@@ -28,6 +28,13 @@ Set the number of parallel builds ('8' in this example) to a number appropriate
 for your machine.
 The use of --verbose is recommended so that you can see the build progress.
 
+The default installation of the backend will be under
+$PYTHONHOME/site-packages/cppyy_backend/lib,
+which needs to be added to your dynamic loader path (LD_LIBRARY_PATH).
+If you need the dictionary and class map generation
+:doc:`tools <distribution>`, you need to add
+$PYTHONHOME/site-packages/cppyy_backend/bin to your executable path (PATH).
+
 
 CPython
 -------
@@ -38,22 +45,11 @@ and a modern C++ compiler (supporting at least C++11).
 
 Install using pip::
 
- $ MAKE_NPROCS=8 pip install --verbose CPyCppyy
+ $ MAKE_NPROCS=8 pip install --verbose cppyy
 
 Set the number of parallel builds ('8' in this example) to a number appropriate
 for your machine.
-Installing CPyCppyy will pull in PyPy-cppyy-backend, which does not depend Python
-and can thus be shared between PyPy and CPython by installing it in a common
-location.
-
-
-Running environment
--------------------
-
-The default installation of the backend will be under
-$PYTHONHOME/site-packages/cppyy_backend/lib,
-which needs to be added to your dynamic loader path (LD_LIBRARY_PATH).
-If you need the dictionary and class map generation
-:doc:`tools <distribution>`, you need to add
-$PYTHONHOME/site-packages/cppyy_backend/bin to your executable path (PATH).
-
+Installing cppyy will pull in PyPy-cppyy-backend, which does not depend on
+Python and can thus be shared between PyPy and CPython by installing it in a
+common location (the platform-specific wheel is shared through pip and will not
+be rebuild).
