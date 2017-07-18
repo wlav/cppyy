@@ -53,3 +53,7 @@ Installing cppyy will pull in PyPy-cppyy-backend, which does not depend on
 Python and can thus be shared between PyPy and CPython by installing it in a
 common location (the platform-specific wheel is shared through pip and will not
 be rebuild).
+
+If you need the dictionary and class map generation
+:doc:`tools <distribution>`, you need to add
+$PYTHONHOME/site-packages/cppyy_backend/bin to your executable path (PATH).
