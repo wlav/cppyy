@@ -1,0 +1,10 @@
+# python compiled files
+*.pyc
+*.pyo
+
+# dictionary products
+*.so
+*.pcm
+*.rootmap
+
+.cache

@@ -11,14 +11,14 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 try:
     import __pypy__
-    requirements = ['PyPy-cppyy-backend']
+    requirements = ['cppyy-backend']
 except ImportError:
     requirements = ['CPyCppyy']
 
 
 setup(
     name='cppyy',
-    version='0.1.0',
+    version='0.2.0',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 
@@ -55,5 +55,6 @@ setup(
 
     keywords='C++ bindings',
 
+    package_dir={'': 'python'},
+    packages=find_packages('python'),
 )
-

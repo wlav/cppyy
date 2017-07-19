@@ -9,20 +9,8 @@ dicts = advancedcppDict.so \
         stltypesDict.so
 all : $(dicts)
 
-ifndef CPPYYHOME
-  CPPYYHOME=$(dir $(shell python -c 'import cppyy, os; os.write(1, cppyy.__file__)'))
-endif
-
-ifndef BACKENDHOME
-  BACKENDHOME=$(CPPYYHOME)/../cppyy_backend
-endif
-
-genreflex := $(shell command -v genreflex 2> /dev/null)
-ifndef genreflex
-  genreflex := $(BACKENDHOME)/bin/genreflex
-endif
-
-cppflags=-std=c++11 -I$(BACKENDHOME)/include -O3 -m64 -fPIC
+genreflex_flags := $(shell genreflex --cppflags)
+cppflags=-std=c++11 $(genreflex_flags) -O3 -m64 -fPIC
 
 PLATFORM := $(shell uname -s)
 ifeq ($(PLATFORM),Darwin)
@@ -33,7 +21,7 @@ endif
 	g++ $(cppflags) -shared -o $@ $^
 
 %_rflx.cpp: %.h %.xml
-	$(genreflex) $< --selection=$*.xml --rootmap=$*Dict.rootmap --rootmap-lib=$*Dict.so
+	genreflex $< --selection=$*.xml --rootmap=$*Dict.rootmap --rootmap-lib=$*Dict.so
 
 .PHONY: test clean
 
