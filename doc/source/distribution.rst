@@ -1,15 +1,10 @@
 Distribution
 ============
 
-On this page, $CPPYYHOME is expected to point the location of the backend, e.g.
-$PYTHONHOME/site-packages/cppyy_backend if it was installed in the default
-location.
-
 Loading code directly into Cling is fine for interactive work and small
 scripts, but large scale applications should take advantage of pre-packaging
 code, linking in libraries, and describing other dependencies.
-Tools are available as part of the backend, under $CPPYYHOME/bin, which should
-be added to your executable path (PATH).
+The necessary tools are installed as part of the backend.
 
 
 Dictionary generation
@@ -26,7 +21,7 @@ residing in ``libproject.so``, the following will generate a
 ``libProjectDict.so`` reflection dictionary::
 
     $ genreflex project_header.h
-    $ g++ -std=c++11 -fPIC -rdynamic -O2 -shared -I$CPPYYHOME/include project_header_rflx.cpp -o libProjectDict.so -L$PROJECTHOME/lib -lproject
+    $ g++ -std=c++11 -fPIC -rdynamic -O2 -shared `genreflex --cppflags` project_header_rflx.cpp -o libProjectDict.so -L$PROJECTHOME/lib -lproject
 
 Instead of loading the header text into Cling, you can now load the
 dictionary:
@@ -61,7 +56,7 @@ The ``genreflex`` tool can produce rootmap files automatically.
 For example::
 
     $ genreflex project_header.h --rootmap=libProjectDict.rootmap --rootmap-lib=libProjectDict.so
-    $ g++ -std=c++11 -fPIC -rdynamic -O2 -shared -I$CPPYYHOME/include project_header_rflx.cpp -o libProjectDict.so -L$CPPYYHOME/lib -lCling -L$PROJECTHOME/lib -lproject
+    $ g++ -std=c++11 -fPIC -rdynamic -O2 -shared `genreflex --cppflags` project_header_rflx.cpp -o libProjectDict.so -L$CPPYYHOME/lib -lCling -L$PROJECTHOME/lib -lproject
 
 where the first option (``--rootmap``) specifies the output file name, and the
 second option (``--rootmap-lib``) the name of the reflection library.

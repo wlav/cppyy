@@ -1,59 +1,38 @@
 Installation
 ============
 
-The installation instructions depend on whether you install for PyPy or
-CPython.
-The former has a builtin cppyy module, and thus only requires the backend.
-The latter needs both cppyy and the backend.
-Compiling the backend takes a long time (it contains a customized version
-of Clang/LLVM), so it is recommended to set the MAKE_NPROCS environment
-variable to the number of cores available on your machine.
+The ``cppyy`` module and its dependencies are available through `PyPI`_ for
+both CPython (2 and 3) and PyPy (5.9.0 and later).
+Build-time only dependencies are ``cmake`` (for general build), ``python2.7``
+(for LLVM), and a modern C++ compiler (one that supports at least C++11).
 
+Compilation of the backend, which contains a customized version of
+Clang/LLVM, can take a long time, so it is recommended to set the MAKE_NPROCS
+environment variable to the number of cores available on your machine or more.
+To see progress, use ``--verbose``::
 
-PyPy
-----
+ $ MAKE_NPROCS=32 pip install --verbose cppyy
 
-This assumes PyPy2.7 v5.7 or later; earlier versions use a Reflex-based cppyy
-module, which is no longer supported.
-Both the tooling and user-facing Python codes are however very backwards
-compatible.
-Further build dependencies are cmake (for general build), Python2.7 (for LLVM),
-and a modern C++ compiler (one that supports at least C++11).
+The bdist_wheel of the backend is reused by pip for all versions of CPython
+and PyPy, thus the long compilation is needed only once.
 
-Install for PyPy, using pip::
+PyPy 5.7 and 5.8 have a built-in module ``cppyy``.
+You can still install the ``cppyy`` package (or, alternatively, just
+``cppyy-backend``), but the built-in takes precedence.
+To use ``cppyy`` without further setting environment variables, simply load
+the backend explicitly, before importing ``cppyy``::
 
- $ MAKE_NPROCS=8 pypy-c -m pip install --verbose PyPy-cppyy-backend
+ $ pypy
+ [PyPy 5.8.0 with GCC 5.4.0] on linux2
+ >>>> from cppyy_backend import loader
+ >>>> c = loader.load_cpp_backend()
+ >>>> import cppyy
+ >>>>
 
-Set the number of parallel builds ('8' in this example) to a number appropriate
-for your machine.
-The use of --verbose is recommended so that you can see the build progress.
+Older versions of PyPy (5.6.0 and earlier) have a built-in ``cppyy`` based on
+`Reflex`_, which is less feature-rich and no longer supported.
+However, both the :doc:`distribution tools <distribution>` and user-facing
+Python codes are very backwards compatible.
 
-The default installation of the backend will be under
-$PYTHONHOME/site-packages/cppyy_backend/lib,
-which needs to be added to your dynamic loader path (LD_LIBRARY_PATH).
-If you need the dictionary and class map generation
-:doc:`tools <distribution>`, you need to add
-$PYTHONHOME/site-packages/cppyy_backend/bin to your executable path (PATH).
-
-
-CPython
--------
-
-Both Python2 and Python3 are supported.
-Further build dependencies are cmake (for general build), Python2.7 (for LLVM),
-and a modern C++ compiler (supporting at least C++11).
-
-Install using pip::
-
- $ MAKE_NPROCS=8 pip install --verbose cppyy
-
-Set the number of parallel builds ('8' in this example) to a number appropriate
-for your machine.
-Installing cppyy will pull in PyPy-cppyy-backend, which does not depend on
-Python and can thus be shared between PyPy and CPython by installing it in a
-common location (the platform-specific wheel is shared through pip and will not
-be rebuild).
-
-If you need the dictionary and class map generation
-:doc:`tools <distribution>`, you need to add
-$PYTHONHOME/site-packages/cppyy_backend/bin to your executable path (PATH).
+.. _`PyPI`: https://pypi.python.org/pypi/cppyy/
+.. _`Reflex`: https://root.cern.ch/how/how-use-reflex
