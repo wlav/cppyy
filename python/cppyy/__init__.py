@@ -6,12 +6,13 @@ try:
     from ._pypy_cppyy import *
     del __pypy__
 except ImportError:
-    from ._python_cppyy import *
+    from ._cpython_cppyy import *
 
 
 #- allow importing from gbl --------------------------------------------------
 import sys
 sys.modules['cppyy.gbl'] = gbl
+sys.modules['cppyy.gbl.std'] = gbl.std
 del sys
 
 
