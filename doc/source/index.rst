@@ -49,7 +49,7 @@ cppyy minimizes dependencies to allow its use in distributed, heterogeneous,
 development environments.
 
 .. _Cling: https://root.cern.ch/cling
-.. _`PyHPC paper`: http://conferences.computer.org/pyhpc/2016/papers/5220a027.pdf
+.. _`PyHPC paper`: http://wlav.web.cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf
 .. _`CPython`: http://python.org
 .. _`PyPy`: http://pypy.org
 
