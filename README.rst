@@ -8,6 +8,7 @@ interpreter and LLVM.
 It supports both PyPy and CPython.
 
 Details and performance are described in
-`this paper <http://conferences.computer.org/pyhpc/2016/papers/5220a027.pdf>`_.
+`this paper <http://cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf>`_.
 
 Full documentation: `cppyy.readthedocs.org <http://cppyy.readthedocs.io/en/latest/>`_.
+

@@ -22,7 +22,7 @@ setup(
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 
-    url='http://cppyy.readthedocs.io/en/latest',
+    url='http://cppyy.readthedocs.org',
 
     # Author details
     author='Wim Lavrijsen',
