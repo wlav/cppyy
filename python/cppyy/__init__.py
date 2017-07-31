@@ -31,3 +31,6 @@ del _pythonization
 #--- CFFI style interface ----------------------------------------------------
 def cppdef(src):
     gbl.gInterpreter.Declare(src)
+
+def include(header):
+    gbl.gInterpreter.ProcessLine('#include "%s"' % header)
