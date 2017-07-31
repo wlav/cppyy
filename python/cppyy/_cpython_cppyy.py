@@ -81,6 +81,11 @@ class Template:
 
         return result
 
+    def __getitem__(self, *args):
+        if args and type(args[0]) == tuple:
+            return self.__call__(*(args[0]))
+        return self.__call__(*args)
+
 _backend.Template = Template
 
 
