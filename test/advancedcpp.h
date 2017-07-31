@@ -385,37 +385,6 @@ template class my_templated_class<std::vector<float> >;
 template char my_templated_function<char>(char);
 template double my_templated_function<double>(double);
 
-class my_templated_method_class {
-public:
-    long get_size();      // to get around bug in genreflex
-    template<class B> long get_size();
-
-    long get_char_size();
-    long get_int_size();
-    long get_long_size();
-    long get_float_size();
-    long get_double_size();
-
-    long get_self_size();
-
-private:
-    double m_data[3];
-};
-
-template<class B>
-inline long my_templated_method_class::get_size() {
-    return sizeof(B);
-}
-
-template long my_templated_method_class::get_size<char>();
-template long my_templated_method_class::get_size<int>();
-template long my_templated_method_class::get_size<long>();
-template long my_templated_method_class::get_size<float>();
-template long my_templated_method_class::get_size<double>();
-
-typedef my_templated_method_class my_typedef_t;
-template long my_templated_method_class::get_size<my_typedef_t>();
-
 
 //===========================================================================
 class overload_one_way {           // overload order testing

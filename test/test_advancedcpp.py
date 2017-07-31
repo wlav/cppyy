@@ -565,22 +565,7 @@ class TestADVANCEDCPP:
             b.m_b.push_back(i)
             assert round(b.m_b[i], 5) == float(i)
 
-    def test16_template_member_functions(self):
-        """Test template member functions lookup and calls"""
-
-        import cppyy
-
-        m = cppyy.gbl.my_templated_method_class()
-
-        assert m.get_size('char')()   == m.get_char_size()
-        assert m.get_size(int)()      == m.get_int_size()
-        assert m.get_size(long)()     == m.get_long_size()
-        assert m.get_size(float)()    == m.get_float_size()
-        assert m.get_size('double')() == m.get_double_size()
-        assert m.get_size('my_templated_method_class')() == m.get_self_size()
-        assert m.get_size('my_typedef_t')() == m.get_self_size()
-
-    def test17_template_global_functions(self):
+    def test16_template_global_functions(self):
         """Test template global function lookup and calls"""
 
         import cppyy
@@ -592,7 +577,7 @@ class TestADVANCEDCPP:
         assert f(3.) == 3.
         assert type(f(4.)) == type(4.)
 
-    def test18_assign_to_return_byref( self ):
+    def test17_assign_to_return_byref( self ):
         """Test assignment to an instance returned by reference"""
 
         from cppyy import gbl
@@ -608,7 +593,7 @@ class TestADVANCEDCPP:
         # assert len(a) == 1
         # assert a[0].m_i == 33
 
-    def test19_math_converters(self):
+    def test18_math_converters(self):
         """Test operator int/long/double incl. typedef"""
 
         from cppyy import gbl
@@ -624,7 +609,7 @@ class TestADVANCEDCPP:
         assert float(a) == 4321.
         assert float(a) == a.m_d
 
-    def test20_comparator(self):
+    def test19_comparator(self):
         """Check that the global operator!=/== is picked up"""
 
         from cppyy import gbl
@@ -642,7 +627,7 @@ class TestADVANCEDCPP:
         assert a.__eq__(a) == False
         assert b.__eq__(b) == False
 
-    def test21_overload_order_with_proper_return(self):
+    def test20_overload_order_with_proper_return(self):
         """Test return type against proper overload w/ const and covariance"""
 
         import cppyy
@@ -650,7 +635,7 @@ class TestADVANCEDCPP:
         assert cppyy.gbl.overload_one_way().gime() == 1
         assert cppyy.gbl.overload_the_other_way().gime() == "aap"
 
-    def test22_access_to_global_variables(self):
+    def test21_access_to_global_variables(self):
         """Access global_variables_and_pointers"""
 
         import cppyy

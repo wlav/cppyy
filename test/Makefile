@@ -6,7 +6,8 @@ dicts = advancedcppDict.so \
         operatorsDict.so \
         overloadsDict.so \
         std_streamsDict.so \
-        stltypesDict.so
+        stltypesDict.so \
+        templatesDict.so
 all : $(dicts)
 
 genreflex_flags := $(shell genreflex --cppflags)
