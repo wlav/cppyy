@@ -5,6 +5,9 @@ from .support import setup_make
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("operatorsDict.so"))
 
+def setup_module(mod):
+    setup_make("operatorsDict.so")
+
 
 class TestOPERATORS:
     def setup_class(cls):

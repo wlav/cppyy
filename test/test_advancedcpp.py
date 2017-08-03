@@ -7,6 +7,7 @@ test_dct = str(currpath.join("advancedcppDict.so"))
 
 def setup_module(mod):
     setup_make("advancedcppDict.so")
+    setup_make("advancedcpp2Dict.so")
 
 
 class TestADVANCEDCPP:
@@ -249,8 +250,6 @@ class TestADVANCEDCPP:
 
     def test06_datamembers(self):
         """Test data member access when using virtual inheritence"""
-
-        raise Exception("currently crashes ...")
 
         import cppyy
         a_class   = cppyy.gbl.a_class
@@ -523,8 +522,6 @@ class TestADVANCEDCPP:
 
     def test13_actual_type_virtual_multi(self):
         """Test auto-downcast in adverse inheritance situation"""
-
-        raise Exception("currently crashes ...")
 
         import cppyy
 
