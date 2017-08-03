@@ -27,3 +27,8 @@ del name, sys
 
 # add _backend itself to exports
 __all__.append('_backend')
+
+def load_reflection_info(name):
+    sc = _backend.gbl.gSystem.Load(name)
+    if sc == -1:
+        raise RuntimeError("missing reflection library "+name)
