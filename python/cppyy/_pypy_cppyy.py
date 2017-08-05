@@ -7,9 +7,7 @@ __all__ = [
     'gbl',
     'addressof',
     'bind_object',
-    'load_reflection_info',
     ]
-
 
 # first load the dependency libraries of the backend, then
 # pull in the built-in low-level cppyy
@@ -25,10 +23,11 @@ for name in __all__:
     setattr(_thismodule, name, getattr(_backend, name))
 del name, sys
 
-# add _backend itself to exports
-__all__.append('_backend')
-
 def load_reflection_info(name):
     sc = _backend.gbl.gSystem.Load(name)
     if sc == -1:
         raise RuntimeError("missing reflection library "+name)
+
+# add other exports to all
+__all__.append('load_reflection_info')
+__all__.append('_backend')

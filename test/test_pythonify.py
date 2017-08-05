@@ -70,18 +70,16 @@ class TestPYTHONIFY:
         """Test object and method calls."""
         import cppyy
         example01_class = cppyy.gbl.example01
-        #assert example01_class.getCount() == 0
+        assert example01_class.getCount() == 0
         instance = example01_class(7)
-        #assert example01_class.getCount() == 1
+        assert example01_class.getCount() == 1
         res = instance.addDataToInt(4)
-        return
         assert res == 11
         res = instance.addDataToInt(-4)
         assert res == 3
         instance.__destruct__()
         assert example01_class.getCount() == 0
         raises(ReferenceError, 'instance.addDataToInt(4)')
-        return
 
         instance = example01_class(7)
         instance2 = example01_class(8)
@@ -91,7 +89,6 @@ class TestPYTHONIFY:
         instance2.__destruct__()
         assert example01_class.getCount() == 0
 
-        t = self.example01
         instance = example01_class(13)
         res = instance.addDataToDouble(16)
         assert round(res-29, 8) == 0.
@@ -99,10 +96,10 @@ class TestPYTHONIFY:
         instance = example01_class(-13)
         res = instance.addDataToDouble(16)
         assert round(res-3, 8) == 0.
+        instance.__destruct__() 
 
-
-        t = self.example01
         instance = example01_class(42)
+        assert example01_class.getCount() == 1
 
         res = instance.addDataToAtoi("13")
         assert res == 55
@@ -322,16 +319,17 @@ class TestPYTHONIFY:
 
        cppyy.gbl.example01.fresh = cppyy.gbl.installableAddOneToInt
 
-       e =  cppyy.gbl.example01(0)
+       e = cppyy.gbl.example01(0)
        assert 2 == e.fresh(1)
        assert 3 == e.fresh(2)
+
 
     def test16_subclassing(self):
         """A sub-class on the python side should have that class as type"""
 
-        raise Exception("currently crashes ...")
+        import cppyy, gc
+        gc.collect()
 
-        import cppyy
         example01 = cppyy.gbl.example01
 
         assert example01.getCount() == 0

@@ -19,7 +19,7 @@ ifeq ($(PLATFORM),Darwin)
 endif
 
 %Dict.so: %_rflx.cpp %.cxx
-	g++ $(cppflags) -shared -o $@ $^
+	$(CXX) $(cppflags) -shared -o $@ $^
 
 %_rflx.cpp: %.h %.xml
 	genreflex $< --selection=$*.xml --rootmap=$*Dict.rootmap --rootmap-lib=$*Dict.so
