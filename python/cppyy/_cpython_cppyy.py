@@ -5,9 +5,12 @@ from cppyy_backend import loader
 
 __all__ = [
     'gbl',
+    'load_reflection_info',
     'addressof',
     'bind_object',
-    'load_reflection_info',
+    'addressof',
+    'nullptr',
+    'move',
     '_backend',
     ]
 
@@ -32,7 +35,7 @@ class Template(object):  # expected/used by CPyCppyyHelpers.cxx in CPyCppyy
             if type(arg) == str:
                 arg = ','.join(map(lambda x: x.strip(), arg.split(',')))
             newargs.append(arg)
-        result = _backend.MakeCppTemplateClass( *newargs )
+        result = _backend.MakeCppTemplateClass(*newargs)
 
       # special case pythonization (builtin_map is not available from the C-API)
         if 'push_back' in result.__dict__:
@@ -75,8 +78,10 @@ class gbl(object):
 
 
 #- exports -------------------------------------------------------------------
-addressof = _backend.addressof
+addressof   = _backend.addressof
 bind_object = _backend.bind_object
+nullptr     = _backend.nullptr
+move        = _backend.move
 
 def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)

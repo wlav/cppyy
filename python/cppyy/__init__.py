@@ -34,3 +34,36 @@ def cppdef(src):
 
 def include(header):
     gbl.gInterpreter.ProcessLine('#include "%s"' % header)
+
+def _get_name(tt):
+    try:
+        ttname = tt.__cppname__
+    except AttributeError:
+        ttname = tt.__name__
+    return ttname
+
+_sizes = {}
+def sizeof(tt):
+    if not isinstance(tt, type):
+        tt = type(tt)
+    try:
+        return _sizes[tt]
+    except KeyError:
+        sz = gbl.gInterpreter.ProcessLine("sizeof(%s);" % (_get_name(tt),))
+        _sizes[tt] = sz
+        return sz
+
+_typeids = {}
+def typeid(tt):
+    if not isinstance(tt, type):
+        tt = type(tt)
+    try:
+        return _typeids[tt]
+    except KeyError:
+        tidname = 'typeid_'+str(len(_typeids))
+        gbl.gInterpreter.ProcessLine(
+            "namespace _cppyy_internal { auto* %s = &typeid(%s); }" %\
+            (tidname, _get_name(tt),))
+        tid = getattr(gbl._cppyy_internal, tidname)
+        _typeids[tt] = tid
+        return tid
