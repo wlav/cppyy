@@ -60,6 +60,7 @@ class TestCPP11FEATURES:
         def moveit(T):
             from cppyy.gbl import std
 
+          # move constructor
             i1 = T()
             assert T.s_move_counter == 0
 
@@ -71,6 +72,16 @@ class TestCPP11FEATURES:
 
             i4 = T(std.move(i1))
             assert T.s_move_counter == 2
+
+          # move assignment
+            i4.__assign__(i2)
+            assert T.s_move_counter == 2
+
+            i4.__assign__(T())
+            assert T.s_move_counter == 3
+
+            i4.__assign__(std.move(i2))
+            assert T.s_move_counter == 4
 
       # order of moving and normal functions are reversed in 1, 2, for
       # overload resolution testing
