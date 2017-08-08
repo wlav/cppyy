@@ -102,6 +102,7 @@ Contents:
    installation
    features
    distribution
+   repositories
 
 
 Comments and bugs
