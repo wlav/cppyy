@@ -243,6 +243,7 @@ class TestFRAGILE:
         assert cppyy.gbl.fragile.nested1 is nested1
         assert nested1.__name__ == 'nested1'
         assert nested1.__module__ == 'cppyy.gbl.fragile'
+        assert nested1.__cppname__ == 'fragile'
 
         from cppyy.gbl.fragile.nested1 import A, nested2
         assert cppyy.gbl.fragile.nested1.A is A
