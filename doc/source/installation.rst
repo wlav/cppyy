@@ -15,6 +15,11 @@ To see progress, use ``--verbose``::
 
 The bdist_wheel of the backend is reused by pip for all versions of CPython
 and PyPy, thus the long compilation is needed only once.
+Prepared wheels of cppyy-cling (which contains LLVM) for Mac 10.12 and
+Linux/Gentoo `are available`_.
+To use them, tell ``pip``::
+
+ $  pip install --extra-index https://cern.ch/wlav/wheels cppyy
 
 PyPy 5.7 and 5.8 have a built-in module ``cppyy``.
 You can still install the ``cppyy`` package (or, alternatively, just
@@ -35,4 +40,5 @@ However, both the :doc:`distribution tools <distribution>` and user-facing
 Python codes are very backwards compatible.
 
 .. _`PyPI`: https://pypi.python.org/pypi/cppyy/
+.. _`are available`: https://cern.ch/wlav/wheels/
 .. _`Reflex`: https://root.cern.ch/how/how-use-reflex
