@@ -10,15 +10,19 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 try:
-    import __pypy__
-    requirements = ['cppyy-backend']
+    import __pypy__, sys
+    version = sys.pypy_version_info
+    if version[0] == 5 and version[1] <= 8:
+        requirements = ['cppyy-backend<0.3']
+    else:
+        requirements = ['cppyy-backend']
 except ImportError:
     requirements = ['CPyCppyy']
 
 
 setup(
     name='cppyy',
-    version='0.2.1',
+    version='0.3.0',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 
