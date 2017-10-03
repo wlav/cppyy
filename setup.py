@@ -14,8 +14,10 @@ try:
     version = sys.pypy_version_info
     if version[0] == 5 and version[1] <= 8:
         requirements = ['cppyy-backend<0.3']
+        add_pkg = ['cppyy', 'cppyy_compat']
     else:
         requirements = ['cppyy-backend']
+        add_pkg = ['cppyy']
 except ImportError:
     requirements = ['CPyCppyy']
 
@@ -60,5 +62,5 @@ setup(
     keywords='C++ bindings',
 
     package_dir={'': 'python'},
-    packages=find_packages('python'),
+    packages=find_packages('python', include=add_pkg),
 )

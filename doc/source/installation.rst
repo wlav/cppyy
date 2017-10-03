@@ -22,17 +22,22 @@ To use them, tell ``pip``::
  $  pip install --extra-index https://cern.ch/wlav/wheels cppyy
 
 PyPy 5.7 and 5.8 have a built-in module ``cppyy``.
-You can still install the ``cppyy`` package (or, alternatively, just
-``cppyy-backend``), but the built-in takes precedence.
-To use ``cppyy`` without further setting environment variables, simply load
-the backend explicitly, before importing ``cppyy``::
+You can still install the ``cppyy`` package, but the built-in module takes
+precedence.
+To use ``cppyy``, first import a compatibility module::
 
  $ pypy
  [PyPy 5.8.0 with GCC 5.4.0] on linux2
- >>>> from cppyy_backend import loader
- >>>> c = loader.load_cpp_backend()
- >>>> import cppyy
+ >>>> import cppyy_compat, cppyy
  >>>>
+
+You will have to set ``LD_LIBRARY_PATH`` appropriately if you get an
+``EnvironmentError`` (it will indicate the needed directory).
+
+Note that your python interpreter (whether CPython or ``pypy-c``) may not have
+been linked by the C++ compiler.
+This can lead to problems during loading of C++ libraries and program shutdown.
+In that case, re-linking is highly recommended.
 
 Older versions of PyPy (5.6.0 and earlier) have a built-in ``cppyy`` based on
 `Reflex`_, which is less feature-rich and no longer supported.
