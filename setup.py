@@ -12,7 +12,7 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 try:
     import __pypy__, sys
     version = sys.pypy_version_info
-    if version[0] == 5 and version[1] <= 8:
+    if version[0] == 5 and version[1] <= 9:
         requirements = ['cppyy-backend<0.3']
         add_pkg = ['cppyy', 'cppyy_compat']
     else:
@@ -24,7 +24,7 @@ except ImportError:
 
 setup(
     name='cppyy',
-    version='0.3.0',
+    version='0.3.1',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 

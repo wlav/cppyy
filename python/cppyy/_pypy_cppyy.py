@@ -28,6 +28,24 @@ __all__ = [
 # pull in the built-in low-level cppyy
 c = loader.load_cpp_backend()
 os.environ['CPPYY_BACKEND_LIBRARY'] = c._name
+
+# for pypy5.9 we may need to move to the location of the backend, if '.' happens
+# to be in LD_LIBRARY_PATH, but not the full directory
+
+def py59_compat(c):
+    olddir = os.getcwd()
+    os.chdir(os.path.dirname(c._name))
+    try:
+        import _cppyy as _backend
+    except ImportError:
+        raise EnvironmentError('"%s" missing in LD_LIBRARY_PATH' % os.path.dirname(c._name))
+    finally:
+        os.chdir(olddir)
+ 
+
+if sys.pypy_version_info[0] == 5 and sys.pypy_version_info[1] == 9:
+    py59_compat(c)
+
 import _cppyy as _backend     # built-in module
 _backend._cpp_backend = c
 

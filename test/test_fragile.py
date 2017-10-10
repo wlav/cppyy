@@ -33,18 +33,22 @@ class TestFRAGILE:
 
         raises(AttributeError, getattr, cppyy.gbl, "no_such_class")
 
+        assert cppyy.gbl.fragile is cppyy.gbl.fragile
         assert cppyy.gbl.fragile == cppyy.gbl.fragile
         fragile = cppyy.gbl.fragile
 
         raises(AttributeError, getattr, fragile, "no_such_class")
 
+        assert fragile.C is fragile.C
         assert fragile.C == fragile.C
         assert fragile.C().check() == ord('C')
 
+        assert fragile.B is fragile.B
         assert fragile.B == fragile.B
         assert fragile.B().check() == ord('B')
         raises(AttributeError, getattr, fragile.B().gime_no_such(), "_cpp_proxy")
 
+        assert fragile.C is fragile.C
         assert fragile.C == fragile.C
         assert fragile.C().check() == ord('C')
         raises(TypeError, fragile.C().use_no_such, None)
@@ -198,7 +202,7 @@ class TestFRAGILE:
             o = fragile.O()       # raises TypeError
             assert 0
         except TypeError as e:
-            assert "cannot instantiate abstract class 'O'" in str(e)
+            assert "cannot instantiate abstract class 'fragile::O'" in str(e)
 
     def test11_dir(self):
         """Test __dir__ method"""
@@ -243,7 +247,7 @@ class TestFRAGILE:
         assert cppyy.gbl.fragile.nested1 is nested1
         assert nested1.__name__ == 'nested1'
         assert nested1.__module__ == 'cppyy.gbl.fragile'
-        assert nested1.__cppname__ == 'fragile'
+        assert nested1.__cppname__ == 'fragile::nested1'
 
         from cppyy.gbl.fragile.nested1 import A, nested2
         assert cppyy.gbl.fragile.nested1.A is A

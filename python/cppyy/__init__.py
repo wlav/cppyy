@@ -3,9 +3,14 @@
 
 try:
     import __pypy__
-    from ._pypy_cppyy import *
     del __pypy__
+    ispypy = True
 except ImportError:
+    ispypy = False
+
+if ispypy:
+    from ._pypy_cppyy import *
+else:
     from ._cpython_cppyy import *
 
 
