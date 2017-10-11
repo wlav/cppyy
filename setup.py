@@ -19,12 +19,13 @@ try:
         requirements = ['cppyy-backend']
         add_pkg = ['cppyy']
 except ImportError:
+    # CPython
     requirements = ['CPyCppyy']
-
+    add_pkg = ['cppyy']
 
 setup(
     name='cppyy',
-    version='0.3.1',
+    version='0.3.2',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 
@@ -44,7 +45,7 @@ setup(
         'Topic :: Software Development',
         'Topic :: Software Development :: Interpreters',
 
-        #'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: BSD License',
 
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',

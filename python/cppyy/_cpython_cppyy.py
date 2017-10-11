@@ -1,6 +1,7 @@
 """ CPython-specific touch-ups
 """
 
+from . import _stdcpp_fix
 from cppyy_backend import loader
 
 __all__ = [
