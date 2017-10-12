@@ -224,8 +224,8 @@ class TestDATATYPES:
         raises(Exception, c.pass_array(0).__getitem__, 0)    # raises SegfaultException
         assert not c.pass_array(None)
         raises(Exception, c.pass_array(None).__getitem__, 0) # id.
-        assert not c.pass_array(cppyy.gbl.nullptr)
-        raises(Exception, c.pass_array(cppyy.gbl.nullptr).__getitem__, 0) # id. id.
+        assert not c.pass_array(cppyy.nullptr)
+        raises(Exception, c.pass_array(cppyy.nullptr).__getitem__, 0) # id. id.
 
         c.__destruct__()
 
@@ -692,22 +692,22 @@ class TestDATATYPES:
 
         c = CppyyTestData()
 
-        assert not cppyy.gbl.nullptr
+        assert not cppyy.nullptr
 
-        assert c.s_voidp                is cppyy.gbl.nullptr
-        assert CppyyTestData.s_voidp  is cppyy.gbl.nullptr
+        assert c.s_voidp                is cppyy.nullptr
+        assert CppyyTestData.s_voidp  is cppyy.nullptr
 
-        assert c.m_voidp                is cppyy.gbl.nullptr
-        assert c.get_voidp()            is cppyy.gbl.nullptr
+        assert c.m_voidp                is cppyy.nullptr
+        assert c.get_voidp()            is cppyy.nullptr
 
         c2 = CppyyTestData()
-        assert c2.m_voidp               is cppyy.gbl.nullptr
+        assert c2.m_voidp               is cppyy.nullptr
         c.set_voidp(c2.m_voidp)
-        assert c.m_voidp                is cppyy.gbl.nullptr
+        assert c.m_voidp                is cppyy.nullptr
         c.set_voidp(c2.get_voidp())
-        assert c.m_voidp                is cppyy.gbl.nullptr
-        c.set_voidp(cppyy.gbl.nullptr)
-        assert c.m_voidp                is cppyy.gbl.nullptr
+        assert c.m_voidp                is cppyy.nullptr
+        c.set_voidp(cppyy.nullptr)
+        assert c.m_voidp                is cppyy.nullptr
 
         c.set_voidp(c2)
         def address_equality_test(a, b):
@@ -722,8 +722,8 @@ class TestDATATYPES:
 
         def null_test(null):
             c.m_voidp = null
-            assert c.m_voidp is cppyy.gbl.nullptr
-        map(null_test, [0, None, cppyy.gbl.nullptr])
+            assert c.m_voidp is cppyy.nullptr
+        map(null_test, [0, None, cppyy.nullptr])
 
         c.m_voidp = c2
         address_equality_test(c.m_voidp,     c2)

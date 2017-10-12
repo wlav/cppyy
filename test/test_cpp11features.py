@@ -2,19 +2,24 @@ import py, os, sys
 from pytest import raises
 from .support import setup_make
 
+try:
+    import __pypy__
+    is_pypy = True
+except ImportError:
+    is_pypy = False
+
+
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("cpp11featuresDict.so"))
 
 def setup_module(mod):
     setup_make("cpp11featuresDict.so")
 
-
 class TestCPP11FEATURES:
     def setup_class(cls):
         cls.test_dct = test_dct
         import cppyy
         cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
-        cls.N = cppyy.gbl.N
 
     def test01_shared_ptr(self):
         """Usage and access of std::shared_ptr<>"""
@@ -49,8 +54,9 @@ class TestCPP11FEATURES:
 
       # test existence
         nullptr = cppyy.nullptr
+      # assert not hasattr(cppyy.gbl, 'nullptr')
 
-      # TODO: test usage ...
+      # usage is tested in datatypes.py:test15_nullptr_passing
  
     def test03_move(self):
         """Move construction, assignment, and methods"""
@@ -67,7 +73,10 @@ class TestCPP11FEATURES:
             i2 = T(i1)  # cctor
             assert T.s_move_counter == 0
 
-            i3 = T(T()) # should call move, not memoized cctor
+            if is_pypy:
+                i3 = T(std.move(T()))            # can't check ref-count
+            else:
+                i3 = T(T()) # should call move, not memoized cctor
             assert T.s_move_counter == 1
 
             i4 = T(std.move(i1))
@@ -77,7 +86,10 @@ class TestCPP11FEATURES:
             i4.__assign__(i2)
             assert T.s_move_counter == 2
 
-            i4.__assign__(T())
+            if is_pypy:
+                i4.__assign__(std.move(T()))     # can't check ref-count
+            else:
+                i4.__assign__(T())
             assert T.s_move_counter == 3
 
             i4.__assign__(std.move(i2))

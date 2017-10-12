@@ -10,6 +10,7 @@ __all__ = [
     'gbl',
     'addressof',
     'bind_object',
+    'nullptr',
     ]
 
 # first load the dependency libraries of the backend, then
@@ -44,6 +45,7 @@ _thismodule = sys.modules[__name__]
 for name in __all__:
     setattr(_thismodule, name, getattr(_backend, name))
 del name, sys
+nullptr = _backend.nullptr
 
 def load_reflection_info(name):
     sc = _backend.gbl.gSystem.Load(name)

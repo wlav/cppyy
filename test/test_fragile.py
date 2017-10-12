@@ -106,7 +106,7 @@ class TestFRAGILE:
         # 0, None, and nullptr allowed
         assert cppyy.addressof(0)                 == 0
         assert cppyy.addressof(None)              == 0
-        assert cppyy.addressof(cppyy.gbl.nullptr) == 0
+        assert cppyy.addressof(cppyy.nullptr)     == 0
 
     def test06_wrong_this(self):
         """Test that using an incorrect self argument raises"""
@@ -176,20 +176,23 @@ class TestFRAGILE:
             assert 0
         except TypeError as e:
             assert "fragile::D::check()" in str(e)
-            assert "TypeError: wrong number of arguments" in str(e)
+            assert "TypeError: takes at most 0 arguments (1 given)" in str(e)
+            assert "TypeError: takes at least 2 arguments (1 given)" in str(e)
+
+        d.overload(None)          # succeeds: accepted as nullptr on fragile::no_such_class*
 
         try:
-            d.overload(None)      # raises TypeError
+            d.overload(3.14)      # raises TypeError
             assert 0
         except TypeError as e:
             assert "fragile::D::overload()" in str(e)
-            assert "TypeError: wrong number of arguments" in str(e)
+            assert "TypeError: takes at most 0 arguments (1 given)" in str(e)
             assert "fragile::D::overload(fragile::no_such_class*)" in str(e)
-            assert "TypeError: no converter available for 'fragile::no_such_class*'" in str(e)
-            assert "fragile::D::overload(char, int)" in str(e)
-            assert "TypeError: expected string, got NoneType object" in str(e)
-            assert "fragile::D::overload(int, fragile::no_such_class*)" in str(e)
-            assert "TypeError: expected integer, got NoneType object" in str(e)
+            assert "TypeError: could not convert argument 1 (no converter available for 'fragile::no_such_class*')" in str(e)
+            assert "void fragile::D::overload(char, int i = 0)" in str(e)
+            assert "TypeError: could not convert argument 1 (char or small int type expected)" in str(e)
+            assert "void fragile::D::overload(int, fragile::no_such_class* p = 0)" in str(e)
+            assert "TypeError: could not convert argument 1 (int/long conversion expects an integer object)" in str(e)
 
         j = fragile.J()
         assert fragile.J.method1.__doc__ == j.method1.__doc__
