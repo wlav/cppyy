@@ -13,7 +13,7 @@ class TestTEMPLATES:
     def setup_class(cls):
         cls.test_dct = test_dct
         import cppyy
-        cls.advanced = cppyy.load_reflection_info(cls.test_dct)
+        cls.templates = cppyy.load_reflection_info(cls.test_dct)
 
     def test01_template_member_functions(self):
         """Template member functions lookup and calls"""
@@ -27,7 +27,11 @@ class TestTEMPLATES:
         assert m.get_size[int]()      == m.get_int_size()
 
       # specialized
-        assert m.get_size[long]()     == m.get_long_size()
+        if sys.hexversion >= 0x3000000:
+            targ = 'long'
+        else:
+            targ = long
+        assert m.get_size[targ]()     == m.get_long_size()
 
       # auto-instantiation
         assert m.get_size[float]()    == m.get_float_size()

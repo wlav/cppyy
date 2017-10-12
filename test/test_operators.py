@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
+from .support import setup_make, pylong, maxvalue
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("operatorsDict.so"))
@@ -102,8 +102,8 @@ class TestOPERATORS:
         assert int(o)  == -13
 
         o = gbl.operator_long(); o.m_long = 42
-        assert o.m_long == 42
-        assert long(o)  == 42
+        assert o.m_long  == 42
+        assert pylong(o) == 42
 
         o = gbl.operator_double(); o.m_double = 3.1415
         assert o.m_double == 3.1415
@@ -120,13 +120,13 @@ class TestOPERATORS:
         assert int(o)    == 256
 
         o = gbl.operator_unsigned_int(); o.m_uint = 2147483647 + 32
-        assert o.m_uint == 2147483647 + 32
-        assert long(o)  == 2147483647 + 32
+        assert o.m_uint  == 2147483647 + 32
+        assert pylong(o) == 2147483647 + 32
 
         o = gbl.operator_unsigned_long();
-        o.m_ulong = sys.maxint + 128
-        assert o.m_ulong == sys.maxint + 128
-        assert long(o)   == sys.maxint + 128
+        o.m_ulong = maxvalue + 128
+        assert o.m_ulong == maxvalue + 128
+        assert pylong(o) == maxvalue + 128
 
         o = gbl.operator_float(); o.m_float = 3.14
         assert round(o.m_float - 3.14, 5) == 0.

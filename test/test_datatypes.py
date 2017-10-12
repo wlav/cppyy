@@ -96,8 +96,8 @@ class TestDATATYPES:
         raises(IndexError, c.m_double_array.__getitem__, self.N)
 
         # can not access an instance member on the class
-        raises(ReferenceError, getattr, CppyyTestData, 'm_bool')
-        raises(ReferenceError, getattr, CppyyTestData, 'm_int')
+        raises(AttributeError, getattr, CppyyTestData, 'm_bool')
+        raises(AttributeError, getattr, CppyyTestData, 'm_int')
 
         assert not hasattr(CppyyTestData, 'm_bool')
         assert not hasattr(CppyyTestData, 'm_int')
@@ -585,11 +585,11 @@ class TestDATATYPES:
         assert p.m_double == 3.14
 
     def test15_nullptr_passing(self):
-        """Integer 0 ('NULL') and None allowed to pass through instance*"""
+        """Integer 0 ('NULL') and nullptr allowed to pass through instance*"""
 
         import cppyy
 
-        for o in (0, None):
+        for o in (0, cppyy.nullptr):
             c = cppyy.gbl.CppyyTestData()
             assert c.m_pod.m_int == 888
             assert c.m_pod.m_double == 3.14

@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
+from .support import setup_make, pylong
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("advancedcppDict.so"))
@@ -46,15 +46,15 @@ class TestADVANCEDCPP:
             assert d.m_b ==  t(4)
             assert d.m_c ==  t(5)
             d.__destruct__()
-        test_defaulter('short', int)
+        test_defaulter('short',  int)
         test_defaulter('ushort', int)
-        test_defaulter('int', int)
-        test_defaulter('uint', int)
-        test_defaulter('long', long)
-        test_defaulter('ulong', long)
-        test_defaulter('llong', long)
-        test_defaulter('ullong', long)
-        test_defaulter('float', float)
+        test_defaulter('int',    int)
+        test_defaulter('uint',   int)
+        test_defaulter('long',   pylong)
+        test_defaulter('ulong',  pylong)
+        test_defaulter('llong',  pylong)
+        test_defaulter('ullong', pylong)
+        test_defaulter('float',  float)
         test_defaulter('double', float)
 
     def test02_simple_inheritance(self):
@@ -469,7 +469,7 @@ class TestADVANCEDCPP:
         assert cppyy.gbl.multi1 is multi.__bases__[0]
         assert cppyy.gbl.multi2 is multi.__bases__[1]
 
-        dict_keys = multi.__dict__.keys()
+        dict_keys = list(multi.__dict__.keys())
         assert dict_keys.count('get_my_own_int') == 1
         assert dict_keys.count('get_multi1_int') == 0
         assert dict_keys.count('get_multi2_int') == 0
@@ -599,12 +599,12 @@ class TestADVANCEDCPP:
         a.m_i = 1234
         a.m_d = 4321.
 
-        assert int(a)  == 1234
-        assert int(a)  == a.m_i
-        assert long(a) == a.m_i
+        assert int(a)    == 1234
+        assert int(a)    == a.m_i
+        assert pylong(a) == a.m_i
 
-        assert float(a) == 4321.
-        assert float(a) == a.m_d
+        assert float(a)  == 4321.
+        assert float(a)  == a.m_d
 
     def test19_comparator(self):
         """Check that the global operator!=/== is picked up"""
