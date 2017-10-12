@@ -12,3 +12,8 @@ def setup_make(targetname):
     stdout, _ = popen.communicate()
     if popen.returncode:
         raise OSError("'make' failed:\n%s" % (stdout,))
+
+if sys.hexversion >= 0x3000000:
+   pylong = int
+else:
+   pylong = long
