@@ -87,4 +87,4 @@ move        = _backend.move
 def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)
     if sc == -1:
-        raise RuntimeError("missing reflection library "+name)
+        raise RuntimeError("Unable to load reflection library "+name)
