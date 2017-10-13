@@ -50,7 +50,7 @@ nullptr = _backend.nullptr
 def load_reflection_info(name):
     sc = _backend.gbl.gSystem.Load(name)
     if sc == -1:
-        raise RuntimeError("missing reflection library "+name)
+        raise RuntimeError("Unable to load reflection library "+name)
 
 # add other exports to all
 __all__.append('load_reflection_info')
