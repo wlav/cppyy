@@ -56,11 +56,11 @@ _backend.Template = Template
 
 
 #- :: and std:: namespaces ---------------------------------------------------
-class _ns_meta(type):
+class _gbl_meta(type):
     def __getattr__(cls, name):
         try:
             attr = _backend.LookupCppEntity(name)
-        except TypeError as e:
+        except Exception as e:
             raise AttributeError(str(e))
         if type(attr) is _backend.PropertyProxy:
             setattr(cls.__class__, name, attr)
@@ -100,12 +100,32 @@ def with_metaclass(meta, *bases):
     class metaclass(meta):
         def __new__(cls, name, this_bases, d):
             return meta(name, bases, d)
-    return type.__new__(metaclass, 'temporary_class', (), {})
+    return meta.__new__(metaclass, 'temporary_class', (), {})
 
-class gbl(with_metaclass(_ns_meta)):
-    class std(with_metaclass(_ns_meta)):
-      # pre-get string to ensure disambiguation from python string module
-        string = _backend.CreateScopeProxy('string')
+class gbl(with_metaclass(_gbl_meta)):
+     __cppname__ = ''
+
+# namespace std is clunky as the backend likes to drop 'std::', so both the
+# normal mechanism and the global namespace need to be searched
+_std = _backend.CreateScopeProxy('std')
+class  _std_meta(type):
+    def __getattr__(cls, name):
+        try:
+            attr = _backend.LookupCppEntity(name)
+        except Exception as e:
+            return getattr(_std, name)
+        if type(attr) is _backend.PropertyProxy:
+            setattr(cls.__class__, name, attr)
+            return attr.__get__(cls)
+        setattr(cls, name, attr)
+        return attr
+
+class std(with_metaclass(_std_meta)):
+     __cppname__ = 'std'
+   # pre-get string to ensure disambiguation from python string module
+     string = _backend.CreateScopeProxy('string')
+
+gbl.std = std
 
 
 #- exports -------------------------------------------------------------------
