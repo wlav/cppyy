@@ -33,7 +33,7 @@ class TestBOOSTANY:
 
         extract = boost.any_cast[std.vector[int]](std.move(val))
         assert type(extract) is std.vector[int]
-        extract += xrange(100)
+        extract += range(100)
 
         val.__assign__(std.move(extract))
         assert len(extract) == 0

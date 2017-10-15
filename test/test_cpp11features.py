@@ -73,27 +73,30 @@ class TestCPP11FEATURES:
             i2 = T(i1)  # cctor
             assert T.s_move_counter == 0
 
-            if is_pypy:
+            if is_pypy or 0x3000000 <= sys.hexversion:
                 i3 = T(std.move(T()))            # can't check ref-count
             else:
                 i3 = T(T()) # should call move, not memoized cctor
             assert T.s_move_counter == 1
 
-            i4 = T(std.move(i1))
+            i3 = T(std.move(T()))                # both move and ref-count
             assert T.s_move_counter == 2
+
+            i4 = T(std.move(i1))
+            assert T.s_move_counter == 3
 
           # move assignment
             i4.__assign__(i2)
-            assert T.s_move_counter == 2
+            assert T.s_move_counter == 3
 
-            if is_pypy:
+            if is_pypy or 0x3000000 <= sys.hexversion:
                 i4.__assign__(std.move(T()))     # can't check ref-count
             else:
                 i4.__assign__(T())
-            assert T.s_move_counter == 3
+            assert T.s_move_counter == 4
 
             i4.__assign__(std.move(i2))
-            assert T.s_move_counter == 4
+            assert T.s_move_counter == 5
 
       # order of moving and normal functions are reversed in 1, 2, for
       # overload resolution testing
