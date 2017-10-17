@@ -391,10 +391,10 @@ class TestADVANCEDCPP:
 
         import array
         addressofo = array.array('l', [cppyy.addressof(o)])
-        assert addressofo.buffer_info()[0] == pp.gime_address_ptr_ptr(addressofo)
+        assert addressofo[0] == pp.gime_address_ptr_ptr(addressofo)
 
         assert 0 == pp.gime_address_ptr(0)
-        assert 0 == pp.gime_address_ptr(None)
+        raises(TypeError, pp.gime_address_ptr, None)
 
         ptr = cppyy.bind_object(0, some_concrete_class)
         assert cppyy.addressof(ptr) == 0
@@ -402,6 +402,9 @@ class TestADVANCEDCPP:
         assert cppyy.addressof(ptr) == 0x1234
         pp.set_address_ptr_ptr(ptr)
         assert cppyy.addressof(ptr) == 0x4321
+
+        assert cppyy.addressof(cppyy.nullptr) == 0
+        assert cppyy.addressof(None)          == 0
 
     def test09_opaque_pointer_passing(self):
         """Test passing around of opaque pointers"""

@@ -9,7 +9,6 @@ __all__ = [
     'load_reflection_info',
     'addressof',
     'bind_object',
-    'addressof',
     'nullptr',
     'move',
     '_backend',
