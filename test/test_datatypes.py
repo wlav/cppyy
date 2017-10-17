@@ -722,7 +722,7 @@ class TestDATATYPES:
         def null_test(null):
             c.m_voidp = null
             assert c.m_voidp is cppyy.nullptr
-        map(null_test, [0, None, cppyy.nullptr])
+        map(null_test, [0, cppyy.nullptr])
 
         c.m_voidp = c2
         address_equality_test(c.m_voidp,     c2)

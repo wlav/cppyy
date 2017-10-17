@@ -404,7 +404,8 @@ class TestADVANCEDCPP:
         assert cppyy.addressof(ptr) == 0x4321
 
         assert cppyy.addressof(cppyy.nullptr) == 0
-        assert cppyy.addressof(None)          == 0
+        assert raises(TypeError, cppyy.addressof, None)
+        assert cppyy.addressof(0)             == 0
 
     def test09_opaque_pointer_passing(self):
         """Test passing around of opaque pointers"""

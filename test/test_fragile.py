@@ -103,10 +103,7 @@ class TestFRAGILE:
         cppyy.addressof(f)
         raises(TypeError, cppyy.addressof, o)
         raises(TypeError, cppyy.addressof, 1)
-        # 0, None, and nullptr allowed
-        assert cppyy.addressof(0)                 == 0
-        assert cppyy.addressof(None)              == 0
-        assert cppyy.addressof(cppyy.nullptr)     == 0
+        # see also test08_void_pointer_passing in test_advancedcpp.py
 
     def test06_wrong_this(self):
         """Test that using an incorrect self argument raises"""
