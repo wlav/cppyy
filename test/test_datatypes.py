@@ -219,11 +219,10 @@ class TestDATATYPES:
             for i in range(self.N):
                 assert ca[i] == b[i]
 
-        # NULL/None/nullptr passing (will use short*)
+        # NULL/nullptr passing (will use short*)
         assert not c.pass_array(0)
         raises(Exception, c.pass_array(0).__getitem__, 0)    # raises SegfaultException
-        assert not c.pass_array(None)
-        raises(Exception, c.pass_array(None).__getitem__, 0) # id.
+        assert raises(TypeError, c.pass_array, None)
         assert not c.pass_array(cppyy.nullptr)
         raises(Exception, c.pass_array(cppyy.nullptr).__getitem__, 0) # id. id.
 
