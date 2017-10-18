@@ -676,7 +676,13 @@ class TestDATATYPES:
                      'get_long_array',   'get_long_array2',
                      'get_ulong_array',  'get_ulong_array2']:
             arr = getattr(c, func)()
-            arr = arr.shape.fromaddress(arr.itemaddress(0), self.N)
+            arr.reshape((self.N,))
+            assert len(arr) == self.N
+
+            raises(TypeError, arr.reshape, (1, 2))
+            assert len(arr) == self.N
+
+            raises(TypeError, arr.reshape, 2*self.N)
             assert len(arr) == self.N
 
             l = list(arr)
