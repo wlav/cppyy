@@ -106,7 +106,10 @@ print 'classes and structs'
 from cppyy.gbl import ConcreteClass, Namespace
 assert ConcreteClass != Namespace.ConcreteClass
 n = Namespace.ConcreteClass.NestedClass()
-assert 'Namespace::ConcreteClass::NestedClass' in str(type(n))
+assert 'Namespace.ConcreteClass.NestedClass' in str(type(n))
+assert 'NestedClass' == type(n).__name__
+assert 'cppyy.gbl.Namespace.ConcreteClass' == type(n).__module__
+assert 'Namespace::ConcreteClass::NestedClass' == type(n).__cppname__
 
 print 'data members'
 from cppyy.gbl import ConcreteClass
