@@ -35,9 +35,21 @@ del _pythonization
 
 #--- CFFI style interface ----------------------------------------------------
 def cppdef(src):
+    """Declare C++ source <src> to Cling.
+
+Example:
+
+cppyy.cppdef(
+\"\"\"class MyClass {
+   public:
+      MyClass(int i) : m_data(i) {
+      int m_data;
+   };\"\"\"
+)"""
     gbl.gInterpreter.Declare(src)
 
 def include(header):
+    """Load (and JIT) header file <header> into Cling."""
     gbl.gInterpreter.ProcessLine('#include "%s"' % header)
 
 def _get_name(tt):
@@ -49,6 +61,7 @@ def _get_name(tt):
 
 _sizes = {}
 def sizeof(tt):
+    """Returns the storage size (in chars) of C++ type <tt>."""
     if not isinstance(tt, type):
         tt = type(tt)
     try:
@@ -60,6 +73,7 @@ def sizeof(tt):
 
 _typeids = {}
 def typeid(tt):
+    """Returns the C++ runtime type information for type <tt>."""
     if not isinstance(tt, type):
         tt = type(tt)
     try:
