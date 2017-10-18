@@ -121,7 +121,7 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 * **classes and structs**: Get mapped onto Python classes, where they can be
   instantiated as expected.
   If classes are inner classes or live in a namespace, their naming and
-  location will reflect that.
+  location will reflect that (as needed e.g. for pickling).
   Example:
 
   .. code-block:: python
@@ -131,7 +131,13 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
     False
     >>> n = Namespace.ConcreteClass.NestedClass()
     >>> type(n)
-    <class '__main__.Namespace::ConcreteClass::NestedClass'>
+    <class cppyy.gbl.Namespace.ConcreteClass.NestedClass at 0x22114c0>
+    >>> type(n).__name__
+    NestedClass
+    >>> type(n).__module__
+    cppyy.gbl.Namespace.ConcreteClass
+    >>> type(n).__cppname__
+    Namespace::ConcreteClass::NestedClass
     >>>
 
 * **data members**: Public data members are represented as Python properties
