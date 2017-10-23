@@ -7,9 +7,11 @@ Build-time only dependencies are ``cmake`` (for general build), ``python2.7``
 (for LLVM), and a modern C++ compiler (one that supports at least C++11).
 
 Compilation of the backend, which contains a customized version of
-Clang/LLVM, can take a long time, so it is recommended to set the MAKE_NPROCS
-environment variable to the number of cores available on your machine or more.
-To see progress, use ``--verbose``::
+Clang/LLVM, can take a long time, so by default the setup script will use all
+cores (x2 if hyperthreading is enabled).
+To change that behevior, set the MAKE_NPROCS environment variable to the
+desired number of processes to use.
+To see progress while waiting, use ``--verbose``::
 
  $ MAKE_NPROCS=32 pip install --verbose cppyy
 
