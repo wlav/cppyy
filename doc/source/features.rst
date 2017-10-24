@@ -184,8 +184,8 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
     >>> from cppyy.gbl import ConcreteClass
     >>> print ConcreteClass.array_method.__doc__
-    void ConcreteClass::array_method(int*, int)
-    void ConcreteClass::array_method(double*, int)
+    void ConcreteClass::array_method(int* ad, int size)
+    void ConcreteClass::array_method(double* ad, int size)
     >>>
 
 * **enums**: Are translated as ints with no further checking.
