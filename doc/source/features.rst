@@ -228,7 +228,7 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
 * **memory**: C++ instances created by calling their constructor from python
   are owned by python.
-  You can check/change the ownership with the _python_owns flag that every
+  You can check/change the ownership with the __python_owns__ flag that every
   bound instance carries.
   Example:
 
@@ -236,7 +236,7 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
     >>> from cppyy.gbl import ConcreteClass
     >>> c = ConcreteClass()
-    >>> c._python_owns            # True: object created in Python
+    >>> c.__python_owns__         # True: object created in Python
     True
     >>>
 
