@@ -158,7 +158,7 @@ namespace Namespace {
         from cppyy.gbl import ConcreteClass
 
         c = ConcreteClass()
-        assert c._python_owns == True
+        assert c.__python_owns__ == True
 
     def test_methods(self):
         import cppyy
