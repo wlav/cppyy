@@ -1,6 +1,8 @@
 """ Dynamic C++ bindings generator.
 """
 
+import os, sys
+
 try:
     import __pypy__
     del __pypy__
@@ -15,10 +17,8 @@ else:
 
 
 #- allow importing from gbl --------------------------------------------------
-import sys
 sys.modules['cppyy.gbl'] = gbl
 sys.modules['cppyy.gbl.std'] = gbl.std
-del sys
 
 
 #- enable auto-loading -------------------------------------------------------
@@ -51,6 +51,12 @@ cppyy.cppdef(
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
     gbl.gInterpreter.ProcessLine('#include "%s"' % header)
+
+def add_include_path(path):
+    """Add a path to the include paths available to cling"""
+    if not os.path.isdir(path):
+        raise OSError("no such directory: %s" % path)
+    gbl.gInterpreter.AddIncludePath(path)
 
 def _get_name(tt):
     try:
