@@ -10,21 +10,29 @@ File features.h
     unsigned int gUint = 0;
 
     //-----
-    class AbstractClass {
+    class Abstract {
     public:
-        virtual ~AbstractClass() {}
+        virtual ~Abstract() {}
         virtual void abstract_method() = 0;
+        virtual void concrete_method() = 0;
     };
 
+    void Abstract::concrete_method() {
+        std::cout << "called Abstract::concrete_method" << std::endl;
+    }
 
     //-----
-    class ConcreteClass : AbstractClass {
+    class Concrete : Abstract {
     public:
-        ConcreteClass(int n=42) : m_int(n), m_const_int(17) {}
-        ~ConcreteClass() {}
+        Concrete(int n=42) : m_int(n), m_const_int(17) {}
+        ~Concrete() {}
 
         virtual void abstract_method() {
-            std::cout << "called concrete method" << std::endl;
+            std::cout << "called Concrete::abstract_method" << std::endl;
+        }
+
+        virtual void concrete_method() {
+            std::cout << "called Concrete::concrete_method" << std::endl;
         }
 
         void array_method(int* ad, int size) {
@@ -39,7 +47,7 @@ File features.h
             std::cout << std::endl;
         }
 
-        AbstractClass* show_autocast() {
+        Abstract* show_autocast() {
             return this;
         }
 
@@ -55,7 +63,7 @@ File features.h
 
     namespace Namespace {
 
-        class ConcreteClass {
+        class Concrete {
         public:
             class NestedClass {
             public:
