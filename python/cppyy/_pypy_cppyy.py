@@ -30,6 +30,7 @@ def py59_compat(c):
         raise EnvironmentError('"%s" missing in LD_LIBRARY_PATH' % os.path.dirname(c._name))
     finally:
         os.chdir(olddir)
+    _backend.nullptr = _backend.gbl.nullptr
  
 
 if sys.pypy_version_info[0] == 5 and sys.pypy_version_info[1] == 9:
