@@ -39,9 +39,10 @@ class TestREGRESSION:
         from cppyy.gbl import KDcrawIface
 
         self.__class__.helpout = []
-        pydoc.doc(KDcrawIface)
+        pydoc.doc(KDcrawIface.KDcraw)
         helptext  = ''.join(self.__class__.helpout)
-        assert 'KDcrawIface' in helptext
+        assert 'KDcraw' in helptext
+        assert 'ObjectProxy' in helptext
 
     def test02_dir(self):
         """For the same reasons as test01_kdcraw, this used to crash."""
@@ -58,11 +59,16 @@ class TestREGRESSION:
         assert 'ObjectProxy' in helptext
         assert 'AddIncludePath' in helptext
 
-        cppyy.cppdef("namespace cppyy_regression_test { int iii = 42; }")
+        cppyy.cppdef("namespace cppyy_regression_test { void iii() {}; }")
 
+        assert not 'iii' in cppyy.gbl.cppyy_regression_test.__dict__
         assert not '__abstractmethods__' in dir(cppyy.gbl.cppyy_regression_test)
         assert '__class__' in dir(cppyy.gbl.cppyy_regression_test)
         assert 'iii' in dir(cppyy.gbl.cppyy_regression_test)
+
+        assert not 'iii' in cppyy.gbl.cppyy_regression_test.__dict__
+        assert cppyy.gbl.cppyy_regression_test.iii
+        assert 'iii' in cppyy.gbl.cppyy_regression_test.__dict__
 
         self.__class__.helpout = []
         pydoc.doc(cppyy.gbl.cppyy_regression_test)
