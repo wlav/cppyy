@@ -21,6 +21,31 @@ import libcppyy as _backend
 _backend._cpp_backend = c
 
 
+import sys
+if sys.hexversion < 0x3000000:
+  # TODO: this reliese on MethodProxy cooking up a func_code object, which atm
+  # is simply not implemented for p3 :/
+
+  # convince inspect that PyROOT method proxies are possible drop-ins for python
+  # methods and classes for pydoc
+    import inspect
+
+    inspect._old_isfunction = inspect.isfunction
+    def isfunction(object):
+        if type(object) == _backend.MethodProxy and not object.im_class:
+            return True
+        return inspect._old_isfunction( object )
+    inspect.isfunction = isfunction
+
+    inspect._old_ismethod = inspect.ismethod
+    def ismethod(object):
+        if type(object) == _backend.MethodProxy:
+            return True
+        return inspect._old_ismethod(object)
+    inspect.ismethod = ismethod
+    del isfunction, ismethod
+
+
 ### template support ---------------------------------------------------------
 class Template(object):  # expected/used by CPyCppyyHelpers.cxx in CPyCppyy
     def __init__(self, name):
