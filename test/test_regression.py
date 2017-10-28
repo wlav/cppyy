@@ -2,7 +2,11 @@ import py, os, sys
 from pytest import raises
 from .support import setup_make
 
-currpath = py.path.local(__file__).dirpath()
+try:
+    import __pypy__
+    is_pypy = True
+except ImportError:
+    is_pypy = False
 
 
 class TestREGRESSION:
@@ -42,7 +46,11 @@ class TestREGRESSION:
         pydoc.doc(KDcrawIface.KDcraw)
         helptext  = ''.join(self.__class__.helpout)
         assert 'KDcraw' in helptext
-        assert 'ObjectProxy' in helptext
+        # TODO: make class naming consistent
+        if is_pypy:
+            assert 'CPPClass' in helptext
+        else:
+            assert 'ObjectProxy' in helptext
 
     def test02_dir(self):
         """For the same reasons as test01_kdcraw, this used to crash."""
@@ -56,7 +64,11 @@ class TestREGRESSION:
         pydoc.doc(cppyy.gbl.gInterpreter)
         helptext = ''.join(self.__class__.helpout)
         assert 'TInterpreter' in helptext
-        assert 'ObjectProxy' in helptext
+        # TODO: make class naming consistent 
+        if is_pypy:
+            assert 'CPPClass' in helptext
+        else:
+            assert 'ObjectProxy' in helptext
         assert 'AddIncludePath' in helptext
 
         cppyy.cppdef("namespace cppyy_regression_test { void iii() {}; }")
@@ -73,4 +85,8 @@ class TestREGRESSION:
         self.__class__.helpout = []
         pydoc.doc(cppyy.gbl.cppyy_regression_test)
         helptext = ''.join(self.__class__.helpout)
-        assert 'ObjectProxy' in helptext
+        # TODO: make class naming consistent 
+        if is_pypy:
+            assert 'CPPClass' in helptext
+        else:
+            assert 'ObjectProxy' in helptext
