@@ -700,7 +700,7 @@ class TestDATATYPES:
         assert not cppyy.nullptr
 
         assert c.s_voidp                is cppyy.nullptr
-        assert CppyyTestData.s_voidp  is cppyy.nullptr
+        assert CppyyTestData.s_voidp    is cppyy.nullptr
 
         assert c.m_voidp                is cppyy.nullptr
         assert c.get_voidp()            is cppyy.nullptr
