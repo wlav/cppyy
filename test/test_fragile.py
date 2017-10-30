@@ -271,11 +271,16 @@ class TestFRAGILE:
         assert nested3.__module__ == 'cppyy.gbl.fragile.nested1.nested2'
         assert nested3.__cppname__ == 'fragile::nested1::nested2::nested3'
 
+        # test writability of __module__
+        nested3.__module__ = "peanut butter"
+        assert nested3.__module__ == "peanut butter"
+
         from cppyy.gbl.fragile.nested1.nested2.nested3 import A
         assert cppyy.gbl.fragile.nested1.nested2.nested3.A is nested3.A
         assert A.__name__ == 'A'
         assert A.__module__ == 'cppyy.gbl.fragile.nested1.nested2.nested3'
         assert A.__cppname__ == 'fragile::nested1::nested2::nested3::A'
+
 
     def test13_missing_casts(self):
         """Test proper handling when a hierarchy is not fully available"""
