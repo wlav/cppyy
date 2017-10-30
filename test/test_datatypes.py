@@ -189,6 +189,10 @@ class TestDATATYPES:
             for i in range(self.N):
                 assert eval('c.m_%s_array2[i]' % names[j]) == b[i]
 
+        # can not write to constant data
+        assert c.m_const_int == 17
+        raises(TypeError, setattr, c, 'm_const_int', 71)
+
         c.__destruct__()
 
     def test03_array_passing(self):

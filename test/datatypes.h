@@ -246,6 +246,7 @@ public:
     short                m_short;
     unsigned short       m_ushort;
     int                  m_int;
+    const int            m_const_int;   // special case: const testing
     unsigned int         m_uint;
     long                 m_long;
     unsigned long        m_ulong;

@@ -6,7 +6,7 @@ std::vector<EFruit> vecFruits{kCitrus, kApple};
 
 
 //===========================================================================
-CppyyTestData::CppyyTestData() : m_owns_arrays(false)
+CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
 {
     m_bool    = false;
     m_char    = 'a';

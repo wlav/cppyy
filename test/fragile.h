@@ -106,6 +106,7 @@ public:
 
 class M {
 public:
+    virtual ~M() {}
     enum E1 { kOnce=42 };
     enum E2 { kTwice=12 };
 };

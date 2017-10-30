@@ -23,7 +23,7 @@ _backend._cpp_backend = c
 
 import sys
 if sys.hexversion < 0x3000000:
-  # TODO: this reliese on MethodProxy cooking up a func_code object, which atm
+  # TODO: this reliese on CPPOverload cooking up a func_code object, which atm
   # is simply not implemented for p3 :/
 
   # convince inspect that PyROOT method proxies are possible drop-ins for python
@@ -32,14 +32,14 @@ if sys.hexversion < 0x3000000:
 
     inspect._old_isfunction = inspect.isfunction
     def isfunction(object):
-        if type(object) == _backend.MethodProxy and not object.im_class:
+        if type(object) == _backend.CPPOverload and not object.im_class:
             return True
         return inspect._old_isfunction( object )
     inspect.isfunction = isfunction
 
     inspect._old_ismethod = inspect.ismethod
     def ismethod(object):
-        if type(object) == _backend.MethodProxy:
+        if type(object) == _backend.CPPOverload:
             return True
         return inspect._old_ismethod(object)
     inspect.ismethod = ismethod
