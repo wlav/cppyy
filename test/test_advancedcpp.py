@@ -643,7 +643,7 @@ class TestADVANCEDCPP:
 
         assert cppyy.gbl.my_global_double == 12.
         assert len(cppyy.gbl.my_global_array) == 500
-        assert cppyy.gbl.my_global_string == "aap  noot  mies"
+        assert cppyy.gbl.my_global_string1 == "aap  noot  mies"
+        assert cppyy.gbl.my_global_string2 == "zus jet teun"
         # TODO: currently fails b/c double** not understood as &double*
         #assert cppyy.gbl.my_global_ptr[0] == 1234.
-
