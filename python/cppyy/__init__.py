@@ -53,10 +53,16 @@ def include(header):
     gbl.gInterpreter.ProcessLine('#include "%s"' % header)
 
 def add_include_path(path):
-    """Add a path to the include paths available to cling"""
+    """Add a path to the include paths available to Cling."""
     if not os.path.isdir(path):
         raise OSError("no such directory: %s" % path)
     gbl.gInterpreter.AddIncludePath(path)
+
+def add_autoload_map(fname):
+    """Add the entries from a autoload (.rootmap) file to Cling."""
+    if not os.path.isfile(fname):
+        raise OSError("no such file: %s" % fname)
+    gbl.gInterpreter.LoadLibraryMap(fname)
 
 def _get_name(tt):
     try:
