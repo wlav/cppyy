@@ -16,7 +16,7 @@ class TestREGRESSION:
         pydoc.pager = stringpager
 
     def test01_kdcraw(self):
-        """Template member functions lookup and calls"""
+        """Doc strings for KDcrawIface (used to crash)."""
 
         import cppyy, pydoc
 
