@@ -86,7 +86,7 @@ class _gbl_meta(type):
             attr = _backend.LookupCppEntity(name)
         except Exception as e:
             raise AttributeError(str(e))
-        if type(attr) is _backend.PropertyProxy:
+        if type(attr) is _backend.CPPDataMember:
             setattr(cls.__class__, name, attr)
             return attr.__get__(cls)
         setattr(cls, name, attr)
@@ -138,7 +138,7 @@ class  _std_meta(type):
             attr = _backend.LookupCppEntity(name)
         except Exception as e:
             return getattr(_std, name)
-        if type(attr) is _backend.PropertyProxy:
+        if type(attr) is _backend.CPPDataMember:
             setattr(cls.__class__, name, attr)
             return attr.__get__(cls)
         setattr(cls, name, attr)
