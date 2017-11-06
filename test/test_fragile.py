@@ -283,6 +283,15 @@ class TestFRAGILE:
 
         # classes in namespace should inherit
         assert A.__module__ == 'peanut butter.nested3'
+        assert 'peanut butter' in repr(A)
+        assert 'class' in repr(A)
+        assert 'peanut butter' in repr(nested3)
+        assert 'namespace' in repr(nested3)
+
+        # as should objects
+        a = A()
+        assert 'peanut butter' in repr(a)
+        assert 'object' in repr(a)
 
     def test13_missing_casts(self):
         """Test proper handling when a hierarchy is not fully available"""
