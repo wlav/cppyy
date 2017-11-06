@@ -80,7 +80,7 @@ _backend.Template = Template
 
 
 #- :: and std:: namespaces ---------------------------------------------------
-class _gbl_meta(type):
+class _gbl_meta(_backend.CPPScope):
     def __getattr__(cls, name):
         try:
             attr = _backend.LookupCppEntity(name)
@@ -91,6 +91,9 @@ class _gbl_meta(type):
             return attr.__get__(cls)
         setattr(cls, name, attr)
         return attr
+
+    def __repr__(cls):
+        return '<namespace cppyy.gbl at 0x%x>' % id(cls)
 
 ### -----------------------------------------------------------------------------
 ### -- metaclass helper from six ------------------------------------------------
@@ -129,10 +132,11 @@ def with_metaclass(meta, *bases):
 class gbl(with_metaclass(_gbl_meta)):
      __cppname__ = ''
 
+
 # namespace std is clunky as the backend likes to drop 'std::', so both the
 # normal mechanism and the global namespace need to be searched
 _std = _backend.CreateScopeProxy('std')
-class  _std_meta(type):
+class _std_meta(_backend.CPPScope):
     def __getattr__(cls, name):
         try:
             attr = _backend.LookupCppEntity(name)
