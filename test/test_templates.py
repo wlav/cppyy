@@ -40,3 +40,13 @@ class TestTEMPLATES:
 
       # auto through typedef
         assert m.get_size['MyTMCTypedef_t']() == m.get_self_size()
+
+    def test02_non_type_template_args(self):
+        """Use of non-types as template arguments"""
+
+        import cppyy
+
+        cppyy.cppdef("template <int i> int nt_templ_args() { return i; };")
+
+        assert cppyy.gbl.nt_templ_args[1]()   == 1
+        assert cppyy.gbl.nt_templ_args[256]() == 256

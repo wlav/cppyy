@@ -72,3 +72,19 @@ class TestREGRESSION:
         pydoc.doc(cppyy.gbl.cppyy_regression_test)
         helptext = ''.join(self.__class__.helpout)
         assert 'CPPInstance' in helptext
+
+    def test03_pyfunc_doc(self):
+        """Help on a generated pyfunc used to crash."""
+
+        import cppyy, distutils, pydoc
+
+        cppyy.add_include_path(distutils.sysconfig_get_python_inc())
+        cppyy.cppdef("#undef _POSIX_C_SOURCE")
+        cppyy.cppdef("#undef _XOPEN_SOURCE")
+
+        cppyy.cppdef("""#include "Python.h"
+           long py2long(PyObject* obj) { return PyLong_AsLong(obj); }""")
+
+        pydoc.doc(cppyy.gbl.py2long)
+
+        assert 1 == cppyy.gbl.py2long(1)
