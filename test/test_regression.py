@@ -76,11 +76,14 @@ class TestREGRESSION:
     def test03_pyfunc_doc(self):
         """Help on a generated pyfunc used to crash."""
 
-        import cppyy, distutils, pydoc
+        import cppyy, distutils, pydoc, sys
 
         cppyy.add_include_path(distutils.sysconfig_get_python_inc())
-        cppyy.cppdef("#undef _POSIX_C_SOURCE")
-        cppyy.cppdef("#undef _XOPEN_SOURCE")
+        if sys.hexversion < 0x3000000:
+            cppyy.cppdef("#undef _POSIX_C_SOURCE")
+            cppyy.cppdef("#undef _XOPEN_SOURCE")
+        else:
+            cppyy.cppdef("#undef slots")     # potentially pulled in by Qt/xapian.h
 
         cppyy.cppdef("""#include "Python.h"
            long py2long(PyObject* obj) { return PyLong_AsLong(obj); }""")
