@@ -94,7 +94,7 @@ wrapper (3) and a large package that contains Cling/LLVM (4).
 The former is still under development and expected to be updated frequently.
 It is small enough to download and build very quickly.
 The latter, however, takes a long time to build, but since it is very stable,
-splitting it if off allows the creation of binary wheels that need updating
+splitting it off allows the creation of binary wheels that need updating
 only infrequently (expected about twice a year).
 
 All code is publicly available; see the
