@@ -82,9 +82,7 @@ _backend.Template = Template
 gbl = _backend.CreateScopeProxy('')
 gbl.__class__.__repr__ = lambda cls : '<namespace cppyy.gbl at 0x%x>' % id(cls)
 gbl.std =  _backend.CreateScopeProxy('std')
-# pre-get string to ensure disambiguation from python string module
-gbl.std.string = _backend.CreateScopeProxy('std::string')
-# similar for move, we want our "pythonized" one, not the C++ template
+# for move, we want our "pythonized" one, not the C++ template
 gbl.std.move  = _backend.move
 
 #- exports -------------------------------------------------------------------
