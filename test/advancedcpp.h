@@ -301,6 +301,11 @@ public:
     some_data m_data;
 };
 
+class refers_to_self {             // for data member reuse testing
+public:
+    refers_to_self* m_other = nullptr;
+};
+
 
 //===========================================================================
 class pointer_pass {               // for testing passing of void*'s
