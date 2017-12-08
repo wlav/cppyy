@@ -29,7 +29,12 @@ extern std::vector<EFruit> vecFruits;
 
 //===========================================================================
 namespace EnumSpace {
-   enum E {E1 = 1, E2};
+    enum E {E1 = 1, E2};
+    class EnumClass {
+    public:
+        enum    {E1 = -1};
+        enum EE {E2 = -1};
+    };
 };
 
 

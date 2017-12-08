@@ -466,6 +466,10 @@ class TestDATATYPES:
         assert gbl.kBanana == 29
         assert gbl.kCitrus == 34
 
+        assert gbl.EnumSpace.E
+        assert gbl.EnumSpace.EnumClass.E1 == -1   # anonymous
+        assert gbl.EnumSpace.EnumClass.E2 == -1   # named type
+
     def test11_string_passing(self):
         """Test passing/returning of a const char*"""
 
