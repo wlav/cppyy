@@ -65,6 +65,8 @@ def add_autoload_map(fname):
     gbl.gInterpreter.LoadLibraryMap(fname)
 
 def _get_name(tt):
+    if type(tt) == str:
+        return tt
     try:
         ttname = tt.__cppname__
     except AttributeError:
@@ -74,7 +76,7 @@ def _get_name(tt):
 _sizes = {}
 def sizeof(tt):
     """Returns the storage size (in chars) of C++ type <tt>."""
-    if not isinstance(tt, type):
+    if not isinstance(tt, type) and not type(tt) == str:
         tt = type(tt)
     try:
         return _sizes[tt]
