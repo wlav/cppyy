@@ -333,3 +333,17 @@ CppyyTestPod* get_global_pod() {
 CppyyTestPod* get_null_pod() {
     return (CppyyTestPod*)0;
 }
+
+
+//= function pointer passing ================================================
+int sum_of_int(int i1, int i2) {
+    return i1+i2;
+}
+
+double sum_of_double(double d1, double d2) {
+    return d1+d2;
+}
+
+double call_double_double(double (*d)(double, double), double d1, double d2) {
+    return d(d1, d2);
+}

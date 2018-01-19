@@ -16,4 +16,8 @@
   <variable name="g_int" />
   <variable name="g_pod" />
 
+  <function name="sum_of_int" />
+  <function name="sum_of_double" />
+  <function name="call_double_double" />
+
 </lcgdict>

@@ -744,3 +744,19 @@ class TestDATATYPES:
 
         c.s_voidp = c2
         address_equality_test(c.s_voidp, c2)
+
+    def test21_function_pointers(self):
+        """Function pointer passing"""
+
+        import cppyy
+
+        f1 = cppyy.gbl.sum_of_int
+        f2 = cppyy.gbl.sum_of_double
+        f3 = cppyy.gbl.call_double_double
+
+        assert 5 == f1(2, 3)
+        assert 5. == f2(5., 0.)
+
+        raises(TypeError, f3, f1, 2, 3)
+
+        assert 5. == f3(f2, 5., 0.)
