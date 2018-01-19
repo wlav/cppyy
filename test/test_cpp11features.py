@@ -102,3 +102,25 @@ class TestCPP11FEATURES:
       # overload resolution testing
         moveit(cppyy.gbl.TestMoving1)
         moveit(cppyy.gbl.TestMoving2)
+
+    def test04_initializer_list(self):
+        """Initializer list construction"""
+
+        from cppyy.gbl import std, TestData
+
+        v = std.vector[int]((1, 2, 3, 4))
+        assert list(v) == [1, 2, 3, 4]
+
+        v = std.vector['double']((1, 2, 3, 4))
+        assert list(v) == [1., 2., 3., 4.]
+
+        raises(TypeError, std.vector[int], [1., 2., 3., 4.])
+
+        l = list()
+        for i in range(10):
+            l.append(TestData(i))
+
+        v = std.vector[TestData](l)
+        assert len(v) == len(l)
+        for i in range(len(l)):
+            assert v[i].m_int == l[i].m_int

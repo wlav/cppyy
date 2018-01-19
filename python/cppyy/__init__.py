@@ -27,10 +27,8 @@ except: pass
 
 
 #--- pythonization factories -------------------------------------------------
-from . import _pythonization
-_pythonization._set_backend(_backend)
-from ._pythonization import *
-del _pythonization
+from . import _pythonization as py
+py._set_backend(_backend)
 
 
 #--- CFFI style interface ----------------------------------------------------

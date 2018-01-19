@@ -3,4 +3,7 @@
   <class name="MyTemplatedMethodClass" />
   <class name="MyTMCTypedef_t" />
 
+  <function name="global_get_size" />
+  <function name="SomeNS::tuplify" />
+
 </lcgdict>

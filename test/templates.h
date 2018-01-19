@@ -1,3 +1,6 @@
+#include <string>
+#include <sstream>
+
 //===========================================================================
 class MyTemplatedMethodClass {         // template methods
 public:
@@ -32,4 +35,25 @@ template long MyTemplatedMethodClass::get_size<int>();
 template<>
 inline long MyTemplatedMethodClass::get_size<long>() {
     return 42;
+}
+
+// global templated function
+template<typename T>
+long global_get_size() {
+    return sizeof(T);
+}
+
+// variadic function
+namespace SomeNS {
+inline std::string tuplify(std::ostringstream& out) {
+    out << ')';
+    return out.str();
+}
+
+template<typename T, typename... Args>
+std::string tuplify(std::ostringstream& out, T value, Args... args)
+{
+    out << value << ", ";
+    return tuplify(out, args...);
+}
 }

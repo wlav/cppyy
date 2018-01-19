@@ -46,7 +46,28 @@ class TestTEMPLATES:
 
         import cppyy
 
-        cppyy.cppdef("template <int i> int nt_templ_args() { return i; };")
+        cppyy.cppdef("template<int i> int nt_templ_args() { return i; };")
 
         assert cppyy.gbl.nt_templ_args[1]()   == 1
         assert cppyy.gbl.nt_templ_args[256]() == 256
+
+    def test03_templated_function(self):
+        """Templated global and static functions lookup and calls"""
+
+        import cppyy
+
+        # TODO: the following only works if something else has already
+        # loaded the headers associated with this template
+        ggs = cppyy.gbl.global_get_size
+        assert ggs['char']() == 1
+
+        # TODO: add some static template method
+
+    def test04_variadic_function(self):
+        """Call a variadic function"""
+
+        import cppyy
+
+        args = (1, 4., "aap")
+        s = cppyy.gbl.std.ostringstream()
+        #cppyy.gbl.gInterpreter.Declare("template std::string SomeNS::tuplify<int>(std::ostringstream&, int);")
