@@ -24,8 +24,11 @@ This provides basic access to ``cling``::
     For more extensive help type: /usr/local/lib/python2.7/dist-packages/cppyy_backend/bin/rootcling -h
 
 The basic mode of operation is to process the header files ('fileN.h')
-according to certain #pragmas in the LinkDef.h file in order to generate
-bindings accessible in Python under the 'cppyy.gbl' namespace. The output is
+according to certain `#pragmas in the LinkDef.h <https://root.cern.ch/root/html/guides/users-guide/AddingaClass.html#the-linkdef.h-file>`_
+file in order to generate bindings accessible in Python under the 'cppyy.gbl'
+namespace.
+
+The output is
 
 * A .cpp file (which, when compiled to a shared library)
 * A .rootmap file
@@ -140,11 +143,10 @@ variables:
     Cppyy_INCLUDE_DIRS - Where to find the ROOT header files.
     Cppyy_VERSION - the version number of the Cppyy backend.
 
-and also defines the following functions:
+and also defines the following functions::
 
-::
-
-   cppyy_add_bindings - Generate a set of bindings from a set of header files.
+    cppyy_add_bindings - Generate a set of bindings from a set of header files.
+    cppyy_find_pips - Return a list of available pip programs.
 
 cppyy_add_bindings
 ^^^^^^^^^^^^^^^^^^
@@ -225,7 +227,7 @@ The bindings are generated/built/packaged using 3 environments:
 +----------------------+---------------------------------------------------------------------------------------------+
 |LINKDEFS def          | Files or lines which contain extra #pragma content                                          |
 |                      | for the linkdef.h file used by rootcling. See                                               |
-|                      | "ttps://root.cern.ch/root/html/guides/users-guide/AddingaClass.html#the-linkdef.h-file.     |
+|                      | https://root.cern.ch/root/html/guides/users-guide/AddingaClass.html#the-linkdef.h-file.     |
 |                      |                                                                                             |
 |                      | In lines, literal semi-colons must be escaped: "\;".                                        |
 +----------------------+---------------------------------------------------------------------------------------------+
@@ -288,3 +290,13 @@ Examples::
       LINK_LIBRARIES ${_LINK_LIBRARIES}
       H_DIRS ${_H_DIRS}
       H_FILES "dcrawinfocontainer.h;kdcraw.h;rawdecodingsettings.h;rawfiles.h")
+
+There is a fuller example of embedding the use of cppyy_add_bindings for a
+large set of bindings::
+
+  https://cgit.kde.org/pykde5.git/plain/KF5/CMakeLists.txt?h=include_qt_binding
+
+cppyy_find_pips
+^^^^^^^^^^^^^^^
+
+Return a list of available pip programs.
