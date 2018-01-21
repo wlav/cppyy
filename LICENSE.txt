@@ -37,3 +37,16 @@ the following license: a non-exclusive, royalty-free perpetual license
 to install, use, modify, prepare derivative works, incorporate into
 other computer software, distribute, and sublicense such Enhancements
 or derivative works thereof, in binary and source code form.
+
+
+
+Additional copyright holders
+----------------------------
+
+Except when otherwise stated (look for LICENSE files or information in
+source files), this package contains files copyrighted by one or more of
+the following people and organizations:
+
+  Aditi Dutta
+  Shaheed Haque
+  Toby StClere-Smithe

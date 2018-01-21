@@ -9,9 +9,7 @@ __all__ = [
     'load_reflection_info',
     'addressof',
     'bind_object',
-    'addressof',
     'nullptr',
-    'move',
     '_backend',
     ]
 
@@ -22,8 +20,33 @@ import libcppyy as _backend
 _backend._cpp_backend = c
 
 
+import sys
+if sys.hexversion < 0x3000000:
+  # TODO: this reliese on CPPOverload cooking up a func_code object, which atm
+  # is simply not implemented for p3 :/
+
+  # convince inspect that PyROOT method proxies are possible drop-ins for python
+  # methods and classes for pydoc
+    import inspect
+
+    inspect._old_isfunction = inspect.isfunction
+    def isfunction(object):
+        if type(object) == _backend.CPPOverload and not object.im_class:
+            return True
+        return inspect._old_isfunction( object )
+    inspect.isfunction = isfunction
+
+    inspect._old_ismethod = inspect.ismethod
+    def ismethod(object):
+        if type(object) == _backend.CPPOverload:
+            return True
+        return inspect._old_ismethod(object)
+    inspect.ismethod = ismethod
+    del isfunction, ismethod
+
+
 ### template support ---------------------------------------------------------
-class Template(object):  # expected/used by CPyCppyyHelpers.cxx in CPyCppyy
+class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
     def __init__(self, name):
         self.__name__ = name
 
@@ -56,65 +79,18 @@ _backend.Template = Template
 
 
 #- :: and std:: namespaces ---------------------------------------------------
-class _ns_meta(type):
-    def __getattr__(cls, name):
-        try:
-            attr = _backend.LookupCppEntity(name)
-        except TypeError as e:
-            raise AttributeError(str(e))
-        if type(attr) is _backend.PropertyProxy:
-            setattr(cls.__class__, name, attr)
-            return attr.__get__(cls)
-        setattr(cls, name, attr)
-        return attr
-
-### -----------------------------------------------------------------------------
-### -- metaclass helper from six ------------------------------------------------
-### -- https://bitbucket.org/gutworth/six/src/8a545f4e906f6f479a6eb8837f31d03731597687/six.py?at=default#cl-800
-#
-# Copyright (c) 2010-2015 Benjamin Peterson
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-def with_metaclass(meta, *bases):
-    """Create a base class with a metaclass."""
-    # This requires a bit of explanation: the basic idea is to make a dummy
-    # metaclass for one level of class instantiation that replaces itself with
-    # the actual metaclass.
-    class metaclass(meta):
-        def __new__(cls, name, this_bases, d):
-            return meta(name, bases, d)
-    return type.__new__(metaclass, 'temporary_class', (), {})
-
-class gbl(with_metaclass(_ns_meta)):
-    class std(with_metaclass(_ns_meta)):
-      # pre-get string to ensure disambiguation from python string module
-        string = _backend.CreateScopeProxy('string')
-
+gbl = _backend.CreateScopeProxy('')
+gbl.__class__.__repr__ = lambda cls : '<namespace cppyy.gbl at 0x%x>' % id(cls)
+gbl.std =  _backend.CreateScopeProxy('std')
+# for move, we want our "pythonized" one, not the C++ template
+gbl.std.move  = _backend.move
 
 #- exports -------------------------------------------------------------------
-addressof   = _backend.addressof
-bind_object = _backend.bind_object
-nullptr     = _backend.nullptr
-move        = _backend.move
+addressof     = _backend.addressof
+bind_object   = _backend.bind_object
+nullptr       = _backend.nullptr
 
 def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)
     if sc == -1:
-        raise RuntimeError("missing reflection library "+name)
+        raise RuntimeError("Unable to load reflection library "+name)

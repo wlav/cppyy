@@ -84,7 +84,9 @@ class TestFRAGILE:
 
         e = fragile.E()
         raises(TypeError, e.overload, None)
-        raises(TypeError, getattr, e, 'm_pp_no_such')
+        # allowing access to e.m_pp_no_such is debatable, but it provides a raw pointer
+        # which may be useful ...
+        assert e.m_pp_no_such[0] == 0xdead
 
     def test05_wrong_arg_addressof(self):
         """Test addressof() error reporting"""
@@ -103,10 +105,7 @@ class TestFRAGILE:
         cppyy.addressof(f)
         raises(TypeError, cppyy.addressof, o)
         raises(TypeError, cppyy.addressof, 1)
-        # 0, None, and nullptr allowed
-        assert cppyy.addressof(0)                 == 0
-        assert cppyy.addressof(None)              == 0
-        assert cppyy.addressof(cppyy.nullptr)     == 0
+        # see also test08_void_pointer_passing in test_advancedcpp.py
 
     def test06_wrong_this(self):
         """Test that using an incorrect self argument raises"""
@@ -277,6 +276,22 @@ class TestFRAGILE:
         assert A.__name__ == 'A'
         assert A.__module__ == 'cppyy.gbl.fragile.nested1.nested2.nested3'
         assert A.__cppname__ == 'fragile::nested1::nested2::nested3::A'
+
+        # test writability of __module__
+        nested3.__module__ = "peanut butter"
+        assert nested3.__module__ == "peanut butter"
+
+        # classes in namespace should inherit
+        assert A.__module__ == 'peanut butter.nested3'
+        assert 'peanut butter' in repr(A)
+        assert 'class' in repr(A)
+        assert 'peanut butter' in repr(nested3)
+        assert 'namespace' in repr(nested3)
+
+        # as should objects
+        a = A()
+        assert 'peanut butter' in repr(a)
+        assert 'object' in repr(a)
 
     def test13_missing_casts(self):
         """Test proper handling when a hierarchy is not fully available"""

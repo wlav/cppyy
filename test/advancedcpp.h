@@ -59,7 +59,7 @@ public:
 class a_class {                    // for esoteric inheritance testing
 public:
     a_class() { m_a = 1; m_da = 1.1; }
-    ~a_class() {}
+    virtual ~a_class() {}
     virtual int get_value() = 0;
 
 public:
@@ -221,6 +221,7 @@ double pass_double_through_const_ref(const double& d);
 //===========================================================================
 class some_abstract_class {        // to test abstract class handling
 public:
+    virtual ~some_abstract_class() {}
     virtual void a_virtual_method() = 0;
 };
 
@@ -273,6 +274,8 @@ bool operator!=( const some_comparable& c1, const some_comparable& c2 );
 extern double my_global_double;    // a couple of globals for access testing
 extern double my_global_array[500];
 extern double* my_global_ptr;
+static const char my_global_string1[] = "aap " " noot " " mies";
+extern const char my_global_string2[];
 
 //===========================================================================
 class some_class_with_data {       // for life-line and identity testing
@@ -296,6 +299,11 @@ public:
 
     int m_padding;
     some_data m_data;
+};
+
+class refers_to_self {             // for data member reuse testing
+public:
+    refers_to_self* m_other = nullptr;
 };
 
 

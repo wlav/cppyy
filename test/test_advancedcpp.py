@@ -391,10 +391,10 @@ class TestADVANCEDCPP:
 
         import array
         addressofo = array.array('l', [cppyy.addressof(o)])
-        assert addressofo.buffer_info()[0] == pp.gime_address_ptr_ptr(addressofo)
+        assert addressofo[0] == pp.gime_address_ptr_ptr(addressofo)
 
         assert 0 == pp.gime_address_ptr(0)
-        assert 0 == pp.gime_address_ptr(None)
+        raises(TypeError, pp.gime_address_ptr, None)
 
         ptr = cppyy.bind_object(0, some_concrete_class)
         assert cppyy.addressof(ptr) == 0
@@ -402,6 +402,10 @@ class TestADVANCEDCPP:
         assert cppyy.addressof(ptr) == 0x1234
         pp.set_address_ptr_ptr(ptr)
         assert cppyy.addressof(ptr) == 0x4321
+
+        assert cppyy.addressof(cppyy.nullptr) == 0
+        raises(TypeError, cppyy.addressof, None)
+        assert cppyy.addressof(0)             == 0
 
     def test09_opaque_pointer_passing(self):
         """Test passing around of opaque pointers"""
@@ -459,6 +463,23 @@ class TestADVANCEDCPP:
 
         d2.__destruct__()
         d1.__destruct__()
+
+        RTS = cppyy.gbl.refers_to_self
+
+        r1 = RTS()
+        r2 = RTS()
+        r1.m_other = r2
+
+        r3 = r1.m_other
+        r4 = r1.m_other
+        assert r3 is r4
+
+        assert r3 == r2
+        assert r3 is r2
+
+        r3.extra = 42
+        assert r2.extra == 42
+        assert r4.extra == 42
 
     def test11_multi_methods(self):
         """Test calling of methods from multiple inheritance"""
@@ -639,6 +660,7 @@ class TestADVANCEDCPP:
 
         assert cppyy.gbl.my_global_double == 12.
         assert len(cppyy.gbl.my_global_array) == 500
+        assert cppyy.gbl.my_global_string1 == "aap  noot  mies"
+        assert cppyy.gbl.my_global_string2 == "zus jet teun"
         # TODO: currently fails b/c double** not understood as &double*
         #assert cppyy.gbl.my_global_ptr[0] == 1234.
-

@@ -73,29 +73,54 @@ class TestCPP11FEATURES:
             i2 = T(i1)  # cctor
             assert T.s_move_counter == 0
 
-            if is_pypy:
+            if is_pypy or 0x3000000 <= sys.hexversion:
                 i3 = T(std.move(T()))            # can't check ref-count
             else:
                 i3 = T(T()) # should call move, not memoized cctor
             assert T.s_move_counter == 1
 
-            i4 = T(std.move(i1))
+            i3 = T(std.move(T()))                # both move and ref-count
             assert T.s_move_counter == 2
+
+            i4 = T(std.move(i1))
+            assert T.s_move_counter == 3
 
           # move assignment
             i4.__assign__(i2)
-            assert T.s_move_counter == 2
+            assert T.s_move_counter == 3
 
-            if is_pypy:
+            if is_pypy or 0x3000000 <= sys.hexversion:
                 i4.__assign__(std.move(T()))     # can't check ref-count
             else:
                 i4.__assign__(T())
-            assert T.s_move_counter == 3
+            assert T.s_move_counter == 4
 
             i4.__assign__(std.move(i2))
-            assert T.s_move_counter == 4
+            assert T.s_move_counter == 5
 
       # order of moving and normal functions are reversed in 1, 2, for
       # overload resolution testing
         moveit(cppyy.gbl.TestMoving1)
         moveit(cppyy.gbl.TestMoving2)
+
+    def test04_initializer_list(self):
+        """Initializer list construction"""
+
+        from cppyy.gbl import std, TestData
+
+        v = std.vector[int]((1, 2, 3, 4))
+        assert list(v) == [1, 2, 3, 4]
+
+        v = std.vector['double']((1, 2, 3, 4))
+        assert list(v) == [1., 2., 3., 4.]
+
+        raises(TypeError, std.vector[int], [1., 2., 3., 4.])
+
+        l = list()
+        for i in range(10):
+            l.append(TestData(i))
+
+        v = std.vector[TestData](l)
+        assert len(v) == len(l)
+        for i in range(len(l)):
+            assert v[i].m_int == l[i].m_int

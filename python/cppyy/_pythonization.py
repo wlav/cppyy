@@ -11,6 +11,7 @@
 # TODO: think this API through and where we want it to live
 __all__ = [
     'cast',
+    'make_interface',
     ]
 
 def _set_backend( backend ):

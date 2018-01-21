@@ -6,6 +6,10 @@ Features
 
    cppyy_features_header
 
+.. toctree::
+
+   classes
+
 The following is not meant to be an exhaustive list, but more of a show case.
 Most features will be fairly obvious: classes are classes with inheritance
 trees preserved, functions are functions, etc.
@@ -23,25 +27,6 @@ automatically pythonized as well.
 
 The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
-* **abstract classes**: Are represented as Python classes, since they are
-  needed to complete the inheritance hierarchies, but will raise a
-  ``TypeError`` exception if an attempt is made to instantiate from them.
-  Example:
-
-  .. code-block:: python
-
-    >>> from cppyy.gbl import AbstractClass, ConcreteClass
-    >>> a = AbstractClass()
-    Traceback (most recent call last):
-      File "<console>", line 1, in <module>
-    TypeError: cannot instantiate abstract class 'AbstractClass'
-    >>> issubclass(ConcreteClass, AbstractClass)
-    True
-    >>> c = ConcreteClass()
-    >>> isinstance(c, AbstractClass)
-    True
-    >>>
-
 * **arrays**: Supported for builtin data types only, as used from module
   ``array`` (or any other builtin-type array that implements the Python buffer
   interface).
@@ -51,9 +36,9 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import ConcreteClass
+    >>> from cppyy.gbl import Concrete
     >>> from array import array
-    >>> c = ConcreteClass()
+    >>> c = Concrete()
     >>> c.array_method(array('d', [1., 2., 3., 4.]), 4)
     1 2 3 4
     >>> c.m_data[4] # static size is 4, so out of bounds
@@ -89,13 +74,13 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import AbstractClass, ConcreteClass
-    >>> c = ConcreteClass()
-    >>> ConcreteClass.show_autocast.__doc__
-    'AbstractClass* ConcreteClass::show_autocast()'
+    >>> from cppyy.gbl import Abstract, Concrete
+    >>> c = Concrete()
+    >>> Concrete.show_autocast.__doc__
+    'Abstract* Concrete::show_autocast()'
     >>> d = c.show_autocast()
     >>> type(d)
-    <class '__main__.ConcreteClass'>
+    <class '__main__.Concrete'>
     >>>
 
   As a consequence, if your C++ classes should only be used through their
@@ -113,25 +98,31 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
   .. code-block:: python
 
     >>> from cppyy import addressof, bind_object
-    >>> e = bind_object(addressof(d), AbstractClass)
+    >>> e = bind_object(addressof(d), Abstract)
     >>> type(e)
-    <class '__main__.AbstractClass'>
+    <class '__main__.Abstract'>
     >>>
 
 * **classes and structs**: Get mapped onto Python classes, where they can be
   instantiated as expected.
   If classes are inner classes or live in a namespace, their naming and
-  location will reflect that.
+  location will reflect that (as needed e.g. for pickling).
   Example:
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import ConcreteClass, Namespace
-    >>> ConcreteClass == Namespace.ConcreteClass
+    >>> from cppyy.gbl import Concrete, Namespace
+    >>> Concrete == Namespace.Concrete
     False
-    >>> n = Namespace.ConcreteClass.NestedClass()
+    >>> n = Namespace.Concrete.NestedClass()
     >>> type(n)
-    <class '__main__.Namespace::ConcreteClass::NestedClass'>
+    <class cppyy.gbl.Namespace.Concrete.NestedClass at 0x22114c0>
+    >>> type(n).__name__
+    NestedClass
+    >>> type(n).__module__
+    cppyy.gbl.Namespace.Concrete
+    >>> type(n).__cppname__
+    Namespace::Concrete::NestedClass
     >>>
 
 * **data members**: Public data members are represented as Python properties
@@ -142,8 +133,8 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import ConcreteClass
-    >>> c = ConcreteClass()
+    >>> from cppyy.gbl import Concrete
+    >>> c = Concrete()
     >>> c.m_int
     42
     >>> c.m_const_int = 71    # declared 'const int' in class definition
@@ -161,11 +152,11 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import ConcreteClass
-    >>> c = ConcreteClass()       # uses default argument
+    >>> from cppyy.gbl import Concrete
+    >>> c = Concrete()       # uses default argument
     >>> c.m_int
     42
-    >>> c = ConcreteClass(13)
+    >>> c = Concrete(13)
     >>> c.m_int
     13
     >>>
@@ -176,10 +167,10 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import ConcreteClass
-    >>> print ConcreteClass.array_method.__doc__
-    void ConcreteClass::array_method(int*, int)
-    void ConcreteClass::array_method(double*, int)
+    >>> from cppyy.gbl import Concrete
+    >>> print Concrete.array_method.__doc__
+    void Concrete::array_method(int* ad, int size)
+    void Concrete::array_method(double* ad, int size)
     >>>
 
 * **enums**: Are translated as ints with no further checking.
@@ -187,56 +178,22 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 * **functions**: Work as expected and live in their appropriate namespace
   (which can be the global one, ``cppyy.gbl``).
 
-* **inheritance**: All combinations of inheritance on the C++ (single,
-  multiple, virtual) are supported in the binding.
-  However, new python classes can only use single inheritance from a bound C++
-  class.
-  Multiple inheritance would introduce two "this" pointers in the binding.
-  This is a current, not a fundamental, limitation.
-  The C++ side will not see any overridden methods on the python side, as
-  cross-inheritance is planned but not yet supported.
-  Example:
-
-  .. code-block:: python
-
-    >>> from cppyy.gbl import ConcreteClass
-    >>> help(ConcreteClass)
-    Help on class ConcreteClass in module __main__:
-
-    class ConcreteClass(AbstractClass)
-     |  Method resolution order:
-     |      ConcreteClass
-     |      AbstractClass
-     |      cppyy.CPPObject
-     |      __builtin__.CPPInstance
-     |      __builtin__.object
-     |
-     |  Methods defined here:
-     |
-     |  ConcreteClass(self, *args)
-     |      ConcreteClass::ConcreteClass(const ConcreteClass&)
-     |      ConcreteClass::ConcreteClass(int)
-     |      ConcreteClass::ConcreteClass()
-     |
-     etc. ....
 
 * **memory**: C++ instances created by calling their constructor from python
   are owned by python.
-  You can check/change the ownership with the _python_owns flag that every
+  You can check/change the ownership with the __python_owns__ flag that every
   bound instance carries.
   Example:
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import ConcreteClass
-    >>> c = ConcreteClass()
-    >>> c._python_owns            # True: object created in Python
+    >>> from cppyy.gbl import Concrete
+    >>> c = Concrete()
+    >>> c.__python_owns__         # True: object created in Python
     True
     >>>
 
 * **methods**: Are represented as python methods and work as expected.
-  They are first class objects and can be bound to an instance.
-  Virtual C++ methods work as expected.
   To select a specific virtual method, do like with normal python classes
   that override methods: select it from the class that you need, rather than
   calling the method on the instance.
@@ -272,8 +229,8 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import ConcreteClass
-    >>> print ConcreteClass()
+    >>> from cppyy.gbl import Concrete
+    >>> print Concrete()
     Hello operator const char*!
     >>>
 

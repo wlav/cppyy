@@ -42,4 +42,11 @@ public:
     TestMoving2& operator=(TestMoving2&&) { ++s_move_counter; return *this; }
 };
 
+
+//===========================================================================
+struct TestData {            // for initializer list construction
+    TestData(int i) : m_int(i) {}
+    int m_int;
+};
+
 #endif // c++11 and later

@@ -6,6 +6,7 @@ dicts = advancedcppDict.so \
         fragileDict.so \
         operatorsDict.so \
         overloadsDict.so \
+        pythonizablesDict.so \
         std_streamsDict.so \
         stltypesDict.so \
         templatesDict.so

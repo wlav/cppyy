@@ -189,6 +189,10 @@ class TestDATATYPES:
             for i in range(self.N):
                 assert eval('c.m_%s_array2[i]' % names[j]) == b[i]
 
+        # can not write to constant data
+        assert c.m_const_int == 17
+        raises(TypeError, setattr, c, 'm_const_int', 71)
+
         c.__destruct__()
 
     def test03_array_passing(self):
@@ -219,11 +223,10 @@ class TestDATATYPES:
             for i in range(self.N):
                 assert ca[i] == b[i]
 
-        # NULL/None/nullptr passing (will use short*)
+        # NULL/nullptr passing (will use short*)
         assert not c.pass_array(0)
         raises(Exception, c.pass_array(0).__getitem__, 0)    # raises SegfaultException
-        assert not c.pass_array(None)
-        raises(Exception, c.pass_array(None).__getitem__, 0) # id.
+        assert raises(TypeError, c.pass_array, None)
         assert not c.pass_array(cppyy.nullptr)
         raises(Exception, c.pass_array(cppyy.nullptr).__getitem__, 0) # id. id.
 
@@ -463,6 +466,10 @@ class TestDATATYPES:
         assert gbl.kBanana == 29
         assert gbl.kCitrus == 34
 
+        assert gbl.EnumSpace.E
+        assert gbl.EnumSpace.EnumClass.E1 == -1   # anonymous
+        assert gbl.EnumSpace.EnumClass.E2 == -1   # named type
+
     def test11_string_passing(self):
         """Test passing/returning of a const char*"""
 
@@ -677,7 +684,13 @@ class TestDATATYPES:
                      'get_long_array',   'get_long_array2',
                      'get_ulong_array',  'get_ulong_array2']:
             arr = getattr(c, func)()
-            arr = arr.shape.fromaddress(arr.itemaddress(0), self.N)
+            arr.reshape((self.N,))
+            assert len(arr) == self.N
+
+            raises(TypeError, arr.reshape, (1, 2))
+            assert len(arr) == self.N
+
+            raises(TypeError, arr.reshape, 2*self.N)
             assert len(arr) == self.N
 
             l = list(arr)
@@ -695,7 +708,7 @@ class TestDATATYPES:
         assert not cppyy.nullptr
 
         assert c.s_voidp                is cppyy.nullptr
-        assert CppyyTestData.s_voidp  is cppyy.nullptr
+        assert CppyyTestData.s_voidp    is cppyy.nullptr
 
         assert c.m_voidp                is cppyy.nullptr
         assert c.get_voidp()            is cppyy.nullptr
@@ -723,7 +736,7 @@ class TestDATATYPES:
         def null_test(null):
             c.m_voidp = null
             assert c.m_voidp is cppyy.nullptr
-        map(null_test, [0, None, cppyy.nullptr])
+        map(null_test, [0, cppyy.nullptr])
 
         c.m_voidp = c2
         address_equality_test(c.m_voidp,     c2)
@@ -731,3 +744,19 @@ class TestDATATYPES:
 
         c.s_voidp = c2
         address_equality_test(c.s_voidp, c2)
+
+    def test21_function_pointers(self):
+        """Function pointer passing"""
+
+        import cppyy
+
+        f1 = cppyy.gbl.sum_of_int
+        f2 = cppyy.gbl.sum_of_double
+        f3 = cppyy.gbl.call_double_double
+
+        assert 5 == f1(2, 3)
+        assert 5. == f2(5., 0.)
+
+        raises(TypeError, f3, f1, 2, 3)
+
+        assert 5. == f3(f2, 5., 0.)

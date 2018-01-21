@@ -30,6 +30,7 @@ def py59_compat(c):
         raise EnvironmentError('"%s" missing in LD_LIBRARY_PATH' % os.path.dirname(c._name))
     finally:
         os.chdir(olddir)
+    _backend.nullptr = _backend.gbl.nullptr
  
 
 if sys.pypy_version_info[0] == 5 and sys.pypy_version_info[1] == 9:
@@ -50,7 +51,7 @@ nullptr = _backend.nullptr
 def load_reflection_info(name):
     sc = _backend.gbl.gSystem.Load(name)
     if sc == -1:
-        raise RuntimeError("missing reflection library "+name)
+        raise RuntimeError("Unable to load reflection library "+name)
 
 # add other exports to all
 __all__.append('load_reflection_info')

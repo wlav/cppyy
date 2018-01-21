@@ -32,6 +32,7 @@
   <class name="some_convertible" />
   <class name="some_class_with_data" />
   <class name="some_class_with_data::some_data" />
+  <class name="refers_to_self" />
 
   <class name="some_comparable" />
   <function name="operator==" />
