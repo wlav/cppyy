@@ -119,6 +119,8 @@ CMake usage
 The CMake usage is via two modules:
 
 * FindLibClang.cmake provides some bootstrap support needed to locate clang.
+  This is provided mostly as a temporary measure; hopefully upstream support
+  will allow this to be eliminated in due course.
 * FindCppyy.cmake provides the interface described further here.
 
 Details of the usage of these modules is within the modules themselves, but
