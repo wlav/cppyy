@@ -9,7 +9,7 @@ Features
 .. toctree::
 
    classes
-   programmatic_access
+   bindings_generation
 
 The following is not meant to be an exhaustive list, but more of a show case.
 Most features will be fairly obvious: classes are classes with inheritance
