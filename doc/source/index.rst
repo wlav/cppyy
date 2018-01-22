@@ -103,6 +103,7 @@ Contents:
    features
    distribution
    repositories
+   developers
 
 
 Comments and bugs
