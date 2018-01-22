@@ -103,8 +103,8 @@ Contents:
    features
    distribution
    bindings_generation
-   repositories
    developers
+   repositories
 
 
 Comments and bugs
