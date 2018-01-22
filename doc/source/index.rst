@@ -102,8 +102,9 @@ Contents:
    installation
    features
    distribution
-   repositories
+   bindings_generation
    developers
+   repositories
 
 
 Comments and bugs
