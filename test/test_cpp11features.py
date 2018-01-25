@@ -19,7 +19,7 @@ class TestCPP11FEATURES:
     def setup_class(cls):
         cls.test_dct = test_dct
         import cppyy
-        cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
+        cls.cpp11features = cppyy.load_reflection_info(cls.test_dct)
 
     def test01_shared_ptr(self):
         """Usage and access of std::shared_ptr<>"""
