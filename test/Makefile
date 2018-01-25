@@ -13,7 +13,7 @@ dicts = advancedcppDict.so \
 all : $(dicts)
 
 genreflex_flags := $(shell genreflex --cppflags)
-cppflags=-std=c++11 $(genreflex_flags) -O3 -m64 -fPIC
+cppflags=$(shell cling-config --cppflags) $(genreflex_flags) -O3 -fPIC
 
 PLATFORM := $(shell uname -s)
 ifeq ($(PLATFORM),Darwin)
