@@ -7,6 +7,7 @@ from cppyy_backend import loader
 __all__ = [
     'gbl',
     'load_reflection_info',
+    'load_library',
     'addressof',
     'bind_object',
     'nullptr',
@@ -85,6 +86,21 @@ gbl.std =  _backend.CreateScopeProxy('std')
 # for move, we want our "pythonized" one, not the C++ template
 gbl.std.move  = _backend.move
 
+
+#- add to the dynamic path as needed -----------------------------------------
+import os
+def add_default_paths():
+    try:
+        for line in open('/etc/ld.so.conf'):
+            f = line.strip()
+            if (os.path.exists(f)):
+                gbl.gSystem.AddDynamicPath(f)
+    except IOError:
+        pass
+add_default_paths()
+del add_default_paths
+
+
 #- exports -------------------------------------------------------------------
 addressof     = _backend.addressof
 bind_object   = _backend.bind_object
@@ -94,3 +110,12 @@ def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)
     if sc == -1:
         raise RuntimeError("Unable to load reflection library "+name)
+
+def load_library(name):
+    if name[:3] != 'lib':
+        if not gbl.gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
+               gbl.gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
+            name = 'lib'+name
+    sc = gbl.gSystem.Load(name)
+    if sc == -1:
+        raise RuntimeError("Unable to load library "+name)
