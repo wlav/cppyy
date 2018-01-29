@@ -124,3 +124,14 @@ class TestCPP11FEATURES:
         assert len(v) == len(l)
         for i in range(len(l)):
             assert v[i].m_int == l[i].m_int
+
+    def test05_lambda_calls(self):
+        """Call (global) lambdas"""
+
+        import cppyy
+
+        cppyy.cppdef("auto gMyLambda = [](int a) { return 40 + a; };")
+
+        assert cppyy.gbl.gMyLambda
+        assert cppyy.gbl.gMyLambda(2)  == 42
+        assert cppyy.gbl.gMyLambda(40) == 80
