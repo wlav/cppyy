@@ -87,6 +87,18 @@ gbl.std =  _backend.CreateScopeProxy('std')
 gbl.std.move  = _backend.move
 
 
+#- fake namespace for interactive lazy lookups -------------------------------
+class InteractiveLazy(object):
+    def __getattr__(self, attr):
+        if attr == '__all__':
+            caller = sys.modules[sys._getframe(1).f_globals['__name__']]
+            _backend._set_cpp_lazy_lookup(caller.__dict__)
+        return []
+
+sys.modules['cppyy.interactive'] = InteractiveLazy()
+del InteractiveLazy
+
+
 #- add to the dynamic path as needed -----------------------------------------
 import os
 def add_default_paths():
