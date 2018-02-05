@@ -9,19 +9,21 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+add_pkg = ['cppyy']
 try:
     import __pypy__, sys
     version = sys.pypy_version_info
-    if version[0] == 5 and version[1] <= 9:
-        requirements = ['cppyy-backend<0.3']
-        add_pkg = ['cppyy', 'cppyy_compat']
+    if version[0] == 5:
+        if version[1] <= 9:
+            requirements = ['cppyy-backend<0.3']
+            add_pkg += ['cppyy_compat']
+        elif version[1] <= 10:
+            requirements = ['cppyy-backend<0.4']
     else:
         requirements = ['cppyy-backend']
-        add_pkg = ['cppyy']
 except ImportError:
     # CPython
     requirements = ['CPyCppyy']
-    add_pkg = ['cppyy']
 
 setup(
     name='cppyy',
