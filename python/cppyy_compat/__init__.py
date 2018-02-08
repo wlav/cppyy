@@ -1,4 +1,4 @@
-"""Compatibility layer for PyPy 5.8 and 5.7
+"""Compatibility layer for PyPy 5.7-9
 """
 
 def pypy58_57_compat():
@@ -39,9 +39,31 @@ def pypy58_57_compat():
     for name in dir(old):
         if not hasattr(new, name):
             setattr(new, name, getattr(old, name))
-    
+
+# for pypy5.9 we may need to move to the location of the backend, if '.' happens
+# to be in LD_LIBRARY_PATH, but not the full directory
+def py59_compat():
+    import os, cppyy_backend
+    olddir = os.getcwd()
+    c = cppyy_backend.loader.load_cpp_backend()
+    os.chdir(os.path.dirname(c._name))
+    try:
+        global __name__
+        actual_name = __name__; __name__ = ''
+        import _cppyy as _backend
+    except ImportError:
+        raise EnvironmentError('"%s" missing in LD_LIBRARY_PATH' % os.path.dirname(c._name))
+    finally:
+        __name__ = actual_name
+        os.chdir(olddir)
+    _backend.nullptr = _backend.gbl.nullptr
+
+
 import sys
 version = sys.pypy_version_info
-if version[0] == 5 and 6 < version[1] <= 8:
-    pypy58_57_compat()
+if version[0] == 5:
+    if 6 < version[1] <= 8:
+        pypy58_57_compat()
+    elif version[1] == 9:
+        py59_compat()
 del version, sys

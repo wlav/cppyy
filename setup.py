@@ -15,10 +15,10 @@ try:
     version = sys.pypy_version_info
     if version[0] == 5:
         if version[1] <= 9:
-            requirements = ['cppyy-backend<0.3']
+            requirements = ['cppyy-cling<6.12', 'cppyy-backend<0.3']
             add_pkg += ['cppyy_compat']
         elif version[1] <= 10:
-            requirements = ['cppyy-backend<0.4']
+            requirements = ['cppyy-cling', 'cppyy-backend<0.4']
     else:
         requirements = ['cppyy-backend']
 except ImportError:
@@ -27,7 +27,7 @@ except ImportError:
 
 setup(
     name='cppyy',
-    version='0.8.8',
+    version='0.9.0',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 
