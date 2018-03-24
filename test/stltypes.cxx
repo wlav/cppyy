@@ -1,15 +1,19 @@
 #include "stltypes.h"
 
-#define STLTYPES_EXPLICIT_INSTANTIATION_WITH_COMPS(STLTYPE, TTYPE)              \
-namespace __gnu_cxx {                                                           \
-template bool operator==(const std::STLTYPE< TTYPE >::iterator&,                \
-                         const std::STLTYPE< TTYPE >::iterator&);               \
-template bool operator!=(const std::STLTYPE< TTYPE >::iterator&,                \
-                         const std::STLTYPE< TTYPE >::iterator&);               \
-}
 
 //- explicit instantiations of used comparisons
-STLTYPES_EXPLICIT_INSTANTIATION_WITH_COMPS(vector, int)
+#if defined __clang__
+namespace std {
+#define ns_prefix std::
+#elif defined(__GNUC__) || defined(__GNUG__)
+namespace __gnu_cxx {
+#define ns_prefix
+#endif
+template bool ns_prefix operator==(const std::vector<int>::iterator&,
+                         const std::vector<int>::iterator&);
+template bool ns_prefix operator!=(const std::vector<int>::iterator&,
+                         const std::vector<int>::iterator&);
+}
 
 //- class with lots of std::string handling
 stringy_class::stringy_class(const char* s) : m_string(s) {}

@@ -87,14 +87,18 @@ namespace {
 
 } // unnamed namespace
 
-#define STLTYPES_EXPLICIT_INSTANTIATION_DECL_COMPS(STLTYPE, TTYPE)           \
-namespace __gnu_cxx {                                                        \
-extern template bool operator==(const std::STLTYPE< TTYPE >::iterator&,      \
-                         const std::STLTYPE< TTYPE >::iterator&);            \
-extern template bool operator!=(const std::STLTYPE< TTYPE >::iterator&,      \
-                         const std::STLTYPE< TTYPE >::iterator&);            \
-}
 
 // comps for int only to allow testing: normal use of vector is looping over a
 // range-checked version of __getitem__
-STLTYPES_EXPLICIT_INSTANTIATION_DECL_COMPS(vector, int)
+#if defined __clang__
+namespace std {
+#define ns_prefix std::
+#elif defined(__GNUC__) || defined(__GNUG__)
+namespace __gnu_cxx {
+#define ns_prefix
+#endif
+extern template bool ns_prefix operator==(const std::vector<int>::iterator&,
+                         const std::vector<int>::iterator&);
+extern template bool ns_prefix operator!=(const std::vector<int>::iterator&,
+                         const std::vector<int>::iterator&);
+}
