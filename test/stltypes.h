@@ -90,7 +90,7 @@ namespace {
 
 // comps for int only to allow testing: normal use of vector is looping over a
 // range-checked version of __getitem__
-#if defined __clang__
+#if defined(__clang__) && defined(__APPLE__)
 namespace std {
 #define ns_prefix std::
 #elif defined(__GNUC__) || defined(__GNUG__)
