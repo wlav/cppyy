@@ -13,14 +13,13 @@ add_pkg = ['cppyy']
 try:
     import __pypy__, sys
     version = sys.pypy_version_info
+    requirements = ['cppyy-backend']
     if version[0] == 5:
         if version[1] <= 9:
             requirements = ['cppyy-cling<6.12', 'cppyy-backend<0.3']
             add_pkg += ['cppyy_compat']
         elif version[1] <= 10:
             requirements = ['cppyy-cling', 'cppyy-backend<0.4']
-    else:
-        requirements = ['cppyy-backend']
 except ImportError:
     # CPython
     requirements = ['CPyCppyy']
