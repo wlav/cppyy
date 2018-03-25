@@ -8,6 +8,7 @@
 *.rootmap
 
 .cache
+.pytest_cache
 
 # Distribution / packaging
 .Python
