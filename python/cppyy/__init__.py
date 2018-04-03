@@ -10,10 +10,13 @@ try:
 except ImportError:
     ispypy = False
 
+# import separately instead of in the above try/except block for easier to
+# understand tracebacks
 if ispypy:
     from ._pypy_cppyy import *
 else:
     from ._cpython_cppyy import *
+del ispypy
 
 
 #- allow importing from gbl --------------------------------------------------
