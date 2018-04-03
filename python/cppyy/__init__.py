@@ -1,5 +1,46 @@
-""" Dynamic C++ bindings generator.
+"""Dynamic C++ bindings generator.
+
+This module provides dynamic bindings to C++ through Cling, the LLVM-based C++
+interpreter, allowing interactive mixing of Python and C++. Example:
+
+    >>> import cppyy
+    >>> cppyy.cppdef(\"\"\"
+    ... class MyClass {
+    ... public:
+    ...     MyClass(int i) : m_data(i) {}
+    ...     int m_data;
+    ... };\"\"\")
+    True
+    >>> from cppyy.gbl import MyClass
+    >>> m = MyClass(42)
+    >>> cppyy.cppdef(\"\"\"
+    ... void say_hello(MyClass* m) {
+    ...     std::cout << "Hello, the number is: " << m->m_data << std::endl;
+    ... }\"\"\")
+    True
+    >>> MyClass.say_hello = cppyy.gbl.say_hello
+    >>> m.say_hello()
+    Hello, the number is: 42
+    >>> m.m_data = 13
+    >>> m.say_hello()
+    Hello, the number is: 13
+    >>>
+
+For full documentation, see:
+   https://cppyy.readthedocs.io/
+
 """
+
+__author__ = 'Wim Lavrijsen <WLavrijsen@lbl.gov>'
+
+__all__ = [
+    'include',                # load and jit a header file
+    'cppdef',                 # declare C++ source to Cling
+    'sizeof',                 #  size of a C++ type
+    'typeid',                 # typeid of a C++ type
+    'add_include_path',       # add a path to search for headers
+    'add_autoload_map',       # explicitly include an autoload map
+    ]
 
 import os, sys
 
@@ -36,17 +77,7 @@ py._set_backend(_backend)
 
 #--- CFFI style interface ----------------------------------------------------
 def cppdef(src):
-    """Declare C++ source <src> to Cling.
-
-Example:
-
-cppyy.cppdef(
-\"\"\"class MyClass {
-   public:
-      MyClass(int i) : m_data(i) {
-      int m_data;
-   };\"\"\"
-)"""
+    """Declare C++ source <src> to Cling."""
     gbl.gInterpreter.Declare(src)
 
 def include(header):
