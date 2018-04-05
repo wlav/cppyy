@@ -10,5 +10,5 @@ It supports both PyPy and CPython.
 Details and performance are described in
 `this paper <http://cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf>`_.
 
-Full documentation: `cppyy.readthedocs.org <http://cppyy.readthedocs.io/en/latest/>`_.
+Full documentation: `cppyy.readthedocs.io <http://cppyy.readthedocs.io/>`_.
 
