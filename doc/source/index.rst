@@ -94,13 +94,28 @@ development environments.
 .. _`PyPy`: http://pypy.org
 
 
-Contents:
+.. only: not latex
+
+   Contents:
 
 .. toctree::
+   :caption: Getting Started
    :maxdepth: 2
 
    installation
+
+.. toctree::
+   :caption: Features
+   :maxdepth: 2
+
+   builtins
+   classes
    features
+
+.. toctree::
+   :caption: Advanced
+   :maxdepth: 2
+
    distribution
    bindings_generation
    developers

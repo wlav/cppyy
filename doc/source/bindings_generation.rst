@@ -1,3 +1,5 @@
+.. _bindings_generation:
+
 ===================
 Bindings Generation
 ===================

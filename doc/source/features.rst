@@ -1,14 +1,13 @@
-Features
-========
+.. _features:
+
+More Features
+=============
 
 .. toctree::
    :hidden:
 
    cppyy_features_header
 
-.. toctree::
-
-   classes
 
 The following is not meant to be an exhaustive list, but more of a show case.
 Most features will be fairly obvious: classes are classes with inheritance
@@ -25,45 +24,17 @@ been pythonized.
 Certain user-provided classes, such as smart pointers, are recognized and
 automatically pythonized as well.
 
-The example C++ code used can be found :doc:`here <cppyy_features_header>`.
-
-* **arrays**: Supported for builtin data types only, as used from module
-  ``array`` (or any other builtin-type array that implements the Python buffer
-  interface).
-  Out-of-bounds checking is limited to those cases where the size is known at
-  compile time.
-  Example:
+The C++ code used for the examples below can be found
+:doc:`here <cppyy_features_header>`, and it is assumed that that code is
+loaded at the start of any session.
+Download it, save it under the name ``features.h``, and load it:
 
   .. code-block:: python
 
-    >>> from cppyy.gbl import Concrete
-    >>> from array import array
-    >>> c = Concrete()
-    >>> c.array_method(array('d', [1., 2., 3., 4.]), 4)
-    1 2 3 4
-    >>> c.m_data[4] # static size is 4, so out of bounds
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-    IndexError: buffer index out of range
+    >>> import cppyy
+    >>> cppyy.include('features.h')
     >>>
 
-* **builtin data types**: Map onto the expected equivalent python types, with
-  the caveats that there may be size differences, different precision or
-  rounding.
-  For example, a C++ ``float`` is returned as a Python ``float``, which is in
-  fact a C++ ``double``.
-  As another example, a C++ ``unsigned int`` becomes a Python ``long``, but
-  unsigned-ness is still honored:
-
-  .. code-block:: python
-
-    >>> type(cppyy.gbl.gUint)
-    <type 'long'>
-    >>> cppyy.gbl.gUint = -1
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-    ValueError: cannot convert negative integer to unsigned
-    >>>
 
 * **casting**: Is supposed to be unnecessary.
   Object pointer returns from functions provide the most derived class known
@@ -101,46 +72,6 @@ The example C++ code used can be found :doc:`here <cppyy_features_header>`.
     >>> e = bind_object(addressof(d), Abstract)
     >>> type(e)
     <class '__main__.Abstract'>
-    >>>
-
-* **classes and structs**: Get mapped onto Python classes, where they can be
-  instantiated as expected.
-  If classes are inner classes or live in a namespace, their naming and
-  location will reflect that (as needed e.g. for pickling).
-  Example:
-
-  .. code-block:: python
-
-    >>> from cppyy.gbl import Concrete, Namespace
-    >>> Concrete == Namespace.Concrete
-    False
-    >>> n = Namespace.Concrete.NestedClass()
-    >>> type(n)
-    <class cppyy.gbl.Namespace.Concrete.NestedClass at 0x22114c0>
-    >>> type(n).__name__
-    NestedClass
-    >>> type(n).__module__
-    cppyy.gbl.Namespace.Concrete
-    >>> type(n).__cppname__
-    Namespace::Concrete::NestedClass
-    >>>
-
-* **data members**: Public data members are represented as Python properties
-  and provide read and write access on instances as expected.
-  Private and protected data members are not accessible, const-ness is
-  respected.
-  Example:
-
-  .. code-block:: python
-
-    >>> from cppyy.gbl import Concrete
-    >>> c = Concrete()
-    >>> c.m_int
-    42
-    >>> c.m_const_int = 71    # declared 'const int' in class definition
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-    TypeError: assignment to const data not allowed
     >>>
 
 * **default arguments**: C++ default arguments work as expected, but python

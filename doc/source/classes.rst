@@ -1,3 +1,5 @@
+.. _classes:
+
 Classes
 =======
 
@@ -14,6 +16,7 @@ Download it, save it under the name ``features.h``, and load it:
 
     >>> import cppyy
     >>> cppyy.include('features.h')
+    >>>
 
 
 The basics
@@ -38,6 +41,24 @@ There is, however, no necessity to expose that structure to end-users: when
 developing a Python package that exposes C++ classes through ``cppyy``,
 consider ``cppyy.gbl`` an "internal" module, and expose the classes in any
 structure you see fit.
+The C++ names will continue to follow the C++ structure, however, as is needed
+for e.g. pickling:
+
+  .. code-block:: python
+
+    >>> from cppyy.gbl import Namespace
+    >>> Concrete == Namespace.Concrete
+    False
+    >>> n = Namespace.Concrete.NestedClass()
+    >>> type(n)
+    <class cppyy.gbl.Namespace.Concrete.NestedClass at 0x22114c0>
+    >>> type(n).__name__
+    NestedClass
+    >>> type(n).__module__
+    cppyy.gbl.Namespace.Concrete
+    >>> type(n).__cppname__
+    Namespace::Concrete::NestedClass
+    >>>
 
 A bound C++ class *is* a Python class and can be used in any way a Python
 class can.
@@ -110,8 +131,19 @@ is treated as a Python property, albeit a typed one:
     (3, 13)
     >>>
 
-Just as classes, C++ methods are represented as Python ones.
-They are first-class objects and can, for example, be bound to an instance.
+Note that private and protected data members are not accessible and C++
+const-ness is respected:
+
+  .. code-block:: python
+
+    >>> c.m_const_int = 71    # declared 'const int' in class definition
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: assignment to const data not allowed
+    >>>
+
+C++ methods are represented as Python ones: these are first-class objects and
+can be bound to an instance.
 If a method is virtual in C++, the proper concrete method is called, whether
 or not the concrete class is bound.
 Similarly, if all classes are bound, the normal Python rules apply:
@@ -126,3 +158,4 @@ Similarly, if all classes are bound, the normal Python rules apply:
     >>> m()
     called Concrete::abstract_method
     >>>
+
