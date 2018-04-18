@@ -63,6 +63,6 @@ Example:
 When the C++ code takes a pointer or reference type to a specific builtin
 type (such as an ``unsigned int`` for example), then types need to match
 exactly.
-``cppyy` supports the types provided by the standard modules ``ctypes`` and
+``cppyy`` supports the types provided by the standard modules ``ctypes`` and
 ``array`` for those cases.
 
