@@ -10,19 +10,7 @@ More Features
 
 
 The following is not meant to be an exhaustive list, but more of a show case.
-Most features will be fairly obvious: classes are classes with inheritance
-trees preserved, functions are functions, etc.
-
-C++ features are mapped onto Python in a way that is natural to C++ to prevent
-name clashes, duplication, and other ambiguities when mixing several large C++
-code bases.
-This can lead to a loss of "Pythonic feel."
-A "pythonization" API is available to make C++ classes more pythonic in an
-semi-automated way.
-Some common classes, such as the Standard Templated Library (STL), have already
-been pythonized.
-Certain user-provided classes, such as smart pointers, are recognized and
-automatically pythonized as well.
+Most features will be fairly obvious in their use.
 
 The C++ code used for the examples below can be found
 :doc:`here <cppyy_features_header>`, and it is assumed that that code is
@@ -74,23 +62,6 @@ Download it, save it under the name ``features.h``, and load it:
     <class '__main__.Abstract'>
     >>>
 
-* **default arguments**: C++ default arguments work as expected, but python
-  keywords are not supported.
-  It is technically possible to support keywords, but for the C++ interface,
-  the formal argument names have no meaning and are not considered part of the
-  API, hence it is not a good idea to use keywords.
-  Example:
-
-  .. code-block:: python
-
-    >>> from cppyy.gbl import Concrete
-    >>> c = Concrete()       # uses default argument
-    >>> c.m_int
-    42
-    >>> c = Concrete(13)
-    >>> c.m_int
-    13
-    >>>
 
 * **doc strings**: The doc string of a method or function contains the C++
   arguments and return types of all overloads of that name, as applicable.
@@ -106,10 +77,6 @@ Download it, save it under the name ``features.h``, and load it:
 
 * **enums**: Are translated as ints with no further checking.
 
-* **functions**: Work as expected and live in their appropriate namespace
-  (which can be the global one, ``cppyy.gbl``).
-
-
 * **memory**: C++ instances created by calling their constructor from python
   are owned by python.
   You can check/change the ownership with the __python_owns__ flag that every
@@ -123,14 +90,6 @@ Download it, save it under the name ``features.h``, and load it:
     >>> c.__python_owns__         # True: object created in Python
     True
     >>>
-
-* **methods**: Are represented as python methods and work as expected.
-  To select a specific virtual method, do like with normal python classes
-  that override methods: select it from the class that you need, rather than
-  calling the method on the instance.
-  To select a specific overload, use the __dispatch__ special function, which
-  takes the name of the desired method and its signature (which can be
-  obtained from the doc string) as arguments.
 
 * **namespaces**: Are represented as python classes.
   Namespaces are more open-ended than classes, so sometimes initial access may

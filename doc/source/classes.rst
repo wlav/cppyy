@@ -5,7 +5,7 @@ Classes
 
 Both Python and C++ support object-oriented code through classes and thus
 it is logical to expose C++ classes as Python ones, including the full
-inheritence hierarchy.
+inheritance hierarchy.
 
 The C++ code used for the examples below can be found
 :doc:`here <cppyy_features_header>`, and it is assumed that that code is
@@ -18,9 +18,6 @@ Download it, save it under the name ``features.h``, and load it:
     >>> cppyy.include('features.h')
     >>>
 
-
-The basics
-----------
 
 All bound C++ code starts off from the global C++ namespace, represented in
 Python by ``gbl``.
@@ -73,7 +70,7 @@ For example, we can ask for ``help()``:
      |  Method resolution order:
      |      Concrete
      |      Abstract
-     |      ObjectProxy
+     |      CPPInstance
      |      __builtin__.object
      |
      |  Methods defined here:

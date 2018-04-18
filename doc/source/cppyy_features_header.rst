@@ -3,8 +3,10 @@ File features.h
 
 .. code-block:: C++
 
+    #include <cmath>
     #include <iostream>
     #include <vector>
+
 
     //-----
     unsigned int gUint = 0;
@@ -61,6 +63,16 @@ File features.h
         const int m_const_int;
     };
 
+    //-----
+    int global_function(int) {
+        return 42;
+    }
+
+    double global_function(double) {
+        return std::exp(1);
+    }
+
+    //-----
     namespace Namespace {
 
         class Concrete {
@@ -71,5 +83,13 @@ File features.h
             };
 
         };
+
+        int global_function(int i) {
+            return 2*::global_function(i);
+        }
+
+        double global_function(double d) {
+            return 2*::global_function(d);
+        }
 
     } // namespace Namespace

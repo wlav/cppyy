@@ -110,6 +110,7 @@ development environments.
 
    builtins
    classes
+   functions
    features
 
 .. toctree::

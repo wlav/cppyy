@@ -22,9 +22,6 @@ Download it, save it under the name ``features.h``, and load it:
     >>>
 
 
-The basics
-----------
-
 Most builtin data types map onto the expected equivalent Python types, with
 the caveats that there may be size differences, different precision or
 rounding.
