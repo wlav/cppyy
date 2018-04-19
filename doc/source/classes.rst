@@ -1,5 +1,9 @@
 .. _classes:
 
+.. role:: toconly
+   :class: toconly
+
+
 Classes
 =======
 
@@ -84,6 +88,10 @@ For example, we can ask for ``help()``:
      |
      etc. ....
 
+
+:toconly:`Inheritance`
+""""""""""""""""""""""
+
 The output of help shows the inheritance hierarchy, constructors, public
 methods, and public data.
 For example, ``Concrete`` inherits from ``Abstract`` and it has
@@ -139,6 +147,9 @@ const-ness is respected:
     TypeError: assignment to const data not allowed
     >>>
 
+:toconly:`Methods`
+""""""""""""""""""
+
 C++ methods are represented as Python ones: these are first-class objects and
 can be bound to an instance.
 If a method is virtual in C++, the proper concrete method is called, whether
@@ -155,4 +166,3 @@ Similarly, if all classes are bound, the normal Python rules apply:
     >>> m()
     called Concrete::abstract_method
     >>>
-
