@@ -147,10 +147,6 @@ Download it, save it under the name ``features.h``, and load it:
   Since these CPython-like objects need to be created and tracked (this all
   happens through ``cpyext``) this interface is not particularly fast.
 
-* **static data members**: Are represented as python property objects on the
-  class and the meta-class.
-  Both read and write access is as expected.
-
 * **static methods**: Are represented as python's ``staticmethod`` objects
   and can be called both from the class as well as from instances.
 
@@ -158,37 +154,6 @@ Download it, save it under the name ``features.h``, and load it:
   mixes quite well with python's str.
   Python's str can be passed where a ``const char*`` is expected, and an str
   will be returned if the return type is ``const char*``.
-
-* **templated classes**: Are represented in a meta-class style in python.
-  This may look a little bit confusing, but conceptually is rather natural.
-  For example, given the class ``std::vector<int>``, the meta-class part would
-  be ``std.vector``.
-  Then, to get the instantiation on ``int``, do ``std.vector(int)`` and to
-  create an instance of that class, do ``std.vector(int)()``:
-
-  .. code-block:: python
-
-    >>> import cppyy
-    >>> cppyy.load_reflection_info('libexampleDict.so')
-    >>> cppyy.gbl.std.vector                # template metatype
-    <cppyy.CppyyTemplateType object at 0x00007fcdd330f1a0>
-    >>> cppyy.gbl.std.vector(int)           # instantiates template -> class
-    <class '__main__.std::vector<int>'>
-    >>> cppyy.gbl.std.vector(int)()         # instantiates class -> object
-    <__main__.std::vector<int> object at 0x00007fe480ba4bc0>
-    >>>
-
-  Note that templates can be build up by handing actual types to the class
-  instantiation (as done in this vector example), or by passing in the list of
-  template arguments as a string.
-  The former is a lot easier to work with if you have template instantiations
-  using classes that themselves are templates in  the arguments (think e.g a
-  vector of vectors).
-  All template classes must already exist in the loaded reflection info, they
-  do not work (yet) with the class loader.
-
-  For compatibility with other bindings generators, use of square brackets
-  instead of parenthesis to instantiate templates is supported as well.
 
 * **templated functions**: Automatically participate in overloading and are
   used in the same way as other global functions.

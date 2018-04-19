@@ -61,7 +61,13 @@ File features.h
         double m_data[4];
         int m_int;
         const int m_const_int;
+
+        static int s_int;
     };
+
+    typedef Concrete Concrete_t;
+
+    int Concrete::s_int = 321;
 
     //-----
     int global_function(int) {

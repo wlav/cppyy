@@ -22,6 +22,8 @@ Download it, save it under the name ``features.h``, and load it:
     >>> cppyy.include('features.h')
     >>>
 
+:toconly:`Basics`
+"""""""""""""""""
 
 All bound C++ code starts off from the global C++ namespace, represented in
 Python by ``gbl``.
@@ -120,6 +122,23 @@ as ``Abstract`` does, can not be instantiated, but their concrete
 implementations can.
 As the output of ``help`` showed, the ``Concrete`` constructor takes
 an integer argument, that by default is 42.
+
+:toconly:`Typedefs`
+""""""""""""""""""""
+
+Typedefs are simple python references to the actual classes to which
+they refer.
+
+  .. code-block:: python
+
+    >>> from cppyy.gbl import Concrete_t
+    >>> Concrete is Concrete_t
+    True
+    >>>
+
+:toconly:`Data members`
+"""""""""""""""""""""""
+
 The ``Concrete`` instances have a public data member ``m_int`` that
 is treated as a Python property, albeit a typed one:
 
@@ -147,6 +166,19 @@ const-ness is respected:
     TypeError: assignment to const data not allowed
     >>>
 
+Static C++ data members act like Python class-level data members.
+They are also represented by property objects and both read and write access
+behave as expected:
+
+  .. code-block:: python
+
+     >>> Concrete.s_int       # access through class
+     321
+     >>> c.s_int = 123        # access through instance
+     >>> Concrete.s_int
+     123
+
+
 :toconly:`Methods`
 """"""""""""""""""
 
@@ -166,3 +198,39 @@ Similarly, if all classes are bound, the normal Python rules apply:
     >>> m()
     called Concrete::abstract_method
     >>>
+
+:toconly:`Templates`
+""""""""""""""""""""
+
+Templated classes are instantiated using square brackets.
+(For backwards compatibility reasons, parentheses work as well.)
+The instantiation of a templated class yields a class, which can then
+be used to create instances.
+
+Templated classes need not pre-exist in the bound code, just their
+declaration needs to be available.
+This is true for e.g. all of STL:
+
+  .. code-block:: python
+
+    >>> cppyy.gbl.std.vector                # template metatype
+    <cppyy.Template 'std::vector' object at 0x7fffed2674d0>
+    >>> cppyy.gbl.std.vector(int)           # instantiates template -> class
+    <class cppyy.gbl.std.vector<int> at 0x1532190>
+    cppyy.gbl.std.vector[int]()             # instantiates class -> object
+    <cppyy.gbl.std.vector<int> object at 0x2341ec0>
+    >>>
+
+The template arguments may be actual types or their names as a string,
+whichever is more convenient.
+Thus, the following are equivalent:
+
+  .. code-block:: python
+
+     >>> from cppyy.gbl.std import vector
+     >>> type1 = vector[Concrete]
+     >>> type2 = vector['Concrete']
+     >>> type1 == type2
+     True
+     >>>
+
