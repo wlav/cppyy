@@ -2,6 +2,13 @@ import py, os, sys
 from pytest import raises
 from .support import setup_make, pylong
 
+try:
+    import __pypy__
+    is_pypy = True
+except ImportError:
+    is_pypy = False
+
+
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("advancedcppDict.so"))
 
@@ -658,9 +665,33 @@ class TestADVANCEDCPP:
 
         import cppyy
 
+        if is_pypy:
+            raise RuntimeError("test fails with crash")
+
         assert cppyy.gbl.my_global_double == 12.
         assert len(cppyy.gbl.my_global_array) == 500
         assert cppyy.gbl.my_global_string1 == "aap  noot  mies"
         assert cppyy.gbl.my_global_string2 == "zus jet teun"
         # TODO: currently fails b/c double** not understood as &double*
         #assert cppyy.gbl.my_global_ptr[0] == 1234.
+
+    def test22_exceptions(self):
+        """Catching of C++ exceptions"""
+
+        import cppyy
+        Thrower = cppyy.gbl.Thrower
+
+        if is_pypy:
+            # TODO: clean up this interface:
+            Thrower.__cppdecl__.get_overload('throw_anything').__useffi__  = False
+            Thrower.__cppdecl__.get_overload('throw_exception').__useffi__ = False
+
+        t = Thrower()
+
+        assert raises(Exception, t.throw_anything)
+        assert raises(Exception, t.throw_exception)
+
+        try:
+            t.throw_exception()
+        except Exception, e:
+            "C++ function failed" in str(e)
