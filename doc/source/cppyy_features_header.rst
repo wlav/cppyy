@@ -99,3 +99,6 @@ File features.h
         }
 
     } // namespace Namespace
+
+    //-----
+    enum EFruit {kApple=78, kBanana=29, kCitrus=34};

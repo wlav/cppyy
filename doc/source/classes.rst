@@ -64,33 +64,6 @@ for e.g. pickling:
     Namespace::Concrete::NestedClass
     >>>
 
-A bound C++ class *is* a Python class and can be used in any way a Python
-class can.
-For example, we can ask for ``help()``:
-
-  .. code-block:: python
-
-    >>> help(Concrete)
-    Help on class Concrete in module gbl:
-
-    class Concrete(Abstract)
-     |  Method resolution order:
-     |      Concrete
-     |      Abstract
-     |      CPPInstance
-     |      __builtin__.object
-     |
-     |  Methods defined here:
-     |
-     |  __assign__(self, const Concrete&)
-     |      Concrete& Concrete::operator=(const Concrete&)
-     |
-     |  __init__(self, *args)
-     |      Concrete::Concrete(int n = 42)
-     |      Concrete::Concrete(const Concrete&)
-     |
-     etc. ....
-
 
 :toconly:`Inheritance`
 """"""""""""""""""""""

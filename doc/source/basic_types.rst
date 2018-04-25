@@ -1,11 +1,11 @@
-.. _builtins:
+.. _basic_types:
 
 .. role:: toconly
    :class: toconly
 
 
-Builtins
-========
+Basic Types
+===========
 
 C++ has a far richer set of builtin types than Python.
 Most Python code can remain relatively agnostic to that, and ``cppyy``
@@ -76,7 +76,7 @@ Example:
 """""""""""""""""""
 
 When the C++ code takes a pointer or reference type to a specific builtin
- type (such as an ``unsigned int`` for example), then types need to match
+type (such as an ``unsigned int`` for example), then types need to match
 exactly.
 ``cppyy`` supports the types provided by the standard modules ``ctypes`` and
 ``array`` for those cases.
@@ -84,9 +84,22 @@ exactly.
 For objects, a pointer to an object and an object are represented the same,
 with the necessary (de)referencing applied automatically.
 Pointer variables are also bound by reference, so that updates on either the
-C++ or Python side are reflected on the other side as well:
+C++ or Python side are reflected on the other side as well.
+
+
+:toconly:`Enums`
+""""""""""""""""
+
+Both named and anonymous enums are supported.
+The type of an enum is implementation dependent and may even be different for
+different enums on the same compiler.
+Typically, however, the types are ``int`` or ``unsigned int``, which
+translates to Python's ``int`` or ``long`` on Python2 or class ``int`` on
+Python3:
 
   .. code-block:: python
 
-     >>> 
-
+    >>> from cppyy.gbl import kApple, kBanana, kCitrus
+    >>> cppyy.gbl.kApple
+    78L
+    >>>

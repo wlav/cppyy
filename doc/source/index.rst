@@ -108,9 +108,11 @@ development environments.
    :caption: Features
    :maxdepth: 2
 
-   builtins
+   basic_types
    classes
    functions
+   type_conversions
+   python
    features
 
 .. toctree::
