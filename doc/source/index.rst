@@ -100,13 +100,13 @@ development environments.
 
 .. toctree::
    :caption: Getting Started
-   :maxdepth: 2
+   :maxdepth: 1
 
    installation
 
 .. toctree::
    :caption: Features
-   :maxdepth: 2
+   :maxdepth: 1
 
    basic_types
    classes
@@ -117,7 +117,7 @@ development environments.
 
 .. toctree::
    :caption: Advanced
-   :maxdepth: 2
+   :maxdepth: 1
 
    distribution
    bindings_generation
