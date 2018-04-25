@@ -1,5 +1,9 @@
 .. _builtins:
 
+.. role:: toconly
+   :class: toconly
+
+
 Builtins
 ========
 
@@ -22,6 +26,9 @@ Download it, save it under the name ``features.h``, and load it:
     >>>
 
 
+:toconly:`Basics`
+"""""""""""""""""
+
 Most builtin data types map onto the expected equivalent Python types, with
 the caveats that there may be size differences, different precision or
 rounding.
@@ -40,6 +47,10 @@ unsigned-ness is still honored:
       File "<stdin>", line 1, in <module>
     ValueError: cannot convert negative integer to unsigned
     >>>
+
+
+:toconly:`Arrays`
+"""""""""""""""""
 
 Builtin arrays are supported by through arrays from module ``array`` (or any
 other builtin-type array that implements the Python buffer interface).
@@ -60,9 +71,22 @@ Example:
     IndexError: buffer index out of range
     >>>
 
+
+:toconly:`Pointers`
+"""""""""""""""""""
+
 When the C++ code takes a pointer or reference type to a specific builtin
-type (such as an ``unsigned int`` for example), then types need to match
+ type (such as an ``unsigned int`` for example), then types need to match
 exactly.
 ``cppyy`` supports the types provided by the standard modules ``ctypes`` and
 ``array`` for those cases.
+
+For objects, a pointer to an object and an object are represented the same,
+with the necessary (de)referencing applied automatically.
+Pointer variables are also bound by reference, so that updates on either the
+C++ or Python side are reflected on the other side as well:
+
+  .. code-block:: python
+
+     >>> 
 

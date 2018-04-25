@@ -22,6 +22,7 @@ Download it, save it under the name ``features.h``, and load it:
     >>> cppyy.include('features.h')
     >>>
 
+
 :toconly:`Basics`
 """""""""""""""""
 
@@ -123,6 +124,7 @@ implementations can.
 As the output of ``help`` showed, the ``Concrete`` constructor takes
 an integer argument, that by default is 42.
 
+
 :toconly:`Typedefs`
 """"""""""""""""""""
 
@@ -135,6 +137,7 @@ they refer.
     >>> Concrete is Concrete_t
     True
     >>>
+
 
 :toconly:`Data members`
 """""""""""""""""""""""
@@ -198,6 +201,7 @@ Similarly, if all classes are bound, the normal Python rules apply:
     >>> m()
     called Concrete::abstract_method
     >>>
+
 
 :toconly:`Templates`
 """"""""""""""""""""
