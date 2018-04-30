@@ -15,6 +15,25 @@ class TestClassPYTHONIZATIONS:
         import cppyy
         cls.pyzables = cppyy.load_reflection_info(cls.test_dct)
 
+    def test00_api(self):
+        """Test basic semantics of the pythonization API"""
+
+        import cppyy
+
+        raises(TypeError, cppyy.py.add_pythonization, 1)
+
+        def pythonizor1(klass, name):
+            pass
+
+        def pythonizor2(klass, name):
+            pass
+
+        pythonizor3 = pythonizor1
+
+        cppyy.py.add_pythonization(pythonizor1)
+        assert cppyy.py.remove_pythonization(pythonizor2) == False
+        assert cppyy.py.remove_pythonization(pythonizor3) == True
+
     def test01_size_mapping(self):
         """Use composites to map GetSize() onto buffer returns"""
 

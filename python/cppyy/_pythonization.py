@@ -1,59 +1,46 @@
 """ Pythonization API.
 """
 
-# TODO: externalize this (have PythonizationScope and UserPythonizations as
-# globals here and picked up from this module
-
-# TODO: move cast to cppyy.lowlevel or some sort
-
-# TODO: remove all need for accessing _backend
-
-# TODO: think this API through and where we want it to live
 __all__ = [
-    'cast',
     'make_interface',
     ]
 
-def _set_backend( backend ):
+def _set_backend(backend):
     global _backend
     _backend = backend
 
-def set_pythonization_scope(scope):
-    _backend.PythonizationScope = scope
-    if scope not in _backend.UserPythonizations:
-        _backend.UserPythonizations[scope] = []
 
-
-def add_pythonization(pythonizor):
-    """Takes a callable that should take two arguments -- the class proxy,
-    and its C++ name -- and which is called the first time the named
-    class is bound.
+# user-provided, general pythonizations
+def add_pythonization(pythonizor, scope = ''):
+    """<pythonizor> should be a callable taking two arguments: a class proxy,
+    and its C++ name. It is called on each time a named class from <scope>
+    (the global one by default, but a relevant C++ namespace is recommended)
+    is bound.
     """
-    scope = _backend.PythonizationScope
-    #scope = _pythonization_scope
-    if pythonizor and not callable(pythonizor):
-        raise TypeError("given '%s' object is not callable" % str(pythonizor))
-    if pythonizor:
-        # _pythonizations[scope]
-        _backend.UserPythonizations[scope].append(pythonizor)
+    return _backend.add_pythonization(pythonizor, scope)
+
+def remove_pythonization(pythonizor, scope = ''):
+    """Remove previously registered <pythonizor> from <scope>.
+    """
+    return _backend.remove_pythonization(pythonizor, scope)
 
 
+# type/casting pythonizations
 def pin_type(derived_type, base_type):
     _backend.SetTypePinning(derived_type, base_type)
-
 
 def make_interface(base_type):
     pin_type(base_type, base_type)
 
-
 def ignore_type_pinning(some_type):
     _backend.IgnoreTypePinning(some_type)
 
-
+# TODO: move this to something like cppyy.lowlevel
 def cast(some_object, new_type):
     return _backend.Cast(some_object, new_type)
 
 
+# exception pythonizations
 def add_exception_mapping(cpp_exception, py_exception):
     _backend.UserExceptions[cpp_exception] = py_exception
 
