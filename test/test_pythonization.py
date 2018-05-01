@@ -34,6 +34,25 @@ class TestClassPYTHONIZATIONS:
         assert cppyy.py.remove_pythonization(pythonizor2) == False
         assert cppyy.py.remove_pythonization(pythonizor3) == True
 
+        def pythonizor(klass, name):
+            if name == 'pyzables::SomeDummy1':
+                klass.test = 1
+
+        cppyy.py.add_pythonization(pythonizor)
+        assert cppyy.gbl.pyzables.SomeDummy1.test == 1
+
+        def pythonizor(klass, name):
+            if name == 'SomeDummy2':
+                klass.test = 2
+        cppyy.py.add_pythonization(pythonizor, 'pyzables')
+
+        def pythonizor(klass, name):
+            if name == 'pyzables::SomeDummy2':
+                klass.test = 3
+        cppyy.py.add_pythonization(pythonizor)
+
+        assert cppyy.gbl.pyzables.SomeDummy2.test == 2
+
     def test01_size_mapping(self):
         """Use composites to map GetSize() onto buffer returns"""
 
@@ -44,7 +63,7 @@ class TestClassPYTHONIZATIONS:
             return buf
 
         cppyy.py.add_pythonization(
-            cppyy.py.compose_method("pyzables::NakedBuffers$", "Get[XY]$", set_size))
+            cppyy.py.compose_method('NakedBuffers$', 'Get[XY]$', set_size), 'pyzables')
 
         bsize, xval, yval = 3, 2, 5
         m = cppyy.gbl.pyzables.NakedBuffers(bsize, xval, yval)

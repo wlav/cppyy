@@ -4,6 +4,11 @@
 namespace pyzables {
 
 //===========================================================================
+class SomeDummy1 {};
+class SomeDummy2 {};
+
+
+//===========================================================================
 class NakedBuffers {
 public:
     NakedBuffers(int size, double valx, double valy);
