@@ -37,14 +37,25 @@ inline long MyTemplatedMethodClass::get_size<long>() {
     return 42;
 }
 
-// global templated function
+// global templated functions
 template<typename T>
 long global_get_size() {
     return sizeof(T);
 }
 
+template <typename T>
+int global_some_foo(T) {
+    return 42;
+}
+
+template <typename T>
+int global_some_bar(T) {
+    return 13;
+}
+
 // variadic function
 namespace SomeNS {
+
 inline std::string tuplify(std::ostringstream& out) {
     out << ')';
     return out.str();
@@ -56,4 +67,5 @@ std::string tuplify(std::ostringstream& out, T value, Args... args)
     out << value << ", ";
     return tuplify(out, args...);
 }
-}
+
+} // namespace SomeNS

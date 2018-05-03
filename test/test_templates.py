@@ -61,6 +61,17 @@ class TestTEMPLATES:
         ggs = cppyy.gbl.global_get_size
         assert ggs['char']() == 1
 
+        gsf = cppyy.gbl.global_some_foo
+
+        assert gsf[int](3) == 42
+        assert gsf(3)      == 42
+        assert gsf(3.)     == 42
+
+        gsb = cppyy.gbl.global_some_bar
+
+        assert gsb(3)            == 13
+        assert gsb['double'](3.) == 13
+
         # TODO: add some static template method
 
     def test04_variadic_function(self):
