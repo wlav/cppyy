@@ -89,3 +89,13 @@ class TestTEMPLATES:
         #s << '('
         #cppyy.gbl.SomeNS.tuplify(s, 1, 4., "aap")
         #print(s.str())
+
+    def test05_variadic_overload(self):
+
+        import cppyy
+
+        assert cppyy.gbl.isSomeInt(3.)         == False
+        assert cppyy.gbl.isSomeInt(1)          == True
+        assert cppyy.gbl.isSomeInt()           == False
+        assert cppyy.gbl.isSomeInt(1, 2, 3)    == False
+

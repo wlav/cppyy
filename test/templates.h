@@ -53,7 +53,12 @@ int global_some_bar(T) {
     return 13;
 }
 
-// variadic function
+// variadic functions
+inline bool isSomeInt(int) { return true; }
+inline bool isSomeInt(double) { return false; }
+template <typename ...Args>
+inline bool isSomeInt(Args...) { return false; }
+
 namespace SomeNS {
 
 template <typename T>

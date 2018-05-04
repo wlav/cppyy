@@ -7,6 +7,8 @@
   <function name="global_some_foo" />
   <function name="global_some_bar" />
 
+  <function name="isSomeInt" />
+
   <function name="SomeNS::some_foo" />
   <function name="SomeNS::some_bar" />
   <function name="SomeNS::tuplify" />
