@@ -84,7 +84,30 @@ class TestClassPYTHONIZATIONS:
         assert len(y) == bsize
         assert list(y) == list(map(lambda x: x*yval, range(bsize)))
 
-    def test02_type_pinning(self):
+    def test01_size_mapping_of_templated_method(self):
+        """Use composites to map GetSize() onto buffer returns"""
+
+        import cppyy
+
+        def set_size(self, buf):
+            buf.reshape((self.GetN(),))
+            return buf
+
+        cppyy.py.add_pythonization(
+            cppyy.py.compose_method('NakedBuffers2.*Vector.*', 'Get[XY]$', set_size), 'pyzables')
+
+        bsize, xval, yval = 3, 2, 5
+        m = cppyy.gbl.pyzables.NakedBuffers2[cppyy.gbl.pyzables.Vector](bsize, xval, yval)
+
+        x = m.GetX()
+        assert len(x) == bsize
+        assert list(x) == list(map(lambda x: x*xval, range(bsize)))
+
+        y = m.GetY()
+        assert len(y) == bsize
+        assert list(y) == list(map(lambda x: x*yval, range(bsize)))
+
+    def test03_type_pinning(self):
         """Verify pinnability of returns"""
 
         import cppyy
@@ -98,7 +121,7 @@ class TestClassPYTHONIZATIONS:
         assert type(result) == cppyy.gbl.pyzables.MyDerived
 
 
-    def test03_transparency(self):
+    def test04_transparency(self):
         """Transparent use of smart pointers"""
 
         import cppyy
@@ -110,7 +133,7 @@ class TestClassPYTHONIZATIONS:
         assert type(mine.__smartptr__()) == cppyy.gbl.std.shared_ptr(Countable)
         assert mine.say_hi() == "Hi!"
 
-    def test04_converters(self):
+    def test05_converters(self):
         """Smart pointer argument passing"""
 
         import cppyy
@@ -135,7 +158,7 @@ class TestClassPYTHONIZATIONS:
         # cppyy.gbl.mine = mine
         pz.renew_mine()
 
-    def test05_executors(self):
+    def test06_executors(self):
         """Smart pointer return types"""
 
         import cppyy

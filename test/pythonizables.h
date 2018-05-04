@@ -1,4 +1,5 @@
 #include <memory>
+#include <vector>
 
 
 namespace pyzables {
@@ -25,6 +26,32 @@ private:
     double* m_Xbuf;
     double* m_Ybuf;
     int m_size;
+};
+
+template<typename C>
+class NakedBuffers2 {
+public:
+    NakedBuffers2(int size, double valx, double valy) : m_Xbuf(size), m_Ybuf(size) {
+        for (int i=0; i<size; ++i) {
+            m_Xbuf[i] = valx*i;
+            m_Ybuf[i] = valy*i;
+        }
+    }
+
+public:
+    int GetN() { return m_Xbuf.size(); }
+    double* GetX() { return m_Xbuf.data(); }
+    double* GetY() { return m_Ybuf.data(); }
+
+private:
+    C m_Xbuf;
+    C m_Ybuf;
+    int m_size;
+};
+
+class Vector : public std::vector<double> {
+public:
+    Vector(int size) : std::vector<double>(size) {}
 };
 
 
