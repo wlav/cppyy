@@ -56,8 +56,18 @@ int global_some_bar(T) {
 // variadic function
 namespace SomeNS {
 
+template <typename T>
+int some_foo(T) {
+    return 42;
+}
+
+template <int T>
+int some_bar() {
+    return T;
+}
+
 inline std::string tuplify(std::ostringstream& out) {
-    out << ')';
+    out.seekp(-2, out.cur); out << ')';
     return out.str();
 }
 

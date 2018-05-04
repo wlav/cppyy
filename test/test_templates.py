@@ -72,6 +72,12 @@ class TestTEMPLATES:
         assert gsb(3)            == 13
         assert gsb['double'](3.) == 13
 
+        # TODO: the following only works in a namespace
+        nsgsb = cppyy.gbl.SomeNS.some_bar
+
+        assert nsgsb[3]
+        assert nsgsb[3]() == 3
+
         # TODO: add some static template method
 
     def test04_variadic_function(self):
@@ -79,6 +85,7 @@ class TestTEMPLATES:
 
         import cppyy
 
-        args = (1, 4., "aap")
         s = cppyy.gbl.std.ostringstream()
-        #cppyy.gbl.gInterpreter.Declare("template std::string SomeNS::tuplify<int>(std::ostringstream&, int);")
+        #s << '('
+        #cppyy.gbl.SomeNS.tuplify(s, 1, 4., "aap")
+        #print(s.str())
