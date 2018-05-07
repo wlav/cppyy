@@ -695,3 +695,28 @@ class TestADVANCEDCPP:
             t.throw_exception()
         except Exception, e:
             "C++ function failed" in str(e)
+
+    def test23_using(self):
+        """Accessibility of using declarations"""
+
+        import cppyy
+
+        assert cppyy.gbl.UsingBase().vcheck() == 'A'
+
+        B = cppyy.gbl.UsingDerived
+        assert not 'UsingBase' in B.__init__.__doc__
+
+        b1 = B()
+        assert b1.m_int    == 13
+        assert b1.m_int2   == 42
+        assert b1.vcheck() == 'B'
+
+        b2 = B(10)
+        assert b2.m_int    == 10
+        assert b2.m_int2   == 42
+        assert b2.vcheck() == 'B'
+
+        b3 = B(b2)
+        assert b3.m_int    == 10
+        assert b3.m_int2   == 42
+        assert b3.vcheck() == 'B'

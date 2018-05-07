@@ -414,3 +414,19 @@ public:
     void throw_anything();
     void throw_exception();
 };
+
+
+//===========================================================================
+class UsingBase {                  // using declaration testing
+public:
+    UsingBase(int n = 13) : m_int(n) {} 
+    virtual char vcheck() { return 'A'; }
+    int m_int;
+};
+
+class UsingDerived : public UsingBase {
+public:
+    using UsingBase::UsingBase;
+    virtual char vcheck() { return 'B'; }
+    int m_int2 = 42;
+};

@@ -60,4 +60,6 @@
 
   <class name="Thrower" />
 
+  <class pattern="Using*" />
+
 </lcgdict>
