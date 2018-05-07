@@ -693,7 +693,7 @@ class TestADVANCEDCPP:
 
         try:
             t.throw_exception()
-        except Exception, e:
+        except Exception as e:
             "C++ function failed" in str(e)
 
     def test23_using(self):
