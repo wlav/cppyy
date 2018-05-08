@@ -26,6 +26,10 @@ except ImportError:
     pass
 
 import _cppyy as _backend     # built-in module
+try:
+    _backend._post_import_startup()
+except AttributeError:
+    pass
 _backend._cpp_backend = c
 
 
