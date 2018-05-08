@@ -9,7 +9,7 @@ def setup_module(mod):
     setup_make("pythonizablesDict.so")
 
 
-class TestClassPYTHONIZATIONS:
+class TestClassPYTHONIZATION:
     def setup_class(cls):
         cls.test_dct = test_dct
         import cppyy
