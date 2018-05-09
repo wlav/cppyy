@@ -73,6 +73,19 @@ constexpr bool has_var1(Args...) { return false; }
 template <typename T>
 constexpr bool call_has_var1(T&& t) { return AttrTesting::has_var1(std::forward<T>(t)); }
 
+template <int N, typename... T>
+struct select_template_arg {};
+
+template <typename T0, typename... T>
+struct select_template_arg<0, T0, T...> {
+    typedef T0 type;
+};
+
+template <int N, typename T0, typename... T>
+struct select_template_arg<N, T0, T...> {
+    typedef typename select_template_arg<N-1, T...>::type argument;
+};
+
 } // AttrTesting
 
 

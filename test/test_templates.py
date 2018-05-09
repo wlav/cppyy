@@ -83,12 +83,13 @@ class TestTEMPLATES:
     def test04_variadic_function(self):
         """Call a variadic function"""
 
-        import cppyy
+        from cppyy import gbl
+        from cppyy.gbl import std
 
-        s = cppyy.gbl.std.ostringstream()
+        s = std.ostringstream()
         #s << '('
-        #cppyy.gbl.SomeNS.tuplify(s, 1, 4., "aap")
-        #print(s.str())
+        #gbl.SomeNS.tuplify(s, 1, 4., "aap")
+        #assert s.str() == '(1, 4, aap)
 
     def test05_variadic_overload(self):
         """Call an overloaded variadic function"""
@@ -115,4 +116,18 @@ class TestTEMPLATES:
 
         assert call_has_var1(move(Obj1())) == True
         assert call_has_var1(move(Obj2())) == False
-        
+
+    def test07_type_deduction(self):
+        """Traits/type deduction"""
+
+        import cppyy
+        cppyy.gbl.AttrTesting      # load
+        from cppyy.gbl.AttrTesting import select_template_arg, Obj1, Obj2
+
+       #assert select_template_arg[0, Obj1, Obj2].argument == Obj1
+        assert select_template_arg[1, Obj1, Obj2].argument == Obj2
+        raises(TypeError, select_template_arg.__getitem__, 2, Obj1, Obj2)
+
+        # TODO, this doesn't work for builtin types as the 'argument'
+        # typedef will not resolve to a class
+        #assert select_template_arg[1, int, float].argument == float
