@@ -84,7 +84,7 @@ class TestClassPYTHONIZATION:
         assert len(y) == bsize
         assert list(y) == list(map(lambda x: x*yval, range(bsize)))
 
-    def test01_size_mapping_of_templated_method(self):
+    def test02_size_mapping_of_templated_method(self):
         """Use composites to map GetSize() onto buffer returns"""
 
         import cppyy

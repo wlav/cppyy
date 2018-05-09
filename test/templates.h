@@ -59,6 +59,23 @@ inline bool isSomeInt(double) { return false; }
 template <typename ...Args>
 inline bool isSomeInt(Args...) { return false; }
 
+namespace AttrTesting {
+
+struct Obj1 { int var1; };
+struct Obj2 { int var2; };
+
+template <typename T>
+constexpr auto has_var1(T t) -> decltype(t.var1, true) { return true; }
+
+template <typename ...Args>
+constexpr bool has_var1(Args...) { return false; }
+
+template <typename T>
+constexpr bool call_has_var1(T&& t) { return AttrTesting::has_var1(std::forward<T>(t)); }
+
+} // AttrTesting
+
+
 namespace SomeNS {
 
 template <typename T>

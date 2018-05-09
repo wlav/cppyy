@@ -9,6 +9,9 @@
 
   <function name="isSomeInt" />
 
+  <namespace name="AttrTesting" />
+  <function pattern="AttrTesting::*" />
+
   <function name="SomeNS::some_foo" />
   <function name="SomeNS::some_bar" />
   <function name="SomeNS::tuplify" />

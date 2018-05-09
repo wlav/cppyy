@@ -91,6 +91,7 @@ class TestTEMPLATES:
         #print(s.str())
 
     def test05_variadic_overload(self):
+        """Call an overloaded variadic function"""
 
         import cppyy
 
@@ -99,3 +100,19 @@ class TestTEMPLATES:
         assert cppyy.gbl.isSomeInt()           == False
         assert cppyy.gbl.isSomeInt(1, 2, 3)    == False
 
+    def test06_variadic_sfinae(self):
+        """Attribute testing through SFINAE"""
+
+        import cppyy
+        cppyy.gbl.AttrTesting      # load
+        from cppyy.gbl.AttrTesting import Obj1, Obj2, has_var1, call_has_var1
+        from cppyy.gbl.std import move
+
+        assert has_var1(Obj1()) == hasattr(Obj1(), 'var1')
+        assert has_var1(Obj2()) == hasattr(Obj2(), 'var1')
+        assert has_var1(3)      == hasattr(3,      'var1')
+        assert has_var1("aap")  == hasattr("aap",  'var1')
+
+        assert call_has_var1(move(Obj1())) == True
+        assert call_has_var1(move(Obj2())) == False
+        
