@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 
+
 //===========================================================================
 class MyTemplatedMethodClass {         // template methods
 public:
@@ -37,6 +38,8 @@ inline long MyTemplatedMethodClass::get_size<long>() {
     return 42;
 }
 
+
+//===========================================================================
 // global templated functions
 template<typename T>
 long global_get_size() {
@@ -53,6 +56,8 @@ int global_some_bar(T) {
     return 13;
 }
 
+
+//===========================================================================
 // variadic functions
 inline bool isSomeInt(int) { return true; }
 inline bool isSomeInt(double) { return false; }
@@ -114,3 +119,27 @@ std::string tuplify(std::ostringstream& out, T value, Args... args)
 }
 
 } // namespace SomeNS
+
+
+//===========================================================================
+// using of static data
+// TODO: this should live here instead of in test_templates.test08
+/*
+template <typename T> struct BaseClassWithStatic {
+    static T const ref_value;
+};
+
+template <typename T>
+T const BaseClassWithStatic<T>::ref_value = 42;
+
+template <typename T>
+struct DerivedClassUsingStatic : public BaseClassWithStatic<T> {
+    using BaseClassWithStatic<T>::ref_value;
+
+    explicit DerivedClassUsingStatic(T x) : BaseClassWithStatic<T>() {
+        m_value = x > ref_value ? ref_value : x;
+    }
+
+    T m_value;
+};
+*/

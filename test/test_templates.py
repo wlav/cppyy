@@ -131,3 +131,42 @@ class TestTEMPLATES:
         # TODO, this doesn't work for builtin types as the 'argument'
         # typedef will not resolve to a class
         #assert select_template_arg[1, int, float].argument == float
+
+    def test08_using_of_static_data(self):
+        """Derived class using static data of base"""
+
+        import cppyy
+
+      # TODO: the following should live in templates.h, but currently fails
+      # in TClass::GetListOfMethods()
+        cppyy.cppdef("""
+        template <typename T> struct BaseClassWithStatic {
+            static T const ref_value;
+        };
+
+        template <typename T>
+        T const BaseClassWithStatic<T>::ref_value = 42;
+
+        template <typename T>
+        struct DerivedClassUsingStatic : public BaseClassWithStatic<T> {
+            using BaseClassWithStatic<T>::ref_value;
+
+            explicit DerivedClassUsingStatic(T x) : BaseClassWithStatic<T>() {
+                m_value = x > ref_value ? ref_value : x;
+            }
+
+            T m_value;
+        };""")
+
+
+      # TODO: the ref_value property is inaccessible (offset == -1)
+      # assert cppyy.gbl.BaseClassWithStatic["size_t"].ref_value == 42
+
+        b1 = cppyy.gbl.DerivedClassUsingStatic["size_t"](  0)
+        b2 = cppyy.gbl.DerivedClassUsingStatic["size_t"](100)
+
+      # assert b1.ref_value == 42
+        assert b1.m_value   ==  0
+
+      # assert b2.ref_value == 42
+        assert b2.m_value   == 42
