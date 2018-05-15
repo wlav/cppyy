@@ -117,7 +117,7 @@ class TestClassPYTHONIZATION:
         result = cppyy.gbl.pyzables.GimeDerived()
         assert type(result) == cppyy.gbl.pyzables.MyDerived
 
-        cppyy.py.make_interface(cppyy.gbl.pyzables.MyBase)
+        cppyy.py.pin_type(cppyy.gbl.pyzables.MyBase)
         assert type(result) == cppyy.gbl.pyzables.MyDerived
 
 

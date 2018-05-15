@@ -25,15 +25,9 @@ def remove_pythonization(pythonizor, scope = ''):
     return _backend.remove_pythonization(pythonizor, scope)
 
 
-# type/casting pythonizations
-def pin_type(derived_type, base_type):
-    _backend.SetTypePinning(derived_type, base_type)
-
-def make_interface(base_type):
-    pin_type(base_type, base_type)
-
-def ignore_type_pinning(some_type):
-    _backend.IgnoreTypePinning(some_type)
+# prevent auto-casting (e.g. for interfaces)
+def pin_type(klass):
+    return _backend._pin_type(klass)
 
 # TODO: move this to something like cppyy.lowlevel
 def cast(some_object, new_type):
