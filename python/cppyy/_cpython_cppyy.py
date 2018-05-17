@@ -7,7 +7,6 @@ from cppyy_backend import loader
 __all__ = [
     'gbl',
     'load_reflection_info',
-    'load_library',
     'addressof',
     'bind_object',
     'nullptr',
@@ -122,12 +121,3 @@ def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)
     if sc == -1:
         raise RuntimeError("Unable to load reflection library "+name)
-
-def load_library(name):
-    if name[:3] != 'lib':
-        if not gbl.gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
-               gbl.gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
-            name = 'lib'+name
-    sc = gbl.gSystem.Load(name)
-    if sc == -1:
-        raise RuntimeError("Unable to load library "+name)

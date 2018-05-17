@@ -34,8 +34,9 @@ For full documentation, see:
 __author__ = 'Wim Lavrijsen <WLavrijsen@lbl.gov>'
 
 __all__ = [
-    'include',                # load and jit a header file
     'cppdef',                 # declare C++ source to Cling
+    'include',                # load and jit a header file
+    'load_library',           # load a shared library
     'sizeof',                 #  size of a C++ type
     'typeid',                 # typeid of a C++ type
     'add_include_path',       # add a path to search for headers
@@ -80,9 +81,24 @@ def cppdef(src):
     """Declare C++ source <src> to Cling."""
     gbl.gInterpreter.Declare(src)
 
+def load_library(name):
+    if name[:3] != 'lib':
+        if not gbl.gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
+               gbl.gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
+            name = 'lib'+name
+    sc = gbl.gSystem.Load(name)
+    if sc == -1:
+        raise RuntimeError("Unable to load library "+name)
+
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
     gbl.gInterpreter.ProcessLine('#include "%s"' % header)
+
+def c_include(header):
+    """Load (and JIT) header file <header> into Cling."""
+    gbl.gInterpreter.ProcessLine("""extern "C" {
+#include "%s"
+}""" % header)
 
 def add_include_path(path):
     """Add a path to the include paths available to Cling."""
