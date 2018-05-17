@@ -70,8 +70,8 @@ class TestDATATYPES:
             assert c.get_bool_array2()[i]   ==   bool((i+1)%2)
 
         # reading of integer array types
-        names = [ 'short', 'ushort',    'int', 'uint',    'long',  'ulong']
-        alpha = [(-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
+        names = ['uchar',  'short', 'ushort',    'int', 'uint',    'long',  'ulong']
+        alpha = [ (1, 2), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
         for j in range(self.N):
             assert getattr(c, 'm_%s_array'    % names[i])[i]   == alpha[i][0]*i
             assert getattr(c, 'get_%s_array'  % names[i])()[i] == alpha[i][0]*i
@@ -86,6 +86,7 @@ class TestDATATYPES:
             assert round(c.m_double_array2[k] + 16.*k, 8) == 0
 
         # out-of-bounds checks
+        raises(IndexError, c.m_uchar_array.__getitem__,  self.N)
         raises(IndexError, c.m_short_array.__getitem__,  self.N)
         raises(IndexError, c.m_ushort_array.__getitem__, self.N)
         raises(IndexError, c.m_int_array.__getitem__,    self.N)
@@ -174,10 +175,10 @@ class TestDATATYPES:
         c.destroy_arrays()
 
         # integer arrays
-        names = ['short', 'ushort', 'int', 'uint', 'long', 'ulong']
+        names = ['uchar', 'short', 'ushort', 'int', 'uint', 'long', 'ulong']
         import array
         a = range(self.N)
-        atypes = ['h', 'H', 'i', 'I', 'l', 'L' ]
+        atypes = ['B', 'h', 'H', 'i', 'I', 'l', 'L' ]
         for j in range(len(names)):
             b = array.array(atypes[j], a)
             setattr(c, 'm_'+names[j]+'_array', b)     # buffer copies
@@ -185,7 +186,8 @@ class TestDATATYPES:
                 assert eval('c.m_%s_array[i]' % names[j]) == b[i]
 
             setattr(c, 'm_'+names[j]+'_array2', b)    # pointer copies
-            b[i] = 28
+            assert 3 < self.N
+            b[3] = 28
             for i in range(self.N):
                 assert eval('c.m_%s_array2[i]' % names[j]) == b[i]
 
@@ -678,6 +680,7 @@ class TestDATATYPES:
 
         c = CppyyTestData()
         for func in ['get_bool_array',   'get_bool_array2',
+                     'get_uchar_array',   'get_uchar_array2',
                      'get_ushort_array', 'get_ushort_array2',
                      'get_int_array',    'get_int_array2',
                      'get_uint_array',   'get_uint_array2',
