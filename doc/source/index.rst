@@ -13,7 +13,7 @@ Design and performance are described in this `PyHPC paper`_.
 cppyy is based on `Cling`_, the C++ interpreter, to match Python's dynamism
 and interactivity.
 Consider this session, showing dynamic, interactive, mixing of C++ and Python
-features:
+features (more examples are in the `tutorial`_):
 
 .. code-block:: python
 
@@ -88,6 +88,7 @@ cppyy minimizes dependencies to allow its use in distributed, heterogeneous,
 development environments.
 
 .. _Cling: https://root.cern.ch/cling
+.. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
 .. _`PyHPC paper`: http://wlav.web.cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf
 .. _`Boost`: http://www.boost.org/
 .. _`CPython`: http://python.org
