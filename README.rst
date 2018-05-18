@@ -12,3 +12,4 @@ Details and performance are described in
 
 Full documentation: `cppyy.readthedocs.io <http://cppyy.readthedocs.io/>`_.
 
+Notebook-based tutorial: `Cppyy Tutorial <https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer>`_.
