@@ -10,7 +10,7 @@
 .cache
 .pytest_cache
 
-# Distribution / packaging
+# distribution / packaging
 .Python
 env/
 build/
@@ -28,3 +28,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# notebook
+.ipynb_checkpoints
