@@ -80,6 +80,9 @@ public:
     virtual const char* say_hi() { return "Hi!"; }
 
 public:
+    unsigned int m_check = 0xcdcdcdcd;
+
+public:
     static int sInstances;
 };
 
@@ -92,12 +95,12 @@ SharedCountable_t gime_mine();
 SharedCountable_t* gime_mine_ptr();
 SharedCountable_t& gime_mine_ref();
 
-void pass_mine_sp(SharedCountable_t p);
-void pass_mine_sp_ref(SharedCountable_t& p);
-void pass_mine_sp_ptr(SharedCountable_t* p);
+unsigned long pass_mine_sp(SharedCountable_t p);
+unsigned long pass_mine_sp_ref(SharedCountable_t& p);
+unsigned long pass_mine_sp_ptr(SharedCountable_t* p);
 
-void pass_mine_rp(Countable);
-void pass_mine_rp_ref(const Countable&);
-void pass_mine_rp_ptr(const Countable*);
+unsigned long pass_mine_rp(Countable);
+unsigned long pass_mine_rp_ref(const Countable&);
+unsigned long pass_mine_rp_ptr(const Countable*);
 
 } // namespace pyzables

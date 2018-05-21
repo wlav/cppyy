@@ -130,7 +130,9 @@ class TestClassPYTHONIZATION:
         mine = cppyy.gbl.pyzables.mine
 
         assert type(mine) == Countable
+        assert mine.m_check == 0xcdcdcdcd
         assert type(mine.__smartptr__()) == cppyy.gbl.std.shared_ptr(Countable)
+        assert mine.__smartptr__().get().m_check == 0xcdcdcdcd
         assert mine.say_hi() == "Hi!"
 
     def test05_converters(self):
@@ -141,18 +143,18 @@ class TestClassPYTHONIZATION:
         pz = cppyy.gbl.pyzables
         mine = pz.mine
 
-        pz.pass_mine_rp_ptr(mine)
-        pz.pass_mine_rp_ref(mine)
-        pz.pass_mine_rp(mine)
+        assert 0xcdcdcdcd == pz.pass_mine_rp_ptr(mine)
+        assert 0xcdcdcdcd == pz.pass_mine_rp_ref(mine)
+        assert 0xcdcdcdcd == pz.pass_mine_rp(mine)
 
-        pz.pass_mine_sp_ptr(mine)
-        pz.pass_mine_sp_ref(mine)
+        assert 0xcdcdcdcd == pz.pass_mine_sp_ptr(mine)
+        assert 0xcdcdcdcd == pz.pass_mine_sp_ref(mine)
 
-        pz.pass_mine_sp_ptr(mine.__smartptr__())
-        pz.pass_mine_sp_ref(mine.__smartptr__())
+        assert 0xcdcdcdcd == pz.pass_mine_sp_ptr(mine.__smartptr__())
+        assert 0xcdcdcdcd == pz.pass_mine_sp_ref(mine.__smartptr__())
 
-        pz.pass_mine_sp(mine)
-        pz.pass_mine_sp(mine.__smartptr__())
+        assert 0xcdcdcdcd == pz.pass_mine_sp(mine)
+        assert 0xcdcdcdcd == pz.pass_mine_sp(mine.__smartptr__())
 
         # TODO:
         # cppyy.gbl.mine = mine
