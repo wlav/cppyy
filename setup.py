@@ -22,11 +22,11 @@ try:
             requirements = ['cppyy-cling', 'cppyy-backend<0.4']
 except ImportError:
     # CPython
-    requirements = ['CPyCppyy']
+    requirements = ['CPyCppyy>=1.0.0']
 
 setup(
     name='cppyy',
-    version='0.9.1',
+    version='1.0.0',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 
@@ -39,7 +39,7 @@ setup(
     license='LBNL BSD',
 
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
 
         'Intended Audience :: Developers',
 
@@ -61,7 +61,7 @@ setup(
 
     install_requires=requirements,
 
-    keywords='C++ bindings',
+    keywords='C++ bindings data science',
 
     package_dir={'': 'python'},
     packages=find_packages('python', include=add_pkg),
