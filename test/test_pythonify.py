@@ -366,27 +366,24 @@ class TestPYTHONIFY:
         assert example01.getCount() == 0
 
 
-class AppTestPYTHONIFY_UI:
-    spaceconfig = dict(usemodules=['cppyy', '_rawffi', 'itertools'])
-
+class TestPYTHONIFY_UI:
     def setup_class(cls):
-        cls.w_test_dct  = cls.space.newtext(test_dct)
-        cls.w_example01 = cls.space.appexec([], """():
-            import cppyy
-            return cppyy.load_reflection_info(%r)""" % (test_dct, ))
+        cls.test_dct = test_dct
+        import cppyy
+        cls.example01 = cppyy.load_reflection_info(cls.test_dct)
 
     def test01_pythonizations(self):
         """Test addition of user-defined pythonizations"""
 
         import cppyy
 
-        def example01a_pythonize(pyclass):
-            assert pyclass.__name__ == 'example01a'
-            def getitem(self, idx):
-                return self.addDataToInt(idx)
-            pyclass.__getitem__ = getitem
+        def example01a_pythonize(pyclass, pyname):
+            if pyname == 'example01a':
+                def getitem(self, idx):
+                    return self.addDataToInt(idx)
+                pyclass.__getitem__ = getitem
 
-        cppyy.add_pythonization('example01a', example01a_pythonize)
+        cppyy.py.add_pythonization(example01a_pythonize)
 
         e = cppyy.gbl.example01a(1)
 
@@ -400,7 +397,7 @@ class AppTestPYTHONIFY_UI:
         import cppyy
 
         example01_pythonize = 1
-        raises(TypeError, cppyy.add_pythonization, 'example01', example01_pythonize)
+        raises(TypeError, cppyy.py.add_pythonization, example01_pythonize)
 
     def test03_write_access_to_globals(self):
         """Test overwritability of globals"""
