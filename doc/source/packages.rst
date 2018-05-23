@@ -1,7 +1,7 @@
-.. _developers:
+.. _packages:
 
-Developers
-==========
+Packages
+========
 
 Cppyy
 -----

@@ -55,7 +55,7 @@ In that case, re-linking is highly recommended.
 
 Older versions of PyPy (5.6.0 and earlier) have a built-in ``cppyy`` based on
 `Reflex`_, which is less feature-rich and no longer supported.
-However, both the :doc:`distribution tools <distribution>` and user-facing
+However, both the :doc:`distribution tools <dictionaries>` and user-facing
 Python codes are very backwards compatible.
 
 .. _`PyPI`: https://pypi.python.org/pypi/cppyy/

@@ -1,6 +1,6 @@
-.. _distribution:
+.. _dictionaries:
 
-Distribution
+Dictionaries
 ============
 
 Loading code directly into Cling is fine for interactive work and small

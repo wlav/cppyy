@@ -76,7 +76,8 @@ and heavy use of templates:
    [0, 1, 2, 3, 4, 5, 6, ..., 97, 98, 99]
    >>>
 
-And yes, there is no reason to use Boost from Python, but the example shows
+And yes, there is no reason to use Boost from Python (in fact, this example
+calls out for :doc:`pythonizations <pythonizations>`),  but the example shows
 that cppyy seamlessly supports many advanced C++ features.
 
 cppyy is available for both `CPython`_ (v2 and v3) and `PyPy`_, reaching
@@ -117,12 +118,18 @@ development environments.
    features
 
 .. toctree::
-   :caption: Advanced
+   :caption: Redistribution
    :maxdepth: 1
 
-   distribution
+   pythonizations
+   dictionaries
    bindings_generation
-   developers
+
+.. toctree::
+   :caption: Developers
+   :maxdepth: 1
+
+   packages
    repositories
 
 
