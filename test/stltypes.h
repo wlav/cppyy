@@ -61,3 +61,13 @@ extern template bool ns_prefix operator==(const std::vector<int>::iterator&,
 extern template bool ns_prefix operator!=(const std::vector<int>::iterator&,
                          const std::vector<int>::iterator&);
 }
+
+
+//- helper class for testing array
+namespace ArrayTest {
+
+struct Point {
+    int px, py;
+};
+
+} // namespace ArrayTest

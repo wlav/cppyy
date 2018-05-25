@@ -4,4 +4,7 @@
   <class name="stringy_class" />
   <class pattern="stl_like_class<*>" />
 
+  <namespace name="ArrayTest" />
+  <class pattern="ArrayTest::*" />
+
 </lcgdict>

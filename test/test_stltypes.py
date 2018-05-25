@@ -483,3 +483,56 @@ class TestSTLITERATOR:
         assert b1 == e2
         assert b1 != b2
         assert b1 == e2
+
+
+class TestSTLARRAY:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+
+    def test01_array_of_basic_types(self):
+        """Usage of std::array of basic types"""
+
+        import cppyy
+        from cppyy.gbl import std
+
+        a = std.array[int, 4]()
+        assert len(a) == 4
+        for i in range(len(a)):
+            a[i] = i
+            assert a[i] == i
+
+    def test02_array_of_pods(self):
+        """Usage of std::array of PODs"""
+
+        import cppyy
+        from cppyy import gbl
+        from cppyy.gbl import std
+
+        a = std.array[gbl.ArrayTest.Point, 4]()
+        assert len(a) == 4
+        for i in range(len(a)):
+            a[i].px = i
+            assert a[i].px == i
+            a[i].py = i**2
+            assert a[i].py == i**2
+
+    def test03_array_of_pointer_to_pods(self):
+        """Usage of std::array of pointer to PODs"""
+
+        import cppyy
+        from cppyy import gbl
+        from cppyy.gbl import std
+
+        ll = [gbl.ArrayTest.Point() for i in range(4)]
+        for i in range(len(ll)):
+            ll[i].px = 13*i
+            ll[i].py = 42*i
+
+        a = std.array['ArrayTest::Point*', 4]()
+        assert len(a) == 4
+        for i in range(len(a)):
+            a[i] = ll[i]
+            assert a[i].px == 13*i
+            assert a[i].py == 42*i
