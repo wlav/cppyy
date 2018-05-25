@@ -6,5 +6,6 @@
 
   <namespace name="ArrayTest" />
   <class pattern="ArrayTest::*" />
+  <function pattern="ArrayTest::*" />
 
 </lcgdict>

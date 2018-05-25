@@ -536,3 +536,12 @@ class TestSTLARRAY:
             a[i] = ll[i]
             assert a[i].px == 13*i
             assert a[i].py == 42*i
+
+        raises(TypeError, a.__setitem__, 1, 42)
+
+        for i in range(len(a)):
+            assert gbl.ArrayTest.get_pp_px(a.data(), i) == 13*i
+            assert gbl.ArrayTest.get_pp_py(a.data(), i) == 42*i
+
+            assert gbl.ArrayTest.get_pa_px(a.data(), i) == 13*i
+            assert gbl.ArrayTest.get_pa_py(a.data(), i) == 42*i

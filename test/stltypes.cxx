@@ -23,3 +23,21 @@ void stringy_class::get_string2(std::string& s) { s = m_string; }
 
 void stringy_class::set_string1(const std::string& s) { m_string = s; }
 void stringy_class::set_string2(std::string s) { m_string = s; }
+
+
+//- helpers for testing array
+int ArrayTest::get_pp_px(Point** p, int idx) {
+    return p[idx]->px;
+}
+
+int ArrayTest::get_pp_py(Point** p, int idx) {
+    return p[idx]->py;
+}
+
+int ArrayTest::get_pa_px(Point* p[], int idx) {
+    return p[idx]->px;
+}
+
+int ArrayTest::get_pa_py(Point* p[], int idx) {
+    return p[idx]->py;
+}
