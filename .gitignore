@@ -6,6 +6,7 @@
 *.so
 *.pcm
 *.rootmap
+*_rflx.cpp
 
 .cache
 .pytest_cache
@@ -29,5 +30,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# notebook
+# notebook products
 .ipynb_checkpoints
+doc/tutorial/gsl_selection.xml
