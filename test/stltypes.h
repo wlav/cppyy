@@ -39,49 +39,8 @@ public:
 };      
 
 
-#define STLTYPE_INSTANTIATION(STLTYPE, TTYPE, N)                             \
-   std::STLTYPE<TTYPE > STLTYPE##_##N;                                       \
-   std::STLTYPE<TTYPE >::iterator STLTYPE##_##N##_i;                         \
-   std::STLTYPE<TTYPE >::const_iterator STLTYPE##_##N##_ci
-
-#define STLTYPE_INSTANTIATION2(STLTYPE, TTYPE1, TTYPE2, N)                   \
-   std::STLTYPE<TTYPE1, TTYPE2 > STLTYPE##_##N;                              \
-   std::pair<TTYPE1, TTYPE2 > STLTYPE##_##N##_p;                             \
-   std::pair<const TTYPE1, TTYPE2 > STLTYPE##_##N##_cp;                      \
-   std::STLTYPE<TTYPE1, TTYPE2 >::iterator STLTYPE##_##N##_i;                \
-   std::STLTYPE<TTYPE1, TTYPE2 >::const_iterator STLTYPE##_##N##_ci
-
-
 //- instantiations of used STL types
 namespace {
-
-    struct _CppyyVectorInstances {
-
-        STLTYPE_INSTANTIATION(vector, int,          1);
-        STLTYPE_INSTANTIATION(vector, float,        2);
-        STLTYPE_INSTANTIATION(vector, double,       3);
-        STLTYPE_INSTANTIATION(vector, just_a_class, 4);
-
-    };
-
-    struct _CppyyListInstances {
-
-        STLTYPE_INSTANTIATION(list, int,    1);
-        STLTYPE_INSTANTIATION(list, float,  2);
-        STLTYPE_INSTANTIATION(list, double, 3);
-
-    };
-
-    struct _CppyyMapInstances {
-
-#ifndef __CINT__
-        STLTYPE_INSTANTIATION2(map, int,         int,           1);
-#endif
-        STLTYPE_INSTANTIATION2(map, std::string, int,           2);
-        STLTYPE_INSTANTIATION2(map, std::string, unsigned int,  3);
-        STLTYPE_INSTANTIATION2(map, std::string, unsigned long, 4);
-
-    };
 
     stl_like_class<int> stlc_1;
 
