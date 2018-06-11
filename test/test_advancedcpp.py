@@ -677,6 +677,12 @@ class TestADVANCEDCPP:
         # TODO: currently fails b/c double** not understood as &double*
         #assert cppyy.gbl.my_global_ptr[0] == 1234.
 
+        v = cppyy.gbl.my_global_int_holders
+        assert len(v) == 5
+        expected_vals = [13, 42, 88, -1, 17]
+        for i in range(len(v)):
+            assert v[i].m_val == expected_vals[i]
+
     def test22_exceptions(self):
         """Catching of C++ exceptions"""
 
@@ -684,9 +690,8 @@ class TestADVANCEDCPP:
         Thrower = cppyy.gbl.Thrower
 
         if is_pypy:
-            # TODO: clean up this interface:
-            Thrower.__cppdecl__.get_overload('throw_anything').__useffi__  = False
-            Thrower.__cppdecl__.get_overload('throw_exception').__useffi__ = False
+            Thrower.throw_anything.__useffi__  = False
+            Thrower.throw_exception.__useffi__ = False
 
         t = Thrower()
 

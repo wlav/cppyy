@@ -2,6 +2,13 @@ import py, os, sys
 from pytest import raises
 from .support import setup_make, maxvalue
 
+try:
+    import __pypy__
+    is_pypy = True
+except ImportError:
+    is_pypy = False
+
+
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("stltypesDict.so"))
 
@@ -529,6 +536,9 @@ class TestSTLARRAY:
         for i in range(len(ll)):
             ll[i].px = 13*i
             ll[i].py = 42*i
+
+        if is_pypy:
+            raise RuntimeError("test fails with crash")
 
         a = std.array['ArrayTest::Point*', 4]()
         assert len(a) == 4

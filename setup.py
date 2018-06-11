@@ -20,13 +20,16 @@ try:
             add_pkg += ['cppyy_compat']
         elif version[1] <= 10:
             requirements = ['cppyy-cling', 'cppyy-backend<0.4']
+    if version[0] == 6:
+        if version[1] <= 0:
+            requirements = ['cppyy-cling<6.12', 'cppyy-backend<1.1']
 except ImportError:
     # CPython
-    requirements = ['CPyCppyy>=1.0.0']
+    requirements = ['CPyCppyy>=1.1.0']
 
 setup(
     name='cppyy',
-    version='1.0.0',
+    version='1.1.0',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 

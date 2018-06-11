@@ -762,4 +762,6 @@ class TestDATATYPES:
 
         raises(TypeError, f3, f1, 2, 3)
 
+        #f2 = cppyy.gbl.sum_of_double
+
         assert 5. == f3(f2, 5., 0.)

@@ -83,13 +83,20 @@ class TestTEMPLATES:
     def test04_variadic_function(self):
         """Call a variadic function"""
 
-        from cppyy import gbl
-        from cppyy.gbl import std
+        import cppyy
+        std = cppyy.gbl.std
 
         s = std.ostringstream()
         #s << '('
-        #gbl.SomeNS.tuplify(s, 1, 4., "aap")
+        #cppyy.gbl.SomeNS.tuplify(s, 1, 4., "aap")
         #assert s.str() == '(1, 4, aap)
+
+        cppyy.cppdef("""
+            template<typename... myTypes>
+            int test04_variadic_func() { return sizeof...(myTypes); }
+        """)
+
+        assert cppyy.gbl.test04_variadic_func['int', 'double', 'void*']() == 3
 
     def test05_variadic_overload(self):
         """Call an overloaded variadic function"""
