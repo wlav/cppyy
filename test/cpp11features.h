@@ -49,4 +49,10 @@ struct TestData {            // for initializer list construction
     int m_int;
 };
 
+struct TestData2 {
+    TestData2(int i) : m_int(i) {}
+    virtual ~TestData2() {}
+    int m_int;
+};
+
 #endif // c++11 and later

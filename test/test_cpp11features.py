@@ -106,7 +106,7 @@ class TestCPP11FEATURES:
     def test04_initializer_list(self):
         """Initializer list construction"""
 
-        from cppyy.gbl import std, TestData
+        from cppyy.gbl import std, TestData, TestData2
 
         v = std.vector[int]((1, 2, 3, 4))
         assert list(v) == [1, 2, 3, 4]
@@ -116,14 +116,15 @@ class TestCPP11FEATURES:
 
         raises(TypeError, std.vector[int], [1., 2., 3., 4.])
 
-        l = list()
-        for i in range(10):
-            l.append(TestData(i))
+        for cls in [TestData, TestData2]:
+            l = list()
+            for i in range(10):
+                l.append(cls(i))
 
-        v = std.vector[TestData](l)
-        assert len(v) == len(l)
-        for i in range(len(l)):
-            assert v[i].m_int == l[i].m_int
+            v = std.vector[cls](l)
+            assert len(v) == len(l)
+            for i in range(len(l)):
+                assert v[i].m_int == l[i].m_int
 
     def test05_lambda_calls(self):
         """Call (global) lambdas"""
