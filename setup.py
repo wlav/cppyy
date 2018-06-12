@@ -29,7 +29,7 @@ except ImportError:
 
 setup(
     name='cppyy',
-    version='1.1.0',
+    version='1.1.1',
     description='Cling-based Python-C++ bindings',
     long_description=long_description,
 
