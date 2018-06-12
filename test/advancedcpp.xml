@@ -60,7 +60,7 @@
   <class name="overload_the_other_way" />
 
   <class name="Thrower" />
-
   <class pattern="Using*" />
+  <class name="TypedefToPrivateClass" />
 
 </lcgdict>

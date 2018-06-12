@@ -727,3 +727,10 @@ class TestADVANCEDCPP:
         assert b3.m_int    == 10
         assert b3.m_int2   == 42
         assert b3.vcheck() == 'B'
+
+    def test24_typedef_to_private_class(self):
+        """Typedefs to private classes should not resolve"""
+
+        import cppyy
+
+        assert cppyy.gbl.TypedefToPrivateClass().f().m_val == 42

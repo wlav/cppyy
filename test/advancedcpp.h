@@ -441,3 +441,18 @@ public:
     virtual char vcheck() { return 'B'; }
     int m_int2 = 42;
 };
+
+
+//===========================================================================
+class TypedefToPrivateClass {      // typedef resolution testing
+private:
+    class PC {
+    public:
+        PC(int i) : m_val(i) {}
+        int m_val;
+    };
+
+public:
+    typedef PC PP;
+    PP f() { return PC(42); }
+};
