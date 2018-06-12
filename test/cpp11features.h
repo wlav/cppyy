@@ -1,6 +1,7 @@
 #if __cplusplus >= 201103L
 
 #include <memory>
+#include <vector>
 
 
 //===========================================================================
@@ -53,6 +54,18 @@ struct TestData2 {
     TestData2(int i) : m_int(i) {}
     virtual ~TestData2() {}
     int m_int;
+};
+
+template<class T>
+class WithInitList {
+public:
+    WithInitList(std::initializer_list<T> ll) : m_data(ll) {}
+    const T& operator[](int i) { return m_data[i]; }
+
+    int size() { return m_data.size(); }
+
+private:
+    std::vector<T> m_data;
 };
 
 #endif // c++11 and later
