@@ -61,7 +61,7 @@ and heavy use of templates:
      File "<stdin>", line 1, in <module>
    Exception: int boost::any_cast(boost::any&& operand) =>
        boost::bad_any_cast: failed conversion using boost::any_cast (C++ exception)
-   >>> extract = boost.any_cast[std.vector[int]](std.move(val))   # correct
+   >>> extract = boost.any_cast[std.vector[int]](val) # correct cast
    >>> type(extract) is std.vector[int]
    True
    >>> extract += xrange(100)
@@ -71,7 +71,7 @@ and heavy use of templates:
    <cppyy.gbl.boost.any object at 0xf6a8a0>
    >>> len(extract)                         # now empty
    0
-   >>> extract = boost.any_cast[std.vector[int]](std.move(val))
+   >>> extract = boost.any_cast[std.vector[int]](val)
    >>> list(extract)
    [0, 1, 2, 3, 4, 5, 6, ..., 97, 98, 99]
    >>>

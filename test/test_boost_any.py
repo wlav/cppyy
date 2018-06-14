@@ -34,14 +34,14 @@ class TestBOOSTANY:
         val.__assign__(std.move(std.vector[int]()))
         assert val.type() == cppyy.typeid(std.vector[int])
 
-        extract = boost.any_cast[std.vector[int]](std.move(val))
+        extract = boost.any_cast[std.vector[int]](val)
         assert type(extract) is std.vector[int]
         extract += range(100)
 
-        val.__assign__(std.move(extract))
+        val.__assign__(std.move(extract))   # move forced
         assert len(extract) == 0
 
-        raises(Exception, boost.any_cast[int], std.move(val))
+        raises(Exception, boost.any_cast[int], val)
 
-        extract = boost.any_cast[std.vector[int]](std.move(val))
+        extract = boost.any_cast[std.vector[int]](val)
         assert len(extract) == 100
