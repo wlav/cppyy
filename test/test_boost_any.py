@@ -28,7 +28,10 @@ class TestBOOSTANY:
         from cppyy.gbl import std, boost
 
         val = boost.any()
-        val.__assign__(std.vector[int]())
+        # test both by-ref and by rvalue
+        v = std.vector[int]()
+        val.__assign__(v)
+        val.__assign__(std.move(std.vector[int]()))
         assert val.type() == cppyy.typeid(std.vector[int])
 
         extract = boost.any_cast[std.vector[int]](std.move(val))
