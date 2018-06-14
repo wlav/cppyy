@@ -7,6 +7,9 @@ The ``cppyy`` module and its dependencies are available through `PyPI`_ for
 both CPython (2 and 3) and PyPy (5.9.0 and later).
 Build-time only dependencies are ``cmake`` (for general build), ``python2.7``
 (for LLVM), and a modern C++ compiler (one that supports at least C++11).
+By default, C++14 will be chosen.
+You can "upgrade" to C++14 or "downgrade" to C++11 by setting the ``STDCXX``
+envar to '14' or '11' respectively.
 The cleanest/easiest way to install cppyy is using `virtualenv`_.
 
 Compilation of the backend, which contains a customized version of
@@ -16,7 +19,7 @@ To change that behavior, set the MAKE_NPROCS environment variable to the
 desired number of processes to use.
 To see progress while waiting, use ``--verbose``::
 
- $ MAKE_NPROCS=32 pip install --verbose cppyy
+ $ STDCXX=17 MAKE_NPROCS=32 pip install --verbose cppyy
 
 The bdist_wheel of the backend is reused by pip for all versions of CPython
 and PyPy, thus the long compilation is needed only once.
