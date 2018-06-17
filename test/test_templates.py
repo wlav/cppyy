@@ -86,10 +86,12 @@ class TestTEMPLATES:
         import cppyy
         std = cppyy.gbl.std
 
-        s = std.ostringstream()
-        #s << '('
-        #cppyy.gbl.SomeNS.tuplify(s, 1, 4., "aap")
-        #assert s.str() == '(1, 4, aap)
+        s = std.ostringstream('(')#TODO: fails on PyPy, std.ios_base.ate)
+        s.seekp(1, s.cur)
+        # Fails; wrong overload on PyPy, none on CPython
+        #s << "("
+        cppyy.gbl.SomeNS.tuplify(s, 1, 4., "aap")
+        assert s.str() == "(1, 4, aap, NULL)"
 
         cppyy.cppdef("""
             template<typename... myTypes>

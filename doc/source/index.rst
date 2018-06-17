@@ -69,7 +69,7 @@ and heavy use of templates:
    100
    >>> val.__assign__(std.move(extract))    # move forced
    <cppyy.gbl.boost.any object at 0xf6a8a0>
-   >>> len(extract)                         # now empty
+   >>> len(extract)                         # now empty (or invalid)
    0
    >>> extract = boost.any_cast[std.vector[int]](val)
    >>> list(extract)
@@ -77,8 +77,8 @@ and heavy use of templates:
    >>>
 
 And yes, there is no reason to use Boost from Python (in fact, this example
-calls out for :doc:`pythonizations <pythonizations>`),  but the example shows
-that cppyy seamlessly supports many advanced C++ features.
+calls out for :doc:`pythonizations <pythonizations>`), but it shows that
+cppyy seamlessly supports many advanced C++ features.
 
 cppyy is available for both `CPython`_ (v2 and v3) and `PyPy`_, reaching
 C++-like performance with the latter.
