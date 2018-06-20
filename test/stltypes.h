@@ -76,3 +76,8 @@ int get_pa_px(Point* p[], int idx);
 int get_pa_py(Point* p[], int idx);
 
 } // namespace ArrayTest
+
+
+// helpers for string testing
+extern std::string str_array_1[3];
+extern std::string str_array_2[];

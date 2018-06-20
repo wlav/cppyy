@@ -218,7 +218,8 @@ class TestSTLVECTOR:
         assert len(vb[4:8]) == 4
         assert list(vb[4:8]) == [False]*3+[True]
 
-class estSTLSTRING:
+
+class TestSTLSTRING:
     def setup_class(cls):
         cls.test_dct = test_dct
         import cppyy
@@ -291,6 +292,18 @@ class estSTLSTRING:
         c.set_string1(s)
         assert t0 == c.get_string1()
         assert s == c.get_string1()
+
+    def test04_array_of_strings(self):
+        """Access to global arrays of strings"""
+
+        import cppyy
+
+        assert cppyy.gbl.str_array_1 == ('a', 'b', 'c')
+        str_array_2 = cppyy.gbl.str_array_2
+        # fix up the size
+        str_array_2.size = 4
+        assert tuple(str_array_2) == ('d', 'e', 'f', 'g')
+        assert tuple(str_array_2) == ('d', 'e', 'f', 'g')
 
 
 class TestSTLLIST:

@@ -41,3 +41,8 @@ int ArrayTest::get_pa_px(Point* p[], int idx) {
 int ArrayTest::get_pa_py(Point* p[], int idx) {
     return p[idx]->py;
 }
+
+
+// helpers for string testing
+std::string str_array_1[3] = {"a", "b", "c"};
+std::string str_array_2[]  = {"d", "e", "f", "g"};

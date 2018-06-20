@@ -8,4 +8,6 @@
   <class pattern="ArrayTest::*" />
   <function pattern="ArrayTest::*" />
 
+  <variable pattern="str_array_*" />
+
 </lcgdict>
