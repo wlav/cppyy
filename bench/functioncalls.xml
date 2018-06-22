@@ -1,6 +1,15 @@
 <lcgdict>
 
+  <!-- group: empty -->
   <function name="empty_call" />
+  <class name="EmptyCall" />
+
+  <!-- group: builtin-args -->
   <function name="take_an_int" />
+  <class name="TakeAValue" />
+
+  <!-- group: do-work -->
+  <function name="do_work" />
+  <class name="DoWork" />
 
 </lcgdict>
