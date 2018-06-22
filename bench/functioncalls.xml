@@ -5,7 +5,7 @@
   <class name="EmptyCall" />
 
   <!-- group: builtin-args -->
-  <function name="take_an_int" />
+  <function pattern="take_*" />
   <class name="TakeAValue" />
 
   <!-- group: do-work -->

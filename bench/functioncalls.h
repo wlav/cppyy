@@ -10,13 +10,17 @@ public:
 };
 
 //- group: builtin-args ------------------------------------------------------
+struct Value { int m_int; };
+
 void take_an_int(int);
 void take_a_double(double);
+void take_a_value(Value);
 
 class TakeAValue {
 public:
     void take_an_int(int);
     void take_a_double(double);
+    void take_a_value(Value);
 };
 
 //- group: do-work -----------------------------------------------------------

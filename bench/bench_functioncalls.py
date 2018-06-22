@@ -47,6 +47,10 @@ def test_free_take_an_int(benchmark):
 def test_free_take_a_double(benchmark):
     benchmark(cppyy.gbl.take_a_double, 1.)
 
+@pytest.mark.benchmark(group=group, warmup=True)
+def test_free_take_a_value(benchmark):
+    benchmark(cppyy.gbl.take_a_value, cppyy.gbl.Value())
+
 inst2 = cppyy.gbl.TakeAValue()
 @pytest.mark.benchmark(group=group, warmup=True)
 def test_inst_take_an_int(benchmark):
@@ -55,6 +59,10 @@ def test_inst_take_an_int(benchmark):
 @pytest.mark.benchmark(group=group, warmup=True)
 def test_inst_take_a_double(benchmark):
     benchmark(inst2.take_a_double, 1)
+
+@pytest.mark.benchmark(group=group, warmup=True)
+def test_inst_take_a_value(benchmark):
+    benchmark(inst2.take_a_value, cppyy.gbl.Value())
 
 
 #- group: do-work ------------------------------------------------------------

@@ -22,6 +22,10 @@ void take_a_double(double /* unused */) {
 /* empty, to measure pure call overhead */
 }
 
+void take_a_value(Value /* unused */) {
+/* empty, to measure pure call overhead */
+}
+
 void TakeAValue::take_an_int(int /* unused */) {
 /* empty, to measure pure call overhead */
 }
@@ -30,6 +34,9 @@ void TakeAValue::take_a_double(double /* unused */) {
 /* empty, to measure pure call overhead */
 }
 
+void TakeAValue::take_a_value(Value /* unused */) {
+/* empty, to measure pure call overhead */
+}
 
 //- group: do-work -----------------------------------------------------------
 double do_work(double arg) {
