@@ -43,6 +43,8 @@ __all__ = [
     'add_autoload_map',       # explicitly include an autoload map
     ]
 
+from ._version import __version__
+
 import os, sys
 
 try:
