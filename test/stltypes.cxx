@@ -46,3 +46,10 @@ int ArrayTest::get_pa_py(Point* p[], int idx) {
 // helpers for string testing
 std::string str_array_1[3] = {"a", "b", "c"};
 std::string str_array_2[]  = {"d", "e", "f", "g"};
+std::string str_array_3[3][2] = {{"a", "b"}, {"c", "d"}, {"e", "f"}};
+std::string str_array_4[4][2][2] = {
+     {{"a", "b"}, {"c", "d"}},
+     {{"e", "f"}, {"g", "h"}},
+     {{"i", "j"}, {"k", "l"}},
+     {{"m", "n"}, {"o", "p"}},
+};

@@ -81,3 +81,5 @@ int get_pa_py(Point* p[], int idx);
 // helpers for string testing
 extern std::string str_array_1[3];
 extern std::string str_array_2[];
+extern std::string str_array_3[3][2];
+extern std::string str_array_4[4][2][2];

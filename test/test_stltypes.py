@@ -305,6 +305,21 @@ class TestSTLSTRING:
         assert tuple(str_array_2) == ('d', 'e', 'f', 'g')
         assert tuple(str_array_2) == ('d', 'e', 'f', 'g')
 
+        # multi-dimensional
+        vals = ['a', 'b', 'c', 'd', 'e', 'f']
+        str_array_3 = cppyy.gbl.str_array_3
+        for i in range(3):
+            for j in range(2):
+                assert str_array_3[i][j] == vals[i*2+j]
+
+        vals = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+                'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p']
+        str_array_4 = cppyy.gbl.str_array_4
+        for i in range(4):
+            for j in range(2):
+                for k in range(2):
+                    assert str_array_4[i][j][k] == vals[i*4+j*2+k]
+
 
 class TestSTLLIST:
     def setup_class(cls):
