@@ -10,6 +10,14 @@ test_dct = str(currpath.join("functioncallsDict.so"))
 import cppyy
 cppyy.load_reflection_info(test_dct)
 
+try:
+    import py11_functioncalls
+    py11 = True
+except ImportError:
+    import warnings
+    warnings.warn('pybind11 tests disabled')
+    py11 = False
+
 
 #- group: empty --------------------------------------------------------------
 def py_empty_call():
@@ -28,6 +36,13 @@ inst1 = cppyy.gbl.EmptyCall()
 @pytest.mark.benchmark(group=group, warmup=True)
 def test_inst_empty_call(benchmark):
     benchmark(inst1.empty_call)
+
+
+if py11:
+    py11_inst1 = py11_functioncalls.EmptyCall()
+    @pytest.mark.benchmark(group=group, warmup=True)
+    def test_inst_py11_empty_call(benchmark):
+        benchmark(py11_inst1.empty_call)
 
 
 #- group: builtin-args -------------------------------------------------------
@@ -63,6 +78,21 @@ def test_inst_take_a_double(benchmark):
 @pytest.mark.benchmark(group=group, warmup=True)
 def test_inst_take_a_value(benchmark):
     benchmark(inst2.take_a_value, cppyy.gbl.Value())
+
+
+if py11:
+    py11_inst2 = py11_functioncalls.TakeAValue()
+    @pytest.mark.benchmark(group=group, warmup=True)
+    def test_py11_inst_take_an_int(benchmark):
+        benchmark(py11_inst2.take_an_int, 1)
+
+    @pytest.mark.benchmark(group=group, warmup=True)
+    def test_py11_inst_take_a_double(benchmark):
+        benchmark(py11_inst2.take_a_double, 1)
+
+    @pytest.mark.benchmark(group=group, warmup=True)
+    def test_py11_inst_take_a_value(benchmark):
+        benchmark(py11_inst2.take_a_value, py11_functioncalls.Value())
 
 
 #- group: do-work ------------------------------------------------------------
