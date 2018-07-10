@@ -4,20 +4,32 @@
 
 
 // for testing of default arguments
-#define IMPLEMENT_DEFAULTER_CLASS(type, tname)                               \
+#define IMPLEMENT_DEFAULTERS(type, tname)                                    \
 tname##_defaulter::tname##_defaulter(type a, type b, type c) {               \
-   m_a = a; m_b = b; m_c = c;                                                \
+    m_a = a; m_b = b; m_c = c;                                               \
+}                                                                            \
+type tname##_defaulter_func(int idx, type a, type b, type c) {               \
+    if (idx == 0) return a;                                                  \
+    if (idx == 1) return b;                                                  \
+    if (idx == 2) return c;                                                  \
+    return (type)idx;                                                        \
 }
-IMPLEMENT_DEFAULTER_CLASS(short, short)
-IMPLEMENT_DEFAULTER_CLASS(unsigned short, ushort)
-IMPLEMENT_DEFAULTER_CLASS(int, int)
-IMPLEMENT_DEFAULTER_CLASS(unsigned, uint)
-IMPLEMENT_DEFAULTER_CLASS(long, long)
-IMPLEMENT_DEFAULTER_CLASS(unsigned long, ulong)
-IMPLEMENT_DEFAULTER_CLASS(long long, llong)
-IMPLEMENT_DEFAULTER_CLASS(unsigned long long, ullong)
-IMPLEMENT_DEFAULTER_CLASS(float, float)
-IMPLEMENT_DEFAULTER_CLASS(double, double)
+IMPLEMENT_DEFAULTERS(short, short)
+IMPLEMENT_DEFAULTERS(unsigned short, ushort)
+IMPLEMENT_DEFAULTERS(int, int)
+IMPLEMENT_DEFAULTERS(unsigned, uint)
+IMPLEMENT_DEFAULTERS(long, long)
+IMPLEMENT_DEFAULTERS(unsigned long, ulong)
+IMPLEMENT_DEFAULTERS(long long, llong)
+IMPLEMENT_DEFAULTERS(unsigned long long, ullong)
+IMPLEMENT_DEFAULTERS(float, float)
+IMPLEMENT_DEFAULTERS(double, double)
+
+std::string string_defaulter_func(int idx, const std::string& name1, std::string name2) {
+    if (idx == 0) return name1;
+    if (idx == 1) return name2;
+    return "mies";
+}
 
 
 // for esoteric inheritance testing

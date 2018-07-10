@@ -4,24 +4,27 @@
 
 
 //===========================================================================
-#define DECLARE_DEFAULTER_CLASS(type, tname)                                \
+#define DECLARE_DEFAULTERS(type, tname)                                     \
 class tname##_defaulter {                                                   \
 public:                                                                     \
     tname##_defaulter(type a = 11, type b = 22, type c = 33);               \
                                                                             \
 public:                                                                     \
     type m_a, m_b, m_c;                                                     \
-};
-DECLARE_DEFAULTER_CLASS(short, short)   // for testing of default arguments
-DECLARE_DEFAULTER_CLASS(unsigned short, ushort)
-DECLARE_DEFAULTER_CLASS(int, int)
-DECLARE_DEFAULTER_CLASS(unsigned, uint)
-DECLARE_DEFAULTER_CLASS(long, long)
-DECLARE_DEFAULTER_CLASS(unsigned long, ulong)
-DECLARE_DEFAULTER_CLASS(long long, llong)
-DECLARE_DEFAULTER_CLASS(unsigned long long, ullong)
-DECLARE_DEFAULTER_CLASS(float, float)
-DECLARE_DEFAULTER_CLASS(double, double)
+};                                                                          \
+type tname##_defaulter_func(int idx = 0, type a = 11, type b = 22, type c = 33);
+DECLARE_DEFAULTERS(short, short)   // for testing of default arguments
+DECLARE_DEFAULTERS(unsigned short, ushort)
+DECLARE_DEFAULTERS(int, int)
+DECLARE_DEFAULTERS(unsigned, uint)
+DECLARE_DEFAULTERS(long, long)
+DECLARE_DEFAULTERS(unsigned long, ulong)
+DECLARE_DEFAULTERS(long long, llong)
+DECLARE_DEFAULTERS(unsigned long long, ullong)
+DECLARE_DEFAULTERS(float, float)
+DECLARE_DEFAULTERS(double, double)
+
+std::string string_defaulter_func(int idx, const std::string& name1 = "aap", std::string name2 = "noot");
 
 
 //===========================================================================

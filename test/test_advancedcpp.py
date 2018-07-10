@@ -53,6 +53,12 @@ class TestADVANCEDCPP:
             assert d.m_b ==  t(4)
             assert d.m_c ==  t(5)
             d.__destruct__()
+
+            defaulter_func = getattr(cppyy.gbl, '%s_defaulter_func' %n)
+            answers = [11, 22, 33, 3]
+            for idx in range(4):
+                assert defaulter_func(idx) == answers[idx]
+
         test_defaulter('short',  int)
         test_defaulter('ushort', int)
         test_defaulter('int',    int)
@@ -63,6 +69,13 @@ class TestADVANCEDCPP:
         test_defaulter('ullong', pylong)
         test_defaulter('float',  float)
         test_defaulter('double', float)
+
+        assert cppyy.gbl.string_defaulter_func(0)               == "aap"
+        assert cppyy.gbl.string_defaulter_func(0, "zus")        == "zus"
+        assert cppyy.gbl.string_defaulter_func(1)               == "noot"
+        assert cppyy.gbl.string_defaulter_func(1, "zus")        == "noot"
+        assert cppyy.gbl.string_defaulter_func(1, "zus", "jet") == "jet"
+        assert cppyy.gbl.string_defaulter_func(2)               == "mies"
 
     def test02_simple_inheritance(self):
         """Test binding of a basic inheritance structure"""
