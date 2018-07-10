@@ -57,28 +57,29 @@ class TestDATATYPES:
         #assert round(c.get_ldouble_cr() + 88., 24) == 0
         #assert round(c.get_ldouble_r()  + 88., 24) == 0
 
-        # complex<double> maps to builtin complex when taken by value, but has to be
-        # the C++ type for by-ref (by const ref doesn't matter, so no test other than
-        # for the correct values)
+        # complex<double> type
         assert type(c.get_complex()) == complex
         assert round(c.get_complex().real    -  99., 11) == 0
         assert round(c.get_complex().imag    - 101., 11) == 0
+        assert repr(c.get_complex()) == '(99+101j)'
         assert round(c.get_complex_cr().real -  99., 11) == 0
         assert round(c.get_complex_cr().imag - 101., 11) == 0
-        assert type(c.get_complex_r()) == cppyy.gbl.std.complex['double']
         assert round(c.get_complex_r().real  -  99., 11) == 0
         assert round(c.get_complex_r().imag  - 101., 11) == 0
+        assert complex(cppyy.gbl.std.complex['double'](1, 2)) == complex(1, 2)
 
         # complex<int> retains C++ type in all cases (but includes pythonization to
         # resemble Python's complex more closely
         assert type(c.get_icomplex()) == cppyy.gbl.std.complex[int]
         assert round(c.get_icomplex().real    - 121., 11) == 0
         assert round(c.get_icomplex().imag    - 141., 11) == 0
+        assert repr(c.get_icomplex()) == '(121+141j)'
         assert round(c.get_icomplex_cr().real - 121., 11) == 0
         assert round(c.get_icomplex_cr().imag - 141., 11) == 0
         assert type(c.get_icomplex_r()) == cppyy.gbl.std.complex[int]
         assert round(c.get_icomplex_r().real  - 121., 11) == 0
         assert round(c.get_icomplex_r().imag  - 141., 11) == 0
+        assert complex(cppyy.gbl.std.complex['int'](1, 2)) == complex(1, 2)
 
         # reading of enum types
         assert c.m_enum == CppyyTestData.kNothing
