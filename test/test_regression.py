@@ -91,3 +91,25 @@ class TestREGRESSION:
         pydoc.doc(cppyy.gbl.py2long)
 
         assert 1 == cppyy.gbl.py2long(1)
+
+    def test04_avc(self):
+        """Test usability of AVX by default."""
+
+        import cppyy, subprocess
+
+        has_avx = False
+        try:
+            for line in open('/proc/cpuinfo', 'r'):
+                if 'avx' in line:
+                    has_avx = True
+                    break
+        except Exception:
+            try:
+                cli_arg = subprocess.check_output(['sysctl', 'machdep.cpu.features'])
+                has_avx = 'avx' in cli_arg.decode("utf-8").strip().lower()
+            except Exception:
+                pass
+
+        if has_avx:
+            assert cppyy.cppdef('int check_avx() { return (int) __AVX__; }')
+            assert cppyy.gbl.check_avx()   # attribute error if compilation failed
