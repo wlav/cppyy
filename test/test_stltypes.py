@@ -62,6 +62,7 @@ class TestSTLVECTOR:
 
             assert v.size() == self.N
             assert len(v) == self.N
+            assert len(v.data()) == self.N
 
             #-----
             v = tv1()
