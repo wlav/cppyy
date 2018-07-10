@@ -81,7 +81,9 @@ py._set_backend(_backend)
 #--- CFFI style interface ----------------------------------------------------
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
-    gbl.gInterpreter.Declare(src)
+    if not gbl.gInterpreter.Declare(src):
+        return False
+    return True
 
 def load_library(name):
     if name[:3] != 'lib':
