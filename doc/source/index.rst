@@ -8,7 +8,8 @@ cppyy: Automatic Python-C++ bindings
 
 cppyy is an automatic Python-C++ bindings generator designed for large scale
 programs in high performance computing that use modern C++.
-Design and performance are described in this `PyHPC paper`_.
+Design and performance are described in this `PyHPC paper`_, albeit that the
+CPython/cppyy performance has been vastly improved since.
 
 cppyy is based on `Cling`_, the C++ interpreter, to match Python's dynamism
 and interactivity.
