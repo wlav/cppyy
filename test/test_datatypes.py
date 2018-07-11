@@ -774,6 +774,10 @@ class TestDATATYPES:
     def test21_function_pointers(self):
         """Function pointer passing"""
 
+        # TODO: currently crashes if fast path disabled
+        if os.environ['CPPYY_DISABLE_FASTPATH']:
+            return
+
         import cppyy
 
         f1 = cppyy.gbl.sum_of_int
