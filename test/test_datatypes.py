@@ -775,8 +775,11 @@ class TestDATATYPES:
         """Function pointer passing"""
 
         # TODO: currently crashes if fast path disabled
-        if os.environ['CPPYY_DISABLE_FASTPATH']:
-            return
+        try:
+            if os.environ['CPPYY_DISABLE_FASTPATH']:
+                return
+        except KeyError:
+            pass
 
         import cppyy
 
