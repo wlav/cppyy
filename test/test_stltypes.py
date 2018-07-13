@@ -443,7 +443,7 @@ class TestSTLMAP:
         mui = std.map(str, 'unsigned int')()
         mui['one'] = 1
         assert mui['one'] == 1
-        raises(TypeError, mui.__setitem__, 'minus one', -1)
+        raises(ValueError, mui.__setitem__, 'minus one', -1)
 
         # UInt_t is always 32b, maxvalue is sys.maxint/maxsize and follows system int
         maxint32 = int(math.pow(2,31)-1)
@@ -456,7 +456,7 @@ class TestSTLMAP:
         mul['maxint'] = maxvalue + 3
         assert mul['maxint'] == maxvalue + 3
 
-        raises(TypeError, mul.__setitem__, 'minus two', -2)
+        raises(ValueError, mul.__setitem__, 'minus two', -2)
 
     def test05_STL_like_class_indexing_overloads(self):
         """Test overloading of operator[] in STL like class"""

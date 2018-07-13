@@ -702,9 +702,8 @@ class TestADVANCEDCPP:
         import cppyy
         Thrower = cppyy.gbl.Thrower
 
-        if is_pypy:
-            Thrower.throw_anything.__useffi__  = False
-            Thrower.throw_exception.__useffi__ = False
+        Thrower.throw_anything.__useffi__  = False
+        Thrower.throw_exception.__useffi__ = False
 
         t = Thrower()
 

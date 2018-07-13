@@ -41,7 +41,7 @@ class TestBOOSTANY:
         assert len(extract) == 200
 
         val.__assign__(std.move(extract))   # move forced
-        assert len(extract) == 0
+        #assert len(extract) == 0      # not guaranteed by the standard
 
         # TODO: we hit boost::any_cast<int>(boost::any* operand) instead
         # of the reference version which raises
