@@ -68,12 +68,14 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: C',
         'Programming Language :: C++',
 
         'Natural Language :: English'
     ],
 
+    setup_requires=['wheel'],
     install_requires=requirements,
 
     keywords='C++ bindings data science',
