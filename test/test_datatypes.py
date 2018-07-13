@@ -56,6 +56,7 @@ class TestDATATYPES:
         #assert round(c.m_ldouble        + 88., 24) == 0
         #assert round(c.get_ldouble_cr() + 88., 24) == 0
         #assert round(c.get_ldouble_r()  + 88., 24) == 0
+        assert round(c.m_double + 77., 8) == 0
 
         # complex<double> type
         assert type(c.get_complex()) == complex
@@ -201,7 +202,7 @@ class TestDATATYPES:
         names = ['uchar', 'short', 'ushort', 'int', 'uint', 'long', 'ulong']
         import array
         a = range(self.N)
-        atypes = ['B', 'h', 'H', 'i', 'I', 'l', 'L' ]
+        atypes = ['B', 'h', 'H', 'i', 'I', 'l', 'L']
         for j in range(len(names)):
             b = array.array(atypes[j], a)
             setattr(c, 'm_'+names[j]+'_array', b)     # buffer copies
