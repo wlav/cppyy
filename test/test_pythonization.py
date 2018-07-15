@@ -112,7 +112,7 @@ class TestClassPYTHONIZATION:
 
         import cppyy
 
-        cppyy.gbl.pyzables.GimeDerived._creates = True
+        cppyy.gbl.pyzables.GimeDerived.__creates__ = True
 
         result = cppyy.gbl.pyzables.GimeDerived()
         assert type(result) == cppyy.gbl.pyzables.MyDerived

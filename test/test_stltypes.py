@@ -46,8 +46,8 @@ class TestSTLVECTOR:
             assert tv1.iterator is cppyy.gbl.std.vector(p_type).iterator
 
             #----- 
-            v = tv1(); v += range(self.N)    # default args from Reflex are useless :/
-            if p_type == int:                # only type with == and != reflected in .xml
+            v = tv1(); v += range(self.N)
+            if p_type == int:
                 assert v.begin().__eq__(v.begin())
                 assert v.begin() == v.begin()
                 assert v.end() == v.end()
