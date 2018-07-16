@@ -92,7 +92,7 @@ class TestREGRESSION:
 
         assert 1 == cppyy.gbl.py2long(1)
 
-    def test04_avc(self):
+    def test04_avx(self):
         """Test usability of AVX by default."""
 
         import cppyy, subprocess
