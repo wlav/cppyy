@@ -189,6 +189,27 @@ class TestClassPYTHONIZATION:
         assert mine.__smartptr__().get().m_check == 0xcdcdcdcd
         assert mine.say_hi() == "Hi!"
 
+    def test07_creates_flag(self):
+        """Effect of creates flag on return type"""
+
+        import cppyy, gc
+
+        pz = cppyy.gbl.pyzables
+        Countable = pz.Countable
+
+        gc.collect()
+        oldcount = Countable.sInstances     # there's eg. one global variable
+
+        pz.gime_naked_countable.__creates__ = True
+        for i in range(10):
+            cnt = pz.gime_naked_countable()
+            gc.collect()
+            assert Countable.sInstances == oldcount + 1
+        del cnt
+        gc.collect()
+
+        assert Countable.sInstances == oldcount
+
 
 ## actual test run
 if __name__ == '__main__':
