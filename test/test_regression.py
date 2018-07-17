@@ -71,7 +71,8 @@ class TestREGRESSION:
         self.__class__.helpout = []
         pydoc.doc(cppyy.gbl.cppyy_regression_test)
         helptext = ''.join(self.__class__.helpout)
-        assert 'CPPInstance' in helptext
+        # TODO: it's deeply silly that namespaces inherit from CPPInstance (in CPyCppyy)
+        assert ('CPPInstance' in helptext or 'CPPNamespace' in helptext)
 
     def test03_pyfunc_doc(self):
         """Help on a generated pyfunc used to crash."""
@@ -113,3 +114,24 @@ class TestREGRESSION:
         if has_avx:
             assert cppyy.cppdef('int check_avx() { return (int) __AVX__; }')
             assert cppyy.gbl.check_avx()   # attribute error if compilation failed
+
+    def test05_default_template_arguments(self):
+        """Calling a templated method on a templated class with all defaults used to crash."""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        template<typename T>
+        class AllDefault {
+        public:
+           AllDefault(int val) : m_t(val) {}
+           template<int aap=1, int noot=2>
+              int do_stuff() { return m_t+aap+noot; }
+
+        public:
+           T m_t;
+        };""")
+
+        a = cppyy.gbl.AllDefault[int](24)
+        a.m_t = 21;
+        assert a.do_stuff() == 24

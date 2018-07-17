@@ -2,13 +2,6 @@ import py, os, sys
 from pytest import raises
 from .support import setup_make, pylong
 
-try:
-    import __pypy__
-    is_pypy = True
-except ImportError:
-    is_pypy = False
-
-
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("advancedcppDict.so"))
 
@@ -683,8 +676,6 @@ class TestADVANCEDCPP:
         assert cppyy.gbl.my_global_double == 12.
         assert len(cppyy.gbl.my_global_array) == 500
         assert cppyy.gbl.my_global_string1 == "aap  noot  mies"
-        if is_pypy:
-            raise RuntimeError("test fails with crash")
         assert cppyy.gbl.my_global_string2 == "zus jet teun"
         # TODO: currently fails b/c double** not understood as &double*
         #assert cppyy.gbl.my_global_ptr[0] == 1234.

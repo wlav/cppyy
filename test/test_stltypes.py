@@ -566,11 +566,10 @@ class TestSTLARRAY:
             ll[i].px = 13*i
             ll[i].py = 42*i
 
-        if is_pypy:
-            raise RuntimeError("test fails with crash")
-
         a = std.array['ArrayTest::Point*', 4]()
         assert len(a) == 4
+        if is_pypy:
+            raise RuntimeError("test fails with crash")
         for i in range(len(a)):
             a[i] = ll[i]
             assert a[i].px == 13*i
