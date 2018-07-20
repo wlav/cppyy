@@ -16,4 +16,6 @@
   <function name="SomeNS::some_bar" />
   <function name="SomeNS::tuplify" />
 
+  <class name="TemplatedCallable" />
+
 </lcgdict>

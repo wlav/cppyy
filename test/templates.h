@@ -143,3 +143,12 @@ struct DerivedClassUsingStatic : public BaseClassWithStatic<T> {
     T m_value;
 };
 */
+
+
+//===========================================================================
+// templated callable
+class TemplatedCallable {
+public:
+    template <class I , class O = double>
+    O operator() (const I& in) const { return O(in); }
+};

@@ -299,7 +299,7 @@ class TestSTLSTRING:
 
         import cppyy
 
-        assert cppyy.gbl.str_array_1 == ('a', 'b', 'c')
+        assert tuple(cppyy.gbl.str_array_1) == ('a', 'b', 'c')
         str_array_2 = cppyy.gbl.str_array_2
         # fix up the size
         str_array_2.size = 4

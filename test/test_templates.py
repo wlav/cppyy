@@ -135,7 +135,9 @@ class TestTEMPLATES:
 
        #assert select_template_arg[0, Obj1, Obj2].argument == Obj1
         assert select_template_arg[1, Obj1, Obj2].argument == Obj2
-        raises(TypeError, select_template_arg.__getitem__, 2, Obj1, Obj2)
+        # TODO: the following raises correctly, but breaks something internal to
+        # Cling (left-over error?), causing occasional trouble downstream
+        #raises(TypeError, select_template_arg.__getitem__, 2, Obj1, Obj2)
 
         # TODO, this doesn't work for builtin types as the 'argument'
         # typedef will not resolve to a class
@@ -179,3 +181,12 @@ class TestTEMPLATES:
 
       # assert b2.ref_value == 42
         assert b2.m_value   == 42
+
+    def test09_templated_callable(self):
+        """Test that templated operator() translates to __call__"""
+
+        import cppyy
+
+        tc = cppyy.gbl.TemplatedCallable()
+
+        assert tc(5) == 5.
