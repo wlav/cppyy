@@ -219,6 +219,26 @@ class TestSTLVECTOR:
         assert len(vb[4:8]) == 4
         assert list(vb[4:8]) == [False]*3+[True]
 
+    def test08_vector_enum(self):
+        """Usability of std::vector<> of some enums"""
+
+        import cppyy
+
+        # TODO: would like to use cppyy.gbl.VecTestEnum but that's an int
+        assert cppyy.gbl.VecTestEnum
+        ve = cppyy.gbl.std.vector['VecTestEnum']()
+        ve.push_back(cppyy.gbl.EVal1);
+        assert ve[0] == 1
+        ve[0] = cppyy.gbl.EVal2
+        assert ve[0] == 3
+
+        assert cppyy.gbl.VecTestEnumNS.VecTestEnum
+        ve = cppyy.gbl.std.vector['VecTestEnumNS::VecTestEnum']()
+        ve.push_back(cppyy.gbl.VecTestEnumNS.EVal1);
+        assert ve[0] == 5
+        ve[0] = cppyy.gbl.VecTestEnumNS.EVal2
+        assert ve[0] == 42
+
 
 class TestSTLSTRING:
     def setup_class(cls):
