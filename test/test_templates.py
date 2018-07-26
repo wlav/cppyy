@@ -80,6 +80,27 @@ class TestTEMPLATES:
 
         # TODO: add some static template method
 
+        # test forced creation of subsequent overloads
+        from cppyy.gbl.std import vector
+        # float in, float out
+        ggsr = cppyy.gbl.global_get_some_result['std::vector<float>']
+        assert type(ggsr(vector['float']([0.5])).m_retval) == float
+        assert ggsr(vector['float']([0.5])).m_retval == 0.5
+        # int in, float out
+        ggsr = cppyy.gbl.global_get_some_result['std::vector<int>']
+        assert type(ggsr(vector['int']([5])).m_retval) == float
+        assert ggsr(vector['int']([5])).m_retval == 5.
+        # float in, int out
+        # TODO: this now matches the earlier overload
+        #ggsr = cppyy.gbl.global_get_some_result['std::vector<float>, int']
+        #assert type(ggsr(vector['float']([0.3])).m_retval) == int
+        #assert ggsr(vector['float']([0.3])).m_retval == 0
+        # int in, int out
+        # TODO: same as above, matches earlier overload
+        #ggsr = cppyy.gbl.global_get_some_result['std::vector<int>, int']
+        #assert type(ggsr(vector['int']([5])).m_retval) == int
+        #assert ggsr(vector['int']([5])).m_retval == 5
+
     def test04_variadic_function(self):
         """Call a variadic function"""
 
