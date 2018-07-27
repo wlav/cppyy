@@ -57,6 +57,8 @@ namespace {
 namespace ArrayTest {
 
 struct Point {
+    Point() : px(0), py(0) {}
+    Point(int x, int y) : px(x), py(y) {}
     int px, py;
 };
 

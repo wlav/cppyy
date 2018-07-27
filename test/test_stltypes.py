@@ -574,6 +574,12 @@ class TestSTLARRAY:
             a[i].py = i**2
             assert a[i].py == i**2
 
+        # test assignment
+        assert a[2]
+        a[2] = gbl.ArrayTest.Point(6, 7)
+        assert a[2].px == 6
+        assert a[2].py == 7
+
     def test03_array_of_pointer_to_pods(self):
         """Usage of std::array of pointer to PODs"""
 
