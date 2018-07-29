@@ -73,7 +73,12 @@ try:    gbl.gInterpreter.EnableAutoLoading()
 except: pass
 
 
-#--- pythonization factories -------------------------------------------------
+#- external typemap ----------------------------------------------------------
+from . import _typemap
+_typemap.initialize(_backend)
+
+
+#- pythonization factories ---------------------------------------------------
 from . import _pythonization as py
 py._set_backend(_backend)
 

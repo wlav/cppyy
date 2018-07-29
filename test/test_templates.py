@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
+from .support import setup_make, pylong
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("templatesDict.so"))
@@ -211,3 +211,73 @@ class TestTEMPLATES:
         tc = cppyy.gbl.TemplatedCallable()
 
         assert tc(5) == 5.
+
+
+class TestTEMPLATED_TYPEDEFS:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.templates = cppyy.load_reflection_info(cls.test_dct)
+
+    def test01_using(self):
+        """Test presence and validity of using typededs"""
+
+        import cppyy
+        tct = cppyy.gbl.TemplatedTypedefs.DerivedWithUsing
+        dum = cppyy.gbl.TemplatedTypedefs.SomeDummy
+
+        assert tct[int, dum, 4].vsize == 4
+        assert tct[int, dum, 8].vsize == 8
+
+        in_type = tct[int, dum, 4].in_type
+        assert 'in_type' in dir(tct[int, dum, 4])
+
+        assert in_type.__name__ == 'in_type'
+        assert in_type.__cppname__ == 'TemplatedTypedefs::DerivedWithUsing<int,TemplatedTypedefs::SomeDummy,4>::in_type'
+
+        in_type_tt = tct[int, dum, 4].in_type_tt
+        assert 'in_type_tt' in dir(tct[int, dum, 4])
+
+        assert in_type_tt.__name__ == 'in_type_tt'
+        assert in_type_tt.__cppname__ == 'TemplatedTypedefs::DerivedWithUsing<int,TemplatedTypedefs::SomeDummy,4>::in_type_tt'
+
+    def test02_mapped_type_as_internal(self):
+        """Test that mapped types can be used as builting"""
+
+        import cppyy
+        tct = cppyy.gbl.TemplatedTypedefs.DerivedWithUsing
+        dum = cppyy.gbl.TemplatedTypedefs.SomeDummy
+
+        for argname in ['short', 'unsigned short', 'int']:
+            in_type = tct[argname, dum, 4].in_type
+            assert issubclass(in_type, int)
+            assert in_type(13) == 13
+            assert 2*in_type(42) - 84 == 0
+
+        for argname in ['unsigned int', 'long', 'unsigned long']:# TODO: 'long long', 'unsigned long long'
+            in_type = tct[argname, dum, 4].in_type
+            assert issubclass(in_type, pylong)
+            assert in_type(13) == 13
+            assert 2*in_type(42) - 84 == 0
+
+        for argname in ['float', 'double', 'long double']:
+            in_type = tct[argname, dum, 4].in_type
+            assert issubclass(in_type, float)
+            assert in_type(13) == 13.
+            assert 2*in_type(42) - 84. == 0.
+
+        raises(TypeError, tct.__getitem__, 'gibberish', dum, 4)
+
+    def test03_mapped_type_as_template_arg(self):
+        """Test that mapped types can be used as template arguments"""
+
+        import cppyy
+        tct = cppyy.gbl.TemplatedTypedefs.DerivedWithUsing
+        dum = cppyy.gbl.TemplatedTypedefs.SomeDummy
+
+        in_type = tct['unsigned int', dum, 4].in_type
+        assert tct['unsigned int', dum, 4] is tct[in_type, dum, 4]
+
+        in_type = tct['long double', dum, 4].in_type
+        assert tct['long double', dum, 4] is tct[in_type, dum, 4]
+        assert tct['double', dum, 4] is not tct[in_type, dum, 4]

@@ -165,3 +165,29 @@ public:
     template <class I , class O = double>
     O operator() (const I& in) const { return O(in); }
 };
+
+
+//===========================================================================
+// templated typedefs
+namespace TemplatedTypedefs {
+
+template<typename IN, typename OUT, size_t _vsize = 4>
+struct BaseWithEnumAndTypedefs {
+    enum { vsize = _vsize };
+    typedef IN in_type;
+    typedef OUT out_type;
+};
+
+template <typename IN, typename OUT, size_t _vsize = 4>
+struct DerivedWithUsing : public BaseWithEnumAndTypedefs<IN, OUT, _vsize>
+{
+    typedef BaseWithEnumAndTypedefs<IN, OUT, _vsize> base_type;
+    using base_type::vsize;
+    using typename base_type::in_type;
+    typedef typename base_type::in_type in_type_tt;
+    using typename base_type::out_type;
+};
+
+struct SomeDummy {};
+
+} // namespace TemplatedTypedefs
