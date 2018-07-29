@@ -491,20 +491,15 @@ class TestSTLMAP:
     def test06_STL_like_class_iterators(self):
         """Test the iterator protocol mapping for an STL like class"""
 
-        return
-
-        # TODO: reconsider this (this is a case where there is no return
-        # type available and the code should (?) fall back onto getitem
-        # iteration. (Python does, and that would break this.)
-
         import cppyy
         stl_like_class = cppyy.gbl.stl_like_class
 
         a = stl_like_class(int)()
-        for i in a:
-            pass
+        assert len(a) == 4
+        for i, j in enumerate(a):
+            assert i == j
 
-        assert i == 3
+        assert i == len(a)-1
 
 
 class TestSTLITERATOR:
@@ -574,6 +569,8 @@ class TestSTLARRAY:
             a[i].py = i**2
             assert a[i].py == i**2
 
+        if is_pypy:
+            raise RuntimeError("test fails with crash")
         # test assignment
         assert a[2]
         a[2] = gbl.ArrayTest.Point(6, 7)
