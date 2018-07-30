@@ -210,6 +210,17 @@ class TestClassPYTHONIZATION:
 
         assert Countable.sInstances == oldcount
 
+    def test08_base_class_pythonization(self):
+        """Derived class should not re-pythonize base class pythonization"""
+
+        import cppyy
+
+        d = cppyy.gbl.pyzables.IndexableDerived()
+
+        assert d[0]  == 42
+        assert d[-1] == 42
+        raises(IndexError, d.__getitem__, 1)
+
 
 ## actual test run
 if __name__ == '__main__':

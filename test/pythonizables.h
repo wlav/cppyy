@@ -105,4 +105,17 @@ unsigned int pass_mine_rp_ptr(const Countable*);
 
 Countable* gime_naked_countable();
 
+
+//===========================================================================
+class unknown_iterator;
+class IndexableBase {
+public:
+    unknown_iterator* begin() { return nullptr; }
+    unknown_iterator* end() { return (unknown_iterator*)1; }
+    int operator[](int) { return 42; }
+    int size() { return 1; }
+};
+
+class IndexableDerived : public IndexableBase {};
+
 } // namespace pyzables
