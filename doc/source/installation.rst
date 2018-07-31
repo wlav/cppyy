@@ -8,8 +8,8 @@ both CPython (2 and 3) and PyPy (5.9.0 and later).
 Build-time only dependencies are ``cmake`` (for general build), ``python2.7``
 (for LLVM), and a modern C++ compiler (one that supports at least C++11).
 By default, C++14 will be chosen.
-You can "upgrade" to C++14 or "downgrade" to C++11 by setting the ``STDCXX``
-envar to '14' or '11' respectively.
+You can "upgrade" to C++17 or "downgrade" to C++11 by setting the ``STDCXX``
+envar to '17' or '11' respectively when building.
 The cleanest/easiest way to install cppyy is using `virtualenv`_.
 
 Compilation of the backend, which contains a customized version of
