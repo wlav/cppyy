@@ -101,11 +101,11 @@ def load_library(name):
 
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
-    gbl.gInterpreter.ProcessLine('#include "%s"' % header)
+    gbl.gInterpreter.Declare('#include "%s"' % header)
 
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
-    gbl.gInterpreter.ProcessLine("""extern "C" {
+    gbl.gInterpreter.Declare("""extern "C" {
 #include "%s"
 }""" % header)
 
