@@ -20,6 +20,16 @@ def initialize(backend):
         return
 
     tm = backend.type_map
+
+    # char types
+    str_tm = _create_mapper(str)
+    for tp in ['char', 'unsigned char', 'signed char']:
+        tm[tp] = str_tm
+    if sys.hexversion < 0x3000000:
+        tm['wchar_t'] = _create_mapper(unicode)
+    else:
+        tm['wchar_t'] = str_tm
+
     # integer types
     int_tm = _create_mapper(int)
     for tp in ['short', 'unsigned short', 'int']:
