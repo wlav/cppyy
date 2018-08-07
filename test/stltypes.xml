@@ -4,7 +4,6 @@
   <enum name="VecTestEnum" />
   <namespace name="VecTestEnumNS" />
   <enum name="VecTestEnumNS::VecTestEnum" />
-  <class name="stringy_class" />
   <class pattern="stl_like_class<*>" />
 
   <namespace name="ArrayTest" />

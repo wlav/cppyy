@@ -21,19 +21,21 @@ namespace VecTestEnumNS {
 }
 
 
-//- class with lots of std::string handling
+//- class with lots of std::[w]string handling
+template<typename S>
 class stringy_class {
 public:
-   stringy_class(const char* s);
+    stringy_class(const typename S::value_type* s) : m_string(s) {}
 
-   std::string get_string1();
-   void get_string2(std::string& s);
+    S get_string1() { return m_string; }
+    void get_string2(S& s) { s = m_string; }
 
-   void set_string1(const std::string& s);
-   void set_string2(std::string s);
+    void set_string1(const S& s) { m_string = s; }
+    void set_string2(S s) { m_string = s; }
 
-   std::string m_string;
+    S m_string;
 };
+
 
 //- class that has an STL-like interface
 class no_dict_available;
@@ -41,12 +43,12 @@ class no_dict_available;
 template<class T>
 class stl_like_class {
 public: 
-   no_dict_available* begin() { return 0; }
-   no_dict_available* end() { return (no_dict_available*)1; }
-   int size() { return 4; }
-   int operator[](int i) { return i; }
-   std::string operator[](double) { return "double"; }
-   std::string operator[](const std::string&) { return "string"; }
+    no_dict_available* begin() { return 0; }
+    no_dict_available* end() { return (no_dict_available*)1; }
+    int size() { return 4; }
+    int operator[](int i) { return i; }
+    std::string operator[](double) { return "double"; }
+    std::string operator[](const std::string&) { return "string"; }
 };      
 
 namespace {

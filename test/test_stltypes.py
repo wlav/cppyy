@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, maxvalue
+from .support import setup_make, pyunicode, maxvalue
 
 try:
     import __pypy__
@@ -247,54 +247,58 @@ class TestSTLSTRING:
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
 
     def test01_string_argument_passing(self):
-        """Test mapping of python strings and std::string"""
+        """Test mapping of python strings and std::[w]string"""
 
         import cppyy
         std = cppyy.gbl.std
-        stringy_class = cppyy.gbl.stringy_class
 
-        c, s = stringy_class(""), std.string("test1")
+        for stp, pystp in [(std.string, str), (std.wstring, pyunicode)]:
+            stringy_class = cppyy.gbl.stringy_class[stp]
 
-        # pass through const std::string&
-        c.set_string1(s)
-        assert c.get_string1() == s
+            c, s = stringy_class(pystp("")), stp(pystp("test1"))
 
-        c.set_string1("test2")
-        assert c.get_string1() == "test2"
+            # pass through const std::[w]string&
+            c.set_string1(s)
+            assert c.get_string1() == s
 
-        # pass through std::string (by value)
-        s = std.string("test3")
-        c.set_string2(s)
-        assert c.get_string1() == s
+            c.set_string1(pystp("test2"))
+            assert c.get_string1() == pystp("test2")
 
-        c.set_string2("test4")
-        assert c.get_string1() == "test4"
+            # pass through std::string (by value)
+            s = stp(pystp("test3"))
+            c.set_string2(s)
+            assert c.get_string1() == s
 
-        # getting through std::string&
-        s2 = std.string()
-        c.get_string2(s2)
-        assert s2 == "test4"
+            c.set_string2(pystp("test4"))
+            assert c.get_string1() == pystp("test4")
 
-        raises(TypeError, c.get_string2, "temp string")
+            # getting through std::[w]string&
+            s2 = stp()
+            c.get_string2(s2)
+            assert s2 == "test4"
+
+            raises(TypeError, c.get_string2, "temp string")
 
     def test02_string_data_access(self):
         """Test access to std::string object data members"""
 
         import cppyy
         std = cppyy.gbl.std
-        stringy_class = cppyy.gbl.stringy_class
 
-        c, s = stringy_class("dummy"), std.string("test string")
+        for stp, pystp in [(std.string, str), (std.wstring, pyunicode)]:
+            stringy_class = cppyy.gbl.stringy_class[stp]
 
-        c.m_string = "another test"
-        assert c.m_string == "another test"
-        assert str(c.m_string) == c.m_string
-        assert c.get_string1() == "another test"
+            c, s = stringy_class(pystp("dummy")), stp(pystp("test string"))
 
-        c.m_string = s
-        assert str(c.m_string) == s
-        assert c.m_string == s
-        assert c.get_string1() == s
+            c.m_string = pystp("another test")
+            assert c.m_string == pystp("another test")
+            assert pystp(c.m_string) == c.m_string
+            assert c.get_string1() == pystp("another test")
+
+            c.m_string = s
+            assert pystp(c.m_string) == s
+            assert c.m_string == s
+            assert c.get_string1() == s
 
     def test03_string_with_null_character(self):
         """Test that strings with NULL do not get truncated"""
@@ -303,7 +307,7 @@ class TestSTLSTRING:
 
         import cppyy
         std = cppyy.gbl.std
-        stringy_class = cppyy.gbl.stringy_class
+        stringy_class = cppyy.gbl.stringy_class["std::string"]
 
         t0 = "aap\0noot"
         assert t0 == "aap\0noot"
