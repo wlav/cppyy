@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong
+from .support import setup_make, pylong, pyunicode
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("datatypesDict.so"))
@@ -33,6 +33,8 @@ class TestDATATYPES:
         assert c.m_char  == 'a'
         assert c.m_schar == 'b'
         assert c.m_uchar == 'c'
+        assert type(c.m_wchar) == pyunicode
+        assert c.m_wchar == u'D'
 
         # reading integer types
         assert c.m_short   == -11; assert c.get_short_cr()   == -11; assert c.get_short_r()   == -11
@@ -154,6 +156,8 @@ class TestDATATYPES:
         # char types through functions
         c.set_char('c');   assert c.get_char()  == 'c'
         c.set_uchar('e');  assert c.get_uchar() == 'e'
+        c.set_wchar(u'F'); assert c.get_wchar() == u'F';
+        assert type(c.get_wchar()) == pyunicode
 
         # char types through data members
         c.m_char = 'b';    assert c.get_char()  ==     'b'
@@ -164,11 +168,14 @@ class TestDATATYPES:
         c.m_uchar = 42;    assert c.get_uchar() == chr(42)
         c.set_uchar('e');  assert c.m_uchar     ==     'e'
         c.set_uchar(43);   assert c.m_uchar     == chr(43)
+        c.m_wchar = u'G';  assert c.get_wchar() ==    u'G'
+        c.set_wchar(u'H'); assert c.m_wchar     ==    u'H'
 
-        raises(ValueError, 'c.set_char("string")')
-        raises(ValueError, 'c.set_char(500)')
-        raises(ValueError, 'c.set_uchar("string")')
-        raises(ValueError, 'c.set_uchar(-1)')
+        raises(ValueError, c.set_char, "string")
+        raises(ValueError, c.set_char, 500)
+        raises(ValueError, c.set_uchar, "string")
+        raises(ValueError, c.set_uchar, -1)
+        raises(ValueError, c.set_wchar, "string")
 
         # integer types
         names = ['short', 'ushort', 'int', 'uint', 'long', 'ulong', 'llong', 'ullong']
@@ -277,6 +284,11 @@ class TestDATATYPES:
         assert c.s_char                 == 'c'
         assert c.s_uchar                == 'u'
         assert CppyyTestData.s_uchar    == 'u'
+        assert c.s_wchar                == u'U'
+        assert CppyyTestData.s_wchar    == u'U'
+
+        assert type(c.s_wchar)             == pyunicode
+        assert type(CppyyTestData.s_wchar) == pyunicode
 
         # integer types
         assert CppyyTestData.s_short    == -101
@@ -326,6 +338,10 @@ class TestDATATYPES:
         assert CppyyTestData.s_uchar    == 'd'
         raises(ValueError, setattr, CppyyTestData, 's_uchar', -1)
         raises(ValueError, setattr, c,             's_uchar', -1)
+        CppyyTestData.s_wchar            = u'K'
+        assert c.s_wchar                == u'K'
+        c.s_wchar                        = u'L'
+        assert CppyyTestData.s_wchar    == u'L'
 
         # integer types
         c.s_short                        = -102
@@ -520,7 +536,10 @@ class TestDATATYPES:
 
         c = CppyyTestData()
         assert c.get_valid_string('aap') == 'aap'
-        #assert c.get_invalid_string() == ''
+        assert c.get_invalid_string() == ''
+
+        assert c.get_valid_wstring(u'aap') == u'aap'
+        assert c.get_invalid_wstring() == u''
 
     def test12_copy_constructor(self):
         """Test copy constructor"""

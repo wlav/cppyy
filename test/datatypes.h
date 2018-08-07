@@ -12,6 +12,7 @@ typedef unsigned long long ULong64_t;//Portable unsigned long integer 8 bytes
 #endif
 #include <complex>
 #include <vector>
+#include <wchar.h>
 
 const int N = 5;
 
@@ -90,6 +91,7 @@ public:
     char                 get_char();
     signed char          get_schar();
     unsigned char        get_uchar();
+    wchar_t              get_wchar();
     short                get_short();
     unsigned short       get_ushort();
     int                  get_int();
@@ -145,6 +147,7 @@ public:
     const char&               get_char_cr();
     const signed char&        get_schar_cr();
     const unsigned char&      get_uchar_cr();
+    const wchar_t&            get_wchar_cr();
     const short&              get_short_cr();
     const unsigned short&     get_ushort_cr();
     const int&                get_int_cr();
@@ -167,6 +170,7 @@ public:
     char&               get_char_r();
     signed char&        get_schar_r();
     unsigned char&      get_uchar_r();
+    wchar_t&            get_wchar_r();
     short&              get_short_r();
     unsigned short&     get_ushort_r();
     int&                get_int_r();
@@ -189,6 +193,7 @@ public:
     void set_char(char);
     void set_schar(signed char);
     void set_uchar(unsigned char);
+    void set_wchar(wchar_t);
     void set_short(short);
     void set_ushort(unsigned short);
     void set_int(int);
@@ -223,6 +228,7 @@ public:
     void set_char_cr(const char&);
     void set_schar_cr(const signed char&);
     void set_uchar_cr(const unsigned char&);
+    void set_wchar_cr(const wchar_t&);
     void set_short_cr(const short&);
     void set_ushort_cr(const unsigned short&);
     void set_int_cr(const int&);
@@ -264,8 +270,10 @@ public:
     complex_t*      pass_void_array_Z(void* a) { return pass_array((complex_t*)a); }
 
 // strings
-    const char* get_valid_string(const char* in);
-    const char* get_invalid_string();
+    const char*    get_valid_string(const char* in);
+    const char*    get_invalid_string();
+    const wchar_t* get_valid_wstring(const wchar_t* in);
+    const wchar_t* get_invalid_wstring();
 
 public:
 // basic types
@@ -273,6 +281,7 @@ public:
     char                 m_char;
     signed char          m_schar;
     unsigned char        m_uchar;
+    wchar_t              m_wchar;
     short                m_short;
     unsigned short       m_ushort;
     int                  m_int;
@@ -328,6 +337,7 @@ public:
     static char                    s_char;
     static signed char             s_schar;
     static unsigned char           s_uchar;
+    static wchar_t                 s_wchar;
     static short                   s_short;
     static unsigned short          s_ushort;
     static int                     s_int;
@@ -362,6 +372,7 @@ extern bool               g_bool;
 extern char               g_char;
 extern signed char        g_schar;
 extern unsigned char      g_uchar;
+extern wchar_t            g_wchar;
 extern short              g_short;
 extern unsigned short     g_ushort;
 extern int                g_int;
@@ -384,6 +395,7 @@ static const bool               g_c_bool    = true;
 static const char               g_c_char    = 'z';
 static const signed char        g_c_schar   = 'y';
 static const unsigned char      g_c_uchar   = 'x';
+static const wchar_t            g_c_wchar   = L'U';
 static const short              g_c_short   =  -99;
 static const unsigned short     g_c_ushort  =   99u;
 static const int                g_c_int     = -199;
