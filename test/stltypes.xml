@@ -6,6 +6,9 @@
   <enum name="VecTestEnumNS::VecTestEnum" />
   <class pattern="stl_like_class<*>" />
 
+  <class name="stringy_class_t" />
+  <class name="wstringy_class_t" />
+
   <namespace name="ArrayTest" />
   <class pattern="ArrayTest::*" />
   <function pattern="ArrayTest::*" />

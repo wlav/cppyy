@@ -36,6 +36,9 @@ public:
     S m_string;
 };
 
+typedef stringy_class<std::string> stringy_class_t;
+typedef stringy_class<std::wstring> wstringy_class_t;
+
 
 //- class that has an STL-like interface
 class no_dict_available;
