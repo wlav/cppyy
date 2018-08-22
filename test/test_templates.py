@@ -212,6 +212,17 @@ class TestTEMPLATES:
 
         assert tc(5) == 5.
 
+    def test10_templated_hidding_methods(self):
+        """Test that base class methods are not considered when hidden"""
+
+        import cppyy
+        B = cppyy.gbl.TemplateHiding.Base
+        D = cppyy.gbl.TemplateHiding.Derived
+
+        assert B().callme(1) == 2
+        assert D().callme()  == 2
+        assert D().callme(2) == 2
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):

@@ -191,3 +191,20 @@ struct DerivedWithUsing : public BaseWithEnumAndTypedefs<IN, OUT, _vsize>
 struct SomeDummy {};
 
 } // namespace TemplatedTypedefs
+
+
+//===========================================================================
+// hiding templated methods
+namespace TemplateHiding {
+
+struct Base {
+    template<class T>
+    int callme(T t = T(1)) { return 2*t; }
+};
+
+struct Derived : public Base {
+    int callme(int t = 2) { return t; }
+};
+
+} // namespace TemplateHiding
+
