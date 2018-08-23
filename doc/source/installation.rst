@@ -10,12 +10,19 @@ However, if you do install with pip on Linux, it will select the manylinux1
 binary wheels.
 Because the gcc compiler on manylinux1 is ancient (4.8.2), this will restrict
 you to C++11.
-Wheels also exist for Mac, where the default is C++14.
+Wheels also exist for Mac, where the chosen default is C++14.
+
+For Mac and for Linux with a gcc that is newer than 7.2.0, manylinux1 wheels
+with C++17 enabled `are available`_ as well (they can't live on PyPI, hence
+the external location).
+To use them, tell ``pip``::
+
+ $ pip install --extra-index https://cern.ch/wlav/wheels cppyy
 
 The alternative is to build from source.
 Build-time only dependencies are ``cmake`` (for general build), ``python``
-(also for LLVM), and a modern C++ compiler (one that supports at least
-C++11).
+(obviously, but also for LLVM), and a modern C++ compiler (one that supports
+at least C++11).
 By default, support for C++14 will be chosen.
 You can "upgrade" to C++17 or "downgrade" to C++11 by setting the ``STDCXX``
 envar to '17' or '11' respectively when building, assuming your compiler
@@ -32,11 +39,15 @@ To see progress while waiting, use ``--verbose``::
 
 The bdist_wheel of the backend is reused by pip for all versions of CPython
 and PyPy, thus the long compilation is needed only once.
+Unless you build on the manylinux1 docker images, wheels for
+``cppyy-backend`` and for ``CPyCppyy`` are disabled, because ``setuptools``
+(as used by ``pip``) does not properly resolve dependencies for wheels.
+You will see a harmless error message to that effect fly by.
 
 If you use the ``--user`` option to pip, make sure that the PATH envar points
 to the bin directory that will contain the installed entry points during the
 installation, as the build process needs them.
-You may also need to install wheel first.
+You may also need to install ``wheel`` first.
 Example::
 
  $ pip install wheel --user
