@@ -6,9 +6,10 @@
 
   <!-- group: builtin-args -->
   <function pattern="take_*" />
+  <struct name="Value" />
   <class name="TakeAValue" />
 
-  <!-- group: do-work -->
+  <!-- group: do_work -->
   <function name="do_work" />
   <class name="DoWork" />
 

@@ -12,170 +12,131 @@ cppyy.load_reflection_info(test_dct)
 
 import py_functioncalls
 
-bench_strings = [('py', 'py_functioncalls'), ('cppyy', 'cppyy.gbl')]
+all_configs = [('py', 'py_functioncalls'), ('cppyy', 'cppyy.gbl')]
 
 N = 10000
-
-try:
-    import py11_functioncalls
-    bench_strings.append(('py11', 'py11_functioncalls'))
-    py11 = True
-except ImportError:
-    warnings.warn('pybind11 tests disabled')
-    py11 = False
-
-try:
-    import swig_functioncalls
-    bench_strings.append(('swig', 'swig_functioncalls'))
-    swig = True
-except ImportError:
-    warnings.warn('swig tests disabled')
-    swig = False
-
+preamble = "@pytest.mark.benchmark(group=group, warmup=True)"
+looprange = range
 if sys.hexversion < 0x3000000:
     looprange = xrange
-else:
-    looprange = range
+
+try:
+    import __pypy__
+except ImportError:
+    try:
+        import py11_functioncalls
+        all_configs.append(('py11', 'py11_functioncalls'))
+        py11 = True
+    except ImportError:
+        warnings.warn('pybind11 tests disabled')
+        py11 = False
+
+    try:
+        import swig_functioncalls
+        all_configs.append(('swig', 'swig_functioncalls'))
+        swig = True
+    except ImportError:
+        warnings.warn('swig tests disabled')
+        swig = False
+
+all_benches = []
 
 
 #- group: empty-free ---------------------------------------------------------
-group = 'empty-free'
-
-def call_instance_empty(inst):
-    for i in looprange(N):
-        inst.empty_call()
-
-benches = """
-@pytest.mark.benchmark(group=group, warmup=True)
+all_benches.append(('empty-free', (
+"""
 def test_{0}_free_empty_call(benchmark):
     benchmark({1}.empty_call)
-"""
-
-for label, modname in bench_strings:
-    exec(benches.format(label, modname))
-
+""",
+)))
 
 #- group: empty-inst ---------------------------------------------------------
-group = 'empty-inst'
-
 def call_instance_empty(inst):
     for i in looprange(N):
         inst.empty_call()
 
-benches = """
-{0}_inst_empty = {1}.EmptyCall()
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_{0}_inst_empty_call(benchmark):
-    benchmark(call_instance_empty, {0}_inst_empty)
+all_benches.append(('empty-inst', (
 """
-
-for label, modname in bench_strings:
-    exec(benches.format(label, modname))
-
-
-#- group: builtin-args -------------------------------------------------------
-def py_take_a_value(val):
-    pass
-
-group = 'free-builtin-args'
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_py_take_a_value(benchmark):
-    benchmark(py_take_a_value, 1)
-
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_free_take_an_int(benchmark):
-    benchmark(cppyy.gbl.take_an_int, 1)
-
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_free_take_a_double(benchmark):
-    benchmark(cppyy.gbl.take_a_double, 1.)
-
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_free_take_a_value(benchmark):
-    benchmark(cppyy.gbl.take_a_value, cppyy.gbl.Value())
+def test_{0}_inst_empty_call(benchmark):
+    inst = {1}.EmptyCall()
+    benchmark(call_instance_empty, inst)
+""",
+)))
 
 
-group = 'inst-builtin-args'
-inst2 = cppyy.gbl.TakeAValue()
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_inst_take_an_int(benchmark):
-    benchmark(inst2.take_an_int, 1)
+#- group: builtin-args-free --------------------------------------------------
+all_benches.append(('builtin-args-free', (
+"""
+def test_{0}_free_take_an_int(benchmark):
+    benchmark({1}.take_an_int, 1)
+""",
+"""
+def test_{0}_free_take_a_double(benchmark):
+    benchmark({1}.take_a_double, 1.)
+""",
+"""
+def test_{0}_free_take_a_struct(benchmark):
+    benchmark({1}.take_a_struct, {1}.Value())
+""",
+)))
 
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_inst_take_a_double(benchmark):
-    benchmark(inst2.take_a_double, 1)
+#- group: builtin-args-inst --------------------------------------------------
+def call_instance_take_an_int(inst, val):
+    for i in looprange(N):
+        inst.take_an_int(1)
 
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_inst_take_a_value(benchmark):
-    benchmark(inst2.take_a_value, cppyy.gbl.Value())
+def call_instance_take_a_double(inst, val):
+    for i in looprange(N):
+        inst.take_a_double(val)
 
-
-if py11:
-    py11_inst2 = py11_functioncalls.TakeAValue()
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_py11_inst_take_an_int(benchmark):
-        benchmark(py11_inst2.take_an_int, 1)
-
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_py11_inst_take_a_double(benchmark):
-        benchmark(py11_inst2.take_a_double, 1)
-
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_py11_inst_take_a_value(benchmark):
-        benchmark(py11_inst2.take_a_value, py11_functioncalls.Value())
-
-
-if swig:
-    swig_inst2 = swig_functioncalls.TakeAValue()
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_swig_inst_take_an_int(benchmark):
-        benchmark(swig_inst2.take_an_int, 1)
-
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_swig_inst_take_a_double(benchmark):
-        benchmark(swig_inst2.take_a_double, 1)
-
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_swig_inst_take_a_value(benchmark):
-        benchmark(swig_inst2.take_a_value, swig_functioncalls.Value())
+def call_instance_take_a_struct(inst, val):
+    for i in looprange(N):
+        inst.take_a_struct(val)
 
 
-#- group: do-work ------------------------------------------------------------
-def py_do_work(val):
-    return math.atan(val)
-
-group = 'do-work'
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_py_do_work(benchmark):
-    benchmark(py_do_work, 1.)
-
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_cppyy_free_do_work(benchmark):
-    benchmark(cppyy.gbl.do_work, 1.)
-
-cppyy_inst3 = cppyy.gbl.DoWork()
-@pytest.mark.benchmark(group=group, warmup=True)
-def test_cppyy_inst_do_work(benchmark):
-    benchmark(cppyy_inst3.do_work, 1.)
-
-
-"""if py11:
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_py11_free_do_work(benchmark):
-        benchmark(py11_functioncalls.do_work, 1.)
-
-    py11_inst3 = py11_functioncalls.DoWork()
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_py11_inst_do_work(benchmark):
-        benchmark(py11_inst3.do_work, 1.)"""
+all_benches.append(('builtin-args-inst', (
+"""
+def test_{0}_inst_take_an_int(benchmark):
+    inst = {1}.TakeAValue()
+    benchmark(call_instance_take_an_int, inst, 1)
+""",
+"""
+def test_{0}_inst_take_a_double(benchmark):
+    inst = {1}.TakeAValue()
+    benchmark(call_instance_take_a_double, inst, 1.)
+""",
+"""
+def test_{0}_inst_take_a_struct(benchmark):
+    inst = {1}.TakeAValue()
+    benchmark(call_instance_take_a_struct, inst, {1}.Value())
+""",
+)))
 
 
-if swig:
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_swig_free_do_work(benchmark):
-        benchmark(swig_functioncalls.do_work, 1.)
+#- group: do_work-free -------------------------------------------------------
+all_benches.append(('do_work-free', (
+"""
+def test_{0}_free_do_work(benchmark):
+    benchmark({1}.do_work, 1.)
+""",
+)))
 
-    swig_inst3 = swig_functioncalls.DoWork()
-    @pytest.mark.benchmark(group=group, warmup=True)
-    def test_swig_inst_do_work(benchmark):
-        benchmark(swig_inst3.do_work, 1.)
+#- group: do_work-inst -------------------------------------------------------
+def call_instance_do_work(inst):
+    for i in looprange(N):
+        inst.do_work(1.)
+
+all_benches.append(('do_work-inst', (
+"""
+def test_{0}_inst_do_work(benchmark):
+    inst = {1}.DoWork()
+    benchmark(call_instance_do_work, inst)
+""",
+)))
+
+
+#- actual creation of all benches --------------------------------------------
+for group, benches in all_benches:
+    for bench in benches:
+        for label, modname in all_configs:
+            exec(preamble+bench.format(label, modname))
