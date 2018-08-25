@@ -13,4 +13,7 @@
   <function name="do_work" />
   <class name="DoWork" />
 
+  <!-- group: overload -->
+  <class name="OverloadedCall" />
+
 </lcgdict>

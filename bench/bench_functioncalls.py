@@ -112,6 +112,19 @@ def test_{0}_inst_take_a_struct(benchmark):
 """,
 )))
 
+#- group: builtin-args-pass --------------------------------------------------
+def call_instance_pass_int(inst, val):
+    for i in looprange(N):
+        inst.pass_int(val)
+
+all_benches.append(('builtin-args-pass', (
+"""
+def test_{0}_inst_pass_int(benchmark):
+    inst = {1}.TakeAValue()
+    benchmark(call_instance_pass_int, inst, 1)
+""",
+)))
+
 
 #- group: do_work-free -------------------------------------------------------
 all_benches.append(('do_work-free', (
@@ -131,6 +144,20 @@ all_benches.append(('do_work-inst', (
 def test_{0}_inst_do_work(benchmark):
     inst = {1}.DoWork()
     benchmark(call_instance_do_work, inst)
+""",
+)))
+
+
+#- group: overload-inst ------------------------------------------------------
+def call_instance_overload(inst):
+    for i in looprange(N):
+        inst.add_it(1.)
+
+all_benches.append(('overload-inst', (
+"""
+def test_{0}_inst_overload(benchmark):
+    inst = {1}.OverloadedCall()
+    benchmark(call_instance_overload, inst)
 """,
 )))
 

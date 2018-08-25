@@ -27,7 +27,10 @@ PYBIND11_MODULE(py11_functioncalls, m) {
         .def(py::init<>())
         .def("take_an_int",   &TakeAValue::take_an_int)
         .def("take_a_double", &TakeAValue::take_a_double)
-        .def("take_a_struct", &TakeAValue::take_a_struct);
+        .def("take_a_struct", &TakeAValue::take_a_struct)
+
+//- group: builtin-args-pass -------------------------------------------------
+        .def("pass_int",      &TakeAValue::pass_int);
 
 
 //- group: do-work-free ------------------------------------------------------
@@ -37,4 +40,16 @@ PYBIND11_MODULE(py11_functioncalls, m) {
     py::class_<DoWork>(m, "DoWork")
         .def(py::init<>())
         .def("do_work", &DoWork::do_work);
+
+
+//- group: overload-inst -----------------------------------------------------
+    py::class_<OverloadedCall>(m, "OverloadedCall")
+        .def(py::init<>())
+        .def("add_it", (double (OverloadedCall::*)(int, int))     &OverloadedCall::add_it)
+        .def("add_it", (double (OverloadedCall::*)(short))        &OverloadedCall::add_it)
+        .def("add_it", (double (OverloadedCall::*)(long))         &OverloadedCall::add_it)
+        .def("add_it", (double (OverloadedCall::*)(int, int, int))&OverloadedCall::add_it)
+        .def("add_it", (double (OverloadedCall::*)(double))       &OverloadedCall::add_it)
+        .def("add_it", (double (OverloadedCall::*)(float))        &OverloadedCall::add_it)
+        .def("add_it", (double (OverloadedCall::*)(int))          &OverloadedCall::add_it);
 }

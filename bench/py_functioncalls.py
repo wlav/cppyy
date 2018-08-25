@@ -36,6 +36,9 @@ class TakeAValue(object):
     def take_a_struct(self, val):
         pass
 
+    def pass_int(self, val):
+        return val + 42
+
 
 #- group: do_work-free -------------------------------------------------------
 def do_work(val):
@@ -45,3 +48,9 @@ def do_work(val):
 class DoWork(object):
     def do_work(self, val):
         return math.atan(val)
+
+
+#- group: overload-inst ------------------------------------------------------
+class OverloadedCall(object):
+    def add_it(self, *args):
+        return 3.1415 + sum(args)
