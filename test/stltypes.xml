@@ -15,4 +15,7 @@
 
   <variable pattern="str_array_*" />
 
+  <namespace name="StringViewTest" />
+  <function pattern="StringViewTest::*" />
+
 </lcgdict>

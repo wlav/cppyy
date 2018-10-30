@@ -1,6 +1,10 @@
 #include <list>
 #include <map>
 #include <string>
+#include <sstream>
+#if __cplusplus > 201402L
+#include <string_view>
+#endif
 #include <utility>
 #include <vector>
 
@@ -81,3 +85,11 @@ extern std::string str_array_1[3];
 extern std::string str_array_2[];
 extern std::string str_array_3[3][2];
 extern std::string str_array_4[4][2][2];
+
+
+// helpers for string_view testing
+#if __cplusplus > 201402L
+namespace StringViewTest {
+    std::string_view::size_type count(const std::string_view arg);
+}
+#endif

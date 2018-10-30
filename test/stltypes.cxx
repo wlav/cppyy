@@ -44,3 +44,11 @@ std::string str_array_4[4][2][2] = {
      {{"i", "j"}, {"k", "l"}},
      {{"m", "n"}, {"o", "p"}},
 };
+
+
+// helpers for string_view testing
+#if __cplusplus > 201402L
+std::string_view::size_type StringViewTest::count(const std::string_view arg) {
+    return arg.size();
+}
+#endif

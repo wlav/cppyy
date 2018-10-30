@@ -610,3 +610,22 @@ class TestSTLARRAY:
 
             assert gbl.ArrayTest.get_pa_px(a.data(), i) == 13*i
             assert gbl.ArrayTest.get_pa_py(a.data(), i) == 42*i
+
+
+class TestSTLSTRING_VIEW:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+
+    def test01_string_through_stringview(self):
+        """Usage of std::string_view as formal argument"""
+
+        import cppyy
+        countit = cppyy.gbl.StringViewTest.count
+
+        assert countit("aap") == 3
+        s = cppyy.gbl.std.string("noot")
+        #assert countit(s)     == 4
+        v = cppyy.gbl.std.string_view(s.data(), s.size())
+        assert v[0] == 'n'
