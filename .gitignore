@@ -37,3 +37,5 @@ doc/tutorial/gsl_selection.xml
 # saved log files of benches
 bench/logs
 bench/swig_*.py
+bench/*_wrap.cxx
+bench/*_main
