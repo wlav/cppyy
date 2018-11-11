@@ -78,7 +78,7 @@ setup(
     setup_requires=['wheel'],
     install_requires=requirements,
 
-    keywords='C++ bindings data science',
+    keywords='C++ bindings data science calling language integration',
 
     package_dir={'': 'python'},
     packages=find_packages('python', include=add_pkg),
