@@ -52,8 +52,8 @@ To resolve, set the ``TMP`` and ``TEMP`` envars to something short, before
 building.
 For example::
 
- > %TMP%=C:\TMP
- > %TEMP%=C:\TMP
+ > set TMP=C:\TMP
+ > set TEMP=C:\TMP
 
 If you use the ``--user`` option to pip, make sure that the PATH envar points
 to the bin directory that will contain the installed entry points during the
