@@ -16,14 +16,14 @@ class TestPYTHONIFY:
         cls.example01 = cppyy.load_reflection_info(cls.test_dct)
 
     def test01_load_dictionary_cache(self):
-        """Test whether loading a dictionary twice results in the same object."""
+        """Test whether loading a dictionary twice results in the same object"""
 
         import cppyy
         lib2 = cppyy.load_reflection_info(self.test_dct)
         assert self.example01 is lib2
 
     def test02_finding_classes(self):
-        """Test the lookup of a class, and its caching."""
+        """Test the lookup of a class, and its caching"""
 
         import cppyy
         example01_class = cppyy.gbl.example01
@@ -33,7 +33,7 @@ class TestPYTHONIFY:
         raises(AttributeError, 'cppyy.gbl.nonexistingclass')
 
     def test03_calling_static_functions(self):
-        """Test calling of static methods."""
+        """Test calling of static methods"""
 
         import cppyy, sys, math
         example01_class = cppyy.gbl.example01
@@ -70,7 +70,7 @@ class TestPYTHONIFY:
         raises(TypeError, 'example01_class.staticStrcpy(1.)')   # TODO: this leaks
 
     def test04_constructing_and_calling(self):
-        """Test object and method calls."""
+        """Test object and method calls"""
 
         import cppyy
         example01_class = cppyy.gbl.example01
