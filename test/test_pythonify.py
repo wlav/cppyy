@@ -17,12 +17,14 @@ class TestPYTHONIFY:
 
     def test01_load_dictionary_cache(self):
         """Test whether loading a dictionary twice results in the same object."""
+
         import cppyy
         lib2 = cppyy.load_reflection_info(self.test_dct)
         assert self.example01 is lib2
 
     def test02_finding_classes(self):
         """Test the lookup of a class, and its caching."""
+
         import cppyy
         example01_class = cppyy.gbl.example01
         cl2 = cppyy.gbl.example01
@@ -32,6 +34,7 @@ class TestPYTHONIFY:
 
     def test03_calling_static_functions(self):
         """Test calling of static methods."""
+
         import cppyy, sys, math
         example01_class = cppyy.gbl.example01
         res = example01_class.staticAddOneToInt(1)
@@ -68,6 +71,7 @@ class TestPYTHONIFY:
 
     def test04_constructing_and_calling(self):
         """Test object and method calls."""
+
         import cppyy
         example01_class = cppyy.gbl.example01
         assert example01_class.getCount() == 0
@@ -116,6 +120,8 @@ class TestPYTHONIFY:
         assert example01_class.getCount() == 0
 
     def test05_passing_object_by_pointer(self):
+        """Pass object by pointer"""
+
         import cppyy
         example01_class = cppyy.gbl.example01
         payload_class = cppyy.gbl.payload
@@ -139,6 +145,8 @@ class TestPYTHONIFY:
         assert example01_class.getCount() == 0
 
     def test06_returning_object_by_pointer(self):
+        """Return an object py pointer"""
+
         import cppyy
         example01_class = cppyy.gbl.example01
         payload_class = cppyy.gbl.payload
@@ -159,6 +167,8 @@ class TestPYTHONIFY:
         assert example01_class.getCount() == 0
 
     def test07_returning_object_by_value(self):
+        """Return an object by value"""
+
         import cppyy
         example01_class = cppyy.gbl.example01
         payload_class = cppyy.gbl.payload
@@ -181,6 +191,8 @@ class TestPYTHONIFY:
         assert example01_class.getCount() == 0
 
     def test08_global_functions(self):
+        """Call a global function"""
+
         import cppyy
 
         assert cppyy.gbl.globalAddOneToInt(3) == 4     # creation lookup
