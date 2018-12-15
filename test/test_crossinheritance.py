@@ -33,7 +33,7 @@ class TestCROSSINHERITANCE:
         assert Base1.call_get_value(Derived()) == 13
 
     def test02_constructor(self):
-        """Test constructor usage"""
+        """Test constructor usage for derived classes"""
 
         import cppyy
         Base1 = cppyy.gbl.CrossInheritance.Base1
@@ -67,3 +67,20 @@ class TestCROSSINHERITANCE:
         assert d.m_pyint ==  2
         assert d.get_value()           == 29
         assert Base1.call_get_value(d) == 29
+
+    def test03_arguments(self):
+        """Test ability to override functions that take arguments"""
+
+        import cppyy
+        Base1 = cppyy.gbl.CrossInheritance.Base1
+
+        assert Base1(27).sum_value(-7) == 20
+
+        class Derived(Base1):
+            def sum_value(self, val):
+                return val + 13
+
+        d = Derived()
+        assert d.m_int   == 42
+        assert d.sum_value(-7)             == 6
+        assert Base1.call_sum_value(d, -7) == 6
