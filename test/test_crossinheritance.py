@@ -84,3 +84,23 @@ class TestCROSSINHERITANCE:
         assert d.m_int   == 42
         assert d.sum_value(-7)             == 6
         assert Base1.call_sum_value(d, -7) == 6
+
+    def tes04_override_overloads(self):
+        """Test ability to override overloaded functions"""
+
+        import cppyy
+        Base1 = cppyy.gbl.CrossInheritance.Base1
+
+        assert Base1(27).sum_all(-7)     == 20
+        assert Base1(27).sum_all(-3, -4) == 20
+
+        class Derived(Base1):
+            def sum_all(self, *args):
+                return sum(args) + 13
+
+        d = Derived()
+        assert d.m_int   == 42
+        assert d.sum_all(-7)             == 6
+        assert Base1.call_sum_all(d, -7) == 6
+        assert d.sum_all(-7, -5)             == 1
+        assert Base1.call_sum_all(d, -7, -5) == 1
