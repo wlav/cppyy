@@ -622,7 +622,7 @@ class TestSTLSTRING_VIEW:
         """Usage of std::string_view as formal argument"""
 
         import cppyy
-        if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus") <= 201402:
+        if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") <= 201402:
             # string_view exists as of C++17
             return
         countit = cppyy.gbl.StringViewTest.count
