@@ -632,3 +632,20 @@ class TestSTLSTRING_VIEW:
         #assert countit(s)     == 4
         v = cppyy.gbl.std.string_view(s.data(), s.size())
         assert v[0] == 'n'
+
+
+class TestSTLDEQUE:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+        cls.N = cppyy.gbl.N
+
+    def test01_deque_byvalue_regression(self):
+        """Return by value of a deque used to crash"""
+
+        import cppyy
+        assert cppyy.cppdef("std::deque<long double> f() { std::deque<long double> d ; return d ; }")
+        x = cppyy.gbl.f()
+        assert x
+        del x
