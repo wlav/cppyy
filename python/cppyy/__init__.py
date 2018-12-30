@@ -91,6 +91,7 @@ def cppdef(src):
     return True
 
 def load_library(name):
+    """Explicitly load a shared library."""
     if name[:3] != 'lib':
         if not gbl.gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
                gbl.gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
