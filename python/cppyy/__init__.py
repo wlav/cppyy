@@ -45,7 +45,7 @@ __all__ = [
 
 from ._version import __version__
 
-import os, sys, distutils
+import os, sys, sysconfig
 
 try:
     import __pypy__
@@ -117,7 +117,7 @@ def add_include_path(path):
     gbl.gInterpreter.AddIncludePath(path)
 
 # add access to Python C-API headers
-add_include_path(distutils.sysconfig.get_python_inc())
+add_include_path(sysconfig.get_path('include'))
 
 def add_autoload_map(fname):
     """Add the entries from a autoload (.rootmap) file to Cling."""
