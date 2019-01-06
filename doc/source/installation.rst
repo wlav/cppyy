@@ -5,30 +5,39 @@ Installation
 
 The ``cppyy`` module and its dependencies are available through `PyPI`_ for
 both CPython (2 and 3) and PyPy (5.9.0 and later).
-The cleanest/easiest way to install cppyy is using `virtualenv`_ and pip.
-However, if you do install with pip on Linux, it will select the manylinux1
-binary wheels.
-Because the gcc compiler on manylinux1 is ancient (4.8.2), this will restrict
-you to C++11.
-Wheels also exist for Mac, where the chosen default is C++14.
+The cleanest/easiest way to install cppyy is using `virtualenv`_ and pip::
 
-For Mac and for Linux with a gcc that is newer than 7.2.0, manylinux1 wheels
-with C++17 enabled `are available`_ as well (they can't live on PyPI, hence
-the external location).
-To use them, tell ``pip`` to only consider that external wheel and recompile
-the dependent packages from source::
+  $ virtualenv WORK
+  $ source WORK/bin/activate
+  (WORK) $ pip install cppyy
 
- $ pip install --find-links=https://cern.ch/wlav/wheels/cppyy-cling cppyy-cling --no-cache-dir --no-index
- $ pip install cppyy --no-cache-dir --no-binary :all:
+The use of virtualenv allows you to easily wipe out the full isntallation by
+removing the virtualenv directory::
 
-The alternative is to build the backend from source as well.
-Build-time only dependencies are ``cmake`` (for general build), ``python``
-(obviously, but also for LLVM), and a modern C++ compiler (one that supports
-at least C++11).
-By default, support for C++14 will be chosen.
+  $ rm -rf WORK
+
+Wheels for the backend are available for GNU/Linux, MacOS-X, and MS Windows
+(support for MS Windows is in beta).
+The Linux wheels are built on manylinux, but with gcc 5.5, not the 4.8.2 that
+ships with manylinux, since ``cppyy`` exposes C++ APIs.
+Using 4.8.2 would have meant that any software using ``cppyy`` would have to
+be (re)compiled for the older gcc ABI, which the odds don't favor.
+Note that building cppyy with 4.8.2 (and requiring the old ABI) works fine,
+but would only support C++11.
+
+The ``CPyCppyy`` and ``cppyy`` packages can not produce wheels as they must be
+build locally in order to match the local compiler and system files and CPU
+features (e.g. AVX).
+
+The C++17 standard is the default for all wheels.
+When building from source, the highest version among 17, 14, and 11 that your
+native compiler supports will be chosen.
+You can control the standard selection by setting the ``STDCXX`` envar to
+'17', '14', or '11'.
+When building from source, build-time only dependencies are ``cmake`` (for 
+general build), ``python`` (obviously, but also for LLVM), and a modern C++
+compiler (one that supports at least C++11).
 You can "upgrade" to C++17 or "downgrade" to C++11 by setting the ``STDCXX``
-envar to '17' or '11' respectively when building, assuming your compiler
-supports it.
 
 Compilation of the backend, which contains a customized version of
 Clang/LLVM, can take a long time, so by default the setup script will use all
@@ -58,7 +67,8 @@ For example::
 If you use the ``--user`` option to pip, make sure that the PATH envar points
 to the bin directory that will contain the installed entry points during the
 installation, as the build process needs them.
-You may also need to install ``wheel`` first.
+You may also need to install ``wheel`` first, if you have an older version of
+pip.
 Example::
 
  $ pip install wheel --user
