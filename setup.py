@@ -60,7 +60,9 @@ class my_install(_install):
                 log.info("installing pre-compiled header in %s", install_path)
                 l.set_cling_compile_options(True)
                 l.ensure_precompiled_header(install_path)
-            except ImportError:
+            except (ImportError, AttributeError):
+                # ImportError may occur with wrong pip requirements resolution (unlikely)
+                # AttributeError will occur with (older) PyPy as it relies on older backends
                 pass
 
 cmdclass = {
