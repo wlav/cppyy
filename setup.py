@@ -26,7 +26,11 @@ try:
             requirements = ['cppyy-cling', 'cppyy-backend<1.1']
 except ImportError:
     # CPython
-    requirements = ['CPyCppyy>=1.1.0']
+    requirements = ['CPyCppyy>=1.4.0']
+
+setup_requirements = ['wheel']
+if not 'egg_info' in sys.argv:
+    setup_requirements += requirements
 
 # https://packaging.python.org/guides/single-sourcing-package-version/
 def read(*parts):
@@ -51,10 +55,13 @@ class my_install(_install):
             # it will be removed on upgrade/uninstall
             install_path = os.path.join(os.getcwd(), self.install_libbase, 'cppyy')
 
-            import cppyy_backend.loader as l
-            log.info("installing pre-compiled header in %s", install_path)
-            l.set_cling_compile_options(True)
-            l.ensure_precompiled_header(install_path)
+            try:
+                import cppyy_backend.loader as l
+                log.info("installing pre-compiled header in %s", install_path)
+                l.set_cling_compile_options(True)
+                l.ensure_precompiled_header(install_path)
+            except ImportError:
+                pass
 
 cmdclass = {
         'install': my_install }
@@ -96,7 +103,7 @@ setup(
         'Natural Language :: English'
     ],
 
-    setup_requires=['wheel']+requirements,
+    setup_requires=setup_requirements,
     install_requires=requirements,
 
     keywords='C++ bindings data science calling language integration',
