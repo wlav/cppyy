@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-import codecs, glob, os, re
+import codecs, glob, os, sys, re
+from distutils import log
 from setuptools import setup, find_packages, Extension
+from setuptools.command.install import install as _install
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -39,6 +41,25 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
+class my_install(_install):
+    def run(self):
+        # base install
+        _install.run(self)
+
+        if 'linux' in sys.platform:
+            # force build of the .pch underneath the cppyy package, so that
+            # it will be removed on upgrade/uninstall
+            install_path = os.path.join(os.getcwd(), self.install_libbase, 'cppyy')
+
+            import cppyy_backend.loader as l
+            log.info("installing pre-compiled header in %s", install_path)
+            l.set_cling_compile_options(True)
+            l.ensure_precompiled_header(install_path)
+
+cmdclass = {
+        'install': my_install }
+
+
 setup(
     name='cppyy',
     version=find_version('python', 'cppyy', '_version.py'),
@@ -75,11 +96,13 @@ setup(
         'Natural Language :: English'
     ],
 
-    setup_requires=['wheel'],
+    setup_requires=['wheel']+requirements,
     install_requires=requirements,
 
     keywords='C++ bindings data science calling language integration',
 
     package_dir={'': 'python'},
     packages=find_packages('python', include=add_pkg),
+
+    cmdclass = cmdclass,
 )

@@ -47,6 +47,12 @@ from ._version import __version__
 
 import os, sys, sysconfig
 
+if not 'CLING_STANDARD_PCH' in os.environ:
+    local_pch = os.path.join(os.path.dirname(__file__), 'allDict.cxx.pch')
+    if os.path.exists(local_pch):
+        os.putenv('CLING_STANDARD_PCH', local_pch)
+        os.environ['CLING_STANDARD_PCH'] = local_pch
+
 try:
     import __pypy__
     del __pypy__
