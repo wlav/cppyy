@@ -9,10 +9,11 @@ The cleanest/easiest way to install cppyy is using `virtualenv`_ and pip::
 
   $ virtualenv WORK
   $ source WORK/bin/activate
-  (WORK) $ pip install cppyy
+  (WORK) $ python -m pip install cppyy
 
-The use of virtualenv allows you to easily wipe out the full isntallation by
-removing the virtualenv directory::
+The use of virtualenv prevents pollution of any system directories and allows
+you to wipe out the full installation simply by removing the virtualenv
+created directory::
 
   $ rm -rf WORK
 
@@ -29,11 +30,12 @@ The ``CPyCppyy`` and ``cppyy`` packages can not produce wheels as they must be
 build locally in order to match the local compiler and system files and CPU
 features (e.g. AVX).
 
-The C++17 standard is the default for all wheels.
+The C++17 standard is the default for Mac and Linux wheels; it is C++14 for
+Windows (compiler limitation).
 When building from source, the highest version among 17, 14, and 11 that your
 native compiler supports will be chosen.
 You can control the standard selection by setting the ``STDCXX`` envar to
-'17', '14', or '11'.
+'17', '14', or '11' (for Linux, the backend does not need to be recompiled).
 When building from source, build-time only dependencies are ``cmake`` (for 
 general build), ``python`` (obviously, but also for LLVM), and a modern C++
 compiler (one that supports at least C++11).
@@ -96,6 +98,36 @@ Older versions of PyPy (5.6.0 and earlier) have a built-in ``cppyy`` based on
 `Reflex`_, which is less feature-rich and no longer supported.
 However, both the :doc:`distribution tools <dictionaries>` and user-facing
 Python codes are very backwards compatible.
+
+
+Precompiled Header
+------------------
+
+For performance reasons (reduced memory and CPU usage), a precompiled header
+(PCH) of the system and compiler header files will be installed or, failing
+that, generated on startup.
+Obviously, this PCH is not portable and should not be part of a wheel.
+
+Some compiler features, such as AVX, OpenMP, fast math, etc. need to be
+active during compilation of the PCH, as they depend both on the compiler flag
+and system headers (for intrinsics, or API calls).
+You can control compiler flags through the ``EXTRA_CLING_ARGS`` envar and thus
+what is active in the PCH.
+In principle, you can also change the C++ language standard by setting the
+appropriate flag on ``EXTRA_CLING_ARGS`` and rebuilding the PCH.
+
+If you want multiple PCHs living side-by-side, you can generate them
+yourself (note that the given path must be absolute)::
+
+ >>> import cppyy_backend.loader as l
+ >>> l.set_cling_compile_options(True)         # adds defaults to EXTRA_CLING_ARGS
+ >>> install_path = '/full/path/to/target/location/for/PCH'
+ >>> l.ensure_precompiled_header(install_path)
+
+You can then select the appropriate PCH with the ``CLING_STANDARD_PCH`` envar::
+
+ $ export CLING_STANDARD_PCH=/full/path/to/target/location/for/PCH/allDict.cxx.pch
+
 
 .. _`PyPI`: https://pypi.python.org/pypi/cppyy/
 .. _`virtualenv`: https://pypi.python.org/pypi/virtualenv
