@@ -29,6 +29,8 @@ but would only support C++11.
 The ``CPyCppyy`` and ``cppyy`` packages can not produce wheels as they must be
 build locally in order to match the local compiler and system files and CPU
 features (e.g. AVX).
+Use the ``CC`` and ``CXX`` envars to set any local compiler if you do not want
+to use the system compiler.
 
 The C++17 standard is the default for Mac and Linux wheels; it is C++14 for
 Windows (compiler limitation).
@@ -39,9 +41,8 @@ You can control the standard selection by setting the ``STDCXX`` envar to
 When building from source, build-time only dependencies are ``cmake`` (for 
 general build), ``python`` (obviously, but also for LLVM), and a modern C++
 compiler (one that supports at least C++11).
-You can "upgrade" to C++17 or "downgrade" to C++11 by setting the ``STDCXX``
 
-Compilation of the backend, which contains a customized version of
+Compilation of the backend from source, which contains a customized version of
 Clang/LLVM, can take a long time, so by default the setup script will use all
 cores (x2 if hyperthreading is enabled).
 To change that behavior, set the MAKE_NPROCS environment variable to the
@@ -51,30 +52,33 @@ To see progress while waiting, use ``--verbose``::
  $ STDCXX=17 MAKE_NPROCS=32 pip install --verbose cppyy
 
 The bdist_wheel of the backend is reused by pip for all versions of CPython
-and PyPy, thus the long compilation is needed only once.
+and PyPy, thus the long compilation is needed only once for all different
+versions of Python on the same machine.
 Unless you build on the manylinux1 docker images, wheels for
 ``cppyy-backend`` and for ``CPyCppyy`` are disabled, because ``setuptools``
 (as used by ``pip``) does not properly resolve dependencies for wheels.
-You will see a harmless error message to that effect fly by.
+You will see a harmless "error" message to that effect fly by in the verbose
+output.
 
-On Windows, some temporary path names may be too long and the build will fail
-in that case.
-To resolve, set the ``TMP`` and ``TEMP`` envars to something short, before
-building.
+On Windows, some temporary path names may be too long, causing the build to
+fail.
+To resolve this issue, set the ``TMP`` and ``TEMP`` envars to something short,
+before building.
 For example::
 
  > set TMP=C:\TMP
  > set TEMP=C:\TMP
 
-If you use the ``--user`` option to pip, make sure that the PATH envar points
-to the bin directory that will contain the installed entry points during the
-installation, as the build process needs them.
+If you use the ``--user`` option to pip and use pip directly on the command
+line, make sure that the PATH envar points to the bin directory that will
+contain the installed entry points during the installation, as the build
+process needs them.
 You may also need to install ``wheel`` first, if you have an older version of
-pip.
+pip and/or do not use virtualenv (which installs wheel by default).
 Example::
 
- $ pip install wheel --user
- $ PATH=$HOME/.local/bin:$PATH pip install cppyy --user
+ $ python -m pip install wheel --user
+ $ PATH=$HOME/.local/bin:$PATH python -m pip install cppyy --user
 
 PyPy 5.7 and 5.8 have a built-in module ``cppyy``.
 You can still install the ``cppyy`` package, but the built-in module takes
