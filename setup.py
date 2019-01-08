@@ -4,11 +4,30 @@ import codecs, glob, os, sys, re
 from distutils import log
 from setuptools import setup, find_packages, Extension
 from setuptools.command.install import install as _install
+try:
+    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+    has_wheel = True
+except ImportError:
+    has_wheel = False
 
 
 here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
+
+_is_manylinux = None
+def is_manylinux():
+    global _is_manylinux
+    if _is_manylinux is None:
+        _is_manylinux = False
+        try:
+            for line in open('/etc/redhat-release').readlines():
+                if 'CentOS release 5.11' in line:
+                    _is_manylinux = True
+                    break
+        except (OSError, IOError):
+            pass
+    return _is_manylinux
 
 add_pkg = ['cppyy']
 try:
@@ -67,6 +86,14 @@ class my_install(_install):
 
 cmdclass = {
         'install': my_install }
+if has_wheel:
+    class my_bdist_wheel(_bdist_wheel):
+        def run(self, *args):
+         # wheels do not respect dependencies; make this a no-op, unless it is
+         # explicit building for manylinux
+            if is_manylinux():
+                return _bdist_wheel.run(self, *args)
+    cmdclass['bdist_wheel'] = my_bdist_wheel
 
 
 setup(
