@@ -91,5 +91,6 @@ extern std::string str_array_4[4][2][2];
 #if __cplusplus > 201402L
 namespace StringViewTest {
     std::string_view::size_type count(const std::string_view arg);
+    std::string_view::size_type count_cr(const std::string_view& arg);
 }
 #endif

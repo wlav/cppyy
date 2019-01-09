@@ -51,4 +51,8 @@ std::string str_array_4[4][2][2] = {
 std::string_view::size_type StringViewTest::count(const std::string_view arg) {
     return arg.size();
 }
+
+std::string_view::size_type StringViewTest::count_cr(const std::string_view& arg) {
+    return arg.size();
+}
 #endif
