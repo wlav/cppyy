@@ -4,6 +4,7 @@ import codecs, glob, os, sys, re
 from distutils import log
 from setuptools import setup, find_packages, Extension
 from setuptools.command.install import install as _install
+from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
 try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
     has_wheel = True
@@ -92,8 +93,16 @@ if has_wheel:
          # wheels do not respect dependencies; make this a no-op, unless it is
          # explicit building for manylinux
             if is_manylinux():
+                print('###################### WHEELIE!')
                 return _bdist_wheel.run(self, *args)
     cmdclass['bdist_wheel'] = my_bdist_wheel
+
+# same for bdist_egg as for bdist_wheel (see above)
+class my_bdist_egg(_bdist_egg):
+    def run(self, *args):
+        if is_manylinux():
+            return _bdist_egg.run(self, *args)
+cmdclass['bdist_egg'] = my_bdist_egg
 
 
 setup(
