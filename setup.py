@@ -103,7 +103,7 @@ class MyDistribution(Distribution):
                 if not cmd in disabled:
                     self.run_command(cmd)
                 else:
-                    log.info('%s is disabled', cmd)
+                    log.info('Command "%s" is disabled', cmd)
                     cmd_obj = self.get_command_obj(cmd)
                     cmd_obj.get_outputs = lambda: None
         else:
