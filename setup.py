@@ -1,34 +1,10 @@
-#!/usr/bin/env python
-
 import codecs, glob, os, sys, re
-from distutils import log
 from setuptools import setup, find_packages, Extension
+from distutils import log
+
+from setuptools.dist import Distribution
 from setuptools.command.install import install as _install
-from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
-try:
-    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
-    has_wheel = True
-except ImportError:
-    has_wheel = False
 
-
-here = os.path.abspath(os.path.dirname(__file__))
-with codecs.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
-
-_is_manylinux = None
-def is_manylinux():
-    global _is_manylinux
-    if _is_manylinux is None:
-        _is_manylinux = False
-        try:
-            for line in open('/etc/redhat-release').readlines():
-                if 'CentOS release 5.11' in line:
-                    _is_manylinux = True
-                    break
-        except (OSError, IOError):
-            pass
-    return _is_manylinux
 
 add_pkg = ['cppyy']
 try:
@@ -46,11 +22,15 @@ try:
             requirements = ['cppyy-cling', 'cppyy-backend<1.1']
 except ImportError:
     # CPython
-    requirements = ['CPyCppyy>=1.4.0']
+    requirements = ['cppyy-cling', 'cppyy-backend', 'CPyCppyy>=1.4.0']
 
 setup_requirements = ['wheel']
 if not 'egg_info' in sys.argv:
     setup_requirements += requirements
+
+here = os.path.abspath(os.path.dirname(__file__))
+with codecs.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+    long_description = f.read()
 
 # https://packaging.python.org/guides/single-sourcing-package-version/
 def read(*parts):
@@ -65,6 +45,23 @@ def find_version(*file_paths):
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
 
+
+#
+# platform-dependent helpers
+#
+def is_manylinux():
+    try:
+       for line in open('/etc/redhat-release').readlines():
+           if 'CentOS release 5.11' in line:
+               return True
+    except (OSError, IOError):
+        pass
+    return False
+
+
+#
+# customized commands
+#
 class my_install(_install):
     def run(self):
         # base install
@@ -85,24 +82,32 @@ class my_install(_install):
                 # AttributeError will occur with (older) PyPy as it relies on older backends
                 pass
 
+
 cmdclass = {
         'install': my_install }
-if has_wheel:
-    class my_bdist_wheel(_bdist_wheel):
-        def run(self, *args):
-         # wheels do not respect dependencies; make this a no-op, unless it is
-         # explicit building for manylinux
-            if is_manylinux():
-                print('###################### WHEELIE!')
-                return _bdist_wheel.run(self, *args)
-    cmdclass['bdist_wheel'] = my_bdist_wheel
 
-# same for bdist_egg as for bdist_wheel (see above)
-class my_bdist_egg(_bdist_egg):
-    def run(self, *args):
-        if is_manylinux():
-            return _bdist_egg.run(self, *args)
-cmdclass['bdist_egg'] = my_bdist_egg
+
+#
+# customized distribition to disable binaries
+#
+class MyDistribution(Distribution):
+    def run_commands(self):
+        # pip does not resolve dependencies before building binaries, so unless
+        # packages are installed one-by-one, on old install is used or the build
+        # will simply fail hard. The following is not completely quiet, but at
+        # least a lot less conspicuous.
+        if not is_manylinux():
+            disabled = set((
+                'bdist_wheel', 'bdist_egg', 'bdist_wininst', 'bdist_rpm'))
+            for cmd in self.commands:
+                if not cmd in disabled:
+                    self.run_command(cmd)
+                else:
+                    log.info('%s is disabled', cmd)
+                    cmd_obj = self.get_command_obj(cmd)
+                    cmd_obj.get_outputs = lambda: None
+        else:
+            return Distribution.run_commands(self)
 
 
 setup(
@@ -149,5 +154,8 @@ setup(
     package_dir={'': 'python'},
     packages=find_packages('python', include=add_pkg),
 
-    cmdclass = cmdclass,
+    cmdclass=cmdclass,
+    distclass=MyDistribution,
+
+    zip_safe=False,
 )
