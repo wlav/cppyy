@@ -137,3 +137,8 @@ class TestCPP11FEATURES:
         assert cppyy.gbl.gMyLambda
         assert cppyy.gbl.gMyLambda(2)  == 42
         assert cppyy.gbl.gMyLambda(40) == 80
+
+        cppyy.cppdef("auto gime_a_lambda() { return []() { return 42; }; }")
+        lll = cppyy.gbl.gime_a_lambda()
+        assert lll
+        assert lll() == 42
