@@ -292,3 +292,20 @@ class TestTEMPLATED_TYPEDEFS:
         in_type = tct['long double', dum, 4].in_type
         assert tct['long double', dum, 4] is tct[in_type, dum, 4]
         assert tct['double', dum, 4] is not tct[in_type, dum, 4]
+
+
+    def test04_template_aliases(self):
+        """Access to templates made available with 'using'"""
+
+        import cppyy
+
+      # through dictionary
+        davec = cppyy.gbl.DA_vector["float"]()
+        davec += range(10)
+        assert davec[5] == 5
+
+      # through interpreter
+        cppyy.cppdef("template<typename T> using IA_vector = std::vector<T>;")
+        iavec = cppyy.gbl.IA_vector["float"]()
+        iavec += range(10)
+        assert iavec[5] == 5

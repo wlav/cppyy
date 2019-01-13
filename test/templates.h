@@ -208,3 +208,7 @@ struct Derived : public Base {
 
 } // namespace TemplateHiding
 
+
+//===========================================================================
+// 'using' of templates
+template<typename T> using DA_vector = std::vector<T>;
