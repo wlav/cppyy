@@ -22,10 +22,10 @@ try:
             requirements = ['cppyy-cling', 'cppyy-backend<1.1']
 except ImportError:
     # CPython
-    requirements = ['cppyy-cling', 'cppyy-backend', 'CPyCppyy>=1.4.0']
+    requirements = ['cppyy-cling', 'cppyy-backend', 'CPyCppyy>=1.5.0']
 
 setup_requirements = ['wheel']
-if not 'egg_info' in sys.argv:
+if 'build' in sys.argv or 'install' in sys.argv:
     setup_requirements += requirements
 
 here = os.path.abspath(os.path.dirname(__file__))
