@@ -24,6 +24,8 @@ features (more examples are in the `tutorial`_):
    ... class MyClass {
    ... public:
    ...     MyClass(int i) : m_data(i) {}
+   ...     virtual ~MyClass() {}
+   ...     virtual int add_int(int i) { return m_data + i; }
    ...     int m_data;
    ... };""")
    True
@@ -40,6 +42,16 @@ features (more examples are in the `tutorial`_):
    >>> m.m_data = 13
    >>> m.say_hello()
    Hello, the number is: 13
+   >>> class PyMyClass(MyClass):
+   ...     def add_int(self, i):  # python side override (CPython only)
+   ...       return self.m_data + 2*i
+   ...
+   >>> cppyy.cppdef("int callback(MyClass* m, int i) { return m->add_int(i); }")
+   True
+   >>> cppyy.gbl.callback(m, 2)             # calls C++ add_int
+   15
+   >>> cppyy.gbl.callback(PyMyClass(1), 2)  # calls Python-side override
+   5
    >>>
 
 With a modern C++ compiler having its back, cppyy is future-proof.
