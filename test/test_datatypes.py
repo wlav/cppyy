@@ -150,8 +150,7 @@ class TestDATATYPES:
         c.set_bool(True);  assert c.m_bool     == True
         c.m_bool = 0;      assert c.get_bool() == False
         c.set_bool(0);     assert c.m_bool     == False
-
-        raises(ValueError, 'c.set_bool(10)')
+        raises(ValueError, c.set_bool, 10)
 
         # char types through functions
         c.set_char('c');   assert c.get_char()  == 'c'
@@ -446,7 +445,8 @@ class TestDATATYPES:
         import cppyy
         gbl = cppyy.gbl
 
-        raises(ReferenceError, 'gbl.g_pod.m_int')
+        with raises(ReferenceError):
+            gbl.g_pod.m_int
 
         c = gbl.CppyyTestPod()
         c.m_int = 42

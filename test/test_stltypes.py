@@ -186,8 +186,10 @@ class TestSTLVECTOR:
         for i in range(self.N):
             v.push_back(i)
 
-        raises(IndexError, 'v[self.N]')
-        raises(IndexError, 'v[self.N+1]')
+        with raises(IndexError):
+            v[self.N]
+        with raises(IndexError):
+            v[self.N+1]
 
         assert v[-1] == self.N-1
         assert v[-2] == self.N-2
