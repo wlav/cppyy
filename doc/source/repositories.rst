@@ -46,7 +46,7 @@ the cppyy-backend repository, do::
  $ pip install ./cppyy-backend/clingwrapper --upgrade
 
 Finally, cppyy-cling requires sources being pulled in from upstream, and
-thus takes a few extra steps:
+thus takes a few extra steps::
 
  $ git clone https://bitbucket.org/wlav/cppyy-backend.git
  $ cd cppyy-backend/cling
