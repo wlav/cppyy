@@ -64,4 +64,9 @@
   <class pattern="Using*" />
   <class name="TypedefToPrivateClass" />
 
+  <namespace name="Cpp2PyPrinting" />
+  <class pattern="Cpp2PyPrinting::*" />
+  <function name="Cpp2PyPrinting::operator<<" />
+  <function name="operator<<" />
+
 </lcgdict>

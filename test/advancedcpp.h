@@ -1,4 +1,5 @@
 #include <new>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -459,3 +460,24 @@ public:
     typedef PC PP;
     PP f() { return PC(42); }
 };
+
+
+//===========================================================================
+namespace Cpp2PyPrinting {         // operator to __str__ mapping
+
+class Printable1 {
+public:
+    std::ostream& operator<<(std::ostream& os);
+};
+
+class Printable2 { /* empty */ };
+class Printable3 { /* empty */ };
+
+std::ostream& operator<<(std::ostream& os, const Printable2&);
+
+} // namespace Cpp2PyPrinting
+
+class Printable4 { /* empty */ };
+
+std::ostream& operator<<(std::ostream& os, const Cpp2PyPrinting::Printable3&);
+std::ostream& operator<<(std::ostream& os, const Printable4&);

@@ -736,3 +736,15 @@ class TestADVANCEDCPP:
         import cppyy
 
         assert cppyy.gbl.TypedefToPrivateClass().f().m_val == 42
+
+    def test25_ostream_printing(self):
+        """Mapping of __str__ through operator<<(ostream&)"""
+
+        import cppyy
+
+        ns = cppyy.gbl.Cpp2PyPrinting
+
+        assert str(ns.Printable1()) == "Printable1::operator<<"
+        assert str(ns.Printable2()) == "Cpp2PyPrinting::operator<<"
+        assert str(ns.Printable3()) == "::operator<<(3)"
+        assert str(cppyy.gbl.Printable4()) == "::operator<<(4)"

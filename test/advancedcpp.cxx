@@ -140,3 +140,25 @@ void Thrower::throw_anything() {
 void Thrower::throw_exception() {
     throw std::runtime_error("C++ function failed");
 }
+
+
+// operator to __str__ mapping
+std::ostream& Cpp2PyPrinting::Printable1::operator<<(std::ostream& os) {
+     os << "Printable1::operator<<";
+     return os;
+}
+
+std::ostream& Cpp2PyPrinting::operator<<(std::ostream& os, const Printable2&) {
+     os << "Cpp2PyPrinting::operator<<";
+     return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Cpp2PyPrinting::Printable3&) {
+     os << "::operator<<(3)";
+     return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Printable4&) {
+     os << "::operator<<(4)";
+     return os;
+}
