@@ -39,14 +39,14 @@ Installation of the cppyy package works the same way (just replace "CPyCppyy"
 with "cppyy").
 Please see the `pip documentation`_ for more options, such as developer mode.
 
-For the clingwrapper part of the backend, which lives in a subdirectory in
-the cppyy-backend repository, do::
+For the clingwrapper part of the backend (package "cppyy-backend"), which
+lives in a subdirectory in the cppyy-backend repository, do::
 
  $ git clone https://bitbucket.org/wlav/cppyy-backend.git
  $ pip install ./cppyy-backend/clingwrapper --upgrade
 
-Finally, cppyy-cling requires sources being pulled in from upstream, and
-thus takes a few extra steps::
+Finally, the cppyy-cling package (subdirectory "cling") requires sources being
+pulled in from upstream, and thus takes a few extra steps::
 
  $ git clone https://bitbucket.org/wlav/cppyy-backend.git
  $ cd cppyy-backend/cling
