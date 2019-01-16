@@ -14,3 +14,6 @@ repositories.
 * CPython (v2/v3) intermediate: https://bitbucket.org/wlav/cpycppyy
 * PyPy intermediate (module _cppyy): https://bitbucket.org/pypy/pypy/
 * Backend, cppyy: https://bitbucket.org/wlav/cppyy-backend
+
+The backend repo contains both the cppyy-cling (under "cling") and
+cppyy-backend (under "clingwrapper") packages.
