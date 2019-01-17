@@ -745,6 +745,15 @@ class TestADVANCEDCPP:
         ns = cppyy.gbl.Cpp2PyPrinting
 
         assert str(ns.Printable1()) == "Printable1::operator<<"
-        assert str(ns.Printable2()) == "Cpp2PyPrinting::operator<<"
-        assert str(ns.Printable3()) == "::operator<<(3)"
-        assert str(cppyy.gbl.Printable4()) == "::operator<<(4)"
+        for tst in [(ns.Printable2,         "Cpp2PyPrinting::operator<<"),
+                    (ns.Printable3,         "::operator<<(3)"),
+                    (cppyy.gbl.Printable4,  "::operator<<(4)")]:
+            assert str(tst[0]()) == tst[1]
+            assert '__lshiftc__' in tst[0].__dict__
+            assert tst[0].__lshiftc__
+            del tst[0].__lshiftc__
+            assert str(tst[0]()) == tst[1]
+            assert tst[0].__lshiftc__
+            s = cppyy.gbl.std.ostringstream()
+            tst[0].__lshiftc__(s, tst[0]())
+            assert s.str() == tst[1]
