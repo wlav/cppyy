@@ -384,6 +384,12 @@ double sum_of_double(double d1, double d2) {
     return d1+d2;
 }
 
-double call_double_double(double (*d)(double, double), double d1, double d2) {
-    return d(d1, d2);
+double call_double_double(double (*f)(double, double), double d1, double d2) {
+    return f(d1, d2);
+}
+
+
+//= callable passing ========================================================
+int call_int_int(int (*f)(int, int), int i1, int i2) {
+    return f(i1, i2);
 }

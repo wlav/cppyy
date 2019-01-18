@@ -819,13 +819,31 @@ class TestDATATYPES:
 
         import cppyy
 
-        f1 = cppyy.gbl.sum_of_int
-        f2 = cppyy.gbl.sum_of_double
-        f3 = cppyy.gbl.call_double_double
+        f1  = cppyy.gbl.sum_of_int
+        f2  = cppyy.gbl.sum_of_double
+        fdd = cppyy.gbl.call_double_double
 
         assert 5 == f1(2, 3)
         assert 5. == f2(5., 0.)
 
-        raises(TypeError, f3, f1, 2, 3)
+        raises(TypeError, fdd, f1, 2, 3)
 
-        assert 5. == f3(f2, 5., 0.)
+        assert 5. == fdd(f2, 5., 0.)
+
+    def test22_callable_passing(self):
+        """Passing callables through function pointers"""
+
+        import cppyy
+
+        fdd = cppyy.gbl.call_double_double
+        fii = cppyy.gbl.call_int_int
+
+        def pyf(i1, i2):
+            return i1+i2
+
+        assert type(fdd(pyf, 2, 3)) == float
+        assert fdd(pyf, 2, 3) == 5.
+
+        assert type(fii(pyf, 2, 3)) == int
+        assert fii(pyf, 2, 3) == 5
+
