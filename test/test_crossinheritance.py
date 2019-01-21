@@ -85,7 +85,7 @@ class TestCROSSINHERITANCE:
         assert d.sum_value(-7)             == 6
         assert Base1.call_sum_value(d, -7) == 6
 
-    def tes04_override_overloads(self):
+    def test04_override_overloads(self):
         """Test ability to override overloaded functions"""
 
         import cppyy
@@ -104,3 +104,25 @@ class TestCROSSINHERITANCE:
         assert Base1.call_sum_all(d, -7) == 6
         assert d.sum_all(-7, -5)             == 1
         assert Base1.call_sum_all(d, -7, -5) == 1
+
+    def test05_error_handling(self):
+        """Python errors should propagate through wrapper"""
+
+        import cppyy
+        Base1 = cppyy.gbl.CrossInheritance.Base1
+
+        assert Base1(27).sum_value(-7) == 20
+
+        errmsg = "I do not like the given value"
+        class Derived(Base1):
+            def sum_value(self, val):
+                raise ValueError(errmsg)
+
+        d = Derived()
+        raises(ValueError, Base1.call_sum_value, d, -7)
+
+        try:
+            Base1.call_sum_value(d, -7)
+            assert not "should not get here"
+        except ValueError as e:
+            assert errmsg in str(e)
