@@ -838,8 +838,8 @@ class TestDATATYPES:
         fdd = cppyy.gbl.call_double_double
         fii = cppyy.gbl.call_int_int
 
-        def pyf(i1, i2):
-            return i1+i2
+        def pyf(arg0, arg1):
+            return arg0+arg1
 
         assert type(fdd(pyf, 2, 3)) == float
         assert fdd(pyf, 2, 3) == 5.
@@ -847,3 +847,28 @@ class TestDATATYPES:
         assert type(fii(pyf, 2, 3)) == int
         assert fii(pyf, 2, 3) == 5
 
+        def pyf(arg0, arg1):
+            return arg0*arg1
+
+        assert fdd(pyf, 2, 3) == 6.
+        assert fii(pyf, 2, 3) == 6
+
+        # callable that does not accept weak-ref
+        import math
+        assert fdd(math.atan2, 0, 3.) == 0.
+
+        # error testing
+        raises(TypeError, fii, None, 2, 3)
+
+        def pyf(arg0, arg1):
+            return arg0/arg1
+
+        raises(ZeroDivisionError, fii, pyf, 1, 0)
+
+        def pyd(arg0, arg1):
+            return arg0*arg1
+        c = cppyy.gbl.StoreCallable(pyd)
+        assert c(3, 3) == 9.
+
+        c.set_callable(lambda x, y: x*y)
+        raises(TypeError, c, 3, 3)     # lambda gone out of scope

@@ -22,5 +22,6 @@
   <function name="call_double_double" />
 
   <function name="Call_int_int" />
+  <class name="StoreCallable" />
 
 </lcgdict>

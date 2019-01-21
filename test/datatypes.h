@@ -434,3 +434,11 @@ double call_double_double(double (*d)(double, double), double d1, double d2);
 
 //= callable passing ========================================================
 int call_int_int(int (*)(int, int), int, int);
+
+class StoreCallable {
+    double (*fF)(double, double);
+public:
+    StoreCallable(double (*)(double, double));
+    void set_callable(double (*)(double, double));
+    double operator()(double, double);
+};

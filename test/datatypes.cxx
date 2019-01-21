@@ -393,3 +393,15 @@ double call_double_double(double (*f)(double, double), double d1, double d2) {
 int call_int_int(int (*f)(int, int), int i1, int i2) {
     return f(i1, i2);
 }
+
+StoreCallable::StoreCallable(double (*f)(double, double)) : fF(f) {
+    /* empty */
+}
+
+void StoreCallable::set_callable(double (*f)(double, double)) {
+    fF = f;
+}
+
+double StoreCallable::operator()(double d1, double d2) {
+    return fF(d1, d2);
+}
