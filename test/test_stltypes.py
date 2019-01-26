@@ -498,14 +498,24 @@ class TestSTLMAP:
         """Test the iterator protocol mapping for an STL like class"""
 
         import cppyy
-        stl_like_class = cppyy.gbl.stl_like_class
 
-        a = stl_like_class(int)()
+        a = cppyy.gbl.stl_like_class(int)()
         assert len(a) == 4
         for i, j in enumerate(a):
             assert i == j
 
         assert i == len(a)-1
+
+        for cls in [cppyy.gbl.stl_like_class2, cppyy.gbl.stl_like_class3]:
+            b = cls[float, 2]()
+            b[0] = 27; b[1] = 42
+            limit = len(b)+1
+            for x in b:
+                limit -= 1
+                assert limit and "iterated too far!"
+                assert x in [27, 42]
+            assert x == 42
+            del x, b
 
 
 class TestSTLITERATOR:

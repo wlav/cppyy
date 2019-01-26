@@ -219,7 +219,10 @@ class TestClassPYTHONIZATION:
 
         assert d[0]  == 42
         assert d[-1] == 42
-        raises(IndexError, d.__getitem__, 1)
+        # skip the IndexErorr test: pythonization for __getitem__[index] < size()
+        # can not be applied strict enough (instead of an index, this could be an
+        # associative  container, with 'index' a key, not a counter
+        #raises(IndexError, d.__getitem__, 1)
 
 
 ## actual test run

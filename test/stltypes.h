@@ -63,6 +63,27 @@ namespace {
 }
 
 
+//- similar, but now the iterators don't work b/c they don't compile
+template<class value_type, size_t sz>
+class stl_like_class2 {
+protected:
+    value_type fData[sz];
+
+public:
+    static const size_t size() { return sz; }
+    value_type& operator[](ptrdiff_t i) { return fData[i]; }
+};
+
+template<class value_type, size_t sz>
+class stl_like_class3 : public stl_like_class2<value_type, sz> {
+    using stl_like_class2<value_type, sz>::fData;
+public:
+    size_t size() { return sz; }
+    value_type& begin() { return fData; }
+    value_type& end() { return fData + sz; }
+};
+
+
 //- helpers for testing array
 namespace ArrayTest {
 
