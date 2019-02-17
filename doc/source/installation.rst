@@ -25,7 +25,7 @@ For example::
  $ conda activate WORK
  (WORK) $ conda install python
  (WORK) $ conda install -c conda-forge cxx-compiler
- (WORK) [x86_64-conda_cos6-linux-gnu] $ pip install cppyy
+ (WORK) [x86_64-conda_cos6-linux-gnu] $ python -m pip install cppyy
 
 Wheels for the backend are available for GNU/Linux, MacOS-X, and MS Windows
 (support for MS Windows is in beta).
