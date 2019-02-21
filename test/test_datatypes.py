@@ -190,6 +190,10 @@ class TestDATATYPES:
             getattr(c, 'set_'+names[i]+'_cr')(3*i)
             assert eval('c.m_%s' % names[i]) == 3*i
 
+        for i in range(len(names)):
+            getattr(c, 'set_'+names[i]+'_rv')(4*i)
+            assert eval('c.m_%s' % names[i]) == 4*i
+
         # float types through functions
         c.set_float(0.123);   assert round(c.get_float()   - 0.123, 5) == 0
         c.set_double(0.456);  assert round(c.get_double()  - 0.456, 8) == 0

@@ -262,6 +262,29 @@ void CppyyTestData::set_complex_cr(const complex_t& cd)          { m_complex  = 
 void CppyyTestData::set_icomplex_cr(const icomplex_t& ci)        { m_icomplex = ci; }
 void CppyyTestData::set_enum_cr(const EWhat& w)                  { m_enum     = w; }
 
+//- setters r-value ---------------------------------------------------------
+void CppyyTestData::set_bool_rv(bool&& b)                   { m_bool     = b; }
+void CppyyTestData::set_char_rv(char&& c)                   { m_char     = c; }
+void CppyyTestData::set_schar_rv(signed char&& sc)          { m_schar    = sc; }
+void CppyyTestData::set_uchar_rv(unsigned char&& uc)        { m_uchar    = uc; }
+void CppyyTestData::set_wchar_rv(wchar_t&& wc)              { m_wchar    = wc; }
+void CppyyTestData::set_short_rv(short&& s)                 { m_short    = s; }
+void CppyyTestData::set_ushort_rv(unsigned short&& us)      { m_ushort   = us; }
+void CppyyTestData::set_int_rv(int&& i)                     { m_int      = i; }
+void CppyyTestData::set_uint_rv(unsigned int&& ui)          { m_uint     = ui; }
+void CppyyTestData::set_long_rv(long&& l)                   { m_long     = l; }
+void CppyyTestData::set_ulong_rv(unsigned long&& ul)        { m_ulong    = ul; }
+void CppyyTestData::set_llong_rv(long long&& ll)            { m_llong    = ll; }
+void CppyyTestData::set_ullong_rv(unsigned long long&& ull) { m_ullong   = ull; }
+void CppyyTestData::set_long64_rv(Long64_t&& l64)           { m_long64   = l64; }
+void CppyyTestData::set_ulong64_rv(ULong64_t&& ul64)        { m_ulong64  = ul64; }
+void CppyyTestData::set_float_rv(float&& f)                 { m_float    = f; }
+void CppyyTestData::set_double_rv(double&& d)               { m_double   = d; }
+void CppyyTestData::set_ldouble_rv(long double&& ld)        { m_ldouble  = ld; }
+void CppyyTestData::set_complex_rv(complex_t&& cd)          { m_complex  = cd; }
+void CppyyTestData::set_icomplex_rv(icomplex_t&& ci)        { m_icomplex = ci; }
+void CppyyTestData::set_enum_rv(EWhat&& w)                  { m_enum     = w; }
+
 //- passers -----------------------------------------------------------------
 unsigned char*  CppyyTestData::pass_array(unsigned char* a)  { return a; }
 short*          CppyyTestData::pass_array(short* a)          { return a; }

@@ -212,3 +212,15 @@ struct Derived : public Base {
 //===========================================================================
 // 'using' of templates
 template<typename T> using DA_vector = std::vector<T>;
+
+
+//===========================================================================
+// template with r-value
+namespace T_WithRValue {
+
+template<typename T>
+bool is_valid(T&& new_value) {
+    return new_value != T{};
+}
+
+}
