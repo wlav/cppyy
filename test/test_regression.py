@@ -135,3 +135,17 @@ class TestREGRESSION:
         a = cppyy.gbl.AllDefault[int](24)
         a.m_t = 21;
         assert a.do_stuff() == 24
+
+    def test06_class_refcounting(self):
+        """The memory regulator would leave an additional refcount on classes"""
+
+        import cppyy, gc, sys
+
+        x = cppyy.gbl.vector['float']
+        old_refcnt = sys.getrefcount(x)
+
+        y = x()
+        del y
+        gc.collect()
+
+        assert sys.getrefcount(x) == old_refcnt
