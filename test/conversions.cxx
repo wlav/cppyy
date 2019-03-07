@@ -37,3 +37,15 @@ double CNS::howmany(const std::vector<Counter>& v) {
 double CNS::howmany(const std::vector<Counter>& v1, const std::vector<Counter>& v2) {
     return v1.size() + v2.size();
 }
+
+int CNS::sumints(const std::vector<int>& v) {
+    return std::accumulate(v.begin(), v.end(), 0);
+}
+
+int CNS::sumints(const std::vector<int>& v1, const std::vector<int>& v2) {
+    return std::accumulate(v1.begin(), v1.end(), std::accumulate(v2.begin(), v2.end(), 0));
+}
+
+double notallowed(std::vector<double>& v) {
+    return std::accumulate(v.begin(), v.end(), 0.);
+}

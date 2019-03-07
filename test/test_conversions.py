@@ -22,7 +22,7 @@ class TestCONVERSIONS:
         CNS = cppyy.gbl.CNS
 
         N = 10
-        total = sum(range(N))
+        total = float(sum(range(N)))
 
         v = cppyy.gbl.std.vector['double'](range(N))
         assert CNS.sumit(v) == total
@@ -30,7 +30,7 @@ class TestCONVERSIONS:
         assert CNS.sumit(range(N)) == total
 
         M = 5
-        total = sum(range(N)) + sum(range(M, N))
+        total = float(sum(range(N)) + sum(range(M, N)))
         v1 = cppyy.gbl.std.vector['double'](range(N))
         v2 = cppyy.gbl.std.vector['double'](range(M, N))
         assert CNS.sumit(v1, v2) == total
@@ -56,5 +56,32 @@ class TestCONVERSIONS:
         assert CC.s_count == 0
 
         assert CNS.howmany((CC(), CC(), CC()), [CC(), CC()]) == 5
+        gc.collect()
+        assert CC.s_count == 0
+
+    def test03_error_handling(self):
+        """Verify error handling"""
+
+        import cppyy, gc
+        CNS, CC = cppyy.gbl.CNS, cppyy.gbl.CNS.Counter
+
+        N = 13
+        total = sum(range(N))
+        assert CNS.sumints(range(N)) == total
+        assert CNS.sumit([float(x) for x in range(N)]) == float(total)
+        raises(TypeError, CNS.sumints, [float(x) for x in range(N)])
+        raises(TypeError, CNS.sumints, range(N)+[0.])
+
+        assert CC.s_count == 0
+
+        raises(TypeError, CNS.sumints, range(N)+[CC()])
+        gc.collect()
+        assert CC.s_count == 0
+
+        raises(TypeError, CNS.sumints, range(N), [CC()])
+        gc.collect()
+
+        assert CC.s_count == 0
+        raises(TypeError, CNS.sumints, [CC()], range(N))
         gc.collect()
         assert CC.s_count == 0

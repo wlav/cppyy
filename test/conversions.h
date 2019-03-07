@@ -20,4 +20,9 @@ public:
 double howmany(const std::vector<Counter>&);
 double howmany(const std::vector<Counter>&, const std::vector<Counter>&);
 
+int sumints(const std::vector<int>&);
+int sumints(const std::vector<int>&, const std::vector<int>&);
+
+double notallowed(std::vector<double>&);
+
 } // namespace CNS
