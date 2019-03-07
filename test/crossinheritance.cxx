@@ -24,6 +24,10 @@ int CrossInheritance::IBase2::call_get_value(IBase2* b) {
     return b->get_value();
 }
 
+CrossInheritance::IBase3::IBase3(int) {
+    /* empty */
+}
+
 int CrossInheritance::CBase2::get_value() {
     return 42;
 }

@@ -98,6 +98,17 @@ class TestCROSSINHERITANCE:
         assert CX.IBase2.call_get_value(c2) == 42
         assert CX.IBase2.call_get_value(c3) == 13
 
+        # now with abstract constructor that takes an argument
+        class C4PyBase2(CX.IBase3):
+            def __init__(self):
+                super(C4PyBase2, self).__init__(0)
+
+            def get_value(self):
+                return 77
+
+        c4 = C4PyBase2()
+        assert CX.IBase2.call_get_value(c4) == 77
+
     def test04_arguments(self):
         """Test ability to override functions that take arguments"""
 

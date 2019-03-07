@@ -33,6 +33,11 @@ public:
     static int call_get_value(IBase2* b);
 };
 
+class IBase3 : IBase2 {
+public:
+    IBase3(int);
+};
+
 class CBase2 : public IBase2 {
 public:
     int get_value();
