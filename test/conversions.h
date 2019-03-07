@@ -17,8 +17,8 @@ public:
     static int s_count;
 };
 
-double howmany(const std::vector<Counter>&);
-double howmany(const std::vector<Counter>&, const std::vector<Counter>&);
+double myhowmany(const std::vector<Counter>&);
+double myhowmany(const std::vector<Counter>&, const std::vector<Counter>&);
 
 int sumints(const std::vector<int>&);
 int sumints(const std::vector<int>&, const std::vector<int>&);

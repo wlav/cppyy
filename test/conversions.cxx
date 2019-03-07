@@ -23,18 +23,18 @@ CNS::Counter::Counter(const Counter&) {
 }
 
 CNS::Counter& CNS::Counter::operator=(const Counter&) {
-    /* empty */
+    return *this;
 }
 
 CNS::Counter::~Counter() {
     --s_count;
 }
 
-double CNS::howmany(const std::vector<Counter>& v) {
+double CNS::myhowmany(const std::vector<Counter>& v) {
     return v.size();
 }
 
-double CNS::howmany(const std::vector<Counter>& v1, const std::vector<Counter>& v2) {
+double CNS::myhowmany(const std::vector<Counter>& v1, const std::vector<Counter>& v2) {
     return v1.size() + v2.size();
 }
 

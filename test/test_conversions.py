@@ -51,11 +51,11 @@ class TestCONVERSIONS:
         del c; gc.collect()
         assert CC.s_count == 0
 
-        assert CNS.howmany((CC(), CC(), CC())) == 3
+        assert CNS.myhowmany((CC(), CC(), CC())) == 3
         gc.collect()
         assert CC.s_count == 0
 
-        assert CNS.howmany((CC(), CC(), CC()), [CC(), CC()]) == 5
+        assert CNS.myhowmany((CC(), CC(), CC()), [CC(), CC()]) == 5
         gc.collect()
         assert CC.s_count == 0
 
