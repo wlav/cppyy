@@ -70,11 +70,11 @@ class TestCONVERSIONS:
         assert CNS.sumints(range(N)) == total
         assert CNS.sumit([float(x) for x in range(N)]) == float(total)
         raises(TypeError, CNS.sumints, [float(x) for x in range(N)])
-        raises(TypeError, CNS.sumints, range(N)+[0.])
+        raises(TypeError, CNS.sumints, list(range(N))+[0.])
 
         assert CC.s_count == 0
 
-        raises(TypeError, CNS.sumints, range(N)+[CC()])
+        raises(TypeError, CNS.sumints, list(range(N))+[CC()])
         gc.collect()
         assert CC.s_count == 0
 
