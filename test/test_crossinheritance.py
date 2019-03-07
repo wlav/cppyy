@@ -68,7 +68,37 @@ class TestCROSSINHERITANCE:
         assert d.get_value()           == 29
         assert Base1.call_get_value(d) == 29
 
-    def test03_arguments(self):
+    def test03_override_function_abstract_base(self):
+        """Test ability to override a simple function with an abstract base"""
+
+        import cppyy
+        CX = cppyy.gbl.CrossInheritance
+
+        class C1PyBase2(CX.IBase2):
+            def __init__(self):
+                super(C1PyBase2, self).__init__()
+
+            def get_value(self):
+                return 99
+
+        class C2PyBase2(CX.CBase2):
+            def __init__(self):
+                super(C2PyBase2, self).__init__()
+
+        class C3PyBase2(CX.CBase2):
+            def __init__(self):
+                super(C3PyBase2, self).__init__()
+
+            def get_value(self):
+                return 13
+
+        c1, c2, c3 = C1PyBase2(), C2PyBase2(), C3PyBase2()
+
+        assert CX.IBase2.call_get_value(c1) == 99
+        assert CX.IBase2.call_get_value(c2) == 42
+        assert CX.IBase2.call_get_value(c3) == 13
+
+    def test04_arguments(self):
         """Test ability to override functions that take arguments"""
 
         import cppyy
@@ -85,7 +115,7 @@ class TestCROSSINHERITANCE:
         assert d.sum_value(-7)             == 6
         assert Base1.call_sum_value(d, -7) == 6
 
-    def test04_override_overloads(self):
+    def test05_override_overloads(self):
         """Test ability to override overloaded functions"""
 
         import cppyy
@@ -105,7 +135,7 @@ class TestCROSSINHERITANCE:
         assert d.sum_all(-7, -5)             == 1
         assert Base1.call_sum_all(d, -7, -5) == 1
 
-    def test05_error_handling(self):
+    def test06_error_handling(self):
         """Python errors should propagate through wrapper"""
 
         import cppyy

@@ -25,4 +25,17 @@ public:
     int m_int;
 };
 
+class IBase2 {
+public:
+    IBase2() {}
+    virtual ~IBase2() {}
+    virtual int get_value() = 0;
+    static int call_get_value(IBase2* b);
+};
+
+class CBase2 : public IBase2 {
+public:
+    int get_value();
+};
+
 } // namespace CrossInheritance
