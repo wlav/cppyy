@@ -841,6 +841,7 @@ class TestDATATYPES:
 
         fdd = cppyy.gbl.call_double_double
         fii = cppyy.gbl.call_int_int
+        fv  = cppyy.gbl.call_void
 
         def pyf(arg0, arg1):
             return arg0+arg1
@@ -856,6 +857,17 @@ class TestDATATYPES:
 
         assert fdd(pyf, 2, 3) == 6.
         assert fii(pyf, 2, 3) == 6
+
+        # call of void function
+        global retval
+        retval = None
+        def voidf(i):
+            global retval
+            retval = i
+
+        assert retval is None
+        assert fv(voidf, 5) == None
+        assert retval == 5
 
         # callable that does not accept weak-ref
         import math

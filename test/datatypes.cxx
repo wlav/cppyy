@@ -417,6 +417,10 @@ int call_int_int(int (*f)(int, int), int i1, int i2) {
     return f(i1, i2);
 }
 
+void call_void(void (*f)(int), int i) {
+    f(i);
+}
+
 StoreCallable::StoreCallable(double (*f)(double, double)) : fF(f) {
     /* empty */
 }

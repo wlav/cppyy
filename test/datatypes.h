@@ -457,6 +457,7 @@ double call_double_double(double (*d)(double, double), double d1, double d2);
 
 //= callable passing ========================================================
 int call_int_int(int (*)(int, int), int, int);
+void call_void(void (*f)(int), int i);
 
 class StoreCallable {
     double (*fF)(double, double);
