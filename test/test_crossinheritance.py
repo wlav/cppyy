@@ -100,13 +100,14 @@ class TestCROSSINHERITANCE:
 
         # now with abstract constructor that takes an argument
         class C4PyBase2(CX.IBase3):
-            def __init__(self):
-                super(C4PyBase2, self).__init__(0)
+            def __init__(self, intval):
+                super(C4PyBase2, self).__init__(intval)
 
             def get_value(self):
                 return 77
 
-        c4 = C4PyBase2()
+        c4 = C4PyBase2(88)
+        assert c4.m_int == 88
         assert CX.IBase2.call_get_value(c4) == 77
 
     def test04_arguments(self):
@@ -146,7 +147,30 @@ class TestCROSSINHERITANCE:
         assert d.sum_all(-7, -5)             == 1
         assert Base1.call_sum_all(d, -7, -5) == 1
 
-    def test06_error_handling(self):
+    def test07_const_methods(self):
+        """Declared const methods should keep that qualifier"""
+
+        import cppyy
+        CX = cppyy.gbl.CrossInheritance
+
+        class C1PyBase4(CX.IBase4):
+            def __init__(self):
+                super(C1PyBase4, self).__init__()
+
+            def get_value(self):
+                return 17
+
+        class C2PyBase4(CX.CBase4):
+            def __init__(self):
+                super(C2PyBase4, self).__init__()
+
+        c1, c2 = C1PyBase4(), C2PyBase4()
+
+        assert CX.IBase4.call_get_value(c1) == 17
+        assert CX.IBase4.call_get_value(c2) == 27
+
+
+    def test07_error_handling(self):
         """Python errors should propagate through wrapper"""
 
         import cppyy

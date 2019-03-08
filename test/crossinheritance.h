@@ -36,11 +36,25 @@ public:
 class IBase3 : IBase2 {
 public:
     IBase3(int);
+    int m_int;
 };
 
 class CBase2 : public IBase2 {
 public:
     int get_value();
+};
+
+class IBase4 {
+public:
+    IBase4() {}
+    virtual ~IBase4() {}
+    virtual int get_value() const = 0;      // <- const, as opposed to IBase2
+    static int call_get_value(IBase4* b);
+};
+
+class CBase4 : public IBase4 {
+public:
+    int get_value() const;
 };
 
 } // namespace CrossInheritance
