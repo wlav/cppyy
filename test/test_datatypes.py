@@ -842,6 +842,9 @@ class TestDATATYPES:
         fdd = cppyy.gbl.call_double_double
         fii = cppyy.gbl.call_int_int
         fv  = cppyy.gbl.call_void
+        fri = cppyy.gbl.call_refi
+        frl = cppyy.gbl.call_refl
+        frd = cppyy.gbl.call_refd
 
         def pyf(arg0, arg1):
             return arg0+arg1
@@ -868,6 +871,13 @@ class TestDATATYPES:
         assert retval is None
         assert fv(voidf, 5) == None
         assert retval == 5
+
+        # call of function with reference argument
+        def reff(ref):
+            ref.value = 5
+        assert fri(reff) == 5
+        assert frl(reff) == pylong(5)
+        assert frd(reff) == 5.
 
         # callable that does not accept weak-ref
         import math

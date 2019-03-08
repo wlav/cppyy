@@ -421,6 +421,19 @@ void call_void(void (*f)(int), int i) {
     f(i);
 }
 
+int call_refi(void (*f)(int&)) {
+    int i = -1; f(i); return i;
+}
+
+int call_refl(void (*f)(long&)) {
+    long l = -1L; f(l); return l;
+}
+
+int call_refd(void (*f)(double&)) {
+    double d = -1.; f(d); return d;
+}
+
+
 StoreCallable::StoreCallable(double (*f)(double, double)) : fF(f) {
     /* empty */
 }

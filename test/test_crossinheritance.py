@@ -81,22 +81,36 @@ class TestCROSSINHERITANCE:
             def get_value(self):
                 return 99
 
-        class C2PyBase2(CX.CBase2):
+        class C2PyBase2(CX.IBase2):
             def __init__(self):
-                super(C2PyBase2, self).__init__()
+                CX.IBase2.__init__(self)
+
+            def get_value(self):
+                return 91
 
         class C3PyBase2(CX.CBase2):
             def __init__(self):
                 super(C3PyBase2, self).__init__()
 
+        class C4PyBase2(CX.CBase2):
+            def __init__(self):
+                super(C4PyBase2, self).__init__()
+
             def get_value(self):
                 return 13
 
-        c1, c2, c3 = C1PyBase2(), C2PyBase2(), C3PyBase2()
+        try:
+            c2 = C2PyBase2()           # direct call to init can not work
+            assert not "should have raised TypeError"
+        except TypeError as e:
+            assert "super" in str(e)   # clarifying message
+            assert "abstract" in str(e)
+
+        c1, c3, c4 = C1PyBase2(), C3PyBase2(), C4PyBase2()
 
         assert CX.IBase2.call_get_value(c1) == 99
-        assert CX.IBase2.call_get_value(c2) == 42
-        assert CX.IBase2.call_get_value(c3) == 13
+        assert CX.IBase2.call_get_value(c3) == 42
+        assert CX.IBase2.call_get_value(c4) == 13
 
         # now with abstract constructor that takes an argument
         class C4PyBase2(CX.IBase3):
