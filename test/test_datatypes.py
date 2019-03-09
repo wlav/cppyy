@@ -846,6 +846,9 @@ class TestDATATYPES:
         frl = cppyy.gbl.call_refl
         frd = cppyy.gbl.call_refd
 
+        assert 'call_double_double' in str(fdd)
+        assert 'call_refd' in str(frd)
+
         def pyf(arg0, arg1):
             return arg0+arg1
 
