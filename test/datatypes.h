@@ -451,6 +451,8 @@ CppyyTestPod* get_null_pod();
 
 //= function pointer passing ================================================
 int sum_of_int(int i1, int i2);
+extern int (*sum_of_int_ptr)(int, int);
+
 double sum_of_double(double d1, double d2);
 double call_double_double(double (*d)(double, double), double d1, double d2);
 

@@ -18,6 +18,7 @@
   <variable name="g_pod" />
 
   <function name="sum_of_int" />
+  <variable name="sum_of_int_ptr" />
   <function name="sum_of_double" />
   <function name="call_double_double" />
 

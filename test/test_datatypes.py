@@ -834,6 +834,9 @@ class TestDATATYPES:
 
         assert 5. == fdd(f2, 5., 0.)
 
+        f1p = cppyy.gbl.sum_of_int_ptr
+        assert 5 == f1p(2, 3)
+
     def test22_callable_passing(self):
         """Passing callables through function pointers"""
 
