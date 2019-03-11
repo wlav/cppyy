@@ -45,7 +45,7 @@ if '64' in platform.architecture()[0]:
     PLATFORMFLAG = '-D_AMD64_'
     MACHINETYPE  = 'X64'
 else:
-    PLATFORMFALG = '-D_X86_'
+    PLATFORMFLAG = '-D_X86_'
     MACHINETYPE  = 'IX86'
 
 cppflags = get_config('cppflags')
