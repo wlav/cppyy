@@ -10,10 +10,10 @@ except ImportError:
 
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("stltypesDict.so"))
+test_dct = str(currpath.join("stltypesDict"))
 
 def setup_module(mod):
-    setup_make("stltypesDict.so")
+    setup_make("stltypes")
 
 
 class TestSTLVECTOR:

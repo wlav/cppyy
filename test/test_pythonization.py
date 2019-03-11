@@ -3,10 +3,10 @@ from pytest import raises
 from .support import setup_make, pylong
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("pythonizablesDict.so"))
+test_dct = str(currpath.join("pythonizablesDict"))
 
 def setup_module(mod):
-    setup_make("pythonizablesDict.so")
+    setup_make("pythonizables")
 
 
 class TestClassPYTHONIZATION:

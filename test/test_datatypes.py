@@ -3,10 +3,10 @@ from pytest import raises
 from .support import setup_make, pylong, pyunicode
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("datatypesDict.so"))
+test_dct = str(currpath.join("datatypesDict"))
 
 def setup_module(mod):
-    setup_make("datatypesDict.so")
+    setup_make("datatypes")
 
 
 class TestDATATYPES:

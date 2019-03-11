@@ -3,10 +3,10 @@ from pytest import raises
 from .support import setup_make, pylong, maxvalue
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("operatorsDict.so"))
+test_dct = str(currpath.join("operatorsDict"))
 
 def setup_module(mod):
-    setup_make("operatorsDict.so")
+    setup_make("operators")
 
 
 class TestOPERATORS:

@@ -10,10 +10,10 @@ except ImportError:
 
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("cpp11featuresDict.so"))
+test_dct = str(currpath.join("cpp11featuresDict"))
 
 def setup_module(mod):
-    setup_make("cpp11featuresDict.so")
+    setup_make("cpp11features")
 
 class TestCPP11FEATURES:
     def setup_class(cls):

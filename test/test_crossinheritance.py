@@ -3,10 +3,10 @@ from pytest import raises
 from .support import setup_make, pylong
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("crossinheritanceDict.so"))
+test_dct = str(currpath.join("crossinheritanceDict"))
 
 def setup_module(mod):
-    setup_make("crossinheritanceDict.so")
+    setup_make("crossinheritance")
 
 
 class TestCROSSINHERITANCE:

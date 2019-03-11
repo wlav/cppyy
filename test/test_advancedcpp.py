@@ -3,11 +3,11 @@ from pytest import raises
 from .support import setup_make, pylong
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("advancedcppDict.so"))
+test_dct = str(currpath.join("advancedcppDict"))
 
 def setup_module(mod):
-    setup_make("advancedcppDict.so")
-    setup_make("advancedcpp2Dict.so")
+    setup_make("advancedcpp")
+    setup_make("advancedcpp2")
 
 
 class TestADVANCEDCPP:
@@ -159,7 +159,7 @@ class TestADVANCEDCPP:
         import cppyy
         gbl = cppyy.gbl
 
-        lib2 = cppyy.load_reflection_info("advancedcpp2Dict.so")
+        lib2 = cppyy.load_reflection_info("advancedcpp2Dict")
 
         assert gbl.a_ns      is gbl.a_ns
         assert gbl.a_ns.d_ns is gbl.a_ns.d_ns

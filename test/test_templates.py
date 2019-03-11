@@ -3,10 +3,10 @@ from pytest import raises
 from .support import setup_make, pylong
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("templatesDict.so"))
+test_dct = str(currpath.join("templatesDict"))
 
 def setup_module(mod):
-    setup_make("templatesDict.so")
+    setup_make("templates")
 
 
 class TestTEMPLATES:
