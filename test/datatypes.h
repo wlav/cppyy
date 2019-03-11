@@ -10,6 +10,7 @@ typedef long long          Long64_t; //Portable signed long integer 8 bytes
 typedef unsigned long long ULong64_t;//Portable unsigned long integer 8 bytes
 #endif
 #endif
+#include <cstdint>
 #include <complex>
 #include <vector>
 #include <wchar.h>
@@ -385,9 +386,9 @@ private:
 
 
 //= global functions ========================================================
-long get_pod_address(CppyyTestData& c);
-long get_int_address(CppyyTestData& c);
-long get_double_address(CppyyTestData& c);
+intptr_t get_pod_address(CppyyTestData& c);
+intptr_t get_int_address(CppyyTestData& c);
+intptr_t get_double_address(CppyyTestData& c);
 
 
 //= global variables/pointers ===============================================

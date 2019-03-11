@@ -329,19 +329,19 @@ const wchar_t* CppyyTestData::get_invalid_wstring() { return (const wchar_t*)0; 
 
 
 //= global functions ========================================================
-long get_pod_address(CppyyTestData& c)
+intptr_t get_pod_address(CppyyTestData& c)
 {
-    return (long)&c.m_pod;
+    return (intptr_t)&c.m_pod;
 }
 
-long get_int_address(CppyyTestData& c)
+intptr_t get_int_address(CppyyTestData& c)
 {
-    return (long)&c.m_pod.m_int;
+    return (intptr_t)&c.m_pod.m_int;
 }
 
-long get_double_address(CppyyTestData& c)
+intptr_t get_double_address(CppyyTestData& c)
 {
-    return (long)&c.m_pod.m_double;
+    return (intptr_t)&c.m_pod.m_double;
 }
 
 
