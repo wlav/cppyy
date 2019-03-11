@@ -40,8 +40,16 @@ ROOTCLING_CMD = "rootcling -f {fn}_rflx.cxx -rmf {fn}Dict.rootmap -rml {fn}Dict.
 if os.system(ROOTCLING_CMD):
     sys.exit(1)
 
+import platform
+if '64' in platform.architecture()[0]:
+    PLATFORMFLAG = '-D_AMD64_'
+    MACHINETYPE  = 'X64'
+else:
+    PLATFORMFALG = '-D_X86_'
+    MACHINETYPE  = 'IX86'
+
 cppflags = get_config('cppflags')
-BUILDOBJ_CMD_PART = "cl -O2 -nologo -TP -c -nologo " + cppflags + " -FIsehmap.h -Zc:__cplusplus -MD -GR -D_WINDOWS -DWIN32 -D_X86_ -EHsc- -W3 -wd4141 -wd4291 -wd4244 -wd4049 -D_XKEYCHECK_H -D_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS {fn}.cxx -Fo{fn}.obj"
+BUILDOBJ_CMD_PART = "cl -O2 -nologo -TP -c -nologo " + cppflags + " -FIsehmap.h -Zc:__cplusplus -MD -GR -D_WINDOWS -DWIN32 " + PLATFORMFLAG + " -EHsc- -W3 -wd4141 -wd4291 -wd4244 -wd4049 -D_XKEYCHECK_H -D_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER -DNOMINMAX -D_CRT_SECURE_NO_WARNINGS {fn}.cxx -Fo{fn}.obj"
 BUILDOBJ_CMD = BUILDOBJ_CMD_PART.format(fn=fn)
 if os.system(BUILDOBJ_CMD):
     sys.exit(1)
@@ -55,7 +63,7 @@ CREATEDEF_CMD = "{be} {fn}Dict.dll {fn}.obj {fn}_rflx.obj > {fn}Dict.def".format
 if os.system(CREATEDEF_CMD):
     sys.exit(1)
 
-CREATELIB_CMD = "lib -nologo -MACHINE:IX86 -out:{fn}Dict.lib {fn}.obj {fn}_rflx.obj -def:{fn}Dict.def".format(fn=fn)
+CREATELIB_CMD = "lib -nologo -MACHINE:" + MACHINETYPE + " -out:{fn}Dict.lib {fn}.obj {fn}_rflx.obj -def:{fn}Dict.def".format(fn=fn)
 if os.system(CREATELIB_CMD):
     sys.exit(1)
 
