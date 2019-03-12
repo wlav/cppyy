@@ -149,3 +149,22 @@ class TestREGRESSION:
         gc.collect()
 
         assert sys.getrefcount(x) == old_refcnt
+
+    def test07_typedef_identity(self):
+        """Nested typedefs should retain identity"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace PyABC {
+            struct S1 {};
+            struct S2 {
+                typedef std::vector<const PyABC::S1*> S1_coll;
+            };
+        }""")
+
+        from cppyy.gbl import PyABC
+
+        assert PyABC.S2.S1_coll
+        assert not 'vector<const PyABC::S1*>' in dir(PyABC.S2)
+        assert PyABC.S2.S1_coll is cppyy.gbl.std.vector('const PyABC::S1*')
+
