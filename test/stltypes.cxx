@@ -2,6 +2,7 @@
 
 
 //- explicit instantiations of used comparisons
+#if defined __clang__ || defined(__GNUC__) || defined(__GNUG__)
 #if defined __clang__
 namespace std {
 #define ns_prefix std::
@@ -14,6 +15,7 @@ template bool ns_prefix operator==(const std::vector<int>::iterator&,
 template bool ns_prefix operator!=(const std::vector<int>::iterator&,
                          const std::vector<int>::iterator&);
 }
+#endif
 
 
 //- helpers for testing array
