@@ -165,6 +165,7 @@ class TestREGRESSION:
         from cppyy.gbl import PyABC
 
         assert PyABC.S2.S1_coll
+        assert 'S1_coll' in dir(PyABC.S2)
         assert not 'vector<const PyABC::S1*>' in dir(PyABC.S2)
         assert PyABC.S2.S1_coll is cppyy.gbl.std.vector('const PyABC::S1*')
 
