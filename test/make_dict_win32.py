@@ -58,8 +58,7 @@ if os.system(BUILDOBJ_CMD):
     sys.exit(1)
 
 import cppyy_backend
-bindexplib = os.path.join(os.path.dirname(cppyy_backend.__file__), 'bin', 'bindexplib.exe')
-CREATEDEF_CMD = "{be} {fn}Dict.dll {fn}.obj {fn}_rflx.obj > {fn}Dict.def".format(be=bindexplib, fn=fn)
+CREATEDEF_CMD = "python bindexplib.py {fn} {fn}Dict".format(fn=fn)
 if os.system(CREATEDEF_CMD):
     sys.exit(1)
 
