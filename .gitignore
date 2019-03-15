@@ -4,6 +4,10 @@
 
 # dictionary products
 *.so
+*.dll
+*.lib
+*.def
+*.exp
 *.pcm
 *.rootmap
 *_rflx.cpp
