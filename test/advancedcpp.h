@@ -325,24 +325,24 @@ public:
 //===========================================================================
 class pointer_pass {               // for testing passing of void*'s
 public:
-    long gime_address_ptr(void* obj) {
-        return (long)obj;
+    intptr_t gime_address_ptr(void* obj) {
+        return (intptr_t)obj;
     }
 
-    long gime_address_ptr_ptr(void** obj) {
-        return (long)*((long**)obj);
+    intptr_t gime_address_ptr_ptr(void** obj) {
+        return (intptr_t)*((long**)obj);
     }
 
-    long gime_address_ptr_ref(void*& obj) {
-        return (long)obj;
+    intptr_t gime_address_ptr_ref(void*& obj) {
+        return (intptr_t)obj;
     }
 
-    static long set_address_ptr_ptr(void** obj) {
-        (*(long**)obj) = (long*)0x4321;
+    static intptr_t set_address_ptr_ptr(void** obj) {
+        (*(intptr_t**)obj) = (intptr_t*)0x4321;
         return 42;
     }
 
-    static long set_address_ptr_ref(void*& obj) {
+    static intptr_t set_address_ptr_ref(void*& obj) {
         obj = (void*)0x1234;
         return 21;
     }
