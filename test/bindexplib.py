@@ -19,7 +19,9 @@ outf = open(output+'.def', 'w')
 outf.write('LIBRARY    %s.dll\nEXPORTS\n' % output)
 for line in stdout.split('\r\n'):
     parts = line.split()
-    if len(parts) < 7:
+    if len(parts) < 8:
+        continue
+    if parts[7][0:4] in ['??_G', '??_E']:   # do not export deleting destructors
         continue
     if parts[4] == 'External':
         if isokay(parts[6]):

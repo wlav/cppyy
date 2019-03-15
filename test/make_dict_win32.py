@@ -2,6 +2,14 @@ import glob, os, sys, subprocess
 
 fn = sys.argv[1]
 
+if fn == 'all':
+    all_headers = glob.glob('*.h')
+    for header in all_headers:
+        res = os.system(" ".join(['python', sys.argv[0], header[:-2]]+sys.argv[2:]))
+        if res != 0:
+            sys.exit(res)
+    sys.exit(0)
+
 if os.path.exists(fn+'Dict.dll'):
     dct_time = os.stat(fn+'Dict.dll').st_mtime
     if not '-f' in sys.argv:
