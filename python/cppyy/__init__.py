@@ -96,12 +96,6 @@ def cppdef(src):
         return False
     return True
 
-# workaround for linker problems (TODO: should probably drop once upstream
-# fixes this, although it should be harmless)
-if 'win32' in sys.platform:
-    gbl.gInterpreter.ProcessLine("namespace __cppyy_internal { TSystem* GetSystem() { return gSystem; } }")
-    gbl.gSystem = gbl.__cppyy_internal.GetSystem()
-
 def load_library(name):
     """Explicitly load a shared library."""
     if name[:3] != 'lib':
