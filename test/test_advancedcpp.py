@@ -757,3 +757,11 @@ class TestADVANCEDCPP:
             s = cppyy.gbl.std.ostringstream()
             tst[0].__lshiftc__(s, tst[0]())
             assert s.str() == tst[1]
+
+    def test26_using_directive(self):
+        """Test using directive in namespaces"""
+
+        import cppyy
+
+        assert cppyy.gbl.UserDirs.foo() == cppyy.gbl.UsedSpace1.foo()
+        assert cppyy.gbl.UserDirs.bar() == cppyy.gbl.UsedSpace2.bar()

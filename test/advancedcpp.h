@@ -481,3 +481,18 @@ class Printable4 { /* empty */ };
 
 std::ostream& operator<<(std::ostream& os, const Cpp2PyPrinting::Printable3&);
 std::ostream& operator<<(std::ostream& os, const Printable4&);
+
+
+//===========================================================================
+namespace UsedSpace1 {             // for using directives testing
+    int foo();
+}
+
+namespace UsedSpace2 {
+    int bar();
+}
+
+namespace UserDirs {
+    using namespace UsedSpace1;
+    using namespace UsedSpace2;
+}

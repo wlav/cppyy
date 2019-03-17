@@ -162,3 +162,13 @@ std::ostream& operator<<(std::ostream& os, const Printable4&) {
      os << "::operator<<(4)";
      return os;
 }
+
+
+// for using directives testing
+int UsedSpace1::foo() {
+    return 13;
+}
+
+int UsedSpace2::bar() {
+    return 42;
+}
