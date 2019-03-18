@@ -213,6 +213,29 @@ struct Derived : public Base {
 // 'using' of templates
 template<typename T> using DA_vector = std::vector<T>;
 
+namespace using_problem {
+
+template <typename T, size_t SZ>
+struct vector {
+    vector() : m_val(SZ) {}
+    T m_val;
+};
+
+template <typename T, size_t ... sizes>
+struct matryoshka {
+    typedef T type;
+};
+
+template <typename T, size_t SZ, size_t ... sizes>
+struct matryoshka<T, SZ, sizes ... > {
+    typedef vector<typename matryoshka<T, sizes ...>::type, SZ> type;
+};
+
+template <typename T, size_t ... sizes>
+using make_vector = typename matryoshka<T, sizes ...>::type;
+    typedef make_vector<int, 2, 3> iiv_t;
+};
+
 
 //===========================================================================
 // template with r-value

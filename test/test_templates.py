@@ -309,6 +309,13 @@ class TestTEMPLATED_TYPEDEFS:
         iavec += range(10)
         assert iavec[5] == 5
 
+      # with variadic template
+        assert cppyy.gbl.using_problem.matryoshka[int, 3].type
+        assert cppyy.gbl.using_problem.matryoshka[int, 3, 4].type
+        assert cppyy.gbl.using_problem.make_vector[int , 3]
+        assert cppyy.gbl.using_problem.make_vector[int , 3]().m_val == 3
+        assert cppyy.gbl.using_problem.make_vector[int , 4]().m_val == 4
+
     def test05_rvalue_templates(self):
         """Use of a template with r-values; should accept builtin types"""
 
