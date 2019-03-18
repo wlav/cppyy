@@ -610,7 +610,7 @@ class TestADVANCEDCPP:
         assert f(3.) == 3.
         assert type(f(4.)) == type(4.)
 
-    def test17_assign_to_return_byref( self ):
+    def test17_assign_to_return_byref(self):
         """Test assignment to an instance returned by reference"""
 
         from cppyy import gbl

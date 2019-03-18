@@ -93,11 +93,11 @@ class TestSTLVECTOR:
         assert tv2 is tv3
 
         v = tv3()
-        assert hasattr(v, 'size' )
-        assert hasattr(v, 'push_back' )
-        assert hasattr(v, '__getitem__' )
-        assert hasattr(v, 'begin' )
-        assert hasattr(v, 'end' )
+        assert hasattr(v, 'size')
+        assert hasattr(v, 'push_back')
+        assert hasattr(v, '__getitem__')
+        assert hasattr(v, 'begin')
+        assert hasattr(v, 'end')
 
         for i in range(self.N):
             v.push_back(cppyy.gbl.just_a_class())
@@ -376,7 +376,7 @@ class TestSTLLIST:
             #-----
             a = tl1()
             for i in range(self.N):
-                a.push_back( i )
+                a.push_back(i)
 
             assert len(a) == self.N
             assert 11 < self.N
