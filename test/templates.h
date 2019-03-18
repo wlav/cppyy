@@ -171,17 +171,17 @@ public:
 // templated typedefs
 namespace TemplatedTypedefs {
 
-template<typename IN, typename OUT, size_t _vsize = 4>
+template<typename TYPE_IN, typename TYPE_OUT, size_t _vsize = 4>
 struct BaseWithEnumAndTypedefs {
     enum { vsize = _vsize };
-    typedef IN in_type;
-    typedef OUT out_type;
+    typedef TYPE_IN in_type;
+    typedef TYPE_OUT out_type;
 };
 
-template <typename IN, typename OUT, size_t _vsize = 4>
-struct DerivedWithUsing : public BaseWithEnumAndTypedefs<IN, OUT, _vsize>
+template <typename TYPE_IN, typename TYPE_OUT, size_t _vsize = 4>
+struct DerivedWithUsing : public BaseWithEnumAndTypedefs<TYPE_IN, TYPE_OUT, _vsize>
 {
-    typedef BaseWithEnumAndTypedefs<IN, OUT, _vsize> base_type;
+    typedef BaseWithEnumAndTypedefs<TYPE_IN, TYPE_OUT, _vsize> base_type;
     using base_type::vsize;
     using typename base_type::in_type;
     typedef typename base_type::in_type in_type_tt;
