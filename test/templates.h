@@ -213,6 +213,7 @@ struct Derived : public Base {
 // 'using' of templates
 template<typename T> using DA_vector = std::vector<T>;
 
+#if __cplusplus > 201402L
 namespace using_problem {
 
 template <typename T, size_t SZ>
@@ -235,6 +236,7 @@ template <typename T, size_t ... sizes>
 using make_vector = typename matryoshka<T, sizes ...>::type;
     typedef make_vector<int, 2, 3> iiv_t;
 };
+#endif
 
 
 //===========================================================================
