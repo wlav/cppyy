@@ -68,7 +68,17 @@ public:
     double m_data[4];
     int m_int;
     const int m_const_int;
+
+    static int s_int;
 };
+
+typedef Concrete Concrete_t;
+
+int Concrete::s_int = 321;
+
+void call_abstract_method(Abstract* a) {
+    a->abstract_method();
+}
 
 //-----
 int global_function(int) {
@@ -77,6 +87,10 @@ int global_function(int) {
 
 double global_function(double) {
     return std::exp(1);
+}
+
+int call_int_int(int (*f)(int, int), int i1, int i2) {
+    return f(i1, i2);
 }
 
 //-----
@@ -167,6 +181,9 @@ namespace Namespace {
         assert c.m_int == 42
         c = Concrete(13)
         assert c.m_int == 13
+        args = (27,)
+        c = Concrete(*args)
+        assert c.m_int == 27
 
     def test_doc_strings(self):
         import cppyy
@@ -182,7 +199,7 @@ namespace Namespace {
     def test_functions(self):
         import cppyy
 
-        from cppyy.gbl import global_function, Namespace
+        from cppyy.gbl import global_function, call_int_int, Namespace
         assert not(global_function == Namespace.global_function)
 
         assert round(global_function(1.)-2.718281828459045, 8) == 0.
@@ -192,6 +209,11 @@ namespace Namespace {
         assert round(Namespace.global_function(1.)-2.718281828459045*2, 8) == 0.
 
         assert round(global_function.__overload__('double')(1)-2.718281828459045, 8) == 0.
+
+        def add(a, b):
+            return a+b
+        assert call_int_int(add, 3, 4) == 7
+        assert call_int_int(lambda x, y: x*y, 3, 7) == 21
 
     def test_inheritance(self):
         import cppyy
@@ -274,10 +296,25 @@ namespace Namespace {
 
     def test_typedefs(self):
         import cppyy
+        from cppyy.gbl import Concrete, Concrete_t
 
-        pass
+        assert Concrete is Concrete_t
 
     def test_unary_operators(sef):
         import cppyy
 
         pass
+
+    def test_x_inheritance(self):
+        import cppyy
+        from cppyy.gbl import Abstract, call_abstract_method
+
+        class PyConcrete(Abstract):
+            def abstract_method(self):
+                print("Hello, Python World!")
+
+            def concrete_method(self):
+                pass
+
+        pc = PyConcrete()
+        call_abstract_method(pc)
