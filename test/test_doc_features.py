@@ -56,6 +56,10 @@ public:
         std::cout << std::endl;
     }
 
+    void uint_ref_assign(unsigned int& target, unsigned int value) {
+        target = value;
+    }
+
     Abstract* show_autocast() {
         return this;
     }
@@ -264,8 +268,23 @@ namespace Namespace {
 
         pass
 
+    def test_ref(self):
+        import cppyy
+        from cppyy.gbl import Concrete
+        from ctypes import c_uint
+
+        c = Concrete()
+        u = c_uint(0)
+        c.uint_ref_assign(u, 42)
+        assert u.value == 42
+
     def test_static_data_members(self):
         import cppyy
+        from cppyy.gbl import Concrete
+
+        assert Concrete.s_int == 321
+        Concrete().s_int = 123
+        assert Concrete.s_int == 123
 
     def test_static_methods(self):
         import cppyy
