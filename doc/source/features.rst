@@ -1,7 +1,7 @@
 .. _features:
 
-More Features
-=============
+Misc
+====
 
 .. toctree::
    :hidden:
