@@ -1,16 +1,15 @@
 .. _features:
 
-Misc
-====
+Miscellaneous
+=============
 
 .. toctree::
    :hidden:
 
    cppyy_features_header
 
-
-The following is not meant to be an exhaustive list, but more of a show case.
-Most features will be fairly obvious in their use.
+This is a collection of a few more features listed that do not have a proper
+place yet in the rest of the documentation.
 
 The C++ code used for the examples below can be found
 :doc:`here <cppyy_features_header>`, and it is assumed that that code is
@@ -23,6 +22,9 @@ Download it, save it under the name ``features.h``, and load it:
     >>> cppyy.include('features.h')
     >>>
 
+
+`Odds and ends`
+---------------
 
 * **memory**: C++ instances created by calling their constructor from python
   are owned by python.

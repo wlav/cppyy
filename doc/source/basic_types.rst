@@ -50,8 +50,9 @@ unsigned-ness is still honored:
 """"""""
 
 Builtin arrays are supported through arrays from module ``array`` (or any
-other builtin-type array that implements the Python buffer interface) and
-a low-level view type from ``cppyy`` for returns and variable access.
+other builtin-type array that implements the Python buffer interface, such
+as numpy arrays) and a low-level view type from ``cppyy`` for returns and
+variable access (that implements the buffer interface as well).
 Out-of-bounds checking is limited to those cases where the size is known at
 compile time.
 Example:
@@ -78,9 +79,19 @@ type (such as an ``unsigned int`` for example), then types need to match
 exactly.
 ``cppyy`` supports the types provided by the standard modules ``ctypes`` and
 ``array`` for those cases.
+Example of using a reference to builtin:
 
-For objects, a pointer to an object and an object are represented the same,
-with the necessary (de)referencing applied automatically.
+  .. code-block:: python
+
+    >>> from ctypes import c_uint
+    >>> u = c_uint(0)
+    >>> c.uint_ref_assign(u, 42)
+    >>> u.value
+    42
+    >>>
+
+For objects, a pointer to an object and an object are represented the same
+way, with the necessary (de)referencing applied automatically.
 Pointer variables are also bound by reference, so that updates on either the
 C++ or Python side are reflected on the other side as well.
 
@@ -99,5 +110,5 @@ Python3:
 
     >>> from cppyy.gbl import kApple, kBanana, kCitrus
     >>> cppyy.gbl.kApple
-    78L
+    78
     >>>
