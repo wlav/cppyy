@@ -119,6 +119,7 @@ development environments.
    :maxdepth: 1
 
    installation
+   changelog
 
 .. toctree::
    :caption: Features

@@ -1,8 +1,5 @@
 .. _basic_types:
 
-.. role:: toconly
-   :class: toconly
-
 
 Basic Types
 ===========
@@ -26,8 +23,8 @@ Download it, save it under the name ``features.h``, and load it:
     >>>
 
 
-:toconly:`Basics`
-"""""""""""""""""
+`Builtins`
+""""""""""
 
 Most builtin data types map onto the expected equivalent Python types, with
 the caveats that there may be size differences, different precision or
@@ -49,11 +46,12 @@ unsigned-ness is still honored:
     >>>
 
 
-:toconly:`Arrays`
-"""""""""""""""""
+`Arrays`
+""""""""
 
-Builtin arrays are supported by through arrays from module ``array`` (or any
-other builtin-type array that implements the Python buffer interface).
+Builtin arrays are supported through arrays from module ``array`` (or any
+other builtin-type array that implements the Python buffer interface) and
+a low-level view type from ``cppyy`` for returns and variable access.
 Out-of-bounds checking is limited to those cases where the size is known at
 compile time.
 Example:
@@ -72,8 +70,8 @@ Example:
     >>>
 
 
-:toconly:`Pointers`
-"""""""""""""""""""
+`Pointers`
+""""""""""
 
 When the C++ code takes a pointer or reference type to a specific builtin
 type (such as an ``unsigned int`` for example), then types need to match
@@ -87,8 +85,8 @@ Pointer variables are also bound by reference, so that updates on either the
 C++ or Python side are reflected on the other side as well.
 
 
-:toconly:`Enums`
-""""""""""""""""
+`Enums`
+"""""""
 
 Both named and anonymous enums are supported.
 The type of an enum is implementation dependent and may even be different for
