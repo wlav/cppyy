@@ -22,7 +22,7 @@ unsigned int gUint = 0;
 class Abstract {
 public:
     virtual ~Abstract() {}
-    virtual void abstract_method() = 0;
+    virtual std::string abstract_method() = 0;
     virtual void concrete_method() = 0;
 };
 
@@ -36,8 +36,8 @@ public:
     Concrete(int n=42) : m_int(n), m_const_int(17) {}
     ~Concrete() {}
 
-    virtual void abstract_method() {
-        std::cout << "called Concrete::abstract_method" << std::endl;
+    virtual std::string abstract_method() {
+        return "called Concrete::abstract_method";
     }
 
     virtual void concrete_method() {
@@ -80,8 +80,8 @@ typedef Concrete Concrete_t;
 
 int Concrete::s_int = 321;
 
-void call_abstract_method(Abstract* a) {
-    a->abstract_method();
+std::string call_abstract_method(Abstract* a) {
+    return a->abstract_method();
 }
 
 //-----
@@ -326,14 +326,47 @@ namespace Namespace {
 
     def test_x_inheritance(self):
         import cppyy
-        from cppyy.gbl import Abstract, call_abstract_method
+        from cppyy.gbl import Abstract, Concrete, call_abstract_method
 
-        class PyConcrete(Abstract):
+        class PyConcrete1(Abstract):
             def abstract_method(self):
-                print("Hello, Python World!")
+                return cppyy.gbl.std.string("Hello, Python World! (1)")
 
             def concrete_method(self):
                 pass
 
-        pc = PyConcrete()
-        call_abstract_method(pc)
+        pc = PyConcrete1()
+        assert call_abstract_method(pc) == "Hello, Python World! (1)"
+
+        class PyConcrete2(Abstract):
+            def abstract_method(self):
+                return "Hello, Python World! (2)"
+
+            def concrete_method(self):
+                pass
+
+        pc = PyConcrete2()
+        assert call_abstract_method(pc) == "Hello, Python World! (2)"
+
+        class PyConcrete3(Abstract):
+            def __init__(self):
+                super(PyConcrete3, self).__init__()
+
+            def abstract_method(self):
+                return "Hello, Python World! (3)"
+
+            def concrete_method(self):
+                pass
+
+        pc = PyConcrete3()
+        assert call_abstract_method(pc) == "Hello, Python World! (3)"
+
+        class PyConcrete4(Concrete):
+            def __init__(self):
+                super(PyConcrete4, self).__init__()
+
+            def abstract_method(self):
+                return "Hello, Python World! (4)"
+
+        pc = PyConcrete4()
+        assert call_abstract_method(pc) == "Hello, Python World! (4)"
