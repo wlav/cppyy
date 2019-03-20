@@ -44,7 +44,7 @@ with open(fn+'Linkdef.h', 'w') as linkdef:
     linkdef.write("#pragma link C++ defined_in %s.h;\n" % fn)
     linkdef.write("\n#endif")
 
-ROOTCLING_CMD = "rootcling -f {fn}_rflx.cxx -rmf {fn}Dict.rootmap -rml {fn}Dict.dll {fn}.h {fn}Linkdef.h".format(fn=fn)
+ROOTCLING_CMD = "python -m cppyy_backend._rootcling -f {fn}_rflx.cxx -rmf {fn}Dict.rootmap -rml {fn}Dict.dll {fn}.h {fn}Linkdef.h".format(fn=fn)
 if os.system(ROOTCLING_CMD):
     sys.exit(1)
 
