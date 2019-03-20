@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-MASTER : 1.4.4
----------------
+2019-03-20 : 1.4.4
+------------------
 
 * Support for 'using' of namespaces
 * Improved support for alias templates
