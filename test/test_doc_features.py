@@ -46,8 +46,8 @@ public:
 
     void array_method(int* ad, int size) {
         for (int i=0; i < size; ++i)
-            std::cout << ad[i] << ' ';
-        std::cout << std::endl;
+            std::cerr << ad[i] << ' ';
+        std::cerr << '\\n';  // sending std::endl to std::cout hangs on Windows (?)
     }
 
     void array_method(double* ad, int size) {
