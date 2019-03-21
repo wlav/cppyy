@@ -198,10 +198,6 @@ class TestCROSSINHERITANCE:
                 raise ValueError(errmsg)
 
         d = Derived()
-
-        if 'win32' in sys.platform:
-            import pytest
-            pytest.skip('C++ exceptions do not properly propagate')
         raises(ValueError, Base1.call_sum_value, d, -7)
 
         try:
