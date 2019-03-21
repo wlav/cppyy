@@ -830,18 +830,12 @@ class TestDATATYPES:
         assert 5 == f1(2, 3)
         assert 5. == f2(5., 0.)
 
-        if not 'win32' in sys.platform:
-            raises(TypeError, fdd, f1, 2, 3)
+        raises(TypeError, fdd, f1, 2, 3)
 
         assert 5. == fdd(f2, 5., 0.)
 
         f1p = cppyy.gbl.sum_of_int_ptr
         assert 5 == f1p(2, 3)
-
-        if 'win32' in sys.platform:
-            # failing test is the TypeError one above
-            import pytest
-            pytest.skip('C++ exceptions do not properly propagate')
 
     def test22_callable_passing(self):
         """Passing callables through function pointers"""
