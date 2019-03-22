@@ -400,6 +400,21 @@ class TestSTLLIST:
         for arg in a:
             pass
 
+    def test03_replacement_of_eq(self):
+        """A global templated function should work as a method"""
+
+        import cppyy
+
+        cppyy.cppdef("""template<class C>
+            bool cont_eq(const typename C::iterator& a, const typename C::iterator& b) {
+                return a != b;
+            }""")
+
+        a = cppyy.gbl.std.list[int]()
+        assert a.begin() == a.end()
+        a.begin().__class__.__eq__ = cppyy.gbl.cont_eq[cppyy.gbl.std.list[int]]
+        assert not (a.begin() == a.end())
+
 
 class TestSTLMAP:
     def setup_class(cls):
