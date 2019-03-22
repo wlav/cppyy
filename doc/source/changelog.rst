@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+MASTER : 1.4.5
+--------------
+
+* allow templated free functions to be attached as methods to classes
+
+
 2019-03-20 : 1.4.4
 ------------------
 
