@@ -142,7 +142,7 @@ class TestREGRESSION:
 
         import cppyy, gc, sys
 
-        x = cppyy.gbl.vector['float']
+        x = cppyy.gbl.std.vector['float']
         old_refcnt = sys.getrefcount(x)
 
         y = x()
