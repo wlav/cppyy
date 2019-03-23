@@ -710,25 +710,33 @@ class TestADVANCEDCPP:
 
         import cppyy
 
-        assert cppyy.gbl.UsingBase().vcheck() == 'A'
+        assert cppyy.gbl.UsingBase1().vcheck() == 'A'
 
-        B = cppyy.gbl.UsingDerived
-        assert not 'UsingBase' in B.__init__.__doc__
+        D1 = cppyy.gbl.UsingDerived1
+        assert not 'UsingBase1' in D1.__init__.__doc__
 
-        b1 = B()
-        assert b1.m_int    == 13
-        assert b1.m_int2   == 42
-        assert b1.vcheck() == 'B'
+        d1a = D1()
+        assert d1a.m_int    == 13
+        assert d1a.m_int2   == 42
+        assert d1a.vcheck() == 'B'
 
-        b2 = B(10)
-        assert b2.m_int    == 10
-        assert b2.m_int2   == 42
-        assert b2.vcheck() == 'B'
+        d1b = D1(10)
+        assert d1b.m_int    == 10
+        assert d1b.m_int2   == 42
+        assert d1b.vcheck() == 'B'
 
-        b3 = B(b2)
-        assert b3.m_int    == 10
-        assert b3.m_int2   == 42
-        assert b3.vcheck() == 'B'
+        d1c = D1(d1b)
+        assert d1c.m_int    == 10
+        assert d1c.m_int2   == 42
+        assert d1c.vcheck() == 'B'
+
+        D2 = cppyy.gbl.UsingDerived2
+        assert 'vcheck(int)' in D2.vcheck.__doc__
+        assert 'vcheck()' in D2.vcheck.__doc__
+
+        d2 = D2()
+        assert d2.vcheck()  == 'A'
+        assert d2.vcheck(1) == 'B'
 
     def test24_typedef_to_private_class(self):
         """Typedefs to private classes should not resolve"""
@@ -763,5 +771,6 @@ class TestADVANCEDCPP:
 
         import cppyy
 
-        assert cppyy.gbl.UserDirs.foo() == cppyy.gbl.UsedSpace1.foo()
-        assert cppyy.gbl.UserDirs.bar() == cppyy.gbl.UsedSpace2.bar()
+        assert cppyy.gbl.UserDirs.foo1() == cppyy.gbl.UsedSpace1.foo1()
+        assert cppyy.gbl.UserDirs.bar()  == cppyy.gbl.UsedSpace2.bar()
+        assert cppyy.gbl.UserDirs.foo2() == cppyy.gbl.UsedSpace1.inner.foo2()

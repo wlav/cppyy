@@ -73,6 +73,8 @@
   <function pattern="UsedSpace1::*" />
   <namespace name="UsedSpace2" />
   <function pattern="UsedSpace2::*" />
+  <namespace name="UsedSpace1::inner" />
+  <function pattern="UsedSpace1::inner::*" />
   <namespace name="UserDirs" />
 
 </lcgdict>

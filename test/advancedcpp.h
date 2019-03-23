@@ -432,18 +432,31 @@ public:
 
 
 //===========================================================================
-class UsingBase {                  // using declaration testing
+class UsingBase1 {                 // using declaration testing
 public:
-    UsingBase(int n = 13) : m_int(n) {} 
+    UsingBase1(int n = 13) : m_int(n) {} 
+    virtual ~UsingBase1() {}
     virtual char vcheck() { return 'A'; }
     int m_int;
 };
 
-class UsingDerived : public UsingBase {
+class UsingDerived1 : public UsingBase1 {
 public:
-    using UsingBase::UsingBase;
+    using UsingBase1::UsingBase1;
     virtual char vcheck() { return 'B'; }
     int m_int2 = 42;
+};
+
+class UsingBase2 {
+public:
+    virtual ~UsingBase2() {}
+    virtual char vcheck() { return 'A'; }
+};
+
+class UsingDerived2 : public UsingBase2 {
+public:
+    using UsingBase2::vcheck;
+    virtual char vcheck(int) { return 'B'; }
 };
 
 
@@ -485,7 +498,11 @@ std::ostream& operator<<(std::ostream& os, const Printable4&);
 
 //===========================================================================
 namespace UsedSpace1 {             // for using directives testing
-    int foo();
+    int foo1();
+
+    namespace inner {
+        int foo2();
+    }
 }
 
 namespace UsedSpace2 {
@@ -495,4 +512,6 @@ namespace UsedSpace2 {
 namespace UserDirs {
     using namespace UsedSpace1;
     using namespace UsedSpace2;
+    using namespace UsedSpace1::inner;
 }
+
