@@ -681,3 +681,51 @@ class TestSTLDEQUE:
         x = cppyy.gbl.f()
         assert x
         del x
+
+
+class TestSTLSET:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+        cls.N = cppyy.gbl.N
+
+    def test01_set_iteration(self):
+        """Iterate over a set"""
+
+        import cppyy
+
+        s = cppyy.gbl.std.set[int]()
+        r = range(self.N)
+        for i in r:
+            s.insert(i)
+
+        assert len(s) == len(r)
+        assert sum(s) == sum(r)
+
+        for i in s:
+            assert i in s
+            assert i in r
+
+    def test02_set_iterators(self):
+        """Access to set iterators and their comparisons"""
+
+        import cppyy
+
+        cppyy.include("iterator")
+        s = cppyy.gbl.std.set[int]()
+
+        assert s.begin()  == s.end()
+        assert s.rbegin() == s.rend()
+
+        val = 42
+        s.insert(val)
+
+        assert len(s) == 1
+        assert s.begin().__deref__()  == val
+        assert s.rbegin().__deref__() == val
+
+        assert s.begin()  != s.end()
+        assert s.begin().__preinc__()  == s.end()
+        assert s.rbegin() != s.rend()
+        assert s.rbegin().__preinc__() == s.rend()
