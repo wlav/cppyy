@@ -334,3 +334,17 @@ class TestTEMPLATED_TYPEDEFS:
         assert not is_valid(0)
         assert is_valid(1.)
         assert not is_valid(0.)
+
+    def test06_templated_return_type(self):
+        import cppyy
+
+        cppyy.cppdef("""
+            struct RTTest_SomeStruct1 {};
+            namespace RTTest_SomeNamespace { struct RTTest_SomeStruct2 {}; }
+            template<class ...T> struct RTTest_TemplatedList {};
+            template<class ...T> auto rttest_make_tlist(T ... args) { return RTTest_TemplatedList<T...>{}; }
+        """)
+
+        assert cppyy.gbl.rttest_make_tlist(cppyy.gbl.RTTest_SomeStruct1())
+        assert cppyy.gbl.rttest_make_tlist(cppyy.gbl.RTTest_SomeNamespace.RTTest_SomeStruct2())
+
