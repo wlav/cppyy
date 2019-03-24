@@ -40,3 +40,7 @@ int CrossInheritance::CBase4::get_value() const {
     return 27;
 }
 
+int CrossInheritance::TDerived1::get_value() {
+    return 27;
+}
+

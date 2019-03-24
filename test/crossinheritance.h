@@ -57,4 +57,19 @@ public:
     int get_value() const;
 };
 
+template<typename T>
+class TBase1 {
+public:
+    virtual int get_value() {
+        return 42;
+    }
+};
+
+class TDerived1 : public TBase1<int> {
+public:
+    int get_value();
+};
+
+using TBase1_I = TBase1<int>;
+
 } // namespace CrossInheritance

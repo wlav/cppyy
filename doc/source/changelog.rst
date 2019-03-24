@@ -14,7 +14,9 @@ MASTER : 1.4.5
 --------------
 
 * allow templated free functions to be attached as methods to classes
+* allow cross-derivation from templated classes
 * more support for 'using' declarations (methods and inner namespaces)
+* fix overload resolution for std::set::rbegin()/rend() operator ==
 * fixes for bugs #61, #67
 
 

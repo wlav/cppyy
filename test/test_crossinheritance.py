@@ -183,8 +183,31 @@ class TestCROSSINHERITANCE:
         assert CX.IBase4.call_get_value(c1) == 17
         assert CX.IBase4.call_get_value(c2) == 27
 
+    def test08_templated_base(self):
+        """Derive from a base class that is instantiated from a template"""
 
-    def test07_error_handling(self):
+        import cppyy
+
+        from cppyy.gbl.CrossInheritance import TBase1, TDerived1, TBase1_I
+
+        class TPyDerived1(TBase1_I):
+            def __init__(self):
+                super(TBase1_I, self).__init__()
+
+            def get_value(self):
+                return 13
+
+        b1, b2 = TBase1[int](), TBase1_I()
+        assert b1.get_value() == 42
+        assert b2.get_value() == 42
+
+        d1 = TDerived1()
+        assert d1.get_value() == 27
+
+        p1 = TPyDerived1()
+        assert p1.get_value() == 13
+
+    def test09_error_handling(self):
         """Python errors should propagate through wrapper"""
 
         import cppyy
