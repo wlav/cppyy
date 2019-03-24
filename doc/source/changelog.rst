@@ -15,6 +15,7 @@ MASTER : 1.4.5
 
 * allow templated free functions to be attached as methods to classes
 * more support for 'using' declarations (methods and inner namespaces)
+* fixes for bugs #61, #67
 
 
 2019-03-20 : 1.4.4
