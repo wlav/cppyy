@@ -35,17 +35,16 @@ def get_config(what):
     cli_arg = subprocess.check_output(config_exec_args)
     return cli_arg.decode("utf-8").strip()
 
-# genreflex does not work on Windows b/c it creates large strings by including headers in-place, rather than
-# with #include's (TODO: fix that ...)
-#GENREFLEX_CMD = "genreflex {fn}.h --selection={fn}.xml --rootmap={fn}Dict.rootmap --rootmap-lib={fn}Dict.dll".format(fn=fn)
+# genreflex option
+#DICTIONARY_CMD = "genreflex {fn}.h --selection={fn}.xml --rootmap={fn}Dict.rootmap --rootmap-lib={fn}Dict.dll".format(fn=fn)
 
 with open(fn+'Linkdef.h', 'w') as linkdef:
     linkdef.write("#ifdef __CLING__\n\n")
     linkdef.write("#pragma link C++ defined_in %s.h;\n" % fn)
     linkdef.write("\n#endif")
 
-ROOTCLING_CMD = "python -m cppyy_backend._rootcling -f {fn}_rflx.cxx -rmf {fn}Dict.rootmap -rml {fn}Dict.dll {fn}.h {fn}Linkdef.h".format(fn=fn)
-if os.system(ROOTCLING_CMD):
+DICTIONARY_CMD = "python -m cppyy_backend._rootcling -f {fn}_rflx.cxx -rmf {fn}Dict.rootmap -rml {fn}Dict.dll {fn}.h {fn}Linkdef.h".format(fn=fn)
+if os.system(DICTIONARY_CMD):
     sys.exit(1)
 
 import platform
