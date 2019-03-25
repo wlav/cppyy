@@ -10,14 +10,16 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-MASTER : 1.4.5
---------------
+2019-03-25 : 1.4.5
+------------------
 
-* allow templated free functions to be attached as methods to classes
-* allow cross-derivation from templated classes
-* more support for 'using' declarations (methods and inner namespaces)
-* fix overload resolution for std::set::rbegin()/rend() operator ==
-* fixes for bugs #61, #67
+* Allow templated free functions to be attached as methods to classes
+* Allow cross-derivation from templated classes
+* More support for 'using' declarations (methods and inner namespaces)
+* Fix overload resolution for std::set::rbegin()/rend() operator ==
+* Fixes for bugs #61, #67
+* Several pointer truncation fixes fo 64b Windows
+* Linker and lookup fixes for Windows
 
 
 2019-03-20 : 1.4.4
