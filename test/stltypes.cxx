@@ -18,6 +18,13 @@ template bool ns_prefix operator!=(const std::vector<int>::iterator&,
 #endif
 
 
+//- adverse effect of implicit conversion on vector<string>
+int vectest_ol1(const std::vector<std::string>&) { return 1; }
+int vectest_ol1(std::string) { return 2; }
+int vectest_ol2(std::string) { return 2; }
+int vectest_ol2(const std::vector<std::string>&) { return 1; }
+
+
 //- helpers for testing array
 int ArrayTest::get_pp_px(Point** p, int idx) {
     return p[idx]->px;

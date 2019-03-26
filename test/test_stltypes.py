@@ -241,6 +241,16 @@ class TestSTLVECTOR:
         ve[0] = cppyy.gbl.VecTestEnumNS.EVal2
         assert ve[0] == 42
 
+    def test09_vector_of_string(self):
+        """Adverse effect of implicit conversion on vector<string>"""
+
+        import cppyy
+
+        assert cppyy.gbl.vectest_ol1("")  == 2
+        assert cppyy.gbl.vectest_ol1("a") == 2
+        assert cppyy.gbl.vectest_ol2("")  == 2
+        assert cppyy.gbl.vectest_ol2("a") == 2
+
 
 class TestSTLSTRING:
     def setup_class(cls):

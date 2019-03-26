@@ -25,6 +25,13 @@ namespace VecTestEnumNS {
 }
 
 
+//- adverse effect of implicit conversion on vector<string>
+int vectest_ol1(const std::vector<std::string>&);
+int vectest_ol1(std::string);
+int vectest_ol2(std::string);
+int vectest_ol2(const std::vector<std::string>&);
+
+
 //- class with lots of std::[w]string handling
 template<typename S>
 class stringy_class {
