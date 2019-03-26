@@ -340,11 +340,26 @@ class TestTEMPLATED_TYPEDEFS:
 
         cppyy.cppdef("""
             struct RTTest_SomeStruct1 {};
-            namespace RTTest_SomeNamespace { struct RTTest_SomeStruct2 {}; }
             template<class ...T> struct RTTest_TemplatedList {};
-            template<class ...T> auto rttest_make_tlist(T ... args) { return RTTest_TemplatedList<T...>{}; }
+            template<class ...T> auto rttest_make_tlist(T ... args) {
+                return RTTest_TemplatedList<T...>{};
+            }
+
+            namespace RTTest_SomeNamespace {
+               struct RTTest_SomeStruct2 {};
+               template<class ...T> struct RTTest_TemplatedList2 {};
+            }
+
+            template<class ...T> auto rttest_make_tlist2(T ... args) {
+                return RTTest_SomeNamespace::RTTest_TemplatedList2<T...>{};
+            }
         """)
 
-        assert cppyy.gbl.rttest_make_tlist(cppyy.gbl.RTTest_SomeStruct1())
-        assert cppyy.gbl.rttest_make_tlist(cppyy.gbl.RTTest_SomeNamespace.RTTest_SomeStruct2())
+        from cppyy.gbl import rttest_make_tlist, rttest_make_tlist2, \
+            RTTest_SomeNamespace, RTTest_SomeStruct1
+
+        assert rttest_make_tlist(RTTest_SomeStruct1())
+        assert rttest_make_tlist(RTTest_SomeNamespace.RTTest_SomeStruct2())
+        assert rttest_make_tlist2(RTTest_SomeStruct1())
+        assert rttest_make_tlist2(RTTest_SomeNamespace.RTTest_SomeStruct2())
 
