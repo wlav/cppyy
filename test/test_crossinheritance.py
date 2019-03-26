@@ -132,14 +132,28 @@ class TestCROSSINHERITANCE:
 
         assert Base1(27).sum_value(-7) == 20
 
-        class Derived(Base1):
+        class Derived1(Base1):
             def sum_value(self, val):
                 return val + 13
 
-        d = Derived()
-        assert d.m_int   == 42
-        assert d.sum_value(-7)             == 6
-        assert Base1.call_sum_value(d, -7) == 6
+        d1 = Derived1()
+        assert d1.m_int   == 42
+        assert d1.sum_value(-7)             == 6
+        assert Base1.call_sum_value(d1, -7) == 6
+
+        b1 = Base1()
+        assert Base1.sum_pass_value(b1) == 6
+
+        class Derived2(Base1):
+            def pass_value1(self, a):
+                return a*2
+            def pass_value2(self, a):
+                return a.value*2
+            def pass_value3(self, a):
+                return a.value*2
+
+        d2 = Derived2()
+        assert Base1.sum_pass_value(d2) == 12
 
     def test05_override_overloads(self):
         """Test ability to override overloaded functions"""
@@ -228,3 +242,19 @@ class TestCROSSINHERITANCE:
             assert not "should not get here"
         except ValueError as e:
             assert errmsg in str(e)
+
+    def test10_interface_checking(self):
+        """Conversion errors should be Python exceptions"""
+
+        import cppyy
+        Base1 = cppyy.gbl.CrossInheritance.Base1
+
+        assert Base1(27).sum_value(-7) == 20
+
+        errmsg = "I do not like the given value"
+        class Derived(Base1):
+            def get_value(self):
+                self.m_int*2       # missing return
+
+        d = Derived(4)
+        assert raises(TypeError, Base1.call_get_value, d)

@@ -20,6 +20,15 @@ int CrossInheritance::Base1::call_sum_all(Base1* b, int i, int j) {
     return b->sum_all(i, j);
 }
 
+int CrossInheritance::Base1::sum_pass_value(Base1* b) {
+    int a = 0;
+    a += b->pass_value1(1);
+    int i = 2;
+    a += b->pass_value2(i);
+    a += b->pass_value3(3);
+    return a;
+}
+
 int CrossInheritance::IBase2::call_get_value(IBase2* b) {
     return b->get_value();
 }

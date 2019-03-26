@@ -1,3 +1,6 @@
+#ifndef CPPYY_TEST_CROSSINHERITANCE_H
+#define CPPYY_TEST_CROSSINHERITANCE_H
+
 #include <string>
 
 
@@ -20,6 +23,11 @@ public:
     virtual int sum_all(int i, int j) { return m_int + i + j; }
     static int call_sum_all(Base1* b, int);
     static int call_sum_all(Base1* b, int, int);
+
+    virtual int pass_value1(int a) { return a; }
+    virtual int pass_value2(int& a) { return a; }
+    virtual int pass_value3(const int& a) { return a; }
+    static int sum_pass_value(Base1* b);
 
 public:
     int m_int;
@@ -73,3 +81,5 @@ public:
 using TBase1_I = TBase1<int>;
 
 } // namespace CrossInheritance
+
+#endif // !CPPYY_TEST_CROSSINHERITANCE_H
