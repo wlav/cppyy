@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+MASTER : 1.4.6
+--------------
+
+* Improved error handling and interface checking in cross-inheritance
+
+
 2019-03-25 : 1.4.5
 ------------------
 
