@@ -363,3 +363,15 @@ class TestTEMPLATED_TYPEDEFS:
         assert rttest_make_tlist2(RTTest_SomeStruct1())
         assert rttest_make_tlist2(RTTest_SomeNamespace.RTTest_SomeStruct2())
 
+    def test07_type_deduction(self):
+        import cppyy
+
+        cppyy.cppdef("""
+           template <typename T> struct DeductTest_Wrap {
+               static auto whatis(T t) { return t; }
+           };
+        """)
+
+        w = cppyy.gbl.DeductTest_Wrap[int]()
+        three = w.whatis(3)
+        assert three == 3

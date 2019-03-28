@@ -14,6 +14,7 @@ MASTER : 1.4.6
 --------------
 
 * Improved error handling and interface checking in cross-inheritance
+* Fix for return type deduction of resolved but uninstantiated templates
 
 
 2019-03-25 : 1.4.5
