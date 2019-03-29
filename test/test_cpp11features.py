@@ -105,7 +105,27 @@ class TestCPP11FEATURES:
         gc.collect()
         assert TestSharedPtr.s_counter == 0
 
-    def test04_nullptr(self):
+    def test04_shared_ptr_passting(self):
+        """Ability to pass shared_ptr<Derived> through shared_ptr<Base>"""
+
+        from cppyy.gbl import std, TestSharedPtr, DerivedTestSharedPtr
+        from cppyy.gbl import pass_shared_ptr
+
+    # proper memory accounting
+        assert TestSharedPtr.s_counter == 0
+
+        dd = std.make_shared[DerivedTestSharedPtr](DerivedTestSharedPtr(24))
+        assert TestSharedPtr.s_counter == 1
+
+        assert pass_shared_ptr(dd) == 100
+
+        del dd
+
+        import gc
+        gc.collect()
+        assert TestSharedPtr.s_counter == 0
+
+    def test05_nullptr(self):
         """Allow the programmer to pass NULL in certain cases"""
       
         import cppyy
@@ -116,7 +136,7 @@ class TestCPP11FEATURES:
 
       # usage is tested in datatypes.py:test15_nullptr_passing
  
-    def test05_move(self):
+    def test06_move(self):
         """Move construction, assignment, and methods"""
 
         import cppyy
@@ -161,7 +181,7 @@ class TestCPP11FEATURES:
         moveit(cppyy.gbl.TestMoving1)
         moveit(cppyy.gbl.TestMoving2)
 
-    def test06_initializer_list(self):
+    def test07_initializer_list(self):
         """Initializer list construction"""
 
         from cppyy.gbl import std, TestData, TestData2, WithInitList
@@ -185,7 +205,7 @@ class TestCPP11FEATURES:
                 for i in range(len(l)):
                     assert v[i].m_int == l[i].m_int
 
-    def test07_lambda_calls(self):
+    def test08_lambda_calls(self):
         """Call (global) lambdas"""
 
         import cppyy
