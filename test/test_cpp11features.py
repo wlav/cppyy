@@ -74,7 +74,38 @@ class TestCPP11FEATURES:
         gc.collect()
         assert TestSharedPtr.s_counter == 0
 
-    def test03_nullptr(self):
+    def test03_shared_ptr_memory_handling(self):
+        """Test shared pointer memory ownership"""
+
+        from cppyy.gbl import std, TestSharedPtr
+
+      # proper memory accounting
+        assert TestSharedPtr.s_counter == 0
+
+        t = TestSharedPtr()
+        assert TestSharedPtr.s_counter == 1
+        assert t.__python_owns__
+
+        tt = std.shared_ptr[TestSharedPtr](t)
+        assert not t.__python_owns__
+
+        class C(TestSharedPtr):
+            pass
+
+        c = C()
+        assert TestSharedPtr.s_counter == 2
+        assert c.__python_owns__
+
+        cc = std.shared_ptr[TestSharedPtr](c)
+        assert not c.__python_owns__
+
+        del cc, tt
+
+        import gc
+        gc.collect()
+        assert TestSharedPtr.s_counter == 0
+
+    def test04_nullptr(self):
         """Allow the programmer to pass NULL in certain cases"""
       
         import cppyy
@@ -85,7 +116,7 @@ class TestCPP11FEATURES:
 
       # usage is tested in datatypes.py:test15_nullptr_passing
  
-    def test04_move(self):
+    def test05_move(self):
         """Move construction, assignment, and methods"""
 
         import cppyy
@@ -130,7 +161,7 @@ class TestCPP11FEATURES:
         moveit(cppyy.gbl.TestMoving1)
         moveit(cppyy.gbl.TestMoving2)
 
-    def test05_initializer_list(self):
+    def test06_initializer_list(self):
         """Initializer list construction"""
 
         from cppyy.gbl import std, TestData, TestData2, WithInitList
@@ -154,7 +185,7 @@ class TestCPP11FEATURES:
                 for i in range(len(l)):
                     assert v[i].m_int == l[i].m_int
 
-    def test06_lambda_calls(self):
+    def test07_lambda_calls(self):
         """Call (global) lambdas"""
 
         import cppyy
