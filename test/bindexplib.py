@@ -7,7 +7,7 @@ output = sys.argv[2]
 
 def isokay(name):
  # filter standard symbols
-    return name[0] != '_' and not name in {'memmove', 'memcpy'}
+    return name[0] != '_' and not name in {'memcpy', 'memmove', 'memset'}
 
 popen = subprocess.Popen(['dumpbin', '/SYMBOLS', target+'.obj'],
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
