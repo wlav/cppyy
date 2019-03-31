@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong
+from .support import setup_make, pylong, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("advancedcppDict"))
