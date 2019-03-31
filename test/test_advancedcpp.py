@@ -404,9 +404,11 @@ class TestADVANCEDCPP:
         assert cppyy.addressof(o) == pp.gime_address_ptr_ptr(o)
         assert cppyy.addressof(o) == pp.gime_address_ptr_ref(o)
 
-        import array
-        addressofo = array.array('l', [cppyy.addressof(o)])
-        assert addressofo[0] == pp.gime_address_ptr_ptr(addressofo)
+        if IS_WINDOWS != 64:
+          # there is no 8-byte integer type array on Windows 64b
+            import array
+            addressofo = array.array('l', [cppyy.addressof(o)])
+            assert addressofo[0] == pp.gime_address_ptr_ptr(addressofo)
 
         assert 0 == pp.gime_address_ptr(0)
         raises(TypeError, pp.gime_address_ptr, None)
