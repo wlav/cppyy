@@ -23,3 +23,12 @@ else:
    pylong = long
    pyunicode = unicode
    maxvalue = sys.maxint
+
+IS_WINDOWS = 0
+if 'win32' in sys.platform:
+     import platform
+     if '64' in platform.architecture()[0]:
+         IS_WINDOWS = 64
+         maxvalue = 2**31-1
+     else:
+         IS_WINDOWS = 32
