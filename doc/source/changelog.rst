@@ -13,8 +13,12 @@ PyPy support lags CPython support.
 MASTER : 1.4.6
 --------------
 
+* More transparent use of smart pointers such as shared_ptr
 * Improved error handling and interface checking in cross-inheritance
+* Argument of const-ref types support in callbacks/cross-inheritance
+* Do template argument resolution in order: reference, pointer, value
 * Fix for return type deduction of resolved but uninstantiated templates
+* Several linker fixes on 64b Windows
 
 
 2019-03-25 : 1.4.5
