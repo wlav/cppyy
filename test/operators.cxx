@@ -67,3 +67,43 @@ int& YAMatrix4::operator() (int, int) {
 const int& YAMatrix4::operator() (int, int) const {
     return m_val;
 }
+
+//-
+int& YAMatrix5::operator[] (int) {
+    return m_val;
+}
+
+int YAMatrix5::operator[] (int) const {
+    return m_val;
+}
+
+int& YAMatrix5::operator() (int, int) {
+    return m_val;
+}
+
+int YAMatrix5::operator() (int, int) const {
+    return m_val;
+}
+
+//-
+int& YAMatrix6::operator[] (int) {
+    return m_val;
+}
+
+int YAMatrix6::operator[] (int) const {
+    return m_val;
+}
+
+int& YAMatrix6::operator() (int, int) {
+    return m_val;
+}
+
+//-
+int& YAMatrix7::operator[] (int) {
+    return m_val;
+}
+
+int& YAMatrix7::operator() (int, int) {
+    return m_val;
+}
+

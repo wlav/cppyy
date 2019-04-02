@@ -192,7 +192,9 @@ class TestOPERATORS:
         assert m.m_val == 27
         assert m[1]    == 27
 
-        for cls in [cppyy.gbl.YAMatrix3, cppyy.gbl.YAMatrix4]:
+        for cls in [cppyy.gbl.YAMatrix3, cppyy.gbl.YAMatrix4,
+                    cppyy.gbl.YAMatrix5, cppyy.gbl.YAMatrix6,
+                    cppyy.gbl.YAMatrix7]:
             m = cls()
             assert m.m_val == 42
             assert m[1,2]  == 42
@@ -216,3 +218,4 @@ class TestOPERATORS:
             assert m[1,2]  == 74
             assert m[1]    == 74
             assert m(1,2)  == 74
+

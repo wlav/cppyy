@@ -164,3 +164,38 @@ public:
 
     int m_val;
 };
+
+class YAMatrix5 {
+public:
+    YAMatrix5() : m_val(42) {}
+
+    int& operator[] (int i);
+    int operator[] (int i) const;
+
+    int& operator() (int i, int j);
+    int operator() (int i, int j) const;
+
+    int m_val;
+};
+
+class YAMatrix6 {
+public:
+    YAMatrix6() : m_val(42) {}
+
+    int& operator[] (int i);
+    int operator[] (int i) const;
+
+    int& operator() (int i, int j);
+
+    int m_val;
+};
+
+class YAMatrix7 {
+public:
+    YAMatrix7() : m_val(42) {}
+
+    int& operator[] (int i);
+    int& operator() (int i, int j);
+
+    int m_val;
+};
