@@ -105,7 +105,7 @@ class TestCPP11FEATURES:
         gc.collect()
         assert TestSharedPtr.s_counter == 0
 
-    def test04_shared_ptr_passting(self):
+    def test04_shared_ptr_passing(self):
         """Ability to pass shared_ptr<Derived> through shared_ptr<Base>"""
 
         from cppyy.gbl import std, TestSharedPtr, DerivedTestSharedPtr
