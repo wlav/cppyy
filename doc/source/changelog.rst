@@ -10,14 +10,16 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-MASTER : 1.4.6
---------------
+2019-04-02 : 1.4.6
+------------------
 
 * More transparent use of smart pointers such as shared_ptr
+* Expose versioned std namespace through using on Mac
 * Improved error handling and interface checking in cross-inheritance
-* Argument of const-ref types support in callbacks/cross-inheritance
+* Argument of (const/non-const) ref types support in callbacks/cross-inheritance
 * Do template argument resolution in order: reference, pointer, value
 * Fix for return type deduction of resolved but uninstantiated templates
+* Fix wrapper generation for defaulted arguments of private types
 * Several linker fixes on 64b Windows
 
 
