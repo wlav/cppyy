@@ -171,3 +171,48 @@ class TestOPERATORS:
         assert not b1 == d2
         assert not d2 == b1
         
+    def test08_call_to_getsetitem_mapping(self):
+        """Map () to []"""
+
+        import cppyy
+
+        m = cppyy.gbl.YAMatrix1()
+        assert m.m_val == 42
+        assert m[1,2]  == 42
+        assert m(1,2)  == 42
+        m[1,2] = 27
+        assert m.m_val == 27
+        assert m[1,2]  == 27
+        assert m(1,2)  == 27
+
+        m = cppyy.gbl.YAMatrix2()
+        assert m.m_val == 42
+        assert m[1]    == 42
+        m[1] = 27
+        assert m.m_val == 27
+        assert m[1]    == 27
+
+        for cls in [cppyy.gbl.YAMatrix3, cppyy.gbl.YAMatrix4]:
+            m = cls()
+            assert m.m_val == 42
+            assert m[1,2]  == 42
+            assert m[1]    == 42
+            assert m(1,2)  == 42
+
+            m[1,2]  = 27
+            assert m.m_val == 27
+            assert m[1,2]  == 27
+            assert m[1]    == 27
+            assert m(1,2)  == 27
+
+            m[1]    = 83
+            assert m.m_val == 83
+            assert m[1,2]  == 83
+            assert m[1]    == 83
+            assert m(1,2)  == 83
+
+            m.m_val = 74
+            assert m.m_val == 74
+            assert m[1,2]  == 74
+            assert m[1]    == 74
+            assert m(1,2)  == 74

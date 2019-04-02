@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+MASTER : 1.4.7
+--------------
+
+* Improved mapping of operator() for indexing (e.g. for matrices)
+
+
 2019-04-02 : 1.4.6
 ------------------
 

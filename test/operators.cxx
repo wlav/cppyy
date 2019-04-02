@@ -14,3 +14,56 @@ v_opeq_derived::~v_opeq_derived() {}
 bool v_opeq_derived::operator==(const v_opeq_derived& other) {
    return m_val != other.m_val;
 }
+
+
+// for indexing tests
+int& YAMatrix1::operator() (int, int) {
+    return m_val;
+}
+
+const int& YAMatrix1::operator() (int, int) const {
+    return m_val;
+}
+
+//-
+int& YAMatrix2::operator[] (int) {
+    return m_val;
+}
+
+const int& YAMatrix2::operator[] (int) const {
+    return m_val;
+}
+
+//-
+int& YAMatrix3::operator() (int, int) {
+    return m_val;
+}
+
+const int& YAMatrix3::operator() (int, int) const {
+    return m_val;
+}
+
+int& YAMatrix3::operator[] (int) {
+    return m_val;
+}
+
+const int& YAMatrix3::operator[] (int) const {
+    return m_val;
+}
+
+//-
+int& YAMatrix4::operator[] (int) {
+    return m_val;
+}
+
+const int& YAMatrix4::operator[] (int) const {
+    return m_val;
+}
+
+int& YAMatrix4::operator() (int, int) {
+    return m_val;
+}
+
+const int& YAMatrix4::operator() (int, int) const {
+    return m_val;
+}
