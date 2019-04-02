@@ -142,7 +142,7 @@ class TestCROSSINHERITANCE:
         assert Base1.call_sum_value(d1, -7) == 6
 
         b1 = Base1()
-        assert Base1.sum_pass_value(b1) == 6
+        assert Base1.sum_pass_value(b1) == 6+2*b1.m_int
 
         class Derived2(Base1):
             def pass_value1(self, a):
@@ -151,9 +151,13 @@ class TestCROSSINHERITANCE:
                 return a.value*2
             def pass_value3(self, a):
                 return a.value*2
+            def pass_value4(self, b):
+                return b.m_int*2
+            def pass_value5(self, b):
+                return b.m_int*2
 
         d2 = Derived2()
-        assert Base1.sum_pass_value(d2) == 12
+        assert Base1.sum_pass_value(d2) == 12+4*d2.m_int
 
     def test05_override_overloads(self):
         """Test ability to override overloaded functions"""

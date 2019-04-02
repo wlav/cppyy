@@ -26,6 +26,8 @@ int CrossInheritance::Base1::sum_pass_value(Base1* b) {
     int i = 2;
     a += b->pass_value2(i);
     a += b->pass_value3(3);
+    a += b->pass_value4(*b);
+    a += b->pass_value5(*b);
     return a;
 }
 

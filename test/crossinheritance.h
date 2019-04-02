@@ -27,6 +27,8 @@ public:
     virtual int pass_value1(int a) { return a; }
     virtual int pass_value2(int& a) { return a; }
     virtual int pass_value3(const int& a) { return a; }
+    virtual int pass_value4(const Base1& b) { return b.m_int; }
+    virtual int pass_value5(Base1& b) { return b.m_int; }
     static int sum_pass_value(Base1* b);
 
 public:
