@@ -14,6 +14,7 @@ MASTER : 1.4.7
 --------------
 
 * Improved mapping of operator() for indexing (e.g. for matrices)
+* Implicit conversion no longer uses global state to prevent recursion
 
 
 2019-04-02 : 1.4.6
