@@ -739,3 +739,45 @@ class TestSTLSET:
         assert s.begin().__preinc__()  == s.end()
         assert s.rbegin() != s.rend()
         assert s.rbegin().__preinc__() == s.rend()
+
+
+class TestSTLTUPLE:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+        cls.N = cppyy.gbl.N
+
+    def test01_tuple_creation_and_access(self):
+        """Create tuples and access their elements"""
+
+        import cppyy
+        std = cppyy.gbl.std
+
+        t1 = std.make_tuple(1, 'a')
+        assert t1
+        assert std.get[0](t1) == 1
+        assert std.get[1](t1) == 'a'
+
+        t2 = std.make_tuple(1, 'a')
+        assert t1 == t2
+
+        t3 = std.make_tuple[int, 'char'](1, 'a')
+        assert t3
+        assert std.get[0](t3) == 1
+        assert std.get[1](t3) == 'a'
+
+        # assert t1 != t3     # fails to link (?!)
+
+        t4 = std.make_tuple(7., 1, 'b')
+        assert t4
+        assert std.get[0](t4) == 7.
+        assert std.get[1](t4) == 1
+        assert std.get[2](t4) == 'b'
+
+        v = std.vector[int](range(self.N))
+        t5 = std.make_tuple(v, False)
+        assert std.get[0](t5).size() == self.N
+        assert not std.get[1](t5)
+
+        # TODO: should be easy enough to add iterators over std::tuple?
