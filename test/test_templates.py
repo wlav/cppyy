@@ -224,6 +224,42 @@ class TestTEMPLATES:
         assert D().callme(2) == 2
 
 
+    def test11_templated_ctor(self):
+        """Test templated constructors"""
+
+        import cppyy
+        cppyy.cppdef("""
+            template <typename T>
+            class RTTest_SomeClassWithTCtor {
+            public:
+                template<typename R>
+                RTTest_SomeClassWithTCtor(int n, R val) : m_double(n+val) {}
+                double m_double;
+            };
+
+            namespace RTTest_SomeNamespace {
+
+            template <typename T>
+            class RTTest_SomeClassWithTCtor {
+            public:
+                RTTest_SomeClassWithTCtor() : m_double(-1.) {}
+                template<typename R>
+                RTTest_SomeClassWithTCtor(int n, R val) : m_double(n+val) {}
+                double m_double;
+            };
+
+            }
+        """)
+
+        from cppyy import gbl
+
+        assert round(gbl.RTTest_SomeClassWithTCtor[int](1, 3.1).m_double - 4.1, 8) == 0.
+
+        RTTest2 = gbl.RTTest_SomeNamespace.RTTest_SomeClassWithTCtor
+        assert round(RTTest2[int](1, 3.1).m_double - 4.1, 8) == 0.
+        assert round(RTTest2[int]().m_double + 1., 8) == 0.
+
+
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
         cls.test_dct = test_dct
