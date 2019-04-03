@@ -251,6 +251,8 @@ class TestSTLVECTOR:
         assert cppyy.gbl.vectest_ol2("")  == 2
         assert cppyy.gbl.vectest_ol2("a") == 2
 
+        raises(TypeError, cppyy.gbl.std.vector["std::string"], "abc")
+
 
 class TestSTLSTRING:
     def setup_class(cls):
