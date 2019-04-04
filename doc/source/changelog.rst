@@ -10,12 +10,14 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-MASTER : 1.4.7
---------------
+2019-04-04 : 1.4.7
+------------------
 
 * Enable initializer_list conversion on Windows as well
 * Improved mapping of operator() for indexing (e.g. for matrices)
 * Implicit conversion no longer uses global state to prevent recursion
+* Improved overload reordering
+* Fixes for templated constructors in namespaces
 
 
 2019-04-02 : 1.4.6
