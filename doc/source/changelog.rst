@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 MASTER : 1.4.7
 --------------
 
+* Enable initializer_list conversion on Windows as well
 * Improved mapping of operator() for indexing (e.g. for matrices)
 * Implicit conversion no longer uses global state to prevent recursion
 
