@@ -10,6 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+MASTER : 1.4.8
+--------------
+
+* Properly resolve overloaded functions with using of templates from bases
+* Get templated constructor info from decl instead of name comparison
+
+
 2019-04-04 : 1.4.7
 ------------------
 
