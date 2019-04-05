@@ -238,6 +238,30 @@ using make_vector = typename matryoshka<T, sizes ...>::type;
 };
 #endif
 
+namespace using_problem {
+
+template<typename T>
+class Base {
+public:
+    template<typename R>
+    R get1(T t) { return t + R{5}; }
+    T get2() { return T{5}; }
+    template<typename R>
+    R get3(T t) { return t + R{5}; }
+    T get3() { return T{5}; }
+};
+
+template<typename T>
+class Derived : public Base<T> {
+public:
+    typedef Base<T> _Mybase;
+    using _Mybase::get1;
+    using _Mybase::get2;
+    using _Mybase::get3;
+};
+
+}
+
 
 //===========================================================================
 // template with r-value
