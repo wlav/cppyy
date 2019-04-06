@@ -14,7 +14,7 @@ alphabetical order):
 
 In addition, cppyy is being re-integrated in it's roots, which includes
 several sophisticated pythonizations.
-See the "experimental" version of the `PyROOT` project.
+See the "experimental" version of the `PyROOT`_ project.
 
 .. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash
