@@ -14,5 +14,5 @@ alphabetical order:
 
 .. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash
-.. _cppyy-knearestneighbors: _https://github.com/jclay/cppyy-knearestneighbors-example
-.. _vspline: https://bitbucket.org/kfj/python-vspline
+.. _cppyy-knearestneighbors: https://github.com/jclay/cppyy-knearestneighbors-example
+.. _python-vspline: https://bitbucket.org/kfj/python-vspline
