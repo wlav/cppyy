@@ -5,8 +5,8 @@ Examples
 
 The detailed feature lists have examples that work using a header file, and
 there is the `tutorial`_ that shows mixing of C++ and Python interactively.
-More complete examples that show packaging include these repos in
-alphabetical order:
+More complete examples that show packaging include these repos (in
+alphabetical order):
 
  * `cppyy-bbhash`_
  * `cppyy-knearestneighbors`_
