@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
+from .support import setup_make, IS_WINDOWS
 
 
 class TestREGRESSION:
@@ -170,3 +170,39 @@ class TestREGRESSION:
         assert not 'vector<const PyABC::S1*>' in dir(PyABC.S2)
         assert PyABC.S2.S1_coll is cppyy.gbl.std.vector('const PyABC::S1*')
 
+    def test08_gil_not_released(self):
+        """GIL was released by accident for by-value returns"""
+
+        import cppyy
+
+        something = 5.0
+
+        code = """
+#include "Python.h"
+
+std::vector<float> some_foo_calling_python() {
+   auto pyobj = reinterpret_cast<PyObject*>(ADDRESS);
+   float f = (float)PyFloat_AsDouble(pyobj);
+   std::vector<float> v;
+   v.push_back(f);
+   return v;
+}
+""".replace("ADDRESS", str(id(something)))
+
+        cppyy.cppdef(code)
+        cppyy.gbl.some_foo_calling_python()
+
+    def test09_enum_in_global_space(self):
+        """Enum declared in search.h did not appear in global space"""
+
+
+        if IS_WINDOWS:
+            return           # no such enum in MSVC's search.h
+
+        import cppyy
+
+        cppyy.include('search.h')
+
+        assert cppyy.gbl.ACTION
+        assert hasattr(cppyy.gbl, 'ENTER')
+        assert hasattr(cppyy.gbl, 'FIND')
