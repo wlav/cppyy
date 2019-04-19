@@ -13,8 +13,14 @@ PyPy support lags CPython support.
 MASTER : 1.4.8
 --------------
 
+* Keep unresolved enums desugared and provide generic converters
+* Fix lookup of enum values in global namespace
+* Backported name mangling (esp. for static/global data lookup) for 32b Windows
+* Fixed more linker problems with malloc on 64b Windows
+* Consistency in buffer length calculations and c_int/c_uint handling  on Windows
 * Properly resolve overloaded functions with using of templates from bases
 * Get templated constructor info from decl instead of name comparison
+* Fixed a performance regression for free functions.
 
 
 2019-04-04 : 1.4.7
