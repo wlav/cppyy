@@ -783,3 +783,46 @@ class TestSTLTUPLE:
         assert not std.get[1](t5)
 
         # TODO: should be easy enough to add iterators over std::tuple?
+
+    def test02_tuple_size(self):
+        """Usage of tuple_size helper class"""
+
+        import cppyy
+        std = cppyy.gbl.std
+
+        t = std.make_tuple("aap", 42, 5.)
+        assert std.tuple_size(type(t)).value == 3
+
+    def test03_tuple_iter(self):
+        """Pack/unpack tuples"""
+
+        import cppyy, ctypes
+        std = cppyy.gbl.std
+
+        t = std.make_tuple(1, '2', 5.)
+        assert len(t) == 3
+
+        a, b, c = t
+        assert a == 1
+        assert b == '2'
+        assert c == 5.
+
+
+class TestSTLPAIR:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+        cls.N = cppyy.gbl.N
+
+    def test01_pair_pack_unpack(self):
+        """Pack/unpack pairs"""
+
+        import cppyy
+        std = cppyy.gbl.std
+
+        p = std.make_pair(1, 2)
+        a, b = p
+
+        assert a == 1
+        assert b == 2

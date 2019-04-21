@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 MASTER : 1.4.8
 --------------
 
+* std::tuple is now iterable for return assignments w/o tie
 * Support for opaque handles and typedefs of pointers to classes
 * Keep unresolved enums desugared and provide generic converters
 * Treat int8_t and uint8_t as integers (even when they are chars)

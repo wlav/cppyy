@@ -88,6 +88,21 @@ _typemap.initialize(_backend)
 from . import _pythonization as py
 py._set_backend(_backend)
 
+def _standard_pythonizations(pyclass, name):
+  # pythonization of tuple; TODO: placed here for convenience, but verify that decision
+    if name.find('std::tuple<', 0, 11) == 0 or name.find('tuple<', 0, 6) == 0:
+        import cppyy
+        pyclass._tuple_len = cppyy.gbl.std.tuple_size(pyclass).value
+        def tuple_len(self):
+            return self.__class__._tuple_len
+        pyclass.__len__ = tuple_len
+        def tuple_getitem(self, idx, get=cppyy.gbl.std.get):
+            if idx < self.__class__._tuple_len:
+                return get[idx](self)
+            raise IndexError(idx)
+        pyclass.__getitem__ = tuple_getitem
+py.add_pythonization(_standard_pythonizations)   # should live on std only, but ...
+
 
 #--- CFFI style interface ----------------------------------------------------
 def cppdef(src):
