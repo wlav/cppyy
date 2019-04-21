@@ -346,3 +346,24 @@ class TestFRAGILE:
         assert cppyy.gbl.myvar2
         assert cppyy.gbl.myvar3
         assert cppyy.gbl.myvar4
+
+    def test16_opaque_handle(self):
+        """Support use of opaque handles"""
+
+        import cppyy
+
+        assert cppyy.gbl.fragile.OpaqueType
+        assert cppyy.gbl.fragile.OpaqueHandle_t
+
+        handle = cppyy.gbl.fragile.OpaqueHandle_t(0x42)
+        assert handle
+        assert cppyy.addressof(handle) == 0x42
+
+        handle = cppyy.gbl.fragile.OpaqueHandle_t()
+        assert not handle
+
+        addr = cppyy.gbl.fragile.create_handle(handle);
+        assert addr
+        assert not not handle
+
+        assert cppyy.gbl.fragile.destroy_handle(handle, addr);
