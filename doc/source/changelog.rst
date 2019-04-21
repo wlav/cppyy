@@ -13,8 +13,9 @@ PyPy support lags CPython support.
 MASTER : 1.4.8
 --------------
 
-* support for opaque handles and typedefs of pointers to classes
+* Support for opaque handles and typedefs of pointers to classes
 * Keep unresolved enums desugared and provide generic converters
+* Treat int8_t and uint8_t as integers (even when they are chars)
 * Fix lookup of enum values in global namespace
 * Backported name mangling (esp. for static/global data lookup) for 32b Windows
 * Fixed more linker problems with malloc on 64b Windows
