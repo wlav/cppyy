@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-MASTER : 1.4.8
---------------
+2019-04-22 : 1.4.8
+------------------
 
 * std::tuple is now iterable for return assignments w/o tie
 * Support for opaque handles and typedefs of pointers to classes
