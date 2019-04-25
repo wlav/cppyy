@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+2019-04-25 : 1.4.9
+------------------
+
+* Fix import error on pypy-c
+
+
 2019-04-22 : 1.4.8
 ------------------
 

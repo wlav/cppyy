@@ -66,7 +66,6 @@ if ispypy:
     from ._pypy_cppyy import *
 else:
     from ._cpython_cppyy import *
-del ispypy
 
 
 #- allow importing from gbl --------------------------------------------------
@@ -101,7 +100,11 @@ def _standard_pythonizations(pyclass, name):
                 return get[idx](self)
             raise IndexError(idx)
         pyclass.__getitem__ = tuple_getitem
-py.add_pythonization(_standard_pythonizations)   # should live on std only, but ...
+
+if not ispypy:
+    py.add_pythonization(_standard_pythonizations)   # should live on std only
+# TODO: PyPy still has the old-style pythonizations, which require the full
+# class name (not possible for std::tuple ...)
 
 
 #--- CFFI style interface ----------------------------------------------------
@@ -138,7 +141,15 @@ def add_include_path(path):
     gbl.gInterpreter.AddIncludePath(path)
 
 # add access to Python C-API headers
-add_include_path(sysconfig.get_path('include', 'posix_prefix' if os.name == 'posix' else os.name))
+apipath = sysconfig.get_path('include', 'posix_prefix' if os.name == 'posix' else os.name)
+if os.path.exists(apipath):
+    add_include_path(apipath)
+elif ispypy:
+  # possibly structured without 'pythonx.y' in path
+    apipath = os.path.dirname(apipath)
+    if os.path.exists(apipath) and os.path.exists(os.path.join(apipath, 'Python.h')):
+        add_include_path(apipath)
+del ispypy, apipath
 
 def add_autoload_map(fname):
     """Add the entries from a autoload (.rootmap) file to Cling."""
