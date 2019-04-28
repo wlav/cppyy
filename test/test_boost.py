@@ -5,20 +5,13 @@ from .support import setup_make
 
 class TestBOOSTANY:
     def setup_class(cls):
-        cls.disable = False
         import cppyy
-        # TODO: better error handling
-        cppyy.include('boost/any.hpp')
+        cppyy.include('boost/any.hpp')           # fails in an ugly way if not found
         if not hasattr(cppyy.gbl, 'boost'):
-            cls.disable = True
+            py.test.skip('boost not found')
 
     def test01_any_class(self):
         """Availability of boost::any"""
-
-        if self.disable:
-            import warnings
-            warnings.warn("no boost/any.hpp found, skipping test01_any_class")
-            return
 
         import cppyy
         assert cppyy.gbl.boost.any
@@ -30,11 +23,6 @@ class TestBOOSTANY:
 
     def test02_any_usage(self):
         """boost::any assignment and casting"""
-
-        if self.disable:
-            import warnings
-            warnings.warn("no boost/any.hpp found, skipping test02_any_usage")
-            return
 
         import cppyy
         assert cppyy.gbl.boost
@@ -69,3 +57,25 @@ class TestBOOSTANY:
 
         extract = boost.any_cast[std.vector[int]](val)
         assert len(extract) == 200
+
+
+class TestBOOSTOPERATORS:
+    def setup_class(cls):
+        import cppyy
+        cppyy.include('boost/operators.hpp')     # fails in an ugly way if not found
+        if not hasattr(cppyy.gbl, 'boost'):
+            py.test.skip('boost not found')
+
+    def test01_ordered(self):
+        """ordered_field_operators as base used to crash"""
+
+        import cppyy
+
+        cppyy.include("gmpxx.h")
+        cppyy.cppdef("""
+            namespace boost_test {
+               class Derived : boost::ordered_field_operators<Derived>, boost::ordered_field_operators<Derived, mpq_class> {};
+            }
+        """)
+
+        assert cppyy.gbl.boost_test.Derived
