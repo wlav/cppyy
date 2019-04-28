@@ -14,10 +14,3 @@ long MyTemplatedMethodClass::get_self_size()   { return (long)sizeof(MyTemplated
 
 // variadic templates
 std::string some_variadic::gTypeName = "";
-
-void func() {
-    auto a = some_variadic::A<int, double>{};
-
-    a.a(1, 1., 'a');
-    a.a_T<int>(1, 1., 'a');
-}
