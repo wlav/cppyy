@@ -10,6 +10,14 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+MASTER: 1.4.10
+--------------
+
+* Fixes in typedef parsing for template arguments in unknown namespaces
+* Fix in templated operator code generation
+* Fixed ref-counting error for instantiated template methods
+
+
 2019-04-25 : 1.4.9
 ------------------
 
