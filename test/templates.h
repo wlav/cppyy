@@ -1,6 +1,12 @@
+#ifndef CPPYY_TEST_TEMPLATES_H
+#define CPPYY_TEST_TEMPLATES_H
+
+#include <stdexcept>
 #include <string>
 #include <sstream>
 #include <vector>
+
+#include <cxxabi.h>
 
 
 //===========================================================================
@@ -260,7 +266,7 @@ public:
     using _Mybase::get3;
 };
 
-}
+} // namespace using_problem
 
 
 //===========================================================================
@@ -272,4 +278,131 @@ bool is_valid(T&& new_value) {
     return new_value != T{};
 }
 
+} // namespace T_WithRValue
+
+
+//===========================================================================
+// variadic templates
+
+namespace some_variadic {
+
+extern std::string gTypeName;
+
+template <typename ... Args>
+class A {
+public:
+    A() {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(A<Args...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("A::A");
+    }
+    A(const A&) = default;
+    A(A&&) = default;
+    A& operator=(const A&) = default;
+    A& operator=(A&&) = default;
+
+    template <typename ... FArgs>
+    void a(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(&A<Args...>::a<FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("A::a-2");
+    }
+
+    template <typename T, typename ... FArgs>
+    T a_T(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(&A<Args...>::a_T<T, FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("A::a_T-2");
+        return T{};
+    }
+
+    template <typename ... FArgs>
+    static void sa(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(A<Args...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("A::sa-1");
+        gTypeName += "::";
+        gTypeName += abi::__cxa_demangle(typeid(A<Args...>::sa<FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("A::sa-2");
+    }
+
+    template <typename T, typename ... FArgs>
+    static T sa_T(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(A<Args...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("A::sa_T-1");
+        gTypeName +=  "::";
+        gTypeName += abi::__cxa_demangle(typeid(A<Args...>::sa_T<T, FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("A::sa_T-2");
+        return T{};
+    }
+};
+
+class B {
+public:
+    B() {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(B).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("B::B");
+    }
+    B(const B&) = default;
+    B(B&&) = default;
+    B& operator=(const B&) = default;
+    B& operator=(B&&) = default;
+
+    template <typename ... FArgs>
+    void b(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(&B::b<FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("B::b-2");
+    }
+
+    template <typename T, typename ... FArgs>
+    T b_T(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(&B::b_T<T, FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("B::b_T-2");
+        return T{};
+    }
+
+    template <typename ... FArgs>
+    static void sb(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(B).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("B::sb-1");
+        gTypeName += "::";
+        gTypeName +=  abi::__cxa_demangle(typeid(B::sb<FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("B::sb-2");
+    }
+
+    template <typename T, typename ... FArgs>
+    static T sb_T(FArgs&&... args) {
+        int status;
+        gTypeName = abi::__cxa_demangle(typeid(B).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("B::sb_T-1");
+        gTypeName += "::";
+        gTypeName += abi::__cxa_demangle(typeid(B::sb_T<T, FArgs...>).name(), 0, 0, &status);
+        if (status != 0) throw std::runtime_error("B::sb_T-2");
+        return T{};
+    }
+};
+
+template <typename ... Args>
+void fn(Args&&... args) {
+    int status;
+    gTypeName = abi::__cxa_demangle(typeid(fn<Args...>).name(), 0, 0, &status);
+    if (status != 0) throw std::runtime_error("fn");
 }
+
+template <typename T, typename ... Args>
+T fn_T(Args&&... args) {
+    int status;
+    gTypeName = abi::__cxa_demangle(typeid(fn<Args...>).name(), 0, 0, &status);
+    if (status != 0) throw std::runtime_error("fn_T");
+    return T{};
+}
+
+} // namespace some_variadic
+
+
+#endif // !CPPYY_TEST_TEMPLATES_H

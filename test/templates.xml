@@ -23,4 +23,6 @@
 
   <namespace name="using_problem" />
 
+  <namespace name="some_variadic" />
+
 </lcgdict>

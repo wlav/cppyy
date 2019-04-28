@@ -10,3 +10,14 @@ long MyTemplatedMethodClass::get_long_size()   { return (long)42; /* "lying" */ 
 long MyTemplatedMethodClass::get_float_size()  { return (long)sizeof(float); }
 long MyTemplatedMethodClass::get_double_size() { return (long)sizeof(double); }
 long MyTemplatedMethodClass::get_self_size()   { return (long)sizeof(MyTemplatedMethodClass); }
+
+
+// variadic templates
+std::string some_variadic::gTypeName = "";
+
+void func() {
+    auto a = some_variadic::A<int, double>{};
+
+    a.a(1, 1., 'a');
+    a.a_T<int>(1, 1., 'a');
+}
