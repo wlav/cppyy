@@ -14,3 +14,18 @@ long MyTemplatedMethodClass::get_self_size()   { return (long)sizeof(MyTemplated
 
 // variadic templates
 std::string some_variadic::gTypeName = "";
+
+
+// template with empty body
+namespace T_WithEmptyBody {
+
+std::string side_effect = "not set";
+
+template<typename T>
+void some_empty() {
+    side_effect = "side effect";
+}
+
+template void some_empty<int>();
+
+} // namespace T_WithRValue

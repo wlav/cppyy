@@ -283,7 +283,6 @@ bool is_valid(T&& new_value) {
 
 //===========================================================================
 // variadic templates
-
 namespace some_variadic {
 
 extern std::string gTypeName;
@@ -404,5 +403,16 @@ T fn_T(Args&&... args) {
 
 } // namespace some_variadic
 
+
+//===========================================================================
+// template with empty body
+namespace T_WithEmptyBody {
+
+extern std::string side_effect;
+
+template<typename T>
+void some_empty();
+
+} // namespace T_WithRValue
 
 #endif // !CPPYY_TEST_TEMPLATES_H

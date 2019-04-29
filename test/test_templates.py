@@ -394,6 +394,17 @@ class TestTEMPLATES:
         b.b_T['int'](1, 1., 'a')
         assert ns.gTypeName.find("int (some_variadic::B::*)(int&&, double&&, std::") == 0
 
+    def test16_empty_body(self):
+        """Use of templated function with empty body"""
+
+        import cppyy
+
+        f_T = cppyy.gbl.T_WithEmptyBody.some_empty
+
+        assert cppyy.gbl.T_WithEmptyBody.side_effect == "not set"
+        assert f_T[int]() is None
+        assert cppyy.gbl.T_WithEmptyBody.side_effect == "side effect"
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
