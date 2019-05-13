@@ -6,7 +6,19 @@
 #include <sstream>
 #include <vector>
 
+#ifndef WIN32
 #include <cxxabi.h>
+inline std::string demangle_it(const char* name, const char* errmsg) {
+    int status;
+    std::string res = abi::__cxa_demangle(name, 0, 0, &status);
+    if (status != 0) throw std::runtime_error(errmsg);
+    return res;
+}
+#else
+inline std::string demangle_it(const char* name, const char*) {
+    return name;        // typeinfo's name() is already demangled
+}
+#endif
 
 
 //===========================================================================
@@ -291,9 +303,7 @@ template <typename ... Args>
 class A {
 public:
     A() {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(A<Args...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("A::A");
+        gTypeName = demangle_it(typeid(A<Args...>).name(), "A::A");
     }
     A(const A&) = default;
     A(A&&) = default;
@@ -302,37 +312,27 @@ public:
 
     template <typename ... FArgs>
     void a(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(&A<Args...>::a<FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("A::a-2");
+        gTypeName = demangle_it(typeid(&A<Args...>::a<FArgs...>).name(), "A::a-2");
     }
 
     template <typename T, typename ... FArgs>
     T a_T(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(&A<Args...>::a_T<T, FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("A::a_T-2");
+        gTypeName = demangle_it(typeid(&A<Args...>::a_T<T, FArgs...>).name(), "A::a_T-2");
         return T{};
     }
 
     template <typename ... FArgs>
     static void sa(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(A<Args...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("A::sa-1");
+        gTypeName = demangle_it(typeid(A<Args...>).name(), "A::sa-1");
         gTypeName += "::";
-        gTypeName += abi::__cxa_demangle(typeid(A<Args...>::sa<FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("A::sa-2");
+        gTypeName += demangle_it(typeid(A<Args...>::sa<FArgs...>).name(), "A::sa-2");
     }
 
     template <typename T, typename ... FArgs>
     static T sa_T(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(A<Args...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("A::sa_T-1");
+        gTypeName = demangle_it(typeid(A<Args...>).name(), "A::sa_T-1");
         gTypeName +=  "::";
-        gTypeName += abi::__cxa_demangle(typeid(A<Args...>::sa_T<T, FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("A::sa_T-2");
+        gTypeName += demangle_it(typeid(A<Args...>::sa_T<T, FArgs...>).name(), "A::sa_T-2");
         return T{};
     }
 };
@@ -340,9 +340,7 @@ public:
 class B {
 public:
     B() {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(B).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("B::B");
+        gTypeName = demangle_it(typeid(B).name(), "B::B");
     }
     B(const B&) = default;
     B(B&&) = default;
@@ -351,53 +349,39 @@ public:
 
     template <typename ... FArgs>
     void b(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(&B::b<FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("B::b-2");
+        gTypeName = demangle_it(typeid(&B::b<FArgs...>).name(), "B::b-2");
     }
 
     template <typename T, typename ... FArgs>
     T b_T(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(&B::b_T<T, FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("B::b_T-2");
+        gTypeName = demangle_it(typeid(&B::b_T<T, FArgs...>).name(), "B::b_T-2");
         return T{};
     }
 
     template <typename ... FArgs>
     static void sb(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(B).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("B::sb-1");
+        gTypeName = demangle_it(typeid(B).name(), "B::sb-1");
         gTypeName += "::";
-        gTypeName +=  abi::__cxa_demangle(typeid(B::sb<FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("B::sb-2");
+        gTypeName +=  demangle_it(typeid(B::sb<FArgs...>).name(), "B::sb-2");
     }
 
     template <typename T, typename ... FArgs>
     static T sb_T(FArgs&&... args) {
-        int status;
-        gTypeName = abi::__cxa_demangle(typeid(B).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("B::sb_T-1");
+        gTypeName = demangle_it(typeid(B).name(), "B::sb_T-1");
         gTypeName += "::";
-        gTypeName += abi::__cxa_demangle(typeid(B::sb_T<T, FArgs...>).name(), 0, 0, &status);
-        if (status != 0) throw std::runtime_error("B::sb_T-2");
+        gTypeName += demangle_it(typeid(B::sb_T<T, FArgs...>).name(), "B::sb_T-2");
         return T{};
     }
 };
 
 template <typename ... Args>
 void fn(Args&&... args) {
-    int status;
-    gTypeName = abi::__cxa_demangle(typeid(fn<Args...>).name(), 0, 0, &status);
-    if (status != 0) throw std::runtime_error("fn");
+    gTypeName = demangle_it(typeid(fn<Args...>).name(), "fn");
 }
 
 template <typename T, typename ... Args>
 T fn_T(Args&&... args) {
-    int status;
-    gTypeName = abi::__cxa_demangle(typeid(fn<Args...>).name(), 0, 0, &status);
-    if (status != 0) throw std::runtime_error("fn_T");
+    gTypeName = demangle_it(typeid(fn<Args...>).name(), "fn_T");
     return T{};
 }
 

@@ -358,41 +358,50 @@ class TestTEMPLATES:
         import cppyy
         ns = cppyy.gbl.some_variadic
 
+        def get_tn(ns):
+          # helper to make all platforms look the same
+            tn = ns.gTypeName
+            tn = tn.replace(' ', '')
+            tn = tn.replace('class', '')
+            tn = tn.replace('__cdecl', '')
+            tn = tn.replace('__ptr64', '')
+            return tn
+
       # templated class
         a = ns.A['int', 'double']()
-        assert ns.gTypeName == "some_variadic::A<int, double>"
+        assert get_tn(ns) == "some_variadic::A<int,double>"
 
       # static functions
         a.sa(1, 1., 'a')
-        assert ns.gTypeName.find("some_variadic::A<int, double>::void (int&&, double&&, std::") == 0
+        assert get_tn(ns).find("some_variadic::A<int,double>::void(int&&,double&&,std::") == 0
         ns.A['char&', 'double*'].sa(1, 1., 'a')
-        assert ns.gTypeName.find("some_variadic::A<char&, double*>::void (int&&, double&&, std::") == 0
+        assert get_tn(ns).find("some_variadic::A<char&,double*>::void(int&&,double&&,std::") == 0
         ns.A['char&', 'double*'].sa_T['int'](1, 1., 'a')
-        assert ns.gTypeName.find("some_variadic::A<char&, double*>::int (int&&, double&&, std::") == 0
+        assert get_tn(ns).find("some_variadic::A<char&,double*>::int(int&&,double&&,std::") == 0
 
       # member functions
         a.a(1, 1., 'a')
-        assert ns.gTypeName.find("void (some_variadic::A<int, double>::*)(int&&, double&&, std::") == 0
+        assert get_tn(ns).find("void(some_variadic::A<int,double>::*)(int&&,double&&,std::") == 0
         a.a_T['int'](1, 1., 'a')
-        assert ns.gTypeName.find("int (some_variadic::A<int, double>::*)(int&&, double&&, std::") == 0
+        assert get_tn(ns).find("int(some_variadic::A<int,double>::*)(int&&,double&&,std::") == 0
 
       # non-templated class
         b = ns.B()
-        assert ns.gTypeName == "some_variadic::B"
+        assert get_tn(ns) == "some_variadic::B"
 
       # static functions
         b.sb(1, 1., 'a')
-        assert ns.gTypeName.find("some_variadic::B::void (int&&, double&&, std::") == 0
+        assert get_tn(ns).find("some_variadic::B::void(int&&,double&&,std::") == 0
         ns.B.sb(1, 1., 'a')
-        assert ns.gTypeName.find("some_variadic::B::void (int&&, double&&, std::") == 0
+        assert get_tn(ns).find("some_variadic::B::void(int&&,double&&,std::") == 0
         ns.B.sb_T['int'](1, 1., 'a')
-        assert ns.gTypeName.find("some_variadic::B::int (int&&, double&&, std::") == 0
+        assert get_tn(ns).find("some_variadic::B::int(int&&,double&&,std::") == 0
 
       # member functions
         b.b(1, 1., 'a')
-        assert ns.gTypeName.find("void (some_variadic::B::*)(int&&, double&&, std") == 0
+        assert get_tn(ns).find("void(some_variadic::B::*)(int&&,double&&,std::") == 0
         b.b_T['int'](1, 1., 'a')
-        assert ns.gTypeName.find("int (some_variadic::B::*)(int&&, double&&, std::") == 0
+        assert get_tn(ns).find("int(some_variadic::B::*)(int&&,double&&,std::") == 0
 
     def test16_empty_body(self):
         """Use of templated function with empty body"""
