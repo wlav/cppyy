@@ -13,6 +13,8 @@ PyPy support lags CPython support.
 MASTER: 1.4.10
 --------------
 
+* Imported several FindCppyy.cmake improvements from Camille's cppyy-bbhash
+* Fixes to cppyy-generator for unresolved templates, void, etc.
 * Fixes in typedef parsing for template arguments in unknown namespaces
 * Fix in templated operator code generation
 * Fixed ref-counting error for instantiated template methods
