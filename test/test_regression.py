@@ -206,3 +206,16 @@ std::vector<float> some_foo_calling_python() {
         assert cppyy.gbl.ACTION
         assert hasattr(cppyy.gbl, 'ENTER')
         assert hasattr(cppyy.gbl, 'FIND')
+
+    def test10_cobject_addressing(self):
+        """AsCObject (not public) had a deref too many"""
+
+        import cppyy
+
+        cppyy.cppdef('struct CObjA { CObjA() : m_int(42) {} int m_int; };')
+        a = cppyy.gbl.CObjA()
+        co = cppyy._backend.AsCObject(a)
+
+        assert a == cppyy.bind_object(co, 'CObjA')
+        assert a.m_int == 42
+        assert cppyy.bind_object(co, 'CObjA').m_int == 42
