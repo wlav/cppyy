@@ -24,7 +24,10 @@ inline std::string demangle_it(const char* name, const char*) {
 //===========================================================================
 class MyTemplatedMethodClass {         // template methods
 public:
-    long get_size();      // to get around bug in genreflex
+    template<class A> long get_size(A&);
+    template<class A> long get_size(const A&);
+
+    long get_size();
     template<class B> long get_size();
 
     long get_char_size();
@@ -38,6 +41,16 @@ public:
 private:
     double m_data[3];
 };
+
+template<class A>
+long MyTemplatedMethodClass::get_size(A&) {
+    return sizeof(A);
+}
+
+template<class A>
+long MyTemplatedMethodClass::get_size(const A&) {
+    return sizeof(A)+1;
+}
 
 template<class B>
 inline long MyTemplatedMethodClass::get_size() {

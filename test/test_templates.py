@@ -33,6 +33,10 @@ class TestTEMPLATES:
             targ = long
         assert m.get_size[targ]()     == m.get_long_size()
 
+        import ctypes
+        assert m.get_size(ctypes.c_double(3.14)) == m.get_size['double']()
+        assert m.get_size(ctypes.c_double(3.14).value) == m.get_size['double']()+1
+
       # auto-instantiation
         assert m.get_size[float]()    == m.get_float_size()
         assert m.get_size['double']() == m.get_double_size()
