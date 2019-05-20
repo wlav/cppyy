@@ -10,8 +10,14 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-MASTER: 1.4.10
---------------
+MASTER : 1.4.11
+---------------
+
+* Workaround for JITed RTTI lookup failures on 64b MS Windows
+
+
+2019-04-13 : 1.4.10
+-------------------
 
 * Imported several FindCppyy.cmake improvements from Camille's cppyy-bbhash
 * Fixes to cppyy-generator for unresolved templates, void, etc.
