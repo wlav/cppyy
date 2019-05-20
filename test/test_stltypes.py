@@ -253,6 +253,17 @@ class TestSTLVECTOR:
 
         raises(TypeError, cppyy.gbl.std.vector["std::string"], "abc")
 
+    def test10_vector_std_distance(self):
+        """Use of std::distance with vector"""
+
+        import cppyy
+        from cppyy.gbl import std
+
+        v = std.vector[int]([1, 2, 3])
+        assert v.size() == 3
+        assert std.distance(v.begin(), v.end()) == v.size()
+        assert std.distance[type(v).iterator](v.begin(), v.end()) == v.size()
+
 
 class TestSTLSTRING:
     def setup_class(cls):
