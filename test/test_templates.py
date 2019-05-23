@@ -368,6 +368,7 @@ class TestTEMPLATES:
             tn = tn.replace(' ', '')
             tn = tn.replace('class', '')
             tn = tn.replace('__cdecl', '')
+            tn = tn.replace('__thiscall', '')
             tn = tn.replace('__ptr64', '')
             return tn
 
