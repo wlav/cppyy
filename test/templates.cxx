@@ -13,6 +13,9 @@ long MyTemplatedMethodClass::get_self_size()   { return (long)sizeof(MyTemplated
 
 
 // variadic templates
+#ifdef WIN32
+__declspec(dllexport)
+#endif
 std::string some_variadic::gTypeName = "";
 
 

@@ -310,7 +310,11 @@ bool is_valid(T&& new_value) {
 // variadic templates
 namespace some_variadic {
 
+#ifdef WIN32
+extern __declspec(dllimport) std::string gTypeName;
+#else
 extern std::string gTypeName;
+#endif
 
 template <typename ... Args>
 class A {

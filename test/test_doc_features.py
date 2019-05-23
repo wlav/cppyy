@@ -47,13 +47,13 @@ public:
     void array_method(int* ad, int size) {
         for (int i=0; i < size; ++i)
             std::cerr << ad[i] << ' ';
-        std::cerr << std::endl;
+        std::cerr << '\\n'; // TODO: not std::endl for 32b Windows
     }
 
     void array_method(double* ad, int size) {
         for (int i=0; i < size; ++i)
             std::cerr << ad[i] << ' ';
-        std::cerr << std::endl;
+        std::cerr << '\\n'; // TODO: not std::endl for 32b Windows
     }
 
     void uint_ref_assign(unsigned int& target, unsigned int value) {

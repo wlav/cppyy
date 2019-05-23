@@ -24,5 +24,8 @@
   <namespace name="using_problem" />
 
   <namespace name="some_variadic" />
+  <class pattern="some_variadic::*" />
+  <function pattern="some_variadic::*" />
+  <variable pattern="some_variadic::*" />
 
 </lcgdict>
