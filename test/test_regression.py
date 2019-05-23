@@ -24,9 +24,7 @@ class TestREGRESSION:
         qtpath = "/usr/include/qt5"
         kdcraw_h = "/usr/include/KF5/KDCRAW/kdcraw/kdcraw.h"
         if not os.path.isdir(qtpath) or not os.path.exists(kdcraw_h):
-            import warnings
-            warnings.warn("no KDE/Qt found, skipping test01_kdcraw")
-            return
+            py.test.skip("no KDE/Qt found, skipping test01_kdcraw")
 
         # need to resolve qt_version_tag for the incremental compiler; since
         # it's not otherwise used, just make something up
@@ -194,7 +192,6 @@ std::vector<float> some_foo_calling_python() {
 
     def test09_enum_in_global_space(self):
         """Enum declared in search.h did not appear in global space"""
-
 
         if IS_WINDOWS:
             return           # no such enum in MSVC's search.h
