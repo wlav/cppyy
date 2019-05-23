@@ -419,6 +419,28 @@ class TestTEMPLATES:
         assert f_T[int]() is None
         assert cppyy.gbl.T_WithEmptyBody.side_effect == "side effect"
 
+    def test17_greedy_overloads(self):
+        """void*/void** should not pre-empt template instantiations"""
+
+        import cppyy
+
+        ns = cppyy.gbl.T_WithGreedyOverloads
+
+      # check that void* does not mask template instantiations
+        g1 = ns.WithGreedy1()
+        assert g1.get_size(ns.SomeClass(), True) == -1
+        assert g1.get_size(ns.SomeClass()) == cppyy.sizeof(ns.SomeClass)
+
+      # check that void* does not mask template instantiations
+        g2 = ns.WithGreedy2()
+        assert g2.get_size(ns.SomeClass()) == cppyy.sizeof(ns.SomeClass)
+        assert g2.get_size(ns.SomeClass(), True) == -1
+
+      # check that unknown classes do not mask template instantiations
+        g3 = ns.WithGreedy3()
+        assert g3.get_size(ns.SomeClass()) == cppyy.sizeof(ns.SomeClass)
+        assert g3.get_size(cppyy.nullptr, True) == -1
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):

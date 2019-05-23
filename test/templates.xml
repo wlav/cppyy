@@ -28,4 +28,9 @@
   <function pattern="some_variadic::*" />
   <variable pattern="some_variadic::*" />
 
+  <namespace name="T_WithEmptyBody" />
+
+  <namespace name="T_WithGreedyOverloads" />
+  <class pattern="T_WithGreedyOverloads::*" />
+
 </lcgdict>

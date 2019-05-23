@@ -409,11 +409,49 @@ T fn_T(Args&&... args) {
 // template with empty body
 namespace T_WithEmptyBody {
 
+#ifdef WIN32
+extern __declspec(dllimport) std::string side_effect
+#else
 extern std::string side_effect;
+#endif
 
 template<typename T>
 void some_empty();
 
-} // namespace T_WithRValue
+} // namespace T_WithEmptyBody
+
+
+//===========================================================================
+// template with catch-all (void*, void**)overloads
+namespace T_WithGreedyOverloads {
+
+class SomeClass {
+    double fD;
+};
+
+class WithGreedy1 {
+public:
+    template<class T>
+    int get_size(T*) { return (int)sizeof(T); }
+    int get_size(void*, bool force=false) { return -1; }
+};
+
+class WithGreedy2 {
+public:
+    template<class T>
+    int get_size(T*) { return (int)sizeof(T); }
+    int get_size(void**, bool force=false) { return -1; }
+};
+
+class DoesNotExist;
+
+class WithGreedy3 {
+public:
+    template<class T>
+    int get_size(T*) { return (int)sizeof(T); }
+    int get_size(DoesNotExist*, bool force=false) { return -1; }
+};
+
+} // namespace T_WithGreedyOverloads
 
 #endif // !CPPYY_TEST_TEMPLATES_H

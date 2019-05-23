@@ -22,6 +22,9 @@ std::string some_variadic::gTypeName = "";
 // template with empty body
 namespace T_WithEmptyBody {
 
+#ifdef WIN32
+__declspec(dllexport)
+#endif
 std::string side_effect = "not set";
 
 template<typename T>
