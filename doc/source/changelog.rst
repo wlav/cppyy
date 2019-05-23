@@ -10,13 +10,16 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-MASTER : 1.4.11
----------------
+2019-05-23 : 1.4.11
+-------------------
 
 * Workaround for JITed RTTI lookup failures on 64b MS Windows
+* Improved overload resolution between f(void*) and f<>(T*)
+* Minimal support for char16_t (Windows) and char32_t (Linux/Mac)
+* Do not unnecessarily autocast smart pointers
 
 
-2019-04-13 : 1.4.10
+2019-05-13 : 1.4.10
 -------------------
 
 * Imported several FindCppyy.cmake improvements from Camille's cppyy-bbhash
