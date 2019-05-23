@@ -410,7 +410,7 @@ T fn_T(Args&&... args) {
 namespace T_WithEmptyBody {
 
 #ifdef WIN32
-extern __declspec(dllimport) std::string side_effect
+extern __declspec(dllimport) std::string side_effect;
 #else
 extern std::string side_effect;
 #endif
