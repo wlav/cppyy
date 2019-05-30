@@ -465,3 +465,41 @@ void StoreCallable::set_callable(double (*f)(double, double)) {
 double StoreCallable::operator()(double d1, double d2) {
     return fF(d1, d2);
 }
+
+//= callable through std::function ==========================================
+double call_double_double_sf(const std::function<double(double, double)>& f, double d1, double d2) {
+    return f(d1, d2);
+}
+
+int call_int_int_sf(const std::function<int(int, int)>& f, int i1, int i2) {
+    return f(i1, i2);
+}
+
+void call_void_sf(const std::function<void(int)>& f, int i) {
+    f(i);
+}
+
+int call_refi_sf(const std::function<void(int&)>& f) {
+    int i = -1; f(i); return i;
+}
+
+int call_refl_sf(const std::function<void(long&)>& f) {
+    long l = -1L; f(l); return l;
+}
+
+int call_refd_sf(const std::function<void(double&)>& f) {
+    double d = -1.; f(d); return d;
+}
+
+
+StoreCallable_sf::StoreCallable_sf(const std::function<double(double, double)>& f) : fF(f) {
+    /* empty */
+}
+
+void StoreCallable_sf::set_callable(const std::function<double(double, double)>& f) {
+    fF = f;
+}
+
+double StoreCallable_sf::operator()(double d1, double d2) {
+    return fF(d1, d2);
+}

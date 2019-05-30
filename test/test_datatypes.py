@@ -914,3 +914,71 @@ class TestDATATYPES:
 
         c.set_callable(lambda x, y: x*y)
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
+
+    def test23_callable_through_function_passing(self):
+        """Passing callables through std::function"""
+
+        import cppyy
+
+        fdd = cppyy.gbl.call_double_double_sf
+        fii = cppyy.gbl.call_int_int_sf
+        fv  = cppyy.gbl.call_void_sf
+        fri = cppyy.gbl.call_refi_sf
+        frl = cppyy.gbl.call_refl_sf
+        frd = cppyy.gbl.call_refd_sf
+
+        assert 'call_double_double_sf' in str(fdd)
+        assert 'call_refd_sf' in str(frd)
+
+        def pyf(arg0, arg1):
+            return arg0+arg1
+
+        assert type(fdd(pyf, 2, 3)) == float
+        assert fdd(pyf, 2, 3) == 5.
+
+        assert type(fii(pyf, 2, 3)) == int
+        assert fii(pyf, 2, 3) == 5
+
+        def pyf(arg0, arg1):
+            return arg0*arg1
+
+        assert fdd(pyf, 2, 3) == 6.
+        assert fii(pyf, 2, 3) == 6
+
+        # call of void function
+        global retval
+        retval = None
+        def voidf(i):
+            global retval
+            retval = i
+
+        assert retval is None
+        assert fv(voidf, 5) == None
+        assert retval == 5
+
+        # call of function with reference argument
+        def reff(ref):
+            ref.value = 5
+        assert fri(reff) == 5
+        assert frl(reff) == pylong(5)
+        assert frd(reff) == 5.
+
+        # callable that does not accept weak-ref
+        import math
+        assert fdd(math.atan2, 0, 3.) == 0.
+
+        # error testing
+        raises(TypeError, fii, None, 2, 3)
+
+        def pyf(arg0, arg1):
+            return arg0/arg1
+
+        raises(ZeroDivisionError, fii, pyf, 1, 0)
+
+        def pyd(arg0, arg1):
+            return arg0*arg1
+        c = cppyy.gbl.StoreCallable(pyd)
+        assert c(3, 3) == 9.
+
+        c.set_callable(lambda x, y: x*y)
+        raises(TypeError, c, 3, 3)     # lambda gone out of scope

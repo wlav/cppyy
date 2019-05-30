@@ -12,6 +12,7 @@ typedef unsigned long long ULong64_t;//Portable unsigned long integer 8 bytes
 #endif
 #include <cstdint>
 #include <complex>
+#include <functional>
 #include <vector>
 #include <wchar.h>
 #include <sys/types.h>
@@ -491,5 +492,23 @@ class StoreCallable {
 public:
     StoreCallable(double (*)(double, double));
     void set_callable(double (*)(double, double));
+    double operator()(double, double);
+};
+
+
+//= callable through std::function ==========================================
+double call_double_double_sf(const std::function<double(double, double)>&, double d1, double d2);
+
+int call_int_int_sf(const std::function<int(int, int)>&, int, int);
+void call_void_sf(const std::function<void(int)>&, int i);
+int call_refi_sf(const std::function<void(int&)>&);
+int call_refl_sf(const std::function<void(long&)>&);
+int call_refd_sf(const std::function<void(double&)>&);
+
+class StoreCallable_sf {
+    std::function<double(double, double)> fF;
+public:
+    StoreCallable_sf(const std::function<double(double, double)>&);
+    void set_callable(const std::function<double(double, double)>&);
     double operator()(double, double);
 };

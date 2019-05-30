@@ -9,6 +9,11 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
+master : 1.4.12
+---------------
+
+* automatic conversion of python functions to std::function arguments
+
 
 2019-05-23 : 1.4.11
 -------------------
