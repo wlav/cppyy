@@ -13,6 +13,7 @@ master : 1.4.12
 ---------------
 
 * automatic conversion of python functions to std::function arguments
+* fix for templated operators that can map to different python names
 
 
 2019-05-23 : 1.4.11

@@ -441,6 +441,36 @@ class TestTEMPLATES:
         assert g3.get_size(ns.SomeClass()) == cppyy.sizeof(ns.SomeClass)
         assert g3.get_size(cppyy.nullptr, True) == -1
 
+    def test18_templated_operator_add(self):
+        """Templated operator+ is ambiguous: either __pos__ or __add__"""
+
+        import cppyy
+        import cppyy.gbl as gbl
+
+        cppyy.cppdef("""
+        namespace OperatorAddTest {
+        template <class V>
+        class CustomVec {
+            V fX;
+        public:
+            CustomVec() : fX(0) {}
+            CustomVec(const V & a) : fX(a) { }
+            V X()  const { return fX; }
+            template <class fV> CustomVec operator + (const fV& v) {
+                CustomVec<V> u;
+                u.fX = fX + v.fX;
+                return u;
+            }
+        }; }
+        """)
+
+        c = gbl.OperatorAddTest.CustomVec['double'](5.3)
+        d = gbl.OperatorAddTest.CustomVec['int'](1)
+
+        q = c + d
+
+        assert round(q.X() - 6.3, 8) == 0.
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
