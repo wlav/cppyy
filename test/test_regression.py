@@ -216,3 +216,18 @@ std::vector<float> some_foo_calling_python() {
         assert a == cppyy.bind_object(co, 'CObjA')
         assert a.m_int == 42
         assert cppyy.bind_object(co, 'CObjA').m_int == 42
+
+    def test11_exception_while_exception(self):
+        """Exception from SetDetailedException during exception handling used to crash"""
+
+        import cppyy
+
+        cppyy.cppdef("namespace AnExceptionNamespace { }")
+
+        try:
+            cppyy.gbl.blabla
+        except AttributeError:
+            try:
+                cppyy.gbl.AnExceptionNamespace.blabla
+            except AttributeError:
+                pass
