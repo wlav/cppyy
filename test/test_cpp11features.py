@@ -231,3 +231,12 @@ class TestCPP11FEATURES:
             l3 = cppyy.gbl.gime_a_lambda3(4)
             assert l3
             assert l3(2) == 48
+
+    def test09_optional(self):
+        """Use of optional and nullopt"""
+
+        import cppyy
+
+        if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") <= 201703:
+            assert cppyy.gbl.std.optional
+            assert cppyy.gbl.std.nullopt
