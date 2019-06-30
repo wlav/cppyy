@@ -15,6 +15,7 @@ master : 1.4.12
 * automatic conversion of python functions to std::function arguments
 * fix for templated operators that can map to different python names
 * fix on p3 crash when setting a detailed exception during exception handling
+* fix bug that prevented certain templated constructors from being considered
 
 
 2019-05-23 : 1.4.11

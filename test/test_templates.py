@@ -471,6 +471,22 @@ class TestTEMPLATES:
 
         assert round(q.X() - 6.3, 8) == 0.
 
+    def test19_templated_ctor_with_defaults(self):
+        """Templated constructor with defaults used to be ignored"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""
+        namespace TemplatedCtor { class C {
+        public:
+            template <typename Integer, typename std::enable_if_t<std::is_integral_v<Integer>, int> = 0>
+            C(Integer) {}
+            C(const std::string&) {}
+        }; }
+        """)
+
+        assert cppyy.gbl.TemplatedCtor.C(0)
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
