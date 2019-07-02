@@ -237,7 +237,7 @@ class TestCPP11FEATURES:
 
         import cppyy
 
-        if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") <= 201703:
+        if 201703 <= cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;"):
             assert cppyy.gbl.std.optional
             assert cppyy.gbl.std.nullopt
 
