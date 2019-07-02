@@ -240,3 +240,14 @@ class TestCPP11FEATURES:
         if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") <= 201703:
             assert cppyy.gbl.std.optional
             assert cppyy.gbl.std.nullopt
+
+            cppyy.cppdef("""
+                enum Enum { A = -1 };
+                bool callopt(std::optional<Enum>) { return true; }
+            """)
+
+            a = cppyy.gbl.std.optional[cppyy.gbl.Enum]()
+            assert cppyy.gbl.callopt(a)
+
+            c = cppyy.gbl.nullopt
+            assert cppyy.gbl.callopt(c)

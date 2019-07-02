@@ -18,6 +18,7 @@ master : 1.4.12
 * fix lookup of std::nullopt
 * fix bug that prevented certain templated constructors from being considered
 * support for enum values as data members on "enum class" enums
+* support for implicit conversion when passing by-value
 
 
 2019-05-23 : 1.4.11

@@ -533,9 +533,9 @@ class TestDATATYPES:
         assert gbl.kBanana == 29
         assert gbl.kCitrus == 34
 
-        #assert gbl.NamedClassEnum.E1 == 42
-        #assert gbl.NamedClassEnum.__name__    == 'NamedClassEnum'
-        #assert gbl.NamedClassEnum.__cppname__ == 'NamedClassEnum'
+        assert gbl.NamedClassEnum.E1 == 42
+        assert gbl.NamedClassEnum.__name__    == 'NamedClassEnum'
+        assert gbl.NamedClassEnum.__cppname__ == 'NamedClassEnum'
 
         assert gbl.EnumSpace.E
         assert gbl.EnumSpace.EnumClass.E1 == -1   # anonymous
