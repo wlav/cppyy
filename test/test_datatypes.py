@@ -533,9 +533,17 @@ class TestDATATYPES:
         assert gbl.kBanana == 29
         assert gbl.kCitrus == 34
 
+        #assert gbl.NamedClassEnum.E1 == 42
+        #assert gbl.NamedClassEnum.__name__    == 'NamedClassEnum'
+        #assert gbl.NamedClassEnum.__cppname__ == 'NamedClassEnum'
+
         assert gbl.EnumSpace.E
         assert gbl.EnumSpace.EnumClass.E1 == -1   # anonymous
         assert gbl.EnumSpace.EnumClass.E2 == -1   # named type
+
+        assert gbl.EnumSpace.NamedClassEnum.E1 == -42
+        assert gbl.EnumSpace.NamedClassEnum.__name__    == 'NamedClassEnum'
+        assert gbl.EnumSpace.NamedClassEnum.__cppname__ == 'EnumSpace::NamedClassEnum'
 
         # typedef enum
         assert gbl.EnumSpace.letter_code

@@ -4,9 +4,11 @@
   <class name="FourVector" />
 
   <enum name="EFruit" />
+  <enum name="NamedClassEnum" />
   <enum name="EnumSpace::E" />
   <class name="EnumSpace::EnumClass" />
   <enum name="EnumSpace::letter_code" />
+  <enum name="EnumSpace::NamedClassEnum" />
 
   <function pattern="get_*" />
   <function pattern="set_*" />

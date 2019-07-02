@@ -33,6 +33,8 @@ extern std::vector<EFruit> vecFruits;
 
 
 //===========================================================================
+enum class NamedClassEnum { E1 = 42 };
+
 namespace EnumSpace {
     enum E {E1 = 1, E2};
     class EnumClass {
@@ -42,6 +44,8 @@ namespace EnumSpace {
     };
 
     typedef enum { AA = 1, BB, CC, DD } letter_code;
+
+    enum class NamedClassEnum { E1 = -42 };
 }
 
 

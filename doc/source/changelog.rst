@@ -17,6 +17,7 @@ master : 1.4.12
 * fix on p3 crash when setting a detailed exception during exception handling
 * fix lookup of std::nullopt
 * fix bug that prevented certain templated constructors from being considered
+* support for enum values as data members on "enum class" enums
 
 
 2019-05-23 : 1.4.11
