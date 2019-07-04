@@ -85,3 +85,13 @@ class TestCONVERSIONS:
         raises(TypeError, CNS.sumints, [CC()], range(N))
         gc.collect()
         assert CC.s_count == 0
+
+    def test04_implicit_conversion_from_tuple(self):
+        """Allow implicit conversions from tuples as arguments {}-like"""
+
+        import cppyy
+
+        m = cppyy.gbl.std.map[str, str]()
+        m.insert(('a', 'b'))      # implicit conversion to std::pair
+
+        assert m['a'] == 'b'

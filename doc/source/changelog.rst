@@ -9,6 +9,12 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
+master: 1.4.13
+--------------
+
+* allow implicit conversion from a tuple of arguments
+
+
 2019-07-01 : 1.4.12
 -------------------
 
