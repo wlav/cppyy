@@ -13,6 +13,7 @@ master: 1.4.13
 --------------
 
 * allow implicit conversion from a tuple of arguments
+* data set on namespaces reflected on C++ even if data not yet bound
 
 
 2019-07-01 : 1.4.12

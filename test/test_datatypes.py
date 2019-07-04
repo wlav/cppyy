@@ -453,6 +453,29 @@ class TestDATATYPES:
         assert gbl.get_global_int() == 22
         assert gbl.g_int == 22
 
+      # if setting before checking, the change must be reflected on the C++ side
+        gbl.g_some_global_string = "Python"
+        assert gbl.get_some_global_string() == "Python"
+        assert gbl.g_some_global_string2 == "C++"
+        assert gbl.get_some_global_string2() == "C++"
+        gbl.g_some_global_string2 = "Python"
+        assert gbl.get_some_global_string2() == "Python"
+
+        NS = gbl.SomeStaticDataNS
+        NS.s_some_static_string = "Python"
+        assert NS.get_some_static_string() == "Python"
+        assert NS.s_some_static_string2 == "C++"
+        assert NS.get_some_static_string2() == "C++"
+        NS.s_some_static_string2 = "Python"
+        assert NS.get_some_static_string2() == "Python"
+
+     # verify that non-C++ data can still be set
+        gbl.g_python_only = "Python"
+        assert gbl.g_python_only == "Python"
+
+        NS.s_python_only = "Python"
+        assert NS.s_python_only == "Python"
+
     def test09_global_ptr(self):
         """Test access of global objects through a pointer"""
 
