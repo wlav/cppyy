@@ -9,9 +9,10 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
-master: 1.4.13
---------------
+master: 1.5.0
+-------------
 
+* upgrade cppyy-cling to 6.18
 * allow implicit conversion from a tuple of arguments
 * data set on namespaces reflected on C++ even if data not yet bound
 
