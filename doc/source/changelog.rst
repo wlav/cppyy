@@ -15,6 +15,8 @@ master: 1.5.0
 * upgrade cppyy-cling to 6.18
 * allow implicit conversion from a tuple of arguments
 * data set on namespaces reflected on C++ even if data not yet bound
+* generalized resolution of binary operators in wrapper generation
+* proper naming of arguments in namespaces for std::function<>
 
 
 2019-07-01 : 1.4.12
