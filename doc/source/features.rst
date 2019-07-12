@@ -55,7 +55,7 @@ Download it, save it under the name ``features.h``, and load it:
   The global namespace is ``cppyy.gbl``.
 
 * **NULL**: Is represented as ``cppyy.nullptr``.
-  In C++11, the keyword ``nullptr`` is used to represent ``NULL``.
+  Starting C++11, the keyword ``nullptr`` is used to represent ``NULL``.
   For clarity of intent, it is recommended to use this instead of ``None``
   (or the integer ``0``, which can serve in some cases), as ``None`` is better
   understood as ``void`` in C++.
