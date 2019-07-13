@@ -555,6 +555,12 @@ class TestDATATYPES:
         assert gbl.kApple  == 78
         assert gbl.kBanana == 29
         assert gbl.kCitrus == 34
+        assert gbl.EFruit.__name__    == 'EFruit'
+        assert gbl.EFruit.__cppname__ == 'EFruit'
+
+        assert gbl.EFruit.kApple  == 78
+        assert gbl.EFruit.kBanana == 29
+        assert gbl.EFruit.kCitrus == 34
 
         assert gbl.NamedClassEnum.E1 == 42
         assert gbl.NamedClassEnum.__name__    == 'NamedClassEnum'
