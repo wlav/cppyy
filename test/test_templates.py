@@ -22,6 +22,10 @@ class TestTEMPLATES:
 
         m = cppyy.gbl.MyTemplatedMethodClass()
 
+      # implicit (called before other tests to check caching)
+        assert m.get_size(1)          == m.get_int_size()+1
+        assert 'get_size<int>' in dir(cppyy.gbl.MyTemplatedMethodClass)
+
       # pre-instantiated
         assert m.get_size['char']()   == m.get_char_size()
         assert m.get_size[int]()      == m.get_int_size()
@@ -41,9 +45,12 @@ class TestTEMPLATES:
         assert m.get_size[float]()    == m.get_float_size()
         assert m.get_size['double']() == m.get_double_size()
         assert m.get_size['MyTemplatedMethodClass']() == m.get_self_size()
+        assert 'get_size<MyTemplatedMethodClass>' in dir(cppyy.gbl.MyTemplatedMethodClass)
 
       # auto through typedef
         assert m.get_size['MyTMCTypedef_t']() == m.get_self_size()
+        assert 'get_size<MyTMCTypedef_t>' in dir(cppyy.gbl.MyTemplatedMethodClass)
+        assert m.get_size['MyTemplatedMethodClass']() == m.get_self_size()
 
     def test02_non_type_template_args(self):
         """Use of non-types as template arguments"""

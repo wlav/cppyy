@@ -62,6 +62,7 @@ class TestCPP11FEATURES:
         assert TestSharedPtr.s_counter == 1
         c.__python_owns__ = False
         cc = std.shared_ptr[TestSharedPtr](c)
+        assert cc.__python_owns__
 
         del c
 
