@@ -555,6 +555,13 @@ class TestSTLMAP:
             assert x == 42
             del x, b
 
+        for num in [4, 5, 6, 7]:
+            cls = getattr(cppyy.gbl, 'stl_like_class%d' % num)
+            count = 0
+            for i in cls():
+                count += 1
+            assert count == 10
+
 
 class TestSTLITERATOR:
     def setup_class(cls):
