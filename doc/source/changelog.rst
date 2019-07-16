@@ -13,6 +13,8 @@ master: 1.5.0
 -------------
 
 * upgrade cppyy-cling to 6.18
+* allow python-derived classes to be used in templates
+* detailed memory management for make_shared and shared_ptr
 * allow implicit conversion from a tuple of arguments
 * data set on namespaces reflected on C++ even if data not yet bound
 * generalized resolution of binary operators in wrapper generation
