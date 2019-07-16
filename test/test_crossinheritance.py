@@ -262,3 +262,71 @@ class TestCROSSINHERITANCE:
 
         d = Derived(4)
         assert raises(TypeError, Base1.call_get_value, d)
+
+    def test11_python_in_templates(self):
+        """Usage of Python derived objects in std::vector"""
+
+        import cppyy
+
+        CB = cppyy.gbl.CrossInheritance.CountableBase
+
+        class PyCountable(CB):
+            def call(self):
+                return 42
+
+        v = cppyy.gbl.std.vector[PyCountable]()
+        v.emplace_back(PyCountable())
+        assert len(v) == 1
+        assert CB.s_count == 2     # emplace_back used the copy contructor
+
+        v.push_back(PyCountable())
+        assert len(v) == 2
+        assert CB.s_count == 4     # push_back used the copy contructor
+
+        del v
+
+      # only thing to check is final refcount of 0: there have been two
+      # C++ objects, copied from eachother, pointing to two Python objects
+        import gc
+        gc.collect()
+        assert CB.s_count == 0
+
+    def test12_python_in_make_shared(self):
+        """Usage of Python derived objects with std::make_shared"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace MakeSharedTest {
+        class Abstract {
+        public:
+            virtual ~Abstract() = 0;
+            virtual int some_imp() = 0;
+        };
+
+        Abstract::~Abstract() {}
+
+        int call_shared(std::shared_ptr<Abstract>& ptr) {
+            return ptr->some_imp();
+        } }
+        """)
+
+        from cppyy.gbl import std, MakeSharedTest
+        from cppyy.gbl.MakeSharedTest import Abstract, call_shared
+
+        class PyDerived(Abstract):
+            def __init__(self, val):
+                super(PyDerived, self).__init__()
+                self.val = val
+            def some_imp(self):
+                return self.val
+
+        v = std.make_shared[PyDerived](42)
+
+        assert call_shared(v) == 42
+        assert v.some_imp() == 42
+
+        p = PyDerived(13)
+        v = std.make_shared[PyDerived](p)
+        assert call_shared(v) == 13
+        assert v.some_imp() == 13

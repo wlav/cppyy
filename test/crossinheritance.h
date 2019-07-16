@@ -82,6 +82,18 @@ public:
 
 using TBase1_I = TBase1<int>;
 
+class CountableBase {
+public:
+    CountableBase();
+    CountableBase(const CountableBase&);
+    CountableBase& operator=(const CountableBase&);
+    virtual ~CountableBase();
+
+    virtual int call();
+
+    static int s_count;
+};
+
 } // namespace CrossInheritance
 
 #endif // !CPPYY_TEST_CROSSINHERITANCE_H
