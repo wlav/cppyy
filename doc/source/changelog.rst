@@ -19,6 +19,7 @@ master: 1.5.0
 * data set on namespaces reflected on C++ even if data not yet bound
 * generalized resolution of binary operators in wrapper generation
 * proper naming of arguments in namespaces for std::function<>
+* allow std::vector initialization with a list of constructor arguments
 
 
 2019-07-01 : 1.4.12

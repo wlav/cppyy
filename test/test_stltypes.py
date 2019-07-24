@@ -264,6 +264,49 @@ class TestSTLVECTOR:
         assert std.distance(v.begin(), v.end()) == v.size()
         assert std.distance[type(v).iterator](v.begin(), v.end()) == v.size()
 
+    def test11_vector_of_pair(self):
+        """Use of std::vector<std::pair>"""
+
+        import cppyy
+
+      # after the original bug report
+        cppyy.cppdef("""
+        class PairVector {
+        public:
+            std::vector<std::pair<double, double>> vector_pair(const std::vector<std::pair<double, double>>& a) {
+                return a;
+            }
+        };
+        """)
+
+        from cppyy.gbl import PairVector
+        a = PairVector()
+        ll = [[1., 2.], [2., 3.], [3., 4.], [4., 5.]]
+        v = a.vector_pair(ll)
+
+        assert len(v) == 4
+        i = 0
+        for p in v:
+            p.first  == ll[i][0]
+            p.second == ll[i][1]
+            i += 1
+        assert i == 4
+
+      # TODO: nicer error handling for the following (current: template compilation failure trying
+      # to assign a pair with <double, string> to <double, double>)
+        # ll2 = ll[:]
+        # ll2[2] = ll[2][:]
+        # ll2[2][1] = 'a'
+        # v = a.vector_pair(ll2)
+
+        ll3 = ll[:]
+        ll3[0] = 'a'
+        raises(TypeError, a.vector_pair, ll3)
+
+        ll4 = ll[:]
+        ll4[1] = 'a'
+        raises(TypeError, a.vector_pair, ll4)
+
 
 class TestSTLSTRING:
     def setup_class(cls):
