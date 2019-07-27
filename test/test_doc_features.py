@@ -167,7 +167,7 @@ namespace Namespace {
         assert 'Namespace.Concrete.NestedClass' in str(type(n))
         assert 'NestedClass' == type(n).__name__
         assert 'cppyy.gbl.Namespace.Concrete' == type(n).__module__
-        assert 'Namespace::Concrete::NestedClass' == type(n).__cppname__
+        assert 'Namespace::Concrete::NestedClass' == type(n).__cpp_name__
 
     def test_data_members(self):
         import cppyy

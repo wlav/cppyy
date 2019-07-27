@@ -15,11 +15,14 @@ master: 1.5.0
 * upgrade cppyy-cling to 6.18
 * allow python-derived classes to be used in templates
 * detailed memory management for make_shared and shared_ptr
+* two-way memory management for cross-inherited objects
+* reduced memory footprint of proxy objects in most common cases
 * allow implicit conversion from a tuple of arguments
 * data set on namespaces reflected on C++ even if data not yet bound
 * generalized resolution of binary operators in wrapper generation
 * proper naming of arguments in namespaces for std::function<>
 * allow std::vector initialization with a list of constructor arguments
+* consistent naming of ``__cppname__`` to ``__cpp_name__``
 
 
 2019-07-01 : 1.4.12

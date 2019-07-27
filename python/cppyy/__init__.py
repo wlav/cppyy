@@ -118,7 +118,6 @@ class py_make_class(object):
             obj = args[0]
         else:
             obj = self.cls(*args)
-        obj.__python_owns__ = False     # give up ownership to the shared pointer
         return self.maker(obj)
 
 class make_shared(object):
@@ -216,7 +215,7 @@ def _get_name(tt):
     if type(tt) == str:
         return tt
     try:
-        ttname = tt.__cppname__
+        ttname = tt.__cpp_name__
     except AttributeError:
         ttname = tt.__name__
     return ttname

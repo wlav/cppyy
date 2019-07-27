@@ -57,7 +57,7 @@ for e.g. pickling:
     NestedClass
     >>> type(n).__module__
     cppyy.gbl.Namespace.Concrete
-    >>> type(n).__cppname__
+    >>> type(n).__cpp_name__
     Namespace::Concrete::NestedClass
     >>>
 

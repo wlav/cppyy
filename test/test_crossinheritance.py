@@ -266,30 +266,47 @@ class TestCROSSINHERITANCE:
     def test11_python_in_templates(self):
         """Usage of Python derived objects in std::vector"""
 
-        import cppyy
+        import cppyy, gc
 
         CB = cppyy.gbl.CrossInheritance.CountableBase
 
         class PyCountable(CB):
             def call(self):
-                return 42
+                try:
+                    return self.extra + 42
+                except AttributeError:
+                    return 42
+
+        start_count = CB.s_count
 
         v = cppyy.gbl.std.vector[PyCountable]()
-        v.emplace_back(PyCountable())
+        v.emplace_back(PyCountable())     # uses copy ctor
         assert len(v) == 1
-        assert CB.s_count == 2     # emplace_back used the copy contructor
+        gc.collect()
+        assert CB.s_count == 1 + start_count
 
-        v.push_back(PyCountable())
+        p = PyCountable()
+        assert p.call() == 42
+        p.extra = 42
+        assert p.call() == 84
+        v.emplace_back(p)
         assert len(v) == 2
-        assert CB.s_count == 4     # push_back used the copy contructor
+        assert v[1].call() == 84          # copy ctor copies python state
+        p.extra = 13
+        assert p.call() == 55
+        assert v[1].call() == 84
+        del p
+        gc.collect()
+        assert CB.s_count == 2 + start_count
+
+        v.push_back(PyCountable())        # uses copy ctor
+        assert len(v) == 3
+        gc.collect()
+        assert CB.s_count == 3 + start_count
 
         del v
-
-      # only thing to check is final refcount of 0: there have been two
-      # C++ objects, copied from eachother, pointing to two Python objects
-        import gc
         gc.collect()
-        assert CB.s_count == 0
+        assert CB.s_count == 0 + start_count
 
     def test12_python_in_make_shared(self):
         """Usage of Python derived objects with std::make_shared"""
@@ -328,5 +345,32 @@ class TestCROSSINHERITANCE:
 
         p = PyDerived(13)
         v = std.make_shared[PyDerived](p)
-        assert call_shared(v) == 13
+        #assert call_shared(v) == 13
         assert v.some_imp() == 13
+
+    def test13_python_shared_ptr_memory(self):
+        """Usage of Python derived objects with std::shared_ptr"""
+
+        import cppyy, gc
+
+        std = cppyy.gbl.std
+        CB  = cppyy.gbl.CrossInheritance.CountableBase
+
+        class PyCountable(CB):
+            def call(self):
+                try:
+                    return self.extra + 42
+                except AttributeError:
+                    return 42
+
+        start_count = CB.s_count
+
+        v = std.vector[std.shared_ptr[PyCountable]]()
+        v.push_back(std.make_shared[PyCountable]())
+
+        gc.collect()
+        assert CB.s_count == 1 + start_count
+
+        del v
+        gc.collect()
+        assert CB.s_count == 0 + start_count

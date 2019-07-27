@@ -12,7 +12,7 @@ def _create_mapper(cls):
         else:
             cppname = name
             modname = 'cppyy.gbl'
-        return type(name, (cls,), {'__cppname__' : cppname, '__module__' : modname})
+        return type(name, (cls,), {'__cpp_name__' : cppname, '__module__' : modname})
     return mapper
 
 def initialize(backend):

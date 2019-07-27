@@ -253,33 +253,33 @@ class TestFRAGILE:
         assert cppyy.gbl.fragile.nested1 is nested1
         assert nested1.__name__ == 'nested1'
         assert nested1.__module__ == 'cppyy.gbl.fragile'
-        assert nested1.__cppname__ == 'fragile::nested1'
+        assert nested1.__cpp_name__ == 'fragile::nested1'
 
         from cppyy.gbl.fragile.nested1 import A, nested2
         assert cppyy.gbl.fragile.nested1.A is A
         assert A.__name__ == 'A'
         assert A.__module__ == 'cppyy.gbl.fragile.nested1'
-        assert A.__cppname__ == 'fragile::nested1::A'
+        assert A.__cpp_name__ == 'fragile::nested1::A'
         assert cppyy.gbl.fragile.nested1.nested2 is nested2
         assert nested2.__name__ == 'nested2'
         assert nested2.__module__ == 'cppyy.gbl.fragile.nested1'
-        assert nested2.__cppname__ == 'fragile::nested1::nested2'
+        assert nested2.__cpp_name__ == 'fragile::nested1::nested2'
 
         from cppyy.gbl.fragile.nested1.nested2 import A, nested3
         assert cppyy.gbl.fragile.nested1.nested2.A is A
         assert A.__name__ == 'A'
         assert A.__module__ == 'cppyy.gbl.fragile.nested1.nested2'
-        assert A.__cppname__ == 'fragile::nested1::nested2::A'
+        assert A.__cpp_name__ == 'fragile::nested1::nested2::A'
         assert cppyy.gbl.fragile.nested1.nested2.nested3 is nested3
         assert nested3.__name__ == 'nested3'
         assert nested3.__module__ == 'cppyy.gbl.fragile.nested1.nested2'
-        assert nested3.__cppname__ == 'fragile::nested1::nested2::nested3'
+        assert nested3.__cpp_name__ == 'fragile::nested1::nested2::nested3'
 
         from cppyy.gbl.fragile.nested1.nested2.nested3 import A
         assert cppyy.gbl.fragile.nested1.nested2.nested3.A is nested3.A
         assert A.__name__ == 'A'
         assert A.__module__ == 'cppyy.gbl.fragile.nested1.nested2.nested3'
-        assert A.__cppname__ == 'fragile::nested1::nested2::nested3::A'
+        assert A.__cpp_name__ == 'fragile::nested1::nested2::nested3::A'
 
         # test writability of __module__
         nested3.__module__ = "peanut butter"
