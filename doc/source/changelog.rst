@@ -21,6 +21,7 @@ master: 1.5.0
 * data set on namespaces reflected on C++ even if data not yet bound
 * generalized resolution of binary operators in wrapper generation
 * proper naming of arguments in namespaces for std::function<>
+* cover more cases of STL-liker iterators
 * allow std::vector initialization with a list of constructor arguments
 * consistent naming of ``__cppname__`` to ``__cpp_name__``
 
