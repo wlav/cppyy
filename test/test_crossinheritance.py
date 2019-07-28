@@ -345,7 +345,7 @@ class TestCROSSINHERITANCE:
 
         p = PyDerived(13)
         v = std.make_shared[PyDerived](p)
-        #assert call_shared(v) == 13
+        assert call_shared(v) == 13
         assert v.some_imp() == 13
 
     def test13_python_shared_ptr_memory(self):

@@ -106,30 +106,24 @@ if not ispypy:
 # TODO: PyPy still has the old-style pythonizations, which require the full
 # class name (not possible for std::tuple ...)
 
-# std::make_shared on Python derived classes instantiates on the dispatcher, not
-# the Python class, so to allow creation of the shared pointer from the arguments
-# given, call the Python class first, then pass that pointer
-class py_make_class(object):
-    def __init__(self, cls, maker):
-        self.cls   = cls
-        self.maker = maker
+# std::make_shared creates needless templates: rely on Python's introspection
+# instead. This also allows Python derived classes to be handled correctly.
+class py_make_shared(object):
+    def __init__(self, cls):
+        self.cls = cls
     def __call__(self, *args):
         if len(args) == 1 and type(args[0]) == self.cls:
             obj = args[0]
         else:
             obj = self.cls(*args)
-        return self.maker(obj)
+        obj.__python_owns__ = False     # C++ to take ownership
+        return gbl.std.shared_ptr[self.cls](obj)
 
 class make_shared(object):
-    def __init__(self, cpp):
-        self._cpp = cpp
     def __getitem__(self, cls):
-        if hasattr(cls, '__cpp_cross__'):
-            return py_make_class(cls, self._cpp.__getitem__(cls))
-        res = self._cpp.__getitem__(cls)
-        return res
+        return py_make_shared(cls)
 
-gbl.std.make_shared = make_shared(gbl.std.make_shared)
+gbl.std.make_shared = make_shared()
 del make_shared
 
 
