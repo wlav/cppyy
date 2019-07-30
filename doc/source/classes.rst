@@ -180,6 +180,8 @@ behave as expected:
      123
 
 
+ .. _sec-methods-label:
+
 `Methods`
 ---------
 

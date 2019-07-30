@@ -97,6 +97,11 @@ int call_int_int(int (*f)(int, int), int i1, int i2) {
     return f(i1, i2);
 }
 
+template<class A, class B, class C = A>
+C multiply(A a, B b) {
+    return C{a*b};
+}
+
 //-----
 namespace Namespace {
 
@@ -568,3 +573,23 @@ namespace Zoo {
 
         assert Zoo.identify_animal(Zoo.free_lion) == "the animal is a lion"
         assert Zoo.identify_animal_smart(Zoo.free_lion) == "the animal is a lion"
+
+    def test09_templated_function(self):
+        """Templated free function"""
+
+        import cppyy
+
+        mul = cppyy.gbl.multiply
+
+        assert mul(1,  2) == 2
+        assert mul(1., 5) == 5.
+
+        assert mul[int]     (1, 1) == 1
+        assert mul[int, int](1, 1) == 1
+
+        # TODO: assert raises(TypeError, mul[int, int], 1, 1,)
+        assert type(mul[int, int, float](1, 1)) == float
+        # TODO: the following error message is rather confusing :(
+        assert raises(TypeError, mul[int, int], 1, 'a')
+
+        assert mul['double, double, double'](1., 5) == 5.
