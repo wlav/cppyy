@@ -3,6 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. meta::
+   :description: cppyy: Automatic Python-C++ bindings
+   :keywords: Python, C++, binding, bindings, automatic bindings, bindings generator, cross-language, C++ from Python, Python from C++
+
 cppyy: Automatic Python-C++ bindings
 ====================================
 
