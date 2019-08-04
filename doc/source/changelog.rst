@@ -24,6 +24,7 @@ master: 1.5.0
 * cover more cases of STL-liker iterators
 * allow std::vector initialization with a list of constructor arguments
 * consistent naming of ``__cppname__`` to ``__cpp_name__``
+* fixes to the cmake fragments for Ubuntu
 * extended documentation
 
 
