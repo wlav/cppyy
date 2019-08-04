@@ -186,14 +186,16 @@ if not ispypy:
                     apipath_extra = os.path.dirname(apipath_extra)
 
             apipath_extra = os.path.join(apipath_extra, 'include')
-          # add back site/pythonx.y if available
-            if os.path.exists(os.path.join(apipath_extra, 'site', 'python'+sys.version[:3], 'CPyCppyy')):
+          # add back pythonx.y or site/pythonx.y if available
+            if os.path.exists(os.path.join(apipath_extra, 'python'+sys.version[:3], 'CPyCppyy')):
+                apipath_extra = os.path.join(apipath_extra, 'python'+sys.version[:3])
+            elif os.path.exists(os.path.join(apipath_extra, 'site', 'python'+sys.version[:3], 'CPyCppyy')):
                 apipath_extra = os.path.join(apipath_extra, 'site', 'python'+sys.version[:3])
 
     cpycppyy_path = os.path.join(apipath_extra, 'CPyCppyy')
     if apipath_extra.lower() != 'none':
         if not os.path.exists(cpycppyy_path):
-            warnings.warn("CPyCppyy API path not found (tried: %s)" % cpycppyy_path)
+            warnings.warn("CPyCppyy API path not found (tried: %s); set CPPYY_API_PATH to fix" % os.path.dirname(cpycppyy_path))
         else:
             add_include_path(apipath_extra)
 
