@@ -374,3 +374,49 @@ class TestCROSSINHERITANCE:
         del v
         gc.collect()
         assert CB.s_count == 0 + start_count
+
+    def test14_virtual_dtors_and_del(self):
+        """Usage of virtual destructors and Python-side del."""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace VirtualDtor {
+        class MyClass1 {};    // no virtual dtor ...
+
+        class MyClass2 {
+        public:
+            virtual ~MyClass2() {}
+        };
+
+        class MyClass3 : public MyClass2 {};
+
+        template<class T>
+        class MyClass4 {
+        public:
+            virtual ~MyClass4() {}
+        }; }
+        """)
+
+        VD = cppyy.gbl.VirtualDtor
+
+        try:
+            class MyPyDerived1(VD.MyClass1):
+                pass
+        except TypeError:
+            pass
+        else:
+            assert not "should have failed"
+
+        class MyPyDerived2(VD.MyClass2):
+            pass
+
+        d = MyPyDerived2()
+        del d                 # used to crash
+
+      # check a few more derivations that should not fail
+        class MyPyDerived3(VD.MyClass3):
+            pass
+
+        class MyPyDerived4(VD.MyClass4[int]):
+            pass

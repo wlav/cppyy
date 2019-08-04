@@ -70,6 +70,7 @@ public:
 template<typename T>
 class TBase1 {
 public:
+    virtual ~TBase1() {}
     virtual int get_value() {
         return 42;
     }
