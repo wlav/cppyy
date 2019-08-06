@@ -14,6 +14,7 @@ master: 1.5.0
 
 * upgrade cppyy-cling to 6.18
 * allow python-derived classes to be used in templates
+* stricter template resolution and better caching/performance
 * detailed memory management for make_shared and shared_ptr
 * two-way memory management for cross-inherited objects
 * reduced memory footprint of proxy objects in most common cases
