@@ -26,9 +26,10 @@ Download it, save it under the name ``features.h``, and load it:
 `Builtins`
 """"""""""
 
-Most builtin data types map onto the expected equivalent Python types, with
-the caveats that there may be size differences, different precision or
-rounding, etc.
+The selection of builtin data types varies greatly between Python and C++.
+Where possible, builtin data types map onto the expected equivalent Python
+types, with the caveats that there may be size differences, different
+precision or rounding, etc.
 For example, a C++ ``float`` is returned as a Python ``float``, which is in
 fact a C++ ``double``.
 If sizes allow, conversions are automatic.
@@ -47,11 +48,40 @@ For example, a C++ ``unsigned int`` becomes a Python2 ``long`` or Python3
     ValueError: cannot convert negative integer to unsigned
     >>>
 
+Some types are builtin in Python, but (STL) classes in C++.
+Examples are ``str`` vs. ``std::string`` and ``complex`` vs. ``std::complex``.
+These classes have been pythonized to behave the same wherever possible.
+For example, string comparison work directly, and ``std::complex`` has
+``real`` and ``imag`` properties:
+
+  .. code-block:: python
+
+    >>> c = cppyy.gbl.std.complex['double'](1, 2)
+    >>> c
+    (1+2j)
+    >>> c.real, c.imag
+    (1.0, 2.0)
+    >>> s = cppyy.gbl.std.string("aap")
+    >>> type(s)
+    <class cppyy.gbl.std.string at 0x7fa75edbf8a0>
+    >>> s == "aap"
+    True
+    >>> 
+
 To pass an argument through a C++ ``char`` (signed or unsigned) use a Python
 string of size 1.
 In many cases, the explicit C types from module ``ctypes`` can also be used,
 but that module does not have a public API (for type conversion or otherwise),
 so support is somewhat limited.
+
+There are automatic conversions between C++'s ``std::vector`` and Python's
+``list`` and ``tuple``, where possible, as they are often used in a similar
+manner.
+These datatypes have completely different memory layouts, however, and the
+``std::vector`` requires that all elements are of the same type and laid
+out consecutively in memory.
+Conversion thus requires type checks, memory allocation, and copies.
+This can be rather expensive.
 
 
 `Arrays`
@@ -90,6 +120,8 @@ in C++ anyway:
 
     >>> cppyy.cppdef('std::string str_array[3][2] = {{"aa", "bb"}, {"cc", "dd"}, {"ee", "ff"}};')
     True
+    >>> type(cppyy.gbl.str_array[0][1])
+    <class cppyy.gbl.std.string at 0x7fd650ccb650>
     >>> cppyy.gbl.str_array[0][1]
     'bb'
     >>> cppyy.gbl.str_array[4][0]
