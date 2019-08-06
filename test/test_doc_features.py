@@ -607,3 +607,14 @@ namespace Zoo {
         assert raises(TypeError, mul[int, int], 1, 'a')
 
         assert mul['double, double, double'](1., 5) == 5.
+
+    def test10_stl_algorithm(self):
+        """Test STL algorithm on std::string"""
+
+        import cppyy
+
+        cppstr = cppyy.gbl.std.string
+        n = cppstr('this is a C++ string')
+        assert n == 'this is a C++ string'
+        n.erase(cppyy.gbl.std.remove(n.begin(), n.end(), cppstr.value_type(' ')))
+        assert n == 'thisisaC++stringing'

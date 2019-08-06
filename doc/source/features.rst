@@ -23,6 +23,34 @@ Download it, save it under the name ``features.h``, and load it:
     >>>
 
 
+`STL algorithms`
+----------------
+
+It is usually easier to use a Python equivalent or code up the effect of an
+STL algorithm directly, but when operating on a large container, calling an
+STL algorithm may offer better performance.
+It is important to note that all STL algorithms are templates and need the
+correct types to be properly instantiated.
+STL containers offer typedefs to obtain those exact types and these should
+be used rather than relying on the usual implicit conversions of Python types
+to C++ ones.
+For example, as there is no ``char`` type in Python, the ``std::remove`` call
+below can not be instantiated using a Python string, but the
+``std::string::value_type`` must be used instead:
+
+  .. code-block:: python
+
+    >>> cppstr = cppyy.gbl.std.string
+    >>> n = cppstr('this is a C++ string')
+    >>> print(n)
+    this is a C++ string
+    >>> n.erase(cppyy.gbl.std.remove(n.begin(), n.end(), cppstr.value_type(' ')))
+    <cppyy.gbl.__wrap_iter<char*> object at 0x7fba35d1af50>
+    >>> print(n)
+    thisisaC++stringing
+    >>>
+
+
 `Odds and ends`
 ---------------
 
