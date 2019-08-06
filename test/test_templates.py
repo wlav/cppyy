@@ -353,7 +353,6 @@ class TestTEMPLATES:
         is_valid = cppyy.gbl.T_WithRValue.is_valid
 
       # bit of regression testing
-        assert is_valid['int&'](3)
         assert is_valid(3)
         assert is_valid['int'](3)      # used to crash
 

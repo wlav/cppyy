@@ -477,9 +477,14 @@ class TestSTLLIST:
             }""")
 
         a = cppyy.gbl.std.list[int]()
-        assert a.begin() == a.end()
         a.begin().__class__.__eq__ = cppyy.gbl.cont_eq[cppyy.gbl.std.list[int]]
         assert not (a.begin() == a.end())
+
+        a = cppyy.gbl.std.list[float]()
+        assert a.begin() == a.end()
+        assert not cppyy.gbl.cont_eq[cppyy.gbl.std.list[float]](a.begin(), a.begin())
+        a.push_back(1)
+        assert     cppyy.gbl.cont_eq[cppyy.gbl.std.list[float]](a.begin(), a.end())
 
 
 class TestSTLMAP:

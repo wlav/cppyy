@@ -581,13 +581,27 @@ namespace Zoo {
 
         mul = cppyy.gbl.multiply
 
+        assert 'multiply' in cppyy.gbl.__dict__
+
         assert mul(1,  2) == 2
+        assert 'multiply<int,int,int>' in cppyy.gbl.__dict__
         assert mul(1., 5) == 5.
+        assert 'multiply<double,int,double>' in cppyy.gbl.__dict__
 
         assert mul[int]     (1, 1) == 1
+        assert 'multiply<int>' in cppyy.gbl.__dict__
         assert mul[int, int](1, 1) == 1
+        assert 'multiply<int,int>' in cppyy.gbl.__dict__
 
-        # TODO: assert raises(TypeError, mul[int, int], 1, 1,)
+      # make sure cached values are actually looked up
+        old = getattr(cppyy.gbl, 'multiply<int,int>')
+        setattr(cppyy.gbl, 'multiply<int,int>', staticmethod(lambda x, y: 2*x*y))
+        assert mul[int, int](2, 2) == 8
+        setattr(cppyy.gbl, 'multiply<int,int>', old)
+        assert mul[int, int](2, 2) == 4
+
+        assert raises(TypeError, mul[int, int, int, int], 1, 1)
+        assert raises(TypeError, mul[int, int], 1, 1.)
         assert type(mul[int, int, float](1, 1)) == float
         # TODO: the following error message is rather confusing :(
         assert raises(TypeError, mul[int, int], 1, 'a')
