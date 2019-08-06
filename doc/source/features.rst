@@ -88,15 +88,5 @@ below can not be instantiated using a Python string, but the
   (or the integer ``0``, which can serve in some cases), as ``None`` is better
   understood as ``void`` in C++.
 
-* **static methods**: Are represented as python's ``staticmethod`` objects
-  and can be called both from the class as well as from instances.
-
-* **templated functions**: Automatically participate in overloading and are
-  used in the same way as other global functions.
-
-* **templated methods**: For now, require an explicit selection of the
-  template parameters.
-  This will be changed to allow them to participate in overloads as expected.
-
 * **unary operators**: Are supported if a python equivalent exists, and if the
   operator is defined in the C++ class.

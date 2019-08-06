@@ -47,10 +47,6 @@ in more functions (incl. new overloads), these become available dynamically.
     >>> from cppyy.gbl import global_function
     >>>
 
-Class static functions are treated the same way as free functions, except
-that they are accessible either through the class or through an instance,
-just like Python's ``staticmethod``.
-
 Free functions can be bound to a class, following the same rules as apply to
 Python functions: unless marked as static, they will turn into member
 functions when bound to an instance, but act as static functions when called
@@ -77,11 +73,29 @@ Consider this example:
     >>>
 
 
+`Static methods`
+----------------
+
+Class static functions are treated the same way as free functions, except
+that they are accessible either through the class or through an instance,
+just like Python's ``staticmethod``.
+
+
 `Methods`
 ---------
 
 For class methods, see the :ref:`methods section <sec-methods-label>` under
 the :doc:`classes heading<classes>`.
+
+
+`Operators`
+-----------
+
+Globally defined operators are found lazily (ie. can resolve after the class
+definition by loading the global definition or by defining them interactively)
+and are mapped onto a Python equivalent when possible.
+See the :ref:`operators section <sec-operators-label>` under the
+:doc:`classes heading<classes>` for more details.
 
 
 `Templates`
