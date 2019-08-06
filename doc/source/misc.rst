@@ -23,6 +23,44 @@ Download it, save it under the name ``features.h``, and load it:
     >>>
 
 
+`Special variables`
+-------------------
+
+There are several conventional "special variables" that control behavior of
+functions or provide (internal) information.
+Often, these can be set/used in pythonizaions to handle memory management or
+Global Interpreter Lock (GIL) release.
+
+* ``__python_owns__``: a flag that every bound instance carries and determines
+  whether Python or C++ owns the C++ instance (and associated memory).
+  If Python owns the instance, it will be destructed when the last Python
+  reference to the proxy disappears.
+  You can check/change the ownership with the __python_owns__ flag that every
+  bound instance carries.
+  Example:
+
+  .. code-block:: python
+
+    >>> from cppyy.gbl import Concrete
+    >>> c = Concrete()
+    >>> c.__python_owns__         # True: object created in Python
+    True
+    >>>
+
+* ``__creates__``: a flag that every C++ overload carries and determines
+  whether the return value is owned by C++ or Python: if ``True``, Python owns
+  the return value, otherwise C++.
+
+* ``__release_gil__``: a flag that every C++ overload carries and determines
+  whether the Global Interpreter Lock (GIL) should be released during the C++
+  call to allow multi-threading.
+  The default is ``False``.
+
+* ``__useffi__``: a flag that every C++ overload carries and determines
+  whether generated wrappers or direct foreign functions should be used.
+  This is for PyPy only; the flag has no effect on CPython.
+
+
 `STL algorithms`
 ----------------
 
@@ -54,32 +92,14 @@ below can not be instantiated using a Python string, but the
 `Odds and ends`
 ---------------
 
-* **memory**: C++ instances created by calling their constructor from python
-  are owned by python.
-  You can check/change the ownership with the __python_owns__ flag that every
-  bound instance carries.
-  Example:
-
-  .. code-block:: python
-
-    >>> from cppyy.gbl import Concrete
-    >>> c = Concrete()
-    >>> c.__python_owns__         # True: object created in Python
-    True
-    >>>
-
 * **namespaces**: Are represented as python classes.
   Namespaces are more open-ended than classes, so sometimes initial access may
   result in updates as data and functions are looked up and constructed
   lazily.
-  Thus the result of ``dir()`` on a namespace shows the classes available,
-  even if they may not have been created yet.
-  It does not show classes that could potentially be loaded by the class
-  loader.
+  Thus the result of ``dir()`` on a namespace shows the classes and functions
+  available for binding, even if these may not have been created yet.
   Once created, namespaces are registered as modules, to allow importing from
   them.
-  Namespace currently do not work with the class loader.
-  Fixing these bootstrap problems is on the TODO list.
   The global namespace is ``cppyy.gbl``.
 
 * **NULL**: Is represented as ``cppyy.nullptr``.
@@ -87,6 +107,3 @@ below can not be instantiated using a Python string, but the
   For clarity of intent, it is recommended to use this instead of ``None``
   (or the integer ``0``, which can serve in some cases), as ``None`` is better
   understood as ``void`` in C++.
-
-* **unary operators**: Are supported if a python equivalent exists, and if the
-  operator is defined in the C++ class.

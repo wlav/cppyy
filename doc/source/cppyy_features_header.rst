@@ -120,3 +120,4 @@ File features.h
 
     //-----
     enum EFruit {kApple=78, kBanana=29, kCitrus=34};
+    enum class NamedClassEnum { E1 = 42 };

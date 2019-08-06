@@ -136,7 +136,7 @@ development environments.
    functions
    type_conversions
    python
-   features
+   misc
 
 .. toctree::
    :caption: Redistribution
