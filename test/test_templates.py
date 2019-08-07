@@ -493,6 +493,38 @@ class TestTEMPLATES:
 
         assert cppyy.gbl.TemplatedCtor.C(0)
 
+    def test20_type_deduction_with_conversion(self):
+        """Template instantiation with [] -> std::vector conversion"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace l2v {
+           struct Base {};
+           struct Derived : Base {};
+
+           int test1(const std::vector<Base*>& v) { return (int)v.size(); }
+
+           template <typename T>
+           int test2(const std::vector<Derived*>& v) { return (int)v.size(); }
+
+           template <typename T>
+           int test3(const std::vector<Base*>& v) { return (int)v.size(); }
+        }""")
+
+        from cppyy.gbl import l2v
+
+        d1 = l2v.Derived()
+
+        assert l2v.test1([d1])     == 1
+        assert l2v.test1([d1, d1]) == 2
+
+        assert l2v.test2[int]([d1])     == 1
+        assert l2v.test2[int]([d1, d1]) == 2
+
+        assert l2v.test3[int]([d1])     == 1
+        assert l2v.test3[int]([d1, d1]) == 2
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
