@@ -1020,3 +1020,37 @@ class TestDATATYPES:
 
         c.set_callable(lambda x, y: x*y)
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
+
+    def test24_multi_dim_arrays_of_builtins(test):
+        """Multi-dim arrays of builtins"""
+
+        import cppyy, ctypes
+
+        cppyy.cppdef("""
+        template<class T, int nlayers>
+        struct MultiDimTest {
+            T* layers[nlayers];
+
+            MultiDimTest(int width, int height) {
+                for (int i=0; i<nlayers; ++i) {
+                    layers[i] = new T[width*height];
+                    for (int j=0; j<width*height; ++j)
+                        layers[i][j] = j*2;
+                }
+            }
+        };
+        """)
+
+        from cppyy.gbl import MultiDimTest
+
+        nlayers = 3; width = 8; height = 4
+        for (cpptype, ctype) in (('unsigned char', ctypes.c_ubyte),
+                                 ('int',           ctypes.c_int),
+                                 ('double',        ctypes.c_double)):
+            m = MultiDimTest[cpptype, nlayers](width, height)
+
+            for i in range(nlayers):
+                buf = m.layers[i]
+                p = (ctype * len(buf)).from_buffer(buf)
+                assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
+
