@@ -588,10 +588,12 @@ class TestSTLMAP:
         assert bt(1)
         assert bt(1) == True
         assert bt(1) != False
+        assert bt(1) is True
         assert bt() == bt(0)
         assert not bt()
         assert bt() == False
         assert bt() != True
+        assert bt() is False
         assert str(bt(1)) == 'True'
         assert str(bt(0)) == 'False'
 
