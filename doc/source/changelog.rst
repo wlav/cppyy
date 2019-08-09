@@ -26,6 +26,7 @@ master: 1.5.0
 * allow std::vector initialization with a list of constructor arguments
 * consistent naming of ``__cppname__`` to ``__cpp_name__``
 * fixes to the cmake fragments for Ubuntu
+* support C++ naming of typedef of bool types
 * extended documentation
 
 

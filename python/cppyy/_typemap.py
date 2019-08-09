@@ -15,11 +15,34 @@ def _create_mapper(cls):
         return type(name, (cls,), {'__cpp_name__' : cppname, '__module__' : modname})
     return mapper
 
+class _Bool(object):
+    def __init__(self, val = bool()):
+        if val: self.val = True
+        else: self.val = False
+
+    def __nonzero__(self):
+        return self.val
+
+    def __bool__(self):
+        return self.val
+
+    def __eq__(self, other):
+        if self: return other == True
+        return other == False
+
+    def __repr__(self):
+        if self.val: return repr(True)
+        else: return repr(False)
+
+
 def initialize(backend):
     if not hasattr(backend, 'type_map'):
         return
 
     tm = backend.type_map
+
+    # boolean type (builtin type bool can nog be subclassed)
+    tm['bool'] = _create_mapper(_Bool)
 
     # char types
     str_tm = _create_mapper(str)

@@ -570,7 +570,32 @@ class TestSTLMAP:
 
         raises(ValueError, mul.__setitem__, 'minus two', -2)
 
-    def test05_STL_like_class_indexing_overloads(self):
+    def test05_bool_typemap(self):
+        """Test mapping of bool type typedefs"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        struct BoolTypeMapTest {
+            typedef bool BoolType;
+        };
+        """)
+
+        bt = cppyy.gbl.BoolTypeMapTest.BoolType
+
+        assert bt.__name__ == 'BoolType'
+        assert bt.__cpp_name__ == 'BoolTypeMapTest::BoolType'
+        assert bt(1)
+        assert bt(1) == True
+        assert bt(1) != False
+        assert bt() == bt(0)
+        assert not bt()
+        assert bt() == False
+        assert bt() != True
+        assert str(bt(1)) == 'True'
+        assert str(bt(0)) == 'False'
+
+    def test06_STL_like_class_indexing_overloads(self):
         """Test overloading of operator[] in STL like class"""
 
         import cppyy
@@ -580,7 +605,7 @@ class TestSTLMAP:
         assert a["some string" ] == 'string'
         assert a[3.1415] == 'double'
 
-    def test06_STL_like_class_iterators(self):
+    def test07_STL_like_class_iterators(self):
         """Test the iterator protocol mapping for an STL like class"""
 
         import cppyy
