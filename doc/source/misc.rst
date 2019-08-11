@@ -51,6 +51,13 @@ Global Interpreter Lock (GIL) release.
   whether the return value is owned by C++ or Python: if ``True``, Python owns
   the return value, otherwise C++.
 
+* ``__set_lifeline__``: a flag that every C++ overload carries and determines
+  whether the return value should place a back-reference on ``self``, to
+  prevent the latter from going out of scope before the return value does.
+  The default is ``False``, but will be automatically set at run-time if a
+  return value's address is a C++ object pointing into the memory of ``this``,
+  or if ``self`` is a by-value return.
+
 * ``__release_gil__``: a flag that every C++ overload carries and determines
   whether the Global Interpreter Lock (GIL) should be released during the C++
   call to allow multi-threading.

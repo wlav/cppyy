@@ -307,6 +307,33 @@ class TestSTLVECTOR:
         ll4[1] = 'a'
         raises(TypeError, a.vector_pair, ll4)
 
+    def test12_vector_lifeline(self):
+        """Check lifeline setting on vectors of objects."""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace Lifeline {
+        static int count = 0;
+        template <typename T>
+        struct C {
+            C(int x) : x(x) { ++count; }
+            C(const C& c) : x(c.x) { ++count; }
+            ~C() { --count; }
+            int x;
+        };
+        auto foo() { return std::vector<C<int>>({C<int>(1337)}); }
+        }""")
+
+        assert cppyy.gbl.Lifeline.count == 0
+        assert not cppyy.gbl.Lifeline.foo()._getitem__unchecked.__set_lifeline__
+        assert cppyy.gbl.Lifeline.foo()[0].x == 1337
+        raises(IndexError, cppyy.gbl.Lifeline.foo().__getitem__, 1)
+        assert cppyy.gbl.Lifeline.foo()._getitem__unchecked.__set_lifeline__
+
+        import gc
+        gc.collect()
+        assert cppyy.gbl.Lifeline.count == 0
+
 
 class TestSTLSTRING:
     def setup_class(cls):
