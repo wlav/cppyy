@@ -13,7 +13,7 @@ class TestCONVERSIONS:
     def setup_class(cls):
         cls.test_dct = test_dct
         import cppyy
-        cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
+        cls.conversion = cppyy.load_reflection_info(cls.test_dct)
 
     def test01_implicit_vector_conversions(self):
         """Test implicit conversions of std::vector"""
