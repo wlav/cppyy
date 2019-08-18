@@ -27,6 +27,7 @@ master: 1.5.0
 * consistent naming of ``__cppname__`` to ``__cpp_name__``
 * added __set_lifeline__ attribute to overloads
 * fixes to the cmake fragments for Ubuntu
+* fixes linker errors on Windows in some configurations
 * support C++ naming of typedef of bool types
 * basic views of 2D arrays of builtin types
 * extended documentation
