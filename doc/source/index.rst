@@ -5,7 +5,7 @@
 
 .. meta::
    :description: cppyy: Automatic Python-C++ bindings
-   :keywords: Python, C++, binding, bindings, automatic bindings, bindings generator, cross-language, C++ from Python, Python from C++
+   :keywords: Python, C++, llvm, cling, binding, bindings, automatic bindings, bindings generator, cross-language inheritance, calling C++ from Python, calling Python from C++, high performance, data science
 
 cppyy: Automatic Python-C++ bindings
 ====================================
