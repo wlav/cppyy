@@ -618,3 +618,32 @@ namespace Zoo {
         assert n == 'this is a C++ string'
         n.erase(cppyy.gbl.std.remove(n.begin(), n.end(), cppstr.value_type(' ')))
         assert n == 'thisisaC++stringing'
+
+
+class TestADVERTISED:
+    def setup_class(cls):
+        import cppyy
+
+    def test01_reduction_of_overloads(self):
+        """Reduce available overloads to 1"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace Advert01 {
+        class A {
+        public:
+             A(int) {}
+            A(double) {}
+        };
+        }""")
+
+        def pythonize_A(klass, name):
+            if name == 'A':
+                klass.__init__ = klass.__init__.__overload__("int")
+
+        cppyy.py.add_pythonization(pythonize_A, 'Advert01')
+
+        from cppyy.gbl import Advert01
+
+        assert Advert01.A(1)
+        raises(TypeError, Advert01.A, 1.)
