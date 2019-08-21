@@ -26,8 +26,9 @@ class InteractiveLazy(object):
                 cppyy._backend._set_cpp_lazy_lookup(caller.__dict__)
                 return cppyy.__all__
             else:
-                self.__dict__['g'] = cppyy.gbl
-                return ['g']+cppyy.__all__
+                self.__dict__['g']   = cppyy.gbl
+                self.__dict__['std'] = cppyy.gbl.std
+                return ['g', 'std']+cppyy.__all__
         return getattr(cppyy, attr)
 
 sys.modules['cppyy.interactive'] = InteractiveLazy(\

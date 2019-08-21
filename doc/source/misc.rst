@@ -106,11 +106,11 @@ below can not be instantiated using a Python string, but the
 Typing ``cppyy.gbl`` all the time gets old rather quickly, but the dynamic
 nature of ``cppyy`` makes something like ``from cppyy.gbl import *``
 impossible.
-For example, classes can be defined dynamically after that statement, which
-would be missed by the import.
-In scripts, it is easy enough to rebind names for a good amount of reduction
-in typing (and a modest performance improvement to boot, because of fewer
-dictionary lookups), e.g.:
+For example, classes can be defined dynamically after that statement and then
+they would be missed by the import.
+In scripts, it is easy enough to rebind names to achieve a good amount of
+reduction in typing (and a modest performance improvement to boot, because of
+fewer dictionary lookups), e.g.:
 
   .. code-block:: python
 
@@ -142,6 +142,11 @@ Example usage:
     >>> s
     <cppyy.gbl.SomeStruct object at 0x7fa9b8624320>
     >>>
+
+For PyPy, IPython, etc. ``cppyy.gbl`` is simply rebound as ``g`` and
+``cppyy.gbl.std`` is made available as ``std``.
+Not as convenient as full lookup, and missing any other namespaces that may be
+available, but still saves some typing in may cases.
 
 
 `Odds and ends`

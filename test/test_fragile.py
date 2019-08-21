@@ -379,3 +379,8 @@ class TestFRAGILE:
         assert hasattr(o, 'm_int')
 
         assert 'OpaqueType' in cppyy.gbl.fragile.__dict__
+
+    def test17_interactive(self):
+        """Test the usage of 'from cppyy.interactive import *'"""
+
+        import assert_interactive
