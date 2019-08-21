@@ -36,8 +36,10 @@ __author__ = 'Wim Lavrijsen <WLavrijsen@lbl.gov>'
 __all__ = [
     'cppdef',                 # declare C++ source to Cling
     'include',                # load and jit a header file
+    'c_include',              # load and jit a C header file
     'load_library',           # load a shared library
-    'sizeof',                 #  size of a C++ type
+    'nullptr',                # unique pointer representing NULL
+    'sizeof',                 # size of a C++ type
     'typeid',                 # typeid of a C++ type
     'add_include_path',       # add a path to search for headers
     'add_autoload_map',       # explicitly include an autoload map
