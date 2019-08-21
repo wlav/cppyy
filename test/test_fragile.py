@@ -384,3 +384,31 @@ class TestFRAGILE:
         """Test the usage of 'from cppyy.interactive import *'"""
 
         import assert_interactive
+
+    def test18_overload(self):
+        """Test usage of __overload__"""
+
+        import cppyy
+
+        cppyy.cppdef("""struct Variable {
+            Variable(double lb, double ub, double value, bool binary, bool integer, const string& name) {}
+            Variable(int) {}
+        };""")
+
+        for sig in ['double, double, double, bool, bool, const string&',
+                    'double,double,double,bool,bool,const string&',
+                    'double lb, double ub, double value, bool binary, bool integer, const string& name']:
+            assert cppyy.gbl.Variable.__init__.__overload__(sig)
+
+    def test19_gbl_contents(self):
+        """Assure cppyy.gbl is mostly devoid of ROOT thingies"""
+
+
+        import cppyy
+
+        dd = dir(cppyy.gbl)
+
+        assert not 'TCanvasImp' in dd
+        assert not 'ESysConstants' in dd
+        assert not 'kDoRed' in dd
+
