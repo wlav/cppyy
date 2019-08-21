@@ -171,6 +171,15 @@ Especially if overloads live in different header files and are only an
 implicit conversion apart, or if types that have no direct equivalent in
 Python, such as e.g. ``unsigned short``, are used.
 
+There are two rounds to finding an overload.
+If all overloads fail argument conversion during the first round, where
+implicit conversions are not allowed, _and_ at least one converter has
+indicated that it can do implicit conversions, a second round is tried.
+In this second round, implicit conversions are allowed, including class
+instantiation of temporaries.
+During some template calls, implicit conversions are not allowed at all, to
+make sure new instantiations happen instead.
+
 In the rare occasion where the automatic overload selection fails, the
 ``__overload__`` function can be called to access a specific overload
 matching a specific function signature:

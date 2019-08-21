@@ -67,7 +67,7 @@ for e.g. pickling:
 
 Python and C++ both make a distinction between allocation (``__new__`` in
 Python, ``operator new`` in C++) and initialization (``__init__`` in Python,
-the contructor call in C++).
+the constructor call in C++).
 When binding, however, there comes a subtle semantic difference: the Python
 ``__new__`` allocates memory for the proxy object only, and ``__init__``
 initializes the proxy by creating or binding the C++ object.

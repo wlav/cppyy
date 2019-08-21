@@ -28,7 +28,7 @@ Download it, save it under the name ``features.h``, and load it:
 
 There are several conventional "special variables" that control behavior of
 functions or provide (internal) information.
-Often, these can be set/used in pythonizaions to handle memory management or
+Often, these can be set/used in pythonizations to handle memory management or
 Global Interpreter Lock (GIL) release.
 
 * ``__python_owns__``: a flag that every bound instance carries and determines
