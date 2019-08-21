@@ -100,6 +100,50 @@ below can not be instantiated using a Python string, but the
     >>>
 
 
+`Reduced typing`
+----------------
+
+Typing ``cppyy.gbl`` all the time gets old rather quickly, but the dynamic
+nature of ``cppyy`` makes something like ``from cppyy.gbl import *``
+impossible.
+For example, classes can be defined dynamically after that statement, which
+would be missed by the import.
+In scripts, it is easy enough to rebind names for a good amount of reduction
+in typing (and a modest performance improvement to boot, because of fewer
+dictionary lookups), e.g.:
+
+  .. code-block:: python
+
+    import cppyy
+    std = cppyy.gbl.std
+    v = std.vector[int](range(10))
+
+But even such rebinding becomes annoying for (brief) interactive sessions.
+
+For CPython only (and not with tools such as IPython or in IDEs that replace
+the interactive prompt), there is a fix, using
+``from cppyy.interactive import *``.
+This makes lookups in the global dictionary of the current frame also
+consider everything under ``cppyy.gbl``.
+This feature comes with a performance `penalty` and is not meant for
+production code.
+Example usage:
+
+  .. code-block:: python
+
+    >>> from cppyy.interactive import *
+    >>> v = std.vector[int](range(10))
+    >>> print(list(v))
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    >>>
+    >>> cppdef("struct SomeStruct {};")
+    True
+    >>> s = SomeStruct()          # <- dynamically made available
+    >>> s
+    <cppyy.gbl.SomeStruct object at 0x7fa9b8624320>
+    >>>
+
+
 `Odds and ends`
 ---------------
 
