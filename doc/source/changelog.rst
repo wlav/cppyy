@@ -9,8 +9,18 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
-master: 1.5.0
+master: 1.5.1
 -------------
+
+* instantiate templates with larger integer types if argument values require
+* improve cppyy.interactive and partially enable it on PyPy, IPython, etc.
+* let __overload__ be more flexible in signature matching
+* make list filtering of dir(cppyy.gbl) on Windows same as Linux/Mac
+* extended documentation
+
+
+2019-08-18: 1.5.0
+-----------------
 
 * upgrade cppyy-cling to 6.18
 * allow python-derived classes to be used in templates
