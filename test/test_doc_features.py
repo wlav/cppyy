@@ -632,10 +632,9 @@ class TestADVERTISED:
         cppyy.cppdef("""namespace Advert01 {
         class A {
         public:
-             A(int) {}
+            A(int) {}
             A(double) {}
-        };
-        }""")
+        }; }""")
 
         def pythonize_A(klass, name):
             if name == 'A':
@@ -647,3 +646,30 @@ class TestADVERTISED:
 
         assert Advert01.A(1)
         raises(TypeError, Advert01.A, 1.)
+
+    def test02_use_c_void_p(self):
+        """Use of opaque handles and ctypes.c_void_p"""
+
+        import cppyy, ctypes
+
+        cppyy.cppdef("""namespace Advert02 {
+            typedef void* PicamHandle;
+            void Picam_OpenFirstCamera(PicamHandle* cam) {
+                *cam = new int(42);
+            }
+
+            bool Picam_CloseCamera(PicamHandle cam) {
+                bool ret = false;
+                if (*((int*)cam) == 42) ret = true;
+                delete (int*)cam;
+                return ret;
+            }
+        } """)
+
+        from cppyy.gbl import Advert02
+
+        assert Advert02.PicamHandle
+
+        cam = Advert02.PicamHandle(cppyy.nullptr)
+        Advert02.Picam_OpenFirstCamera(cam)
+        assert Advert02.Picam_CloseCamera(cam)
