@@ -525,6 +525,21 @@ class TestTEMPLATES:
         assert l2v.test3[int]([d1])     == 1
         assert l2v.test3[int]([d1, d1]) == 2
 
+    def test21_type_deduction_of_proper_integer_size(self):
+        """Template type from integer arg should be big enough"""
+
+        import cppyy
+
+        cppyy.cppdef("template <typename T> T PassSomeInt(T t) { return t; }")
+
+        from cppyy.gbl import PassSomeInt
+
+        for val in [1, 100000000000, -2**32, 2**32-1, 2**64-1 -2**63]:
+            assert val == PassSomeInt(val)
+
+        for val in [2**64, -2**63-1]:
+            raises(OverflowError, PassSomeInt, val)
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
