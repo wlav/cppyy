@@ -509,6 +509,9 @@ class TestTEMPLATES:
            int test2(const std::vector<Derived*>& v) { return (int)v.size(); }
 
            template <typename T>
+           int test2a(std::vector<Derived*> v) { return v.size(); }
+
+           template <typename T>
            int test3(const std::vector<Base*>& v) { return (int)v.size(); }
         }""")
 
@@ -521,6 +524,9 @@ class TestTEMPLATES:
 
         assert l2v.test2[int]([d1])     == 1
         assert l2v.test2[int]([d1, d1]) == 2
+
+        assert l2v.test2a[int]([d1])     == 1
+        assert l2v.test2a[int]([d1, d1]) == 2
 
         assert l2v.test3[int]([d1])     == 1
         assert l2v.test3[int]([d1, d1]) == 2
