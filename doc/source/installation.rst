@@ -72,11 +72,11 @@ to ``LD_LIBRARY_PATH`` (Mac, Linux; MS Windows uses ``PATH`` for both
 executables and libraries).
 The upshot is that you will get the newer compilers and your system libraries
 mixed in the same environment, unless you set ``LD_LIBRARY_PATH`` yourself,
-e.g. to ``$CONDA_PREFIX\lib``.
+e.g. by adding ``$CONDA_PREFIX/lib``.
 That is, however, not recommended per the conda documentation.
 Furthermore, the compilers pulled in from conda-forge are not their vanilla
 distributions: header files have been modified.
-This can lead to parsing problems with clang5, as used by cppyy.
+This can lead to parsing problems if the system C library is too old.
 
 Nevertheless, with the above caveats, if your system C++ libraries are new
 enough, the following can be made to work::
