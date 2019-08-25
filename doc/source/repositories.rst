@@ -59,22 +59,23 @@ first step if you already cloned the repo for ``cppyy-cling``)::
  $ cd cppyy-backend/clingwrapper
  $ python -m pip install . --upgrade
 
-Upgrading ``CPyCppyy`` and ``cppyy`` is very similar.
+Upgrading ``CPyCppyy`` (if on CPython, it's not needed for PyPy) and ``cppyy``
+is very similar.
 First, ``CPyCppyy``::
 
  $ git clone https://bitbucket.org/wlav/CPyCppyy.git
  $ cd CPyCppyy
  $ python -m pip install . --upgrade
 
-Then ``cppyy``::
+Finally, the top-level ``cppyy``::
 
  $ git clone https://bitbucket.org/wlav/cppyy.git
  $ cd cppyy
  $ python -m pip install . --upgrade
 
 Please see the `pip documentation`_ for more options, such as developer mode; and
-the :ref:`installation section <intallation_from_source>`, for more installation
-options, such as selectin the desired C++ standard.
+the :ref:`installation section <installation_from_source>`, for more installation
+options, such as selecting the desired C++ standard.
 
 .. _`setuptools`: https://setuptools.readthedocs.io/
 .. _`pip documentation`: https://pip.pypa.io/

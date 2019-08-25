@@ -100,7 +100,7 @@ but it will be lowered if your compiler does not support a newer standard.
 
 Installing from source
 ----------------------
-.. _intallation_from_source:
+.. _installation_from_source:
 
 The easiest way to install completely from source is again to use ``pip`` and
 simply tell it to use the source package.
@@ -199,7 +199,7 @@ You can control compiler flags through the ``EXTRA_CLING_ARGS`` envar and thus
 what is active in the PCH.
 In principle, you can also change the C++ language standard by setting the
 appropriate flag on ``EXTRA_CLING_ARGS`` and rebuilding the PCH.
-Howeve, if done at this stage, that disables some automatic conversion for
+However, if done at this stage, that disables some automatic conversion for
 C++ types that were introduced after C++11 (such as string_view and optional).
 
 If you want multiple PCHs living side-by-side, you can generate them
@@ -214,7 +214,7 @@ You can then select the appropriate PCH with the ``CLING_STANDARD_PCH`` envar::
 
  $ export CLING_STANDARD_PCH=/full/path/to/target/location/for/PCH/allDict.cxx.pch
 
-Or disable it completely by setting that evnar to "none".
+Or disable it completely by setting that envar to "none".
 
 
 .. _`PyPI`: https://pypi.python.org/pypi/cppyy/
