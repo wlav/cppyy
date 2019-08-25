@@ -179,7 +179,7 @@ if not ispypy:
     else:
         apipath_extra = os.path.join(os.path.dirname(apipath), 'site', os.path.basename(apipath))
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
-            import libcppyy
+            import glob, libcppyy
             apipath_extra = os.path.dirname(libcppyy.__file__)
           # a "normal" structure finds the include directory 3 levels up,
           # ie. from lib/pythonx.y/site-packages
@@ -189,10 +189,11 @@ if not ispypy:
 
             apipath_extra = os.path.join(apipath_extra, 'include')
           # add back pythonx.y or site/pythonx.y if available
-            if os.path.exists(os.path.join(apipath_extra, 'python'+sys.version[:3], 'CPyCppyy')):
-                apipath_extra = os.path.join(apipath_extra, 'python'+sys.version[:3])
-            elif os.path.exists(os.path.join(apipath_extra, 'site', 'python'+sys.version[:3], 'CPyCppyy')):
-                apipath_extra = os.path.join(apipath_extra, 'site', 'python'+sys.version[:3])
+            for p in glob.glob(os.path.join(apipath_extra, 'python'+sys.version[:3]+'*'))+\
+                     glob.glob(os.path.join(apipath_extra, '*', 'python'+sys.version[:3]+'*')):
+                if os.path.exists(os.path.join(p, 'CPyCppyy')):
+                    apipath_extra = p
+                    break
 
     cpycppyy_path = os.path.join(apipath_extra, 'CPyCppyy')
     if apipath_extra.lower() != 'none':
