@@ -9,8 +9,8 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
-master: 1.5.1
--------------
+2019-08-26: 1.5.1
+-----------------
 
 * Upgrade cppyy-cling to 6.18.2
 * Various patches to upstream's pre-compiled header generation and use
