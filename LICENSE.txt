@@ -51,4 +51,4 @@ the following people and organizations:
   Toby StClere-Smithe
   Stefan Wunsch
 
-Conda-forge recipes were provided by Julian Ruth.
+Conda-forge recipes were provided by Julian Rueth.
