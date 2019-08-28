@@ -411,6 +411,8 @@ class TestSTLSTRING:
         assert t0 == c.get_string1()
         assert s == c.get_string1()
 
+        assert std.string('ab\0c') == 'ab\0c'
+
     def test04_array_of_strings(self):
         """Access to global arrays of strings"""
 
