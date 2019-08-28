@@ -77,4 +77,5 @@ are licensed differently:
  ROOT: distributed under LGPL 2.1
    https://root.cern.ch/license
 
-The ROOT and LLVM/Clang codes are modified/patched.
+The ROOT and LLVM/Clang codes are modified/patched, as part of the build
+process.
