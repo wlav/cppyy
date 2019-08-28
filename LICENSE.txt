@@ -39,7 +39,6 @@ other computer software, distribute, and sublicense such Enhancements
 or derivative works thereof, in binary and source code form.
 
 
-
 Additional copyright holders
 ----------------------------
 
@@ -51,3 +50,5 @@ the following people and organizations:
   Shaheed Haque
   Toby StClere-Smithe
   Stefan Wunsch
+
+Conda-forge recipes were provided by Julian Ruth.
