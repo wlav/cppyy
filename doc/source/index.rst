@@ -126,6 +126,7 @@ development environments.
    installation
    examples
    changelog
+   license
 
 .. toctree::
    :caption: Features
