@@ -263,6 +263,60 @@ public:
     void set_icomplex_cr(const icomplex_t&);
     void set_enum_cr(const EWhat&);
 
+// setters ref
+    void set_bool_r(bool&);
+    void set_char_r(char&);
+    void set_wchar_r(wchar_t&);
+    void set_schar_r(signed char&);
+    void set_uchar_r(unsigned char&);
+    void set_short_r(short&);
+    void set_ushort_r(unsigned short&);
+    void set_int_r(int&);
+    void set_uint_r(unsigned int&);
+    void set_long_r(long&);
+    void set_ulong_r(unsigned long&);
+    void set_llong_r(long long&);
+    void set_ullong_r(unsigned long long&);
+    void set_float_r(float&);
+    void set_double_r(double&);
+    void set_ldouble_r(long double&);
+
+// setters ptr
+    void set_bool_p(bool*);
+    void set_char_p(char*);
+    void set_wchar_p(wchar_t*);
+    void set_schar_p(signed char*);
+    void set_uchar_p(unsigned char*);
+    void set_short_p(short*);
+    void set_ushort_p(unsigned short*);
+    void set_int_p(int*);
+    void set_uint_p(unsigned int*);
+    void set_long_p(long*);
+    void set_ulong_p(unsigned long*);
+    void set_llong_p(long long*);
+    void set_ullong_p(unsigned long long*);
+    void set_float_p(float*);
+    void set_double_p(double*);
+    void set_ldouble_p(long double*);
+
+// setters ptrptr
+    void set_bool_pp(bool**);
+    void set_char_pp(char**);
+    void set_wchar_pp(wchar_t**);
+    void set_schar_pp(signed char**);
+    void set_uchar_pp(unsigned char**);
+    void set_short_pp(short**);
+    void set_ushort_pp(unsigned short**);
+    void set_int_pp(int**);
+    void set_uint_pp(unsigned int**);
+    void set_long_pp(long**);
+    void set_ulong_pp(unsigned long**);
+    void set_llong_pp(long long**);
+    void set_ullong_pp(unsigned long long**);
+    void set_float_pp(float**);
+    void set_double_pp(double**);
+    void set_ldouble_pp(long double**);
+
 // setters r-value
     void set_bool_rv(bool&&);
     void set_char_rv(char&&);
