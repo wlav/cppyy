@@ -405,7 +405,7 @@ class TestSTLSTRING:
         t0 = "aap\0noot"
         assert t0 == "aap\0noot"
 
-        c, s = stringy_class(""), std.string(t0, len(t0))
+        c, s = stringy_class(""), std.string(t0)
 
         c.set_string1(s)
         assert t0 == c.get_string1()
