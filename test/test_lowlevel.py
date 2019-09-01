@@ -73,13 +73,13 @@ class TestLOWLEVEL:
 
         ctd = cppyy.gbl.CppyyTestData()
 
-        # boolean type
+      # boolean type
         b = array('b', [0]); ctd.set_bool_r(b); assert b[0] == True
 
-        # char types (as data)
+      # char types (as data)
         c = array('B', [0]); ctd.set_uchar_r(c); assert c[0] == ord('d')
 
-        # integer types
+      # integer types
         i = array('h', [0]);     ctd.set_short_r(i);  assert i[0] == -1
         i = array('H', [0]);     ctd.set_ushort_r(i); assert i[0] ==  2
         i = array('i', [0]);     ctd.set_int_r(i);    assert i[0] == -3
@@ -90,7 +90,7 @@ class TestLOWLEVEL:
             i = array('q', [0]); ctd.set_llong_r(i);  assert i[0] == -7
             i = array('Q', [0]); ctd.set_ullong_r(i); assert i[0] ==  8
 
-        # floating point types
+      # floating point types
         f = array('f', [0]);     ctd.set_float_r(f);  assert f[0] ==  5.
         f = array('d', [0]);     ctd.set_double_r(f); assert f[0] == -5.
 
@@ -130,32 +130,31 @@ class TestLOWLEVEL:
 
         ctd = cppyy.gbl.CppyyTestData()
 
-        ### pass by reference and set value back
+      # pass by reference/pointer and set value back
+        for e in ['_r', '_p']:
+          # boolean type
+            b = ctypes.c_bool(False);     getattr(ctd, 'set_bool'+e)(b);     assert b.value == True
 
-        # boolean type
-        b = ctypes.c_bool(False);   ctd.set_bool_r(b);     assert b.value == True
+          # char types
+            if e == '_r':
+                c = ctypes.c_char('\0');  getattr(ctd, 'set_char'+e)(c);     assert c.value == 'a'
+                c = ctypes.c_wchar('\0'); getattr(ctd, 'set_wchar'+e)(c);    assert c.value == 'b'
+                c = ctypes.c_byte(0);     getattr(ctd, 'set_schar'+e)(c);    assert c.value == ord('c')
+            c = ctypes.c_ubyte(0);        getattr(ctd, 'set_uchar'+e)(c);    assert c.value == ord('d')
 
-        # char types
-        c = ctypes.c_char('\0');    ctd.set_char_r(c);     assert c.value == 'a'
-        c = ctypes.c_wchar('\0');   ctd.set_wchar_r(c);    assert c.value == 'b'
-        c = ctypes.c_byte(0);       ctd.set_schar_r(c);    assert c.value == ord('c')
-        c = ctypes.c_ubyte(0);      ctd.set_uchar_r(c);    assert c.value == ord('d')
+          # integer types
+            i = ctypes.c_short(0);        getattr(ctd, 'set_short'+e)(i);    assert i.value == -1
+            i = ctypes.c_ushort(0);       getattr(ctd, 'set_ushort'+e)(i);   assert i.value ==  2
+            i = ctypes.c_int(0);          getattr(ctd, 'set_int'+e)(i);      assert i.value == -3
+            i = ctypes.c_uint(0);         getattr(ctd, 'set_uint'+e)(i);     assert i.value ==  4
+            i = ctypes.c_long(0);         getattr(ctd, 'set_long'+e)(i);     assert i.value == -5
+            i = ctypes.c_ulong(0);        getattr(ctd, 'set_ulong'+e)(i);    assert i.value ==  6
+            i = ctypes.c_longlong(0);     getattr(ctd, 'set_llong'+e)(i);    assert i.value == -7
+            i = ctypes.c_ulonglong(0);    getattr(ctd, 'set_ullong'+e)(i);   assert i.value ==  8
 
-        # integer types
-        i = ctypes.c_short(0);      ctd.set_short_r(i);    assert i.value == -1
-        i = ctypes.c_ushort(0);     ctd.set_ushort_r(i);   assert i.value ==  2
-        i = ctypes.c_int(0);        ctd.set_int_r(i);      assert i.value == -3
-        i = ctypes.c_uint(0);       ctd.set_uint_r(i);     assert i.value ==  4
-        i = ctypes.c_long(0);       ctd.set_long_r(i);     assert i.value == -5
-        i = ctypes.c_ulong(0);      ctd.set_ulong_r(i);    assert i.value ==  6
-        i = ctypes.c_longlong(0);   ctd.set_llong_r(i);    assert i.value == -7
-        i = ctypes.c_ulonglong(0);  ctd.set_ullong_r(i);   assert i.value ==  8
+          # floating point types
+            f = ctypes.c_float(0);        getattr(ctd, 'set_float'+e)(f);    assert f.value ==  5.
+            f = ctypes.c_double(0);       getattr(ctd, 'set_double'+e)(f);   assert f.value == -5.
+            f = ctypes.c_longdouble(0);   getattr(ctd, 'set_ldouble'+e)(f);  assert f.value == 10.
 
-        # floating point types
-        f = ctypes.c_float(0);      ctd.set_float_r(f);    assert f.value ==  5.
-        f = ctypes.c_double(0);     ctd.set_double_r(f);   assert f.value == -5.
-        f = ctypes.c_longdouble(0); ctd.set_ldouble_r(f);  assert f.value == 10.
-
-        ### pass by pointer and set value back
-
-        # pointer types
+      # pointer types
