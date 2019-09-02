@@ -300,22 +300,22 @@ public:
     void set_ldouble_p(long double*);
 
 // setters ptrptr
-    void set_bool_pp(bool**);
-    void set_char_pp(char**);
-    void set_wchar_pp(wchar_t**);
-    void set_schar_pp(signed char**);
-    void set_uchar_pp(unsigned char**);
-    void set_short_pp(short**);
-    void set_ushort_pp(unsigned short**);
-    void set_int_pp(int**);
-    void set_uint_pp(unsigned int**);
-    void set_long_pp(long**);
-    void set_ulong_pp(unsigned long**);
-    void set_llong_pp(long long**);
-    void set_ullong_pp(unsigned long long**);
-    void set_float_pp(float**);
-    void set_double_pp(double**);
-    void set_ldouble_pp(long double**);
+    void set_bool_ppa(bool**);
+    void set_char_ppa(char**);
+    void set_wchar_ppa(wchar_t**);
+    void set_schar_ppa(signed char**);
+    void set_uchar_ppa(unsigned char**);
+    void set_short_ppa(short**);
+    void set_ushort_ppa(unsigned short**);
+    void set_int_ppa(int**);
+    void set_uint_ppa(unsigned int**);
+    void set_long_ppa(long**);
+    void set_ulong_ppa(unsigned long**);
+    void set_llong_ppa(long long**);
+    void set_ullong_ppa(unsigned long long**);
+    void set_float_ppa(float**);
+    void set_double_ppa(double**);
+    void set_ldouble_ppa(long double**);
 
 // setters r-value
     void set_bool_rv(bool&&);

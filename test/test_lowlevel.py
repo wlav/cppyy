@@ -19,7 +19,6 @@ class TestLOWLEVEL:
     def test01_builtin_cpp_casts(self):
         """C++ casting of builtin types"""
 
-        import cppyy
         from cppyy import ll
 
         for cast in (ll.cast, ll.static_cast):
@@ -94,8 +93,8 @@ class TestLOWLEVEL:
         f = array('f', [0]);     ctd.set_float_r(f);  assert f[0] ==  5.
         f = array('d', [0]);     ctd.set_double_r(f); assert f[0] == -5.
 
-    def test05_ctypes_as_ref(self):
-        """Use ctypes for pass-by-ref"""
+    def test05_ctypes_as_ref_and_ptr(self):
+        """Use ctypes for pass-by-ref/ptr"""
 
         # See:
         #  https://docs.python.org/2/library/ctypes.html#fundamental-data-types
@@ -130,7 +129,8 @@ class TestLOWLEVEL:
 
         ctd = cppyy.gbl.CppyyTestData()
 
-      # pass by reference/pointer and set value back
+      ### pass by reference/pointer and set value back
+
         for e in ['_r', '_p']:
           # boolean type
             b = ctypes.c_bool(False);     getattr(ctd, 'set_bool'+e)(b);     assert b.value == True
@@ -155,6 +155,80 @@ class TestLOWLEVEL:
           # floating point types
             f = ctypes.c_float(0);        getattr(ctd, 'set_float'+e)(f);    assert f.value ==  5.
             f = ctypes.c_double(0);       getattr(ctd, 'set_double'+e)(f);   assert f.value == -5.
-            f = ctypes.c_longdouble(0);   getattr(ctd, 'set_ldouble'+e)(f);  assert f.value == 10.
+            #f = ctypes.c_longdouble(0);   getattr(ctd, 'set_ldouble'+e)(f);  assert f.value == 10.
 
-      # pointer types
+      ### pass by pointer and set value back, now using byref (not recommended)
+
+        cb = ctypes.byref
+
+      # boolean type
+        b = ctypes.c_bool(False);     ctd.set_bool_p(cb(b));     assert b.value == True
+
+      # char types
+        c = ctypes.c_ubyte(0);        ctd.set_uchar_p(cb(c));    assert c.value == ord('d')
+
+      # integer types
+        i = ctypes.c_short(0);        ctd.set_short_p(cb(i));    assert i.value == -1
+        i = ctypes.c_ushort(0);       ctd.set_ushort_p(cb(i));   assert i.value ==  2
+        i = ctypes.c_int(0);          ctd.set_int_p(cb(i));      assert i.value == -3
+        i = ctypes.c_uint(0);         ctd.set_uint_p(cb(i));     assert i.value ==  4
+        i = ctypes.c_long(0);         ctd.set_long_p(cb(i));     assert i.value == -5
+        i = ctypes.c_ulong(0);        ctd.set_ulong_p(cb(i));    assert i.value ==  6
+        i = ctypes.c_longlong(0);     ctd.set_llong_p(cb(i));    assert i.value == -7
+        i = ctypes.c_ulonglong(0);    ctd.set_ullong_p(cb(i));   assert i.value ==  8
+
+      # floating point types
+        f = ctypes.c_float(0);        ctd.set_float_p(cb(f));    assert f.value ==  5.
+        f = ctypes.c_double(0);       ctd.set_double_p(cb(f));   assert f.value == -5.
+
+      ### pass by ptr/ptr with allocation (ptr/ptr is ambiguous in it's task, so many
+        # types are allowed to pass; this tests allocation into the pointer)
+
+        from ctypes import POINTER
+
+      # boolean type
+        b = POINTER(ctypes.c_bool)();     ctd.set_bool_ppa(b);
+        assert b[0] == True; assert b[1] == False; assert b[2] == True
+        cppyy.ll.array_delete(b)
+
+      # char types
+        c = POINTER(ctypes.c_ubyte)();    ctd.set_uchar_ppa(c)
+        assert c[0] == ord('k'); assert c[1] == ord('l'); assert c[2] == ord('m')
+        cppyy.ll.array_delete(c)
+
+      # integer types
+        i = POINTER(ctypes.c_short)();        ctd.set_short_ppa(i)
+        assert i[0] ==  -1; assert i[1] ==  -2; assert i[2] ==  -3
+        cppyy.ll.array_delete(i)
+        i = POINTER(ctypes.c_ushort)();       ctd.set_ushort_ppa(i)
+        assert i[0] ==   4; assert i[1] ==   5; assert i[2] ==   6
+        cppyy.ll.array_delete(i)
+        i = POINTER(ctypes.c_int)();          ctd.set_int_ppa(i)
+        assert i[0] ==  -7; assert i[1] ==  -8; assert i[2] ==  -9
+        cppyy.ll.array_delete(i)
+        i = POINTER(ctypes.c_uint)();         ctd.set_uint_ppa(i)
+        assert i[0] ==  10; assert i[1] ==  11; assert i[2] ==  12
+        cppyy.ll.array_delete(i)
+        i = POINTER(ctypes.c_long)();         ctd.set_long_ppa(i)
+        assert i[0] == -13; assert i[1] == -14; assert i[2] == -15
+        cppyy.ll.array_delete(i)
+        i = POINTER(ctypes.c_ulong)();        ctd.set_ulong_ppa(i)
+        assert i[0] ==  16; assert i[1] ==  17; assert i[2] ==  18
+        cppyy.ll.array_delete(i)
+        i = POINTER(ctypes.c_longlong)();     ctd.set_llong_ppa(i)
+        assert i[0] == -19; assert i[1] == -20; assert i[2] == -21
+        cppyy.ll.array_delete(i)
+        i = POINTER(ctypes.c_ulonglong)();    ctd.set_ullong_ppa(i)
+        assert i[0] ==  22; assert i[1] ==  23; assert i[2] ==  24
+        cppyy.ll.array_delete(i)
+
+      # floating point types
+        f = POINTER(ctypes.c_float)();        ctd.set_float_ppa(f)
+        assert f[0] ==   5; assert f[1] ==  10; assert f[2] ==  20
+        cppyy.ll.array_delete(f)
+        f = POINTER(ctypes.c_double)();       ctd.set_double_ppa(f)
+        assert f[0] ==  -5; assert f[1] == -10; assert f[2] == -20
+        cppyy.ll.array_delete(f)
+        f = POINTER(ctypes.c_longdouble)();   ctd.set_ldouble_ppa(f)
+        assert f[0] ==   5; assert f[1] ==  10; assert f[2] ==  20
+        cppyy.ll.array_delete(f)

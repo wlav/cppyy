@@ -311,67 +311,67 @@ void CppyyTestData::set_double_p(double* d)               { *d = -5.; }
 void CppyyTestData::set_ldouble_p(long double* ld)        { *ld = 10.l; }
 
 //- setters ptrptr ----------------------------------------------------------
-void CppyyTestData::set_bool_pp(bool** b) {
+void CppyyTestData::set_bool_ppa(bool** b) {
     (*b) = new bool[3];
     (*b)[0] = true; (*b)[1] = false; (*b)[2] = true;
 }
-void CppyyTestData::set_char_pp(char** c) {
+void CppyyTestData::set_char_ppa(char** c) {
     (*c) = new char[3];
     (*c)[0] = 'a'; (*c)[1] = 'b'; (*c)[2] = 'c';
 }
-void CppyyTestData::set_wchar_pp(wchar_t** wc) {
+void CppyyTestData::set_wchar_ppa(wchar_t** wc) {
     (*wc) = new wchar_t[3];
     (*wc)[0] = 'd'; (*wc)[1] = 'e'; (*wc)[2] = 'f';
 }
-void CppyyTestData::set_schar_pp(signed char** sc) {
+void CppyyTestData::set_schar_ppa(signed char** sc) {
     (*sc) = new signed char[3];
     (*sc)[0] = 'g'; (*sc)[1] = 'h'; (*sc)[2] = 'j';
 }
-void CppyyTestData::set_uchar_pp(unsigned char** uc) {
+void CppyyTestData::set_uchar_ppa(unsigned char** uc) {
     (*uc) = new unsigned char[3];
     (*uc)[0] = 'k'; (*uc)[1] = 'l'; (*uc)[2] = 'm';
 }
-void CppyyTestData::set_short_pp(short** s) {
+void CppyyTestData::set_short_ppa(short** s) {
     (*s) = new short[3];
     (*s)[0] = -1; (*s)[1] = -2; (*s)[2] = -3;
 }
-void CppyyTestData::set_ushort_pp(unsigned short** us) {
+void CppyyTestData::set_ushort_ppa(unsigned short** us) {
     (*us) = new unsigned short[3];
     (*us)[0] = 4; (*us)[1] = 5; (*us)[2] = 6;
 }
-void CppyyTestData::set_int_pp(int** i) {
+void CppyyTestData::set_int_ppa(int** i) {
     (*i) = new int[3];
     (*i)[0] = -7; (*i)[1] = -8; (*i)[2] = -9;
 }
-void CppyyTestData::set_uint_pp(unsigned int** ui) {
+void CppyyTestData::set_uint_ppa(unsigned int** ui) {
     (*ui) = new unsigned int[3];
     (*ui)[0] = 10; (*ui)[1] = 11; (*ui)[2] = 12;
 }
-void CppyyTestData::set_long_pp(long** l) {
+void CppyyTestData::set_long_ppa(long** l) {
     (*l) = new long[3];
     (*l)[0] = -13; (*l)[1] = -14; (*l)[2] = -15;
 }
-void CppyyTestData::set_ulong_pp(unsigned long** ul) {
+void CppyyTestData::set_ulong_ppa(unsigned long** ul) {
     (*ul) = new unsigned long[3];
     (*ul)[0] = 16; (*ul)[1] = 17; (*ul)[2] = 18;
 }
-void CppyyTestData::set_llong_pp(long long** ll) {
+void CppyyTestData::set_llong_ppa(long long** ll) {
     (*ll) = new long long[3];
     (*ll)[0] = -19; (*ll)[1] = -20; (*ll)[2] = -21;
 }
-void CppyyTestData::set_ullong_pp(unsigned long long** ull) {
+void CppyyTestData::set_ullong_ppa(unsigned long long** ull) {
     (*ull) = new unsigned long long[3];
     (*ull)[0] = 22; (*ull)[1] = 23; (*ull)[2] = 24;
 }
-void CppyyTestData::set_float_pp(float** f) {
+void CppyyTestData::set_float_ppa(float** f) {
     (*f) = new float[3];
     (*f)[0] = 5.f; (*f)[1] = 10.f; (*f)[2] = 20.f;
 }
-void CppyyTestData::set_double_pp(double** d) {
+void CppyyTestData::set_double_ppa(double** d) {
     (*d) = new double[3];
     (*d)[0] = -5; (*d)[1] = -10.; (*d)[2] = -20.;
 }
-void CppyyTestData::set_ldouble_pp(long double** ld) {
+void CppyyTestData::set_ldouble_ppa(long double** ld) {
     (*ld) = new long double[3];
     (*ld)[0] = 5.l; (*ld)[1] = 10.f; (*ld)[2] = 20.l;
 }
