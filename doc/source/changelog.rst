@@ -13,6 +13,7 @@ master: 1.5.2
 -------------
 
 * Added a "low level" interface (cppyy.ll) for hard-casting
+* Extened support for passing ctypes arguments
 * Fixed crash when creating an array of instances of a scoped inner struct
 * Extended documentation
 
