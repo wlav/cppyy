@@ -133,29 +133,29 @@ class TestLOWLEVEL:
 
         for e in ['_r', '_p']:
           # boolean type
-            b = ctypes.c_bool(False);     getattr(ctd, 'set_bool'+e)(b);     assert b.value == True
+            b = ctypes.c_bool(False);      getattr(ctd, 'set_bool'+e)(b);     assert b.value == True
 
           # char types
             if e == '_r':
-                c = ctypes.c_char('\0');  getattr(ctd, 'set_char'+e)(c);     assert c.value == 'a'
-                c = ctypes.c_wchar('\0'); getattr(ctd, 'set_wchar'+e)(c);    assert c.value == 'b'
-                c = ctypes.c_byte(0);     getattr(ctd, 'set_schar'+e)(c);    assert c.value == ord('c')
-            c = ctypes.c_ubyte(0);        getattr(ctd, 'set_uchar'+e)(c);    assert c.value == ord('d')
+                c = ctypes.c_char(b'\0');  getattr(ctd, 'set_char'+e)(c);     assert c.value == b'a'
+                c = ctypes.c_wchar(u'\0'); getattr(ctd, 'set_wchar'+e)(c);    assert c.value == u'b'
+                c = ctypes.c_byte(0);      getattr(ctd, 'set_schar'+e)(c);    assert c.value == ord('c')
+            c = ctypes.c_ubyte(0);         getattr(ctd, 'set_uchar'+e)(c);    assert c.value == ord('d')
 
           # integer types
-            i = ctypes.c_short(0);        getattr(ctd, 'set_short'+e)(i);    assert i.value == -1
-            i = ctypes.c_ushort(0);       getattr(ctd, 'set_ushort'+e)(i);   assert i.value ==  2
-            i = ctypes.c_int(0);          getattr(ctd, 'set_int'+e)(i);      assert i.value == -3
-            i = ctypes.c_uint(0);         getattr(ctd, 'set_uint'+e)(i);     assert i.value ==  4
-            i = ctypes.c_long(0);         getattr(ctd, 'set_long'+e)(i);     assert i.value == -5
-            i = ctypes.c_ulong(0);        getattr(ctd, 'set_ulong'+e)(i);    assert i.value ==  6
-            i = ctypes.c_longlong(0);     getattr(ctd, 'set_llong'+e)(i);    assert i.value == -7
-            i = ctypes.c_ulonglong(0);    getattr(ctd, 'set_ullong'+e)(i);   assert i.value ==  8
+            i = ctypes.c_short(0);         getattr(ctd, 'set_short'+e)(i);    assert i.value == -1
+            i = ctypes.c_ushort(0);        getattr(ctd, 'set_ushort'+e)(i);   assert i.value ==  2
+            i = ctypes.c_int(0);           getattr(ctd, 'set_int'+e)(i);      assert i.value == -3
+            i = ctypes.c_uint(0);          getattr(ctd, 'set_uint'+e)(i);     assert i.value ==  4
+            i = ctypes.c_long(0);          getattr(ctd, 'set_long'+e)(i);     assert i.value == -5
+            i = ctypes.c_ulong(0);         getattr(ctd, 'set_ulong'+e)(i);    assert i.value ==  6
+            i = ctypes.c_longlong(0);      getattr(ctd, 'set_llong'+e)(i);    assert i.value == -7
+            i = ctypes.c_ulonglong(0);     getattr(ctd, 'set_ullong'+e)(i);   assert i.value ==  8
 
           # floating point types
-            f = ctypes.c_float(0);        getattr(ctd, 'set_float'+e)(f);    assert f.value ==  5.
-            f = ctypes.c_double(0);       getattr(ctd, 'set_double'+e)(f);   assert f.value == -5.
-            #f = ctypes.c_longdouble(0);   getattr(ctd, 'set_ldouble'+e)(f);  assert f.value == 10.
+            f = ctypes.c_float(0);         getattr(ctd, 'set_float'+e)(f);    assert f.value ==  5.
+            f = ctypes.c_double(0);        getattr(ctd, 'set_double'+e)(f);   assert f.value == -5.
+            f = ctypes.c_longdouble(0);    getattr(ctd, 'set_ldouble'+e)(f);  assert f.value == 10.
 
       ### pass by pointer and set value back, now using byref (not recommended)
 
