@@ -687,21 +687,19 @@ class TestADVERTISED:
         import cppyy, ctypes
 
         cppyy.cppdef("""namespace Advert03 {
-            enum SomeEnum1 { AA = -1, BB = 42 };
+        enum SomeEnum1 { AA = -1, BB = 42 };
+        void build_enum_array1(SomeEnum1** ptr, int* sz) {
+            *ptr = (SomeEnum1*)malloc(sizeof(SomeEnum1)*4);
+            *sz = 4;
+           (*ptr)[0] = AA; (*ptr)[1] = BB; (*ptr)[2] = AA; (*ptr)[3] = BB;
+        }
 
-            void build_enum_array1(SomeEnum1** ptr, int* sz) {
-                *ptr = (SomeEnum1*)malloc(sizeof(SomeEnum1)*4);
-                *sz = 4;
-               (*ptr)[0] = AA; (*ptr)[1] = BB; (*ptr)[2] = AA; (*ptr)[3] = BB;
-           }
-
-           enum SomeEnum2 { CC = 1, DD = 42 };
-           void build_enum_array2(SomeEnum2** ptr, int* sz) {
-                *ptr = (SomeEnum2*)malloc(sizeof(SomeEnum2)*4);
-                *sz = 4;
-               (*ptr)[0] = CC; (*ptr)[1] = DD; (*ptr)[2] = CC; (*ptr)[3] = DD;
-           }
-        }""")
+        enum SomeEnum2 { CC = 1, DD = 42 };
+        void build_enum_array2(SomeEnum2** ptr, int* sz) {
+            *ptr = (SomeEnum2*)malloc(sizeof(SomeEnum2)*4);
+            *sz = 4;
+            (*ptr)[0] = CC; (*ptr)[1] = DD; (*ptr)[2] = CC; (*ptr)[3] = DD;
+        } }""")
 
      # enum through void pointer (b/c underlying type unknown)
         vp = ctypes.c_void_p(0); cnt = ctypes.c_int(0)
@@ -714,12 +712,11 @@ class TestADVERTISED:
 
      # helper to convert the enum array pointer & size to something packaged
         cppyy.cppdef("""namespace Advert03 {
-            std::vector<SomeEnum1> ptr2vec(intptr_t ptr, int sz) {
-                std::vector<SomeEnum1> result{(SomeEnum1*)ptr, (SomeEnum1*)ptr+sz};
-                free((void*)ptr);
-                return result;
-            }
-        }""")
+        std::vector<SomeEnum1> ptr2vec(intptr_t ptr, int sz) {
+            std::vector<SomeEnum1> result{(SomeEnum1*)ptr, (SomeEnum1*)ptr+sz};
+            free((void*)ptr);
+            return result;
+        } }""")
 
         assert list(cppyy.gbl.Advert03.ptr2vec(vp.value, cnt.value)) == [-1, 42, -1, 42]
 
@@ -734,3 +731,65 @@ class TestADVERTISED:
 
         assert list(arr) == [1, 42, 1, 42]
         cppyy.gbl.free(vp)
+
+    def test04_ptr_ptr_python_owns(self):
+        """Example of ptr-ptr use where python owns"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace Advert04 {
+        struct SomeStruct {
+            SomeStruct(int i) : i(i) {}
+            int i;
+        };
+
+        int count_them(SomeStruct** them, int sz) {
+            int total = 0;
+            for (int i = 0; i < sz; ++i) total += them[i]->i;
+            return total;
+        } }""")
+
+        cppyy.gbl.Advert04
+        from cppyy.gbl.Advert04 import SomeStruct, count_them
+
+      # initialization on python side
+        v = cppyy.gbl.std.vector['Advert04::SomeStruct*']()
+        v._l = [SomeStruct(i) for i in range(10)]
+        for s in v._l: v.push_back(s)
+        assert count_them(v.data(), v.size()) == sum(range(10))
+
+      # initialization on C++ side
+        cppyy.cppdef("""namespace Advert04 {
+        void ptr2ptr_init(SomeStruct** ref) {
+            *ref = new SomeStruct(42);
+        } }""")
+
+        s = cppyy.bind_object(cppyy.nullptr, SomeStruct)
+        cppyy.gbl.Advert04.ptr2ptr_init(s)
+        assert s.i == 42
+
+    def test05_ptr_ptr_with_array(self):
+        """Example of ptr-ptr with array"""
+
+        import cppyy, ctypes
+
+        cppyy.cppdef("""namespace Advert05 {
+        struct SomeStruct { int i; };
+
+        void create_them(SomeStruct** them, int* sz) {
+            *sz = 4;
+            *them = new SomeStruct[*sz];
+            for (int i = 0; i < *sz; ++i) (*them)[i].i = i*i;
+        } }""")
+
+        cppyy.gbl.Advert05
+        from cppyy.gbl.Advert05 import SomeStruct, create_them
+
+        ptr = cppyy.bind_object(cppyy.nullptr, SomeStruct)
+        sz = ctypes.c_int(0)
+        create_them(ptr, sz)
+
+        arr = cppyy.bind_object(cppyy.addressof(ptr), cppyy.gbl.std.array[SomeStruct, sz.value])
+        total = 0
+        for s in arr: total += s.i
+        assert total == 14
