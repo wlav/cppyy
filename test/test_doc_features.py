@@ -652,6 +652,7 @@ class TestADVERTISED:
 
         import cppyy, ctypes
 
+      ### void pointer as opaque handle
         cppyy.cppdef("""namespace Advert02 {
             typedef void* PicamHandle;
             void Picam_OpenFirstCamera(PicamHandle* cam) {
@@ -664,12 +665,44 @@ class TestADVERTISED:
                 delete (int*)cam;
                 return ret;
             }
-        } """)
+        }""")
 
         from cppyy.gbl import Advert02
 
         assert Advert02.PicamHandle
 
+      # first approach
         cam = Advert02.PicamHandle(cppyy.nullptr)
         Advert02.Picam_OpenFirstCamera(cam)
         assert Advert02.Picam_CloseCamera(cam)
+
+      # second approch
+        cam = ctypes.c_void_p()
+        Advert02.Picam_OpenFirstCamera(cam)
+        assert Advert02.Picam_CloseCamera(cam)
+
+      ### enum through void pointer (b/c underlying type unknown)
+        cppyy.cppdef("""namespace Advert02 {
+            enum SomeEnum { AA = -1, BB = 42 };
+
+            void use_enum(SomeEnum** ptr, int* sz) {
+                *ptr = (SomeEnum*)malloc(sizeof(SomeEnum)*4);
+                *sz = 4;
+               (*ptr)[0] = AA; (*ptr)[1] = BB; (*ptr)[2] = AA; (*ptr)[3] = BB;
+           }
+        }""")
+
+        vp = ctypes.c_void_p(0); cnt = ctypes.c_int(0)
+        cppyy.gbl.Advert02.use_enum(vp, cnt)
+        assert cnt.value == 4
+
+     # helper to convert the enum array pointer & size to something packaged
+        cppyy.cppdef("""namespace Advert02 {
+            std::vector<SomeEnum> ptr2vec(intptr_t ptr, int sz) {
+                std::vector<SomeEnum> result{(SomeEnum*)ptr, (SomeEnum*)ptr+sz};
+                free((void*)ptr);
+                return result;
+            }
+        }""")
+
+        assert list(cppyy.gbl.Advert02.ptr2vec(vp.value, cnt.value)) == [-1, 42, -1, 42]
