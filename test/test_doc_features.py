@@ -681,28 +681,56 @@ class TestADVERTISED:
         Advert02.Picam_OpenFirstCamera(cam)
         assert Advert02.Picam_CloseCamera(cam)
 
-      ### enum through void pointer (b/c underlying type unknown)
-        cppyy.cppdef("""namespace Advert02 {
-            enum SomeEnum { AA = -1, BB = 42 };
+    def test03_use_of_ctypes_and_enum(self):
+        """Use of (opaque) enum through ctypes.c_void_p"""
 
-            void use_enum(SomeEnum** ptr, int* sz) {
-                *ptr = (SomeEnum*)malloc(sizeof(SomeEnum)*4);
+        import cppyy, ctypes
+
+        cppyy.cppdef("""namespace Advert03 {
+            enum SomeEnum1 { AA = -1, BB = 42 };
+
+            void build_enum_array1(SomeEnum1** ptr, int* sz) {
+                *ptr = (SomeEnum1*)malloc(sizeof(SomeEnum1)*4);
                 *sz = 4;
                (*ptr)[0] = AA; (*ptr)[1] = BB; (*ptr)[2] = AA; (*ptr)[3] = BB;
            }
+
+           enum SomeEnum2 { CC = 1, DD = 42 };
+           void build_enum_array2(SomeEnum2** ptr, int* sz) {
+                *ptr = (SomeEnum2*)malloc(sizeof(SomeEnum2)*4);
+                *sz = 4;
+               (*ptr)[0] = CC; (*ptr)[1] = DD; (*ptr)[2] = CC; (*ptr)[3] = DD;
+           }
         }""")
 
+     # enum through void pointer (b/c underlying type unknown)
         vp = ctypes.c_void_p(0); cnt = ctypes.c_int(0)
-        cppyy.gbl.Advert02.use_enum(vp, cnt)
+        cppyy.gbl.Advert03.build_enum_array2(vp, cnt)
+        assert cnt.value == 4
+
+        vp = ctypes.c_void_p(0); cnt = ctypes.c_int(0)
+        cppyy.gbl.Advert03.build_enum_array1(vp, cnt)
         assert cnt.value == 4
 
      # helper to convert the enum array pointer & size to something packaged
-        cppyy.cppdef("""namespace Advert02 {
-            std::vector<SomeEnum> ptr2vec(intptr_t ptr, int sz) {
-                std::vector<SomeEnum> result{(SomeEnum*)ptr, (SomeEnum*)ptr+sz};
+        cppyy.cppdef("""namespace Advert03 {
+            std::vector<SomeEnum1> ptr2vec(intptr_t ptr, int sz) {
+                std::vector<SomeEnum1> result{(SomeEnum1*)ptr, (SomeEnum1*)ptr+sz};
                 free((void*)ptr);
                 return result;
             }
         }""")
 
-        assert list(cppyy.gbl.Advert02.ptr2vec(vp.value, cnt.value)) == [-1, 42, -1, 42]
+        assert list(cppyy.gbl.Advert03.ptr2vec(vp.value, cnt.value)) == [-1, 42, -1, 42]
+
+      # 2nd approach through low level cast
+        vp = ctypes.pointer(ctypes.c_uint(0)); cnt = ctypes.c_int(0)
+        cppyy.gbl.Advert03.build_enum_array2(vp, cnt)
+        assert cnt.value == 4
+
+        import cppyy.ll
+        arr = cppyy.ll.cast['Advert03::SomeEnum2*'](vp)
+        arr.reshape((cnt.value,))
+
+        assert list(arr) == [1, 42, 1, 42]
+        cppyy.gbl.free(vp)
