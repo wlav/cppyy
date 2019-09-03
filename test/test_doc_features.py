@@ -793,3 +793,26 @@ class TestADVERTISED:
         total = 0
         for s in arr: total += s.i
         assert total == 14
+
+    def test06_c_char_p(self):
+        """Example of ctypes.c_char_p usage"""
+
+        import cppyy, ctypes
+
+        cppyy.cppdef("""namespace Advert06 {
+        intptr_t createit(const char** out) {
+            *out = (char*)malloc(4);
+            return (intptr_t)*out;
+        }
+        intptr_t destroyit(const char* in) {
+            intptr_t out = (intptr_t)in;
+            free((void*)in);
+            return out;
+        } }""")
+
+        cppyy.gbl.Advert06
+        from cppyy.gbl.Advert06 import createit, destroyit
+
+        ptr = ctypes.c_char_p()
+        val = createit(ptr)
+        assert destroyit(ptr) == val
