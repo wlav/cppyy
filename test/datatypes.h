@@ -317,6 +317,14 @@ public:
     void set_double_ppa(double**);
     void set_ldouble_ppa(long double**);
 
+    intptr_t set_char_ppm(char**);
+    intptr_t set_cchar_ppm(const char**);
+    intptr_t set_wchar_ppm(wchar_t**);
+    intptr_t set_cwchar_ppm(const wchar_t**);
+    intptr_t set_void_ppm(void**);
+
+    intptr_t freeit(void*);
+
 // setters r-value
     void set_bool_rv(bool&&);
     void set_char_rv(char&&);

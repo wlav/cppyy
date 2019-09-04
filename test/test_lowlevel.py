@@ -120,10 +120,6 @@ class TestLOWLEVEL:
         # c_float           float                                       float
         # c_double          double                                      float
         # c_longdouble      long double                                 float
-        #
-        # c_char_p          char * (NUL terminated)                     string or None
-        # c_wchar_p         wchar_t * (NUL terminated)                  unicode or None
-        # c_void_p          void *                                      int/long or None
 
         import cppyy, ctypes
 
@@ -232,3 +228,45 @@ class TestLOWLEVEL:
         f = POINTER(ctypes.c_longdouble)();   ctd.set_ldouble_ppa(f)
         assert f[0] ==   5; assert f[1] ==  10; assert f[2] ==  20
         cppyy.ll.array_delete(f)
+
+    def test06_ctypes_pointer_types(self):
+        """Use ctypes for pass-by-ptr/ptr-ptr"""
+
+        # See:
+        #  https://docs.python.org/2/library/ctypes.html#fundamental-data-types
+        #
+        # ctypes type       C type                                      Python type
+        # ------------------------------------------------------------------------------
+        # c_char_p          char* (NULL terminated)                     string or None
+        # c_wchar_p         wchar_t* (NULL terminated)                  unicode or None
+        # c_void_p          void*                                       int/long or None
+
+        import cppyy, ctypes
+
+        ctd = cppyy.gbl.CppyyTestData()
+
+        ptr = ctypes.c_char_p()
+        for meth in ['char', 'cchar']:
+            val = getattr(ctd, 'set_'+meth+'_ppm')(ptr)
+            assert ctd.freeit(ptr) == val
+
+        ptr = ctypes.c_wchar_p()
+        for meth in ['wchar', 'cwchar']:
+            val = getattr(ctd, 'set_'+meth+'_ppm')(ptr)
+            assert ctd.freeit(ptr) == val
+
+        ptr = ctypes.c_void_p()
+        val = ctd.set_void_ppm(ptr)
+        assert ctd.freeit(ptr) == val
+
+    def test07_ctypes_type_correctness(self):
+        """If types don't match with ctypes, expect exceptions"""
+
+        import cppyy, ctypes
+
+        ctd = cppyy.gbl.CppyyTestData()
+
+        i = ctypes.c_int(0);
+        for ext in ['_r', '_p']:
+            for meth in ['bool', 'long', 'double']:
+                with raises(TypeError): getattr(ctd, 'set_'+meth+ext)(i)
