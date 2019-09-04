@@ -62,7 +62,24 @@ class TestLOWLEVEL:
     def test03_python_casts(self):
         """Casts to common Python pointer encapsulations"""
 
-        pass
+        import cppyy, cppyy.ll
+
+        cppyy.cppdef("""namespace pycasts {
+        struct SomeObject{};
+        uintptr_t get_address(SomeObject* ptr) { return (intptr_t)ptr; }
+        uintptr_t get_deref(void* ptr) { return (uintptr_t)(*(void**)ptr); }
+        }""")
+
+        from cppyy.gbl import pycasts
+
+        s = pycasts.SomeObject()
+        actual = pycasts.get_address(s)
+
+        assert cppyy.ll.addressof(s) == actual
+        assert cppyy.ll.as_ctypes(s).value == actual
+
+        ptrptr = cppyy.ll.as_ctypes(s, byref=True)
+        assert pycasts.get_deref(ptrptr) == actual
 
     def test04_array_as_ref(self):
         """Use arrays for pass-by-ref"""
