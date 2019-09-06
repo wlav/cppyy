@@ -376,6 +376,33 @@ void CppyyTestData::set_ldouble_ppa(long double** ld) {
     (*ld)[0] = 5.l; (*ld)[1] = 10.f; (*ld)[2] = 20.l;
 }
 
+intptr_t CppyyTestData::set_char_ppm(char** c) {
+    *c = (char*)malloc(4*sizeof(char));
+    return (intptr_t)*c;
+}
+intptr_t CppyyTestData::set_cchar_ppm(const char** cc) {
+    *cc = (const char*)malloc(4*sizeof(char));
+    return (intptr_t)*cc;
+}
+intptr_t CppyyTestData::set_wchar_ppm(wchar_t** w) {
+    *w = (wchar_t*)malloc(4*sizeof(wchar_t));
+    return (intptr_t)*w;
+}
+intptr_t CppyyTestData::set_cwchar_ppm(const wchar_t** cw) {
+    *cw = (const wchar_t*)malloc(4*sizeof(wchar_t));
+    return (intptr_t)*cw;
+}
+intptr_t CppyyTestData::set_void_ppm(void** v) {
+    *v = malloc(4*sizeof(void*));
+    return (intptr_t)*v;
+}
+
+intptr_t CppyyTestData::freeit(void* ptr) {
+    intptr_t out = (intptr_t)ptr;
+    free(ptr);
+    return out;
+}
+
 //- setters r-value ---------------------------------------------------------
 void CppyyTestData::set_bool_rv(bool&& b)                   { m_bool     = b; }
 void CppyyTestData::set_char_rv(char&& c)                   { m_char     = c; }

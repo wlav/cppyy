@@ -9,7 +9,21 @@ __all__ = [
     'static_cast',
     'reinterpret_cast',
     'dynamic_cast',
+    'malloc',
+    'free',
+    'array_new',
+    'array_detele',
     ]
+
+
+# import low-level python converters
+for _name in ['addressof', 'as_cobject', 'as_capsule', 'as_ctypes']:
+    try:
+        exec('%s = cppyy._backend.%s' % (_name, _name))
+        __all__.append(_name)
+    except AttributeError:
+        pass
+del _name
 
 
 # create low-level helpers
