@@ -432,9 +432,9 @@ class TestDATATYPES:
         c.m_double = -1
         assert round(c.m_double + 1.0, 8) == 0
 
-        raises(TypeError, c.m_double,  'c')
-        raises(TypeError, c.m_int,     -1.)
-        raises(TypeError, c.m_int,      1.)
+        raises(TypeError, setattr, c.m_double,  'c')
+        raises(TypeError, setattr, c.m_int,     -1.)
+        raises(TypeError, setattr, c.m_int,      1.)
 
         c.__destruct__()
 
