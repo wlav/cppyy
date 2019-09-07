@@ -691,7 +691,7 @@ class TestADVERTISED:
         void build_enum_array1(SomeEnum1** ptr, int* sz) {
             *ptr = (SomeEnum1*)malloc(sizeof(SomeEnum1)*4);
             *sz = 4;
-           (*ptr)[0] = AA; (*ptr)[1] = BB; (*ptr)[2] = AA; (*ptr)[3] = BB;
+            (*ptr)[0] = AA; (*ptr)[1] = BB; (*ptr)[2] = AA; (*ptr)[3] = BB;
         }
 
         enum SomeEnum2 { CC = 1, DD = 42 };
