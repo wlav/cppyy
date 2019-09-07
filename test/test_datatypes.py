@@ -1038,6 +1038,7 @@ class TestDATATYPES:
                         layers[i][j] = j*2;
                 }
             }
+            ~MultiDimTest() { for (int i=0; i<nlayers; ++i) delete[] layers[i]; }
         };
         """)
 
