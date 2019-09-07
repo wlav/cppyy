@@ -9,11 +9,12 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
-master: 1.5.2
--------------
 
-* Added a "low level" interface (cppyy.ll) for hard-casting
-* Extened support for passing ctypes arguments
+2019-09-06: 1.5.2
+-----------------
+
+* Added a "low level" interface (cppyy.ll) for hard-casting and ll types
+* Extened support for passing ctypes arguments through ptr, ref, ptr-ptr
 * Fixed crash when creating an array of instances of a scoped inner struct
 * Extended documentation
 
