@@ -152,4 +152,68 @@ take a pointer to a single C++ builtin, and ``ctypes`` pointers can be passed
 when a pointer-to-pointer is expected, e.g. for array out-parameters.
 
 
+`Memory`
+--------
+
+C++ has three ways of allocating heap memory (``malloc``, ``new``, and
+``new[]``) and three corresponding ways of deallocation (``free``,
+``delete``, and ``delete[]``).
+Direct use of ``malloc`` and ``new`` should be avoided for C++ classes, as
+these may override ``operator new`` to control their allocation own.
+However these low-level allocators can be necessary for builtin types on
+occassion if the C++ side takes ownership (otherwise, prefer either
+``array`` from the builtin module ``array`` or ``ndarray`` from Numpy).
+
+The low-level module adds the following functions:
+
+* **ll.malloc**: an interface on top of C's malloc.
+  Use it as a template with the number of elements (not the number types) to
+  be allocated.
+  The result is a ``cppyy.LowLevelView`` with the proper type and size:
+
+  .. code-block:: python
+
+    >>> arr = cppyy.ll.malloc[int](4)   # allocates memory for 4 C ints
+    >>> print(len(arr))
+    4
+    >>> print(type(arr[0]))
+    <type 'int'>
+    >>>
+
+  The actual C malloc can also be used directly, through ``cppyy.gbl.malloc``,
+  taking the number of *bytes* to be allocated and returning a ``void*``.
+
+* **ll.free**: an interface to C's free, to deallocate memory allocated by
+  C's malloc.
+  To continue to example above:
+
+  .. code-block:: python
+
+    >>> cppyy.ll.free(arr)
+    >>>
+
+  The actual C free can also be used directly, through ``cppyy.gbl.free``.
+
+* **ll.array_new**: an interface on top of C++'s ``new[]``.
+  Use it as a template; the result is a ``cppyy.LowLevelView`` with the
+  proper type and size:
+
+  .. code-block:: python
+
+    >>> arr = cppyy.ll.array_new[int](4)   # allocates memory for 4 C ints
+    >>> print(len(arr))
+    4
+    >>> print(type(arr[0]))
+    <type 'int'>
+    >>>
+
+* **ll.array_delete**: an interface on top of C++'s ``delete[]``.
+  To continue to example above:
+
+  .. code-block:: python
+
+    >>> cppyy.ll.array_delete(arr)
+    >>>
+
+
 .. _`ctypes module`: https://docs.python.org/3/library/ctypes.html
