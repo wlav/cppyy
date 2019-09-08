@@ -204,6 +204,28 @@ lazy lookup).
 Objects from ``ctypes`` can be passed through arguments of functions that
 take a pointer to a single C++ builtin, and ``ctypes`` pointers can be passed 
 when a pointer-to-pointer is expected, e.g. for array out-parameters.
+This leads to the following set of possible mappings:
+
+========================================  ========================================
+C++                                       ctypes
+========================================  ========================================
+by value (ex.: ``int``)                   ``.value`` (ex.: ``c_int(0).value``)
+by const reference (ex.: ``const int&``)  ``.value`` (ex.: ``c_int(0).value``)
+by reference (ex.: ``int&``)              direct (ex.: ``c_int(0)``)
+by pointer (ex.: ``int*``)                direct (ex.: ``c_int(0)``)
+by ptr-ref (ex.: ``int*&``)               ``pointer`` (ex.: ``pointer(c_int(0))``)
+by ptr-ptr **in** (ex.: ``int**``)        ``pointer`` (ex.: ``pointer(c_int(0))``)
+by ptr-ptr **out** (ex.: ``int**``)       ``POINTER`` (ex.: ``POINTER(c_int)()``)
+========================================  ========================================
+
+The ``ctypes`` pointer objects (from ``POINTER``, ``pointer``, or ``byref``)
+can also be used for pass by reference or pointer, instead of the direct
+object, and ``ctypes.c_void_p`` can pass through all pointer types.
+The addresses will be adjusted internally by cppyy.
+
+Note that ``ctypes.c_char_p`` is expected to be a NULL-terminated C string,
+not a character array (see the `ctypes module`_ documentation), and that
+``ctypes.c_bool`` is a C ``_Bool`` type, not C++ ``bool``.
 
 
 `Memory`
