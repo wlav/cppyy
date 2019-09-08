@@ -64,6 +64,29 @@ is required to turn it into something usable.
   Instead of the type name as a string, ``bind_object`` can also take the
   actual class (here: ``cppyy.gbl.MyStruct``).
 
+* **Typed nullptr**: A Python side proxy can pass through a pointer to
+  pointer function argument, but if the C++ side allocates memory and
+  stores it in the pointer, the result is a memory leak.
+  In that case, use ``bind_object`` to bind ``cppyy.nullptr`` instead, to
+  get a typed nullptr to pass to the function.
+  Example (continuing from the example above):
+
+  .. code-block:: python
+
+    >>> cppyy.cppdef("""
+    ... void create_mystruct(MyStruct** ptr) { *ptr = new MyStruct{42}; }
+    ... """)
+    ...
+    >>> s = cppyy.bind_object(cppyy.nullptr, 'MyStruct')
+    >>> print(s)
+    <cppyy.gbl.MyStruct object at 0x0>
+    >>> cppyy.gbl.create_mystruct(s)
+    >>> print(s)
+    <cppyy.gbl.MyStruct object at 0x7fc7d85b91c0>
+    >>> print(s.fInt)
+    42
+    >>>
+
 * **C-style cast**: This is the simplest option for builtin types.
   The syntax is "template-style", example:
 
@@ -102,6 +125,37 @@ pointer, type, and number of elements (or unchecked, if unknown).
 It only supports basic operations such as indexing and iterations, but also
 the buffer protocol for integration with full-fledged functional arrays such
 as NumPy`s ``ndarray``.
+
+In addition, specifically when dealing with ``void*`` returns, you can use
+NumPy's low-level ``frombuffer`` interface to perform the cast.
+Example:
+
+  .. code-block:: python
+
+     >>> cppyy.cppdef("""
+     ... void* create_float_array(int sz) {
+     ...     float* pf = (float*)malloc(sizeof(float)*sz);
+     ...     for (int i = 0; i < sz; ++i) pf[i] = 2*i;
+     ...     return pf;
+     ... }""")
+     ...
+     >>> import numpy as np
+     >>> NDATA = 8
+     >>> arr = cppyy.gbl.create_float_array(NDATA)
+     >>> print(arr)
+     <cppyy.LowLevelView object at 0x109f15230>
+     >>> arr.reshape((NDATA,))   # adjust the llv's size
+     >>> v = np.frombuffer(arr, dtype=np.float32, count=NDATA)  # cast to float
+     >>> print(len(v))
+     8
+     >>> print(v)
+     array([ 0.,  2.,  4.,  6.,  8., 10., 12., 14.], dtype=float32)
+     >>>
+
+Note that NumPy will internally check the total buffer size, so if the size
+you are casting *to* is larger than the size you are casting *from*, then
+the number of elements set in the ``reshape`` call needs to be adjusted
+accordingly.
 
 
 `Capsules`
