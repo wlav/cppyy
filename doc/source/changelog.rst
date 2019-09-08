@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.5.3
+-------------
+
+* Performance improvements
+
+
 2019-09-06: 1.5.2
 -----------------
 
