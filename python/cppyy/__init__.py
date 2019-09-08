@@ -138,11 +138,12 @@ def cppdef(src):
 
 def load_library(name):
     """Explicitly load a shared library."""
+    gSystem = gbl.gSystem
     if name[:3] != 'lib':
-        if not gbl.gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
-               gbl.gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
+        if not gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
+               gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
             name = 'lib'+name
-    sc = gbl.gSystem.Load(name)
+    sc = gSystem.Load(name)
     if sc == -1:
         raise RuntimeError("Unable to load library "+name)
 
@@ -177,7 +178,7 @@ if not ispypy:
     if 'CPPYY_API_PATH' in os.environ:
         apipath_extra = os.environ['CPPYY_API_PATH']
     else:
-        apipath_extra = os.path.join(os.path.dirname(apipath), 'site', os.path.basename(apipath))
+        apipath_extra = os.path.join(os.path.dirname(apipath), 'site', 'python'+sys.version[:3])
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
             import glob, libcppyy
             apipath_extra = os.path.dirname(libcppyy.__file__)
