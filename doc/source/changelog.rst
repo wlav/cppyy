@@ -14,6 +14,7 @@ master: 1.5.3
 -------------
 
 * Performance improvements
+* Extended documentation
 
 
 2019-09-06: 1.5.2

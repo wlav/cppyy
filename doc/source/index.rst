@@ -137,6 +137,7 @@ development environments.
    functions
    type_conversions
    python
+   lowlevel
    misc
 
 .. toctree::
