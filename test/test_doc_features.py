@@ -816,3 +816,40 @@ class TestADVERTISED:
         ptr = ctypes.c_char_p()
         val = createit(ptr)
         assert destroyit(ptr) == val
+
+    def test07_array_of_arrays(self):
+        """Example of array of array usage"""
+
+
+        import cppyy
+        import cppyy.ll
+
+        NREADOUTS = 4
+        NPIXELS = 16
+
+        cppyy.cppdef("""
+        #define NREADOUTS %d
+        #define NPIXELS %d
+        namespace Advert07 {
+        struct S {
+            S() {
+                uint16_t** readout = new uint16_t*[NREADOUTS];
+                for (int i=0; i<4; ++i) {
+                    readout[i] = new uint16_t[NPIXELS];
+                    for (int j=0; j<NPIXELS; ++j) readout[i][j] = i*NPIXELS+j;
+                }
+                fField = (void*)readout;
+            }
+            ~S() {
+                for (int i = 0; i < 4; ++i) delete[] ((uint16_t**)fField)[i];
+                delete [] (uint16_t**)fField;
+            }
+            void* fField;
+        }; }""" % (NREADOUTS, NPIXELS))
+
+        s = cppyy.gbl.Advert07.S()
+
+        for i in range(NREADOUTS):
+            image_array = cppyy.ll.cast['uint16_t*'](s.fField[i])
+            for j in range (NPIXELS):
+                 assert image_array[j] == i*NPIXELS+j
