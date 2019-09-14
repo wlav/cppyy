@@ -1055,7 +1055,7 @@ class TestDATATYPES:
                 p = (ctype * len(buf)).from_buffer(buf)
                 assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
 
-    def test24_anonymous_union(self):
+    def test25_anonymous_union(self):
         """Anonymous unions place there fields in the parent scope"""
 
         import cppyy
@@ -1089,3 +1089,9 @@ class TestDATATYPES:
         e = cppyy.gbl.AnonUnion.Event4(5.)
         assert e.num == 2
         assert e.a == 5.
+
+        # anonumous struct in anonymous union
+        p = cppyy.gbl.AnonUnion.PointXYZI()
+        assert type(p.x) == float
+        assert type(p.data_c[0]) == float
+        assert p.intensity == 5.

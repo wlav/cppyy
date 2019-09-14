@@ -14,7 +14,7 @@ master: 1.5.3
 -------------
 
 * Performance improvements
-* Support for (anonymous/unnamed) unions
+* Support for (anonymous/unnamed/nested) unions
 * Extended documentation
 
 

@@ -635,6 +635,19 @@ struct Event4 {
     };
 };
 
+struct PointXYZI {
+    PointXYZI() : intensity(5.) {}
+    double x, y, z, i;
+    union {
+        int offset1;
+        struct {
+           int offset2;
+           float intensity;
+        };
+        float data_c[4];
+    };
+};
+
 } // namespace AnonUnion
 
 #endif // !CPPYY_TEST_DATATYPES_H
