@@ -1,3 +1,6 @@
+#ifndef CPPYY_TEST_DATATYPES_H
+#define CPPYY_TEST_DATATYPES_H
+
 #ifndef CPPYY_DUMMY_BACKEND
 #include "RtypesCore.h"
 #else
@@ -590,3 +593,48 @@ public:
     void set_callable(const std::function<double(double, double)>&);
     double operator()(double, double);
 };
+
+
+//= anonymous unions ========================================================
+namespace AnonUnion {
+
+struct Event1 {
+    Event1() : num(1) { shrd.a = 5.; }
+    int num;
+    union SomeUnion {
+        double a;
+        int b;
+    } shrd;
+};
+
+struct Event2 {
+    Event2() : num(1) { shrd.a = 5.; }
+    int num;
+    union {
+        double a;
+        int b;
+    } shrd;
+};
+
+struct Event3 {
+    Event3(double d) : a(d) {}
+    Event3(int i) : b(i) {}
+    union {
+        double a;
+        int b;
+    };
+};
+
+struct Event4 {
+    Event4(int i) : num(1), b(i) {}
+    Event4(double d) : num(2), a(d) {}
+    int num;
+    union {
+        double a;
+        int b;
+    };
+};
+
+} // namespace AnonUnion
+
+#endif // !CPPYY_TEST_DATATYPES_H

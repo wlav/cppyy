@@ -1055,3 +1055,37 @@ class TestDATATYPES:
                 p = (ctype * len(buf)).from_buffer(buf)
                 assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
 
+    def test24_anonymous_union(self):
+        """Anonymous unions place there fields in the parent scope"""
+
+        import cppyy
+
+        # named union
+        e = cppyy.gbl.AnonUnion.Event1()
+        assert e.num == 1
+        raises(AttributeError, getattr, e, 'a')
+        raises(AttributeError, getattr, e, 'b')
+        assert e.shrd.a == 5.
+
+        # anonymous union, with field name
+        e = cppyy.gbl.AnonUnion.Event2()
+        assert e.num == 1
+        raises(AttributeError, getattr, e, 'a')
+        raises(AttributeError, getattr, e, 'b')
+        #assert e.shrd.a == 5.
+
+        # anonymous union, no field name
+        e = cppyy.gbl.AnonUnion.Event3(42)
+        assert e.b == 42
+
+        e = cppyy.gbl.AnonUnion.Event3(5.)
+        assert e.a == 5.
+
+        # anonymous union, no field name, with offset
+        e = cppyy.gbl.AnonUnion.Event4(42)
+        assert e.num == 1
+        assert e.b == 42
+
+        e = cppyy.gbl.AnonUnion.Event4(5.)
+        assert e.num == 2
+        assert e.a == 5.
