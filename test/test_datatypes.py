@@ -1072,7 +1072,7 @@ class TestDATATYPES:
         assert e.num == 1
         raises(AttributeError, getattr, e, 'a')
         raises(AttributeError, getattr, e, 'b')
-        #assert e.shrd.a == 5.
+        assert e.shrd.a == 5.
 
         # anonymous union, no field name
         e = cppyy.gbl.AnonUnion.Event3(42)
