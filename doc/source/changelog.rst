@@ -10,11 +10,11 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.5.3
--------------
+2019-09-15: 1.5.3
+-----------------
 
 * Performance improvements
-* Support for (anonymous/unnamed/nested) unions
+* Support for anonymous/unnamed/nested unions
 * Extended documentation
 
 
