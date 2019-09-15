@@ -59,7 +59,7 @@ def find_version(*file_paths):
 def is_manylinux():
     try:
        for line in open('/etc/redhat-release').readlines():
-           if 'CentOS release 5.11' in line:
+           if 'CentOS release 6.10 (Final)' in line:
                return True
     except (OSError, IOError):
         pass
