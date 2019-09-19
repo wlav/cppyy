@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.5.4
+-------------
+
+* operator+/* now respect C++-side associativity
+
+
 2019-09-15: 1.5.3
 -----------------
 
