@@ -225,3 +225,34 @@ class TestOPERATORS:
         from cppyy.gbl import TOIClass
 
         assert (TOIClass() < 1)
+
+    def test09_r_non_associative(self):
+        """Use of radd/rmul with non-associative types"""
+
+        import cppyy
+
+        # Note: calls are repeated to test caching, if any
+
+        a = cppyy.gbl.AssocADD(5.)
+        assert 5+a == 10.
+        assert a+5 == 10.
+        assert 5+a == 10.
+        assert a+5 == 10.
+
+        a = cppyy.gbl.NonAssocRADD(5.)
+        assert 5+a == 10.
+        assert 5+a == 10.
+        with raises(TypeError):
+            v = a+5
+
+        a = cppyy.gbl.AssocMUL(5.)
+        assert 2*a == 10.
+        assert a*2 == 10.
+        assert 2*a == 10.
+        assert a*2 == 10.
+
+        m = cppyy.gbl.NonAssocRMUL(5.)
+        assert 2*m == 10.
+        assert 2*m == 10.
+        with raises(TypeError):
+            v = m*2

@@ -4,5 +4,12 @@
   <class pattern="operator_*" />
   <class pattern="v_opeq_*" />
   <class pattern="YAMatrix*" />
+  <class name="AssocADD" />
+  <class name="NonAssocRADD" />
+  <class name="AssocMUL" />
+  <class name="NonAssocRMUL" />
+
+  <function name="operator*" />
+  <function name="operator_" />
 
 </lcgdict>
