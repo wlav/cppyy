@@ -12,7 +12,7 @@ When installing from source, the only requirement is full support for C++11
 (e.g. minimum gcc 4.8.1 on GNU/Linux), but older compilers than the ones
 listed for the wheels have not been tested.
 
-With CPython on Linux or Mac, probably by far the easiest way to install
+With CPython on Linux, probably by far the easiest way to install
 ``cppyy``, is through conda-forge on `Anaconda`_ (or `miniconda`_).
 A Windows recipe for ``conda`` is not available yet, but is forthcoming, so
 use ``pip`` for that platform for now (see below).
