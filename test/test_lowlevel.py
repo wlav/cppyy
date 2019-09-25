@@ -284,7 +284,7 @@ class TestLOWLEVEL:
         ctd = cppyy.gbl.CppyyTestData()
 
         meth_types = ['bool', 'double']
-        if IS_WINDOWS:
+        if not IS_WINDOWS:
             meth_types.append('long')
 
         i = ctypes.c_int(0);
