@@ -477,6 +477,14 @@ class TestDATATYPES:
         NS.s_python_only = "Python"
         assert NS.s_python_only == "Python"
 
+    def test08a_global_object(self):
+        """Test access to global objects by value"""
+
+        import cppyy
+        gbl = cppyy.gbl
+
+        assert gbl.gData.fData == 5.
+
     def test09_global_ptr(self):
         """Test access of global objects through a pointer"""
 

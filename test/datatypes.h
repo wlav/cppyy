@@ -552,6 +552,13 @@ namespace SomeStaticDataNS {
     std::string get_some_static_string2();
 }
 
+struct StorableData {
+    StorableData(double d) : fData(d) {}
+    double fData;
+};
+
+extern StorableData gData;
+
 
 //= function pointer passing ================================================
 int sum_of_int(int i1, int i2);

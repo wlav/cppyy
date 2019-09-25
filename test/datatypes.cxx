@@ -554,6 +554,8 @@ std::string SomeStaticDataNS::get_some_static_string() { return s_some_static_st
 std::string SomeStaticDataNS::s_some_static_string2 = "C++";
 std::string SomeStaticDataNS::get_some_static_string2() { return s_some_static_string2; }
 
+StorableData gData{5.};
+
 
 //= function pointer passing ================================================
 int sum_of_int(int i1, int i2) {

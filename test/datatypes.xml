@@ -24,6 +24,9 @@
   <variable name="g_some_global_string2" />
   <function name="get_some_global_string2" />
 
+  <class name="StorableData" />
+  <variable name="gData" />
+
   <namespace name="SomeStaticDataNS" />
   <variable name="SomeStaticDataNS::s_some_static_string" />
   <function name="SomeStaticDataNS::get_some_static_string" />
