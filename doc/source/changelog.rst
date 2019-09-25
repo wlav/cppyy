@@ -14,6 +14,8 @@ master: 1.5.4
 -------------
 
 * operator+/* now respect C++-side associativity
+* Fix potential crash if modules are reloaded
+* Fix some portability issues on Mac/Windows of cppyy-cling
 
 
 2019-09-15: 1.5.3
