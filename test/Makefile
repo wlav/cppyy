@@ -15,7 +15,7 @@ dicts = advancedcppDict.so \
 all : $(dicts)
 
 genreflex_flags := $(shell genreflex --cppflags)
-cppflags=$(shell cling-config --cppflags) $(genreflex_flags) -O3 -fPIC
+cppflags=$(shell cling-config --cppflags) $(genreflex_flags) -O3 -fPIC $(shell python-config --include) -Wno-register
 
 PLATFORM := $(shell uname -s)
 ifeq ($(PLATFORM),Darwin)

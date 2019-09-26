@@ -57,6 +57,7 @@ source code):
   * Aditi Dutta
   * Shaheed Haque
   * Jonsomi
+  * Max Kolin
   * Alvaro Moran
   * Matti Picus
   * Camille Scott
