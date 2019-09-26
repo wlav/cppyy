@@ -10,8 +10,14 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-2019-09-25 1.5.4
-----------------
+master: 1.5.5
+-------------
+
+* support for lazily combining overloads of operator*/+-
+
+
+2019-09-25: 1.5.4
+-----------------
 
 * operator+/* now respect C++-side associativity
 * Fix potential crash if modules are reloaded
