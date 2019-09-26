@@ -107,6 +107,7 @@ int& YAMatrix7::operator() (int, int) {
     return m_val;
 }
 
+
 //- for __radd__/__rmul__, non-associative
 AssocADD operator+(int n, AssocADD& a) {
     return AssocADD(n+a.fx);
@@ -130,4 +131,38 @@ AssocMUL operator*(AssocMUL& m, int n) {
 
 NonAssocRMUL operator*(int n, NonAssocRMUL& m) {
     return NonAssocRMUL(n*m.fx);
+}
+
+
+//- for multi-lookup
+double MultiLookup::operator*(const Vector2& v1, const Vector2& v2) {
+    return v1.x*v2.x + v1.y*v2.y;
+}
+
+MultiLookup::Vector2 MultiLookup::operator*(const Vector2& v, double a) {
+    return Vector2{v.x*a, v.y*a};
+}
+
+double MultiLookup::operator/(const Vector2& v1, const Vector2& v2) {
+    return v1.x/v2.x + v1.y/v2.y;
+}
+
+MultiLookup::Vector2 MultiLookup::operator/(const Vector2& v, double a) {
+    return Vector2{v.x/a, v.y/a};
+}
+
+double MultiLookup::operator+(const Vector2& v1, const Vector2& v2) {
+    return v1.x+v2.x + v1.y+v2.y;
+}
+
+MultiLookup::Vector2 MultiLookup::operator+(const Vector2& v, double a) {
+    return Vector2{v.x+a, v.y+a};
+}
+
+double MultiLookup::operator-(const Vector2& v1, const Vector2& v2) {
+    return v1.x-v2.x + v1.y-v2.y;
+}
+
+MultiLookup::Vector2 MultiLookup::operator-(const Vector2& v, double a) {
+    return Vector2{v.x-a, v.y-a};
 }

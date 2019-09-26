@@ -256,3 +256,35 @@ class TestOPERATORS:
         assert 2*m == 10.
         with raises(TypeError):
             v = m*2
+
+    def test10_overloaded_operators(self):
+        """Overloaded operator*/+-"""
+
+        import cppyy
+
+        v = cppyy.gbl.MultiLookup.Vector2(1, 2)
+        w = cppyy.gbl.MultiLookup.Vector2(3, 4)
+
+        u = v*2
+        assert u.x == 2.
+        assert u.y == 4.
+
+        assert v*w == 1*3 + 2*4
+
+        u = v/2
+        assert u.x == 0.5
+        assert u.y == 1.0
+
+        assert round(v/w - (1./3. + 2./4.), 8) == 0.
+
+        u = v+2
+        assert u.x == 3.
+        assert u.y == 4.
+
+        assert v+w == 1+3 + 2+4
+
+        u = v-2
+        assert u.x == -1.
+        assert u.y ==  0.
+
+        assert v-w == 1-3 + 2-4

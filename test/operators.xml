@@ -10,6 +10,13 @@
   <class name="NonAssocRMUL" />
 
   <function name="operator*" />
-  <function name="operator_" />
+  <function name="operator+" />
+
+  <namespace name="MultiLookup" />
+  <class name="MultiLookup::Vector2" />
+  <function name="MultiLookup::operator*" />
+  <function name="MultiLookup::operator/" />
+  <function name="MultiLookup::operator+" />
+  <function name="MultiLookup::operator-" />
 
 </lcgdict>

@@ -271,4 +271,27 @@ private:
 
 NonAssocRMUL operator*(int n, NonAssocRMUL& m);
 
+//----------------------------------------------------------------------------
+// multi-lookup
+namespace MultiLookup {
+
+struct Vector2{
+    Vector2(double d1, double d2) : x(d1), y(d2) {}
+    double x, y;
+};
+
+double operator*(const Vector2&, const Vector2&);
+Vector2 operator*(const Vector2&, double);
+
+double operator/(const Vector2&, const Vector2&);
+Vector2 operator/(const Vector2&, double);
+
+double operator+(const Vector2&, const Vector2&);
+Vector2 operator+(const Vector2&, double);
+
+double operator-(const Vector2&, const Vector2&);
+Vector2 operator-(const Vector2&, double);
+
+} // namespace MultiLookup
+
 #endif // !CPPYY_TEST_OPERATORS_H
