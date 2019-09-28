@@ -15,6 +15,7 @@ master: 1.5.5
 
 * support for lazily combining overloads of operator*/+-
 * refactored and optimized operator==/!= usage
+* refactored converters/executors for lower memory usage
 
 
 2019-09-25: 1.5.4
