@@ -19,6 +19,8 @@ __all__ = [
     'free',
     'array_new',
     'array_detele',
+    'signals_as_exception',
+    'set_signals_as_exception'
     'FatalError'
     'BusError',
     'SegmentationViolation',
@@ -96,14 +98,14 @@ if not ispypy:
     IllegalInstruction    = cppyy._backend.IllegalInstruction
     AbortSignal           = cppyy._backend.AbortSignal
 
-    class signal_as_exception:
+    class signals_as_exception:
         def __enter__(self):
             cppyy._backend.SetGlobalSignalPolicy(1)
 
         def __exit__(self, type, value, traceback):
             cppyy._backend.SetGlobalSignalPolicy(0)
 
-    set_signals_as_exceptions = cppyy._backend.SetGlobalSignalPolicy
+    set_signals_as_exception = cppyy._backend.SetGlobalSignalPolicy
 
 else:
     class FatalError(Exception):
@@ -117,14 +119,14 @@ else:
     class AbortSignal(FatalError):
         pass
 
-    class signal_as_exception:
+    class signals_as_exception:
         def __enter__(self):
             pass   # not yet implemented
 
         def __exit__(self, type, value, traceback):
             pass   # not yet implemented
 
-    def set_signals_as_exceptions(seton):
+    def set_signals_as_exception(seton):
         return False
 
 del ispypy

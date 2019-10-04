@@ -429,20 +429,23 @@ class TestSIGNALS:
         assert issubclass(cppyy.ll.IllegalInstruction,     cppyy.ll.FatalError)
         assert issubclass(cppyy.ll.AbortSignal,            cppyy.ll.FatalError)
 
+        import os
+        os.putenv('CPPYY_CRASH_QUIET', '1')
+
         with raises(cppyy.ll.SegmentationViolation):
-            with cppyy.ll.signal_as_exception():
+            with cppyy.ll.signals_as_exception():
                 f.segfault()
 
         with raises(cppyy.ll.AbortSignal):
-            with cppyy.ll.signal_as_exception():
+            with cppyy.ll.signals_as_exception():
                 f.sigabort()
 
-        cppyy.ll.set_signals_as_exceptions(True)
+        cppyy.ll.set_signals_as_exception(True)
         with raises(cppyy.ll.SegmentationViolation):
             f.segfault()
         with raises(cppyy.ll.AbortSignal):
             f.sigabort()
-        cppyy.ll.set_signals_as_exceptions(False)
+        cppyy.ll.set_signals_as_exception(False)
 
         f.segfault.__sig2exc__ = True
         with raises(cppyy.ll.SegmentationViolation):

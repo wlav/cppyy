@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 master: 1.5.5
 -------------
 
+* added signal -> exception support in cppyy.ll
 * support for lazily combining overloads of operator*/+-
 * refactored and optimized operator==/!= usage
 * refactored converters/executors for lower memory usage
