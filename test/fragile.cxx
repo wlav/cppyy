@@ -55,7 +55,7 @@ int fragile::destroy_handle(OpaqueHandle_t handle, intptr_t addr) {
 
 // for signal -> exception testing
 void fragile::segfault() {
-     int* i = 0; *i = 42;
+    int* i = 0; *i = 42;
 }
 
 void fragile::sigabort() {
