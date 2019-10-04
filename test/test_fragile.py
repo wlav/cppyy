@@ -420,13 +420,20 @@ class TestSIGNALS:
         """Conversion from abortive signals to Python exceptions"""
 
         import cppyy
+        import cppyy.ll
+
         f = cppyy.gbl.fragile
 
-        with raises(SystemError):
-            with cppyy.signal_as_exception():
+        assert issubclass(cppyy.ll.BusError,               cppyy.ll.FatalError)
+        assert issubclass(cppyy.ll.SegmentationViolation,  cppyy.ll.FatalError)
+        assert issubclass(cppyy.ll.IllegalInstruction,     cppyy.ll.FatalError)
+        assert issubclass(cppyy.ll.AbortSignal,            cppyy.ll.FatalError)
+
+        with raises(cppyy.ll.SegmentationViolation):
+            with cppyy.ll.signal_as_exception():
                 f.segfault()
 
-        with raises(SystemError):
-            with cppyy.signal_as_exception():
+        with raises(cppyy.ll.AbortSignal):
+            with cppyy.ll.signal_as_exception():
                 f.sigabort()
 

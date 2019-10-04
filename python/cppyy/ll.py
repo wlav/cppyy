@@ -3,6 +3,12 @@
 
 import cppyy
 
+try:
+    import __pypy__
+    del __pypy__
+    ispypy = True
+except ImportError:
+    ispypy = False
 
 __all__ = [
     'cast',
@@ -13,6 +19,11 @@ __all__ = [
     'free',
     'array_new',
     'array_detele',
+    'FatalError'
+    'BusError',
+    'SegmentationViolation',
+    'IllegalInstruction',
+    'AbortSignal',
     ]
 
 
@@ -76,3 +87,40 @@ malloc           = ArraySizer(cppyy.gbl.__cppyy_internal.cppyy_malloc)
 free             = cppyy.gbl.free      # for symmetry
 array_new        = ArraySizer(cppyy.gbl.__cppyy_internal.cppyy_array_new)
 array_delete     = cppyy.gbl.__cppyy_internal.cppyy_array_delete
+
+# signals as exceptions
+if not ispypy:
+    FatalError            = cppyy._backend.FatalError
+    BusError              = cppyy._backend.BusError
+    SegmentationViolation = cppyy._backend.SegmentationViolation
+    IllegalInstruction    = cppyy._backend.IllegalInstruction
+    AbortSignal           = cppyy._backend.AbortSignal
+
+    class signal_as_exception:
+        def __enter__(self):
+            cppyy._backend.SetGlobalSignalPolicy(1)
+
+        def __exit__(self, type, value, traceback):
+            cppyy._backend.SetGlobalSignalPolicy(0)
+
+else:
+    class FatalError(Exception):
+        pass
+    class BusError(FatalError):
+        pass
+    class SegmentationViolation(FatalError):
+        pass
+    class IllegalInstruction(FatalError):
+        pass
+    class AbortSignal(FatalError):
+        pass
+
+    class signal_as_exception:
+        def __enter__(self):
+            pass   # not yet implemented
+
+        def __exit__(self, type, value, traceback):
+            pass   # not yet implemented
+
+del ispypy
+
