@@ -437,3 +437,17 @@ class TestSIGNALS:
             with cppyy.ll.signal_as_exception():
                 f.sigabort()
 
+        cppyy.ll.set_signals_as_exceptions(True)
+        with raises(cppyy.ll.SegmentationViolation):
+            f.segfault()
+        with raises(cppyy.ll.AbortSignal):
+            f.sigabort()
+        cppyy.ll.set_signals_as_exceptions(False)
+
+        f.segfault.__sig2exc__ = True
+        with raises(cppyy.ll.SegmentationViolation):
+            f.segfault()
+
+        f.sigabort.__sig2exc__ = True
+        with raises(cppyy.ll.AbortSignal):
+            f.sigabort()

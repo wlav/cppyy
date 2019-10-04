@@ -103,6 +103,8 @@ if not ispypy:
         def __exit__(self, type, value, traceback):
             cppyy._backend.SetGlobalSignalPolicy(0)
 
+    set_signals_as_exceptions = cppyy._backend.SetGlobalSignalPolicy
+
 else:
     class FatalError(Exception):
         pass
@@ -121,6 +123,9 @@ else:
 
         def __exit__(self, type, value, traceback):
             pass   # not yet implemented
+
+    def set_signals_as_exceptions(seton):
+        return False
 
 del ispypy
 
