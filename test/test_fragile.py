@@ -409,3 +409,24 @@ class TestFRAGILE:
         assert not 'ESysConstants' in dd
         assert not 'kDoRed' in dd
 
+
+class TestSIGNALS:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.fragile = cppyy.load_reflection_info(cls.test_dct)
+
+    def test01_abortive_signals(self):
+        """Conversion from abortive signals to Python exceptions"""
+
+        import cppyy
+        f = cppyy.gbl.fragile
+
+        with raises(SystemError):
+            with cppyy.signal_as_exception():
+                f.segfault()
+
+        with raises(SystemError):
+            with cppyy.signal_as_exception():
+                f.sigabort()
+
