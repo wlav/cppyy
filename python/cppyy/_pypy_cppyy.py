@@ -11,6 +11,7 @@ __all__ = [
     'addressof',
     'bind_object',
     'nullptr',
+    'signal_as_exception',
     ]
 
 # first load the dependency libraries of the backend, then
@@ -45,6 +46,13 @@ def load_reflection_info(name):
     sc = _backend.gbl.gSystem.Load(name)
     if sc == -1:
         raise RuntimeError("Unable to load reflection library "+name)
+
+class signal_as_exception:
+    def __enter__(self):
+        pass       # not yet implemented
+
+    def __exit__(self, type, value, traceback):
+        pass       # not yet implemented
 
 # add other exports to all
 __all__.append('load_reflection_info')

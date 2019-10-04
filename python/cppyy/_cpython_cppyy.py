@@ -10,6 +10,7 @@ __all__ = [
     'addressof',
     'bind_object',
     'nullptr',
+    'signal_as_exception',
     '_backend',
     ]
 
@@ -122,3 +123,10 @@ def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)
     if sc == -1:
         raise RuntimeError("Unable to load reflection library "+name)
+
+class signal_as_exception:
+    def __enter__(self):
+        _backend.SetGlobalSignalPolicy(1)
+
+    def __exit__(self, type, value, traceback):
+        _backend.SetGlobalSignalPolicy(0)
