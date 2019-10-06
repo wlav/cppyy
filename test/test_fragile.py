@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
+from .support import setup_make, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("fragileDict"))
@@ -440,17 +440,20 @@ class TestSIGNALS:
             with cppyy.ll.signals_as_exception():
                 f.sigabort()
 
-        cppyy.ll.set_signals_as_exception(True)
-        with raises(cppyy.ll.SegmentationViolation):
-            f.segfault()
-        with raises(cppyy.ll.AbortSignal):
-            f.sigabort()
-        cppyy.ll.set_signals_as_exception(False)
+      # can only recover once from each error on Windows, which is functionally
+      # enough, but precludes further testing here
+        if not IS_WINDOWS:
+            cppyy.ll.set_signals_as_exception(True)
+            with raises(cppyy.ll.SegmentationViolation):
+                f.segfault()
+            with raises(cppyy.ll.AbortSignal):
+                f.sigabort()
+            cppyy.ll.set_signals_as_exception(False)
 
-        f.segfault.__sig2exc__ = True
-        with raises(cppyy.ll.SegmentationViolation):
-            f.segfault()
+            f.segfault.__sig2exc__ = True
+            with raises(cppyy.ll.SegmentationViolation):
+                f.segfault()
 
-        f.sigabort.__sig2exc__ = True
-        with raises(cppyy.ll.AbortSignal):
-            f.sigabort()
+            f.sigabort.__sig2exc__ = True
+            with raises(cppyy.ll.AbortSignal):
+                f.sigabort()
