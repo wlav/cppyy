@@ -226,7 +226,7 @@ class TestOPERATORS:
 
         assert (TOIClass() < 1)
 
-    def test09_r_non_associative(self):
+    def test10_r_non_associative(self):
         """Use of radd/rmul with non-associative types"""
 
         import cppyy
@@ -242,7 +242,7 @@ class TestOPERATORS:
         a = cppyy.gbl.NonAssocRADD(5.)
         assert 5+a == 10.
         assert 5+a == 10.
-        with raises(TypeError):
+        with raises(NotImplementedError):
             v = a+5
 
         a = cppyy.gbl.AssocMUL(5.)
@@ -254,10 +254,10 @@ class TestOPERATORS:
         m = cppyy.gbl.NonAssocRMUL(5.)
         assert 2*m == 10.
         assert 2*m == 10.
-        with raises(TypeError):
+        with raises(NotImplementedError):
             v = m*2
 
-    def test10_overloaded_operators(self):
+    def test11_overloaded_operators(self):
         """Overloaded operator*/+-"""
 
         import cppyy
@@ -289,7 +289,7 @@ class TestOPERATORS:
 
         assert v-w == 1-3 + 2-4
 
-    def test11_unary_operators(self):
+    def test12_unary_operators(self):
         """Unary operator-+~"""
 
         import cppyy
