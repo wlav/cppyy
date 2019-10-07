@@ -16,6 +16,7 @@ master: 1.5.5
 * added signal -> exception support in cppyy.ll
 * support for lazily combining overloads of operator*/+-
 * no longer call trivial destructors
+* support for free function unary operators
 * refactored and optimized operator==/!= usage
 * refactored converters/executors for lower memory usage
 * bug fixes in rootcling and _cppyy_generator.py
