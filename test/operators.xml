@@ -19,4 +19,15 @@
   <function name="MultiLookup::operator+" />
   <function name="MultiLookup::operator-" />
 
+  <class name="SomeGlobalNumber" />
+  <function name="operator-" />
+  <!-- <function name="operator+" /> -->
+  <function name="operator~" />
+
+  <namespace name="Unary" />
+  <class name="Unary::SomeNumber" />
+  <function name="Unary::operator-" />
+  <function name="Unary::operator+" />
+  <function name="Unary::operator~" />
+
 </lcgdict>

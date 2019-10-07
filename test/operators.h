@@ -271,11 +271,12 @@ private:
 
 NonAssocRMUL operator*(int n, NonAssocRMUL& m);
 
+
 //----------------------------------------------------------------------------
 // multi-lookup
 namespace MultiLookup {
 
-struct Vector2{
+struct Vector2 {
     Vector2(double d1, double d2) : x(d1), y(d2) {}
     double x, y;
 };
@@ -293,5 +294,30 @@ double operator-(const Vector2&, const Vector2&);
 Vector2 operator-(const Vector2&, double);
 
 } // namespace MultiLookup
+
+
+//----------------------------------------------------------------------------
+// unary functions
+struct SomeGlobalNumber {
+    SomeGlobalNumber(int n) : i(n) {}
+    int i;
+};
+
+SomeGlobalNumber operator-(const SomeGlobalNumber&);
+SomeGlobalNumber operator+(const SomeGlobalNumber&);
+SomeGlobalNumber operator~(const SomeGlobalNumber&);
+
+namespace Unary {
+
+struct SomeNumber {
+    SomeNumber(int n) : i(n) {}
+    int i;
+};
+
+SomeNumber operator-(const SomeNumber&);
+SomeNumber operator+(const SomeNumber&);
+SomeNumber operator~(const SomeNumber&);
+
+}
 
 #endif // !CPPYY_TEST_OPERATORS_H

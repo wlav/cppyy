@@ -166,3 +166,29 @@ double MultiLookup::operator-(const Vector2& v1, const Vector2& v2) {
 MultiLookup::Vector2 MultiLookup::operator-(const Vector2& v, double a) {
     return Vector2{v.x-a, v.y-a};
 }
+
+
+//- for unary functions
+SomeGlobalNumber operator-(const SomeGlobalNumber& n) {
+    return SomeGlobalNumber{-n.i};
+}
+
+SomeGlobalNumber operator+(const SomeGlobalNumber& n) {
+    return SomeGlobalNumber{+n.i};
+}
+
+SomeGlobalNumber operator~(const SomeGlobalNumber& n) {
+    return SomeGlobalNumber{~n.i};
+}
+
+Unary::SomeNumber Unary::operator-(const SomeNumber& n) {
+    return SomeNumber{-n.i};
+}
+
+Unary::SomeNumber Unary::operator+(const SomeNumber& n) {
+    return SomeNumber{+n.i};
+}
+
+Unary::SomeNumber Unary::operator~(const SomeNumber& n) {
+    return SomeNumber{~n.i};
+}

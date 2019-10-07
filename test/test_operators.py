@@ -288,3 +288,15 @@ class TestOPERATORS:
         assert u.y ==  0.
 
         assert v-w == 1-3 + 2-4
+
+    def test11_unary_operators(self):
+        """Unary operator-+~"""
+
+        import cppyy
+
+        for cls in [cppyy.gbl.SomeGlobalNumber, cppyy.gbl.Unary.SomeNumber]:
+            n = cls(42)
+
+            assert (-n).i == -42
+            assert (+n).i ==  42
+            #assert (~n).i == ~42
