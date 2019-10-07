@@ -432,7 +432,7 @@ class TestSIGNALS:
         import os
         os.putenv('CPPYY_CRASH_QUIET', '1')
 
-        with raises(cppyy.ll.SegmentationViolation):
+        with raises((cppyy.ll.SegmentationViolation, cppyy.ll.IllegalInstruction)):
             with cppyy.ll.signals_as_exception():
                 f.segfault()
 
@@ -444,14 +444,14 @@ class TestSIGNALS:
       # enough, but precludes further testing here
         if not IS_WINDOWS:
             cppyy.ll.set_signals_as_exception(True)
-            with raises(cppyy.ll.SegmentationViolation):
+            with raises((cppyy.ll.SegmentationViolation, cppyy.ll.IllegalInstruction)):
                 f.segfault()
             with raises(cppyy.ll.AbortSignal):
                 f.sigabort()
             cppyy.ll.set_signals_as_exception(False)
 
             f.segfault.__sig2exc__ = True
-            with raises(cppyy.ll.SegmentationViolation):
+            with raises((cppyy.ll.SegmentationViolation, cppyy.ll.IllegalInstruction)):
                 f.segfault()
 
             f.sigabort.__sig2exc__ = True
