@@ -213,6 +213,9 @@ class TestDATATYPES:
         c.set_ldouble(0.098);    assert round(c.m_ldouble     - 0.098, 8) == 0
         c.set_ldouble_cr(0.210); assert round(c.m_ldouble     - 0.210, 8) == 0
 
+        # (non-)writing of enum types
+        raises(TypeError, setattr, CppyyTestData, 'kNothing', 42)
+
         # arrays; there will be pointer copies, so destroy the current ones
         c.destroy_arrays()
 
@@ -582,6 +585,12 @@ class TestDATATYPES:
         assert gbl.EnumSpace.NamedClassEnum.E1 == -42
         assert gbl.EnumSpace.NamedClassEnum.__name__     == 'NamedClassEnum'
         assert gbl.EnumSpace.NamedClassEnum.__cpp_name__ == 'EnumSpace::NamedClassEnum'
+
+        raises(TypeError, setattr, gbl.EFruit, 'kBanana', 42)
+
+        assert gbl.g_enum == gbl.EFruit.kBanana
+        gbl.g_enum = gbl.EFruit.kCitrus
+        assert gbl.g_enum == gbl.EFruit.kCitrus
 
         # typedef enum
         assert gbl.EnumSpace.letter_code
