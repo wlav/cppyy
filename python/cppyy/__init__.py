@@ -203,7 +203,20 @@ if not ispypy:
         else:
             add_include_path(apipath_extra)
 
-del ispypy, apipath
+if os.getenv('CONDA_PREFIX'):
+  # MacOS, Linux
+    include_path = os.path.join(os.getenv('CONDA_PREFIX'), 'include')
+    if os.path.exists(include_path): add_include_path(include_path)
+
+  # Windows
+    include_path = os.path.join(os.getenv('CONDA_PREFIX'), 'Library', 'include')
+    if os.path.exists(include_path): add_include_path(include_path)
+
+# assuming that we are in PREFIX/lib/python/site-packages/cppyy, add PREFIX/include to the search path
+include_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, os.path.pardir, os.path.pardir, 'include'))
+if os.path.exists(include_path): add_include_path(include_path)
+
+del include_path, apipath, ispypy
 
 def add_autoload_map(fname):
     """Add the entries from a autoload (.rootmap) file to Cling."""
