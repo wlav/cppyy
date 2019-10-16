@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.5.5
--------------
+2019-10-16: 1.5.5
+-----------------
 
 * added signal -> exception support in cppyy.ll
 * support for lazily combining overloads of operator*/+-
