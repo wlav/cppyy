@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.5.6
+-------------
+
+* fix iteration over vector of shared_ptr
+
+
 2019-10-16: 1.5.5
 -----------------
 

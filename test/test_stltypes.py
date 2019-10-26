@@ -334,6 +334,39 @@ class TestSTLVECTOR:
         gc.collect()
         assert cppyy.gbl.Lifeline.count == 0
 
+    def test13_vector_smartptr_iteration(self):
+        """Iteration over smart pointers."""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace VectorOfShared {
+        struct X {
+            int y;
+            X() : y(0) {}
+            X(int y) : y(y) { }
+            std::vector<std::shared_ptr<X>> gimeVec() {
+                std::vector<std::shared_ptr<X>> result;
+                for (int i = 0; i < 10; ++i) {
+                    result.push_back(std::make_shared<X>(i));
+                }
+                return result;
+            }
+        }; }""")
+
+        test = cppyy.gbl.VectorOfShared.X()
+        result = test.gimeVec()
+        assert 'shared' in type(result).__cpp_name__
+        assert len(result) == 10
+
+        for i in range(len(result)):
+            assert result[i].y == i
+
+        i = 0
+        for res in result:
+            assert res.y == i
+            i += 1
+        assert i == len(result)
+
 
 class TestSTLSTRING:
     def setup_class(cls):
