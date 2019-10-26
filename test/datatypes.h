@@ -125,6 +125,8 @@ public:
 
     bool*           get_bool_array();
     bool*           get_bool_array2();
+    signed char*    get_schar_array();
+    signed char*    get_schar_array2();
     unsigned char*  get_uchar_array();
     unsigned char*  get_uchar_array2();
     short*          get_short_array();
@@ -413,6 +415,8 @@ public:
 // array types
     bool            m_bool_array[N];
     bool*           m_bool_array2;
+    signed char     m_schar_array[N];
+    signed char*    m_schar_array2;
     unsigned char   m_uchar_array[N];
     unsigned char*  m_uchar_array2;
     short           m_short_array[N];

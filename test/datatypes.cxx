@@ -34,6 +34,7 @@ CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
     m_voidp    = (void*)0;
 
     m_bool_array2     = new bool[N];
+    m_schar_array2    = new signed char[N];
     m_uchar_array2    = new unsigned char[N];
     m_short_array2    = new short[N];
     m_ushort_array2   = new unsigned short[N];
@@ -132,6 +133,8 @@ void*                CppyyTestData::get_voidp()    { return m_voidp; }
 
 bool*           CppyyTestData::get_bool_array()    { return m_bool_array; }
 bool*           CppyyTestData::get_bool_array2()   { return m_bool_array2; }
+signed char*    CppyyTestData::get_schar_array()   { return m_schar_array; }
+signed char*    CppyyTestData::get_schar_array2()  { return m_schar_array2; }
 unsigned char*  CppyyTestData::get_uchar_array()   { return m_uchar_array; }
 unsigned char*  CppyyTestData::get_uchar_array2()  { return m_uchar_array2; }
 short*          CppyyTestData::get_short_array()   { return m_short_array; }

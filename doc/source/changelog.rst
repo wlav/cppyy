@@ -14,6 +14,7 @@ master: 1.5.6
 -------------
 
 * fix iteration over vector of shared_ptr
+* length checking on global variables of type 'signed char[N]'
 
 
 2019-10-16: 1.5.5

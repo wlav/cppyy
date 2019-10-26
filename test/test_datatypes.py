@@ -100,8 +100,8 @@ class TestDATATYPES:
             assert c.get_bool_array2()[i]   ==   bool((i+1)%2)
 
         # reading of integer array types
-        names = ['uchar',  'short', 'ushort',    'int', 'uint',    'long',  'ulong']
-        alpha = [ (1, 2), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
+        names = ['schar', 'uchar',  'short', 'ushort',    'int', 'uint',    'long',  'ulong']
+        alpha = [ (1, 2), (1, 2), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
         for j in range(self.N):
             assert getattr(c, 'm_%s_array'    % names[i])[i]   == alpha[i][0]*i
             assert getattr(c, 'get_%s_array'  % names[i])()[i] == alpha[i][0]*i
@@ -116,6 +116,7 @@ class TestDATATYPES:
             assert round(c.m_double_array2[k] + 16.*k, 8) == 0
 
         # out-of-bounds checks
+        raises(IndexError, c.m_schar_array.__getitem__,  self.N)
         raises(IndexError, c.m_uchar_array.__getitem__,  self.N)
         raises(IndexError, c.m_short_array.__getitem__,  self.N)
         raises(IndexError, c.m_ushort_array.__getitem__, self.N)
@@ -808,7 +809,7 @@ class TestDATATYPES:
 
         c = CppyyTestData()
         for func in ['get_bool_array',   'get_bool_array2',
-                     'get_uchar_array',   'get_uchar_array2',
+                     'get_uchar_array',  'get_uchar_array2',
                      'get_ushort_array', 'get_ushort_array2',
                      'get_int_array',    'get_int_array2',
                      'get_uint_array',   'get_uint_array2',
