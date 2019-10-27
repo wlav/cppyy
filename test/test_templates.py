@@ -546,6 +546,16 @@ class TestTEMPLATES:
         for val in [2**64, -2**63-1]:
             raises(OverflowError, PassSomeInt, val)
 
+    def test22_overloaded_setitem(self):
+        """Template with overloaded non-templated and templated setitem"""
+
+        import cppyy
+
+        MyVec = cppyy.gbl.TemplateWithSetItem.MyVec
+
+        v = MyVec["float"](2)
+        v[0] = 1        # used to throw TypeError
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):

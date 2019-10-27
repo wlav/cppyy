@@ -15,6 +15,7 @@ master: 1.5.6
 
 * fix iteration over vector of shared_ptr
 * length checking on global variables of type 'signed char[N]'
+* properly support overloaded templated with non-templated  __setitem__
 
 
 2019-10-16: 1.5.5
