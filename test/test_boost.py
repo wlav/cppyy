@@ -58,6 +58,41 @@ class TestBOOSTANY:
         extract = boost.any_cast[std.vector[int]](val)
         assert len(extract) == 200
 
+    def test03_variant_usage(self):
+        """boost::variant usage"""
+
+      # as posted on stackoverflow as example
+        import cppyy
+
+        cppyy.include("boost/variant/variant.hpp")
+        cppyy.include("boost/variant/get.hpp")
+
+        cpp   = cppyy.gbl
+        std   = cpp.std
+        boost = cpp.boost
+
+        cppyy.cppdef("""namespace BV {
+          class A { };
+          class B { };
+          class C { }; } """)
+
+        VariantType = boost.variant['BV::A, BV::B, BV::C']
+        VariantTypeList = std.vector[VariantType]
+
+        v = VariantTypeList()
+
+        v.push_back(VariantType(cpp.BV.A()))
+        assert v.back().which() == 0
+        v.push_back(VariantType(cpp.BV.B()))
+        assert v.back().which() == 1
+        v.push_back(VariantType(cpp.BV.C()))
+        assert v.back().which() == 2
+
+        assert type(boost.get['BV::A'](v[0])) == cpp.BV.A
+        raises(Exception, boost.get['BV::B'], v[0])
+        assert type(boost.get['BV::B'](v[1])) == cpp.BV.B
+        assert type(boost.get['BV::C'](v[2])) == cpp.BV.C
+
 
 class TestBOOSTOPERATORS:
     def setup_class(cls):
