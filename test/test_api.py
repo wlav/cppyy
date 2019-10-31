@@ -66,3 +66,72 @@ class TestAPI:
         voidp = API.Instance_AsVoidPtr(m)
         m2 = API.Instance_FromVoidPtr(voidp, 'APICheck2')
         assert m is m2
+
+    def test04_custom_converter(self):
+        """Custom type converter"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        #include "CPyCppyy/API.h"
+
+        class APICheck3 {
+            int fFlags;
+        public:
+            APICheck3() : fFlags(0) {}
+            virtual ~APICheck3() {}
+
+            void setSetArgCalled()     { fFlags |= 0x01; }
+            bool wasSetArgCalled()     { return fFlags & 0x01; }
+            void setFromMemoryCalled() { fFlags |= 0x02; }
+            bool wasFromMemoryCalled() { return fFlags & 0x02; }
+            void setToMemoryCalled()   { fFlags |= 0x04; }
+            bool wasToMemoryCalled()   { return fFlags & 0x04; }
+        };
+
+        class APICheck3Converter : CPyCppyy::Converter {
+        public:
+            virtual bool SetArg(PyObject*, CPyCppyy::Parameter&, CPyCppyy::CallContext* = nullptr) {
+                return false;
+            }
+
+            virtual PyObject* FromMemory(void* address) {
+                APICheck3* a3 = (APICheck3*)address;
+                a3->setFromMemoryCalled();
+                return CPyCppyy::Instance_FromVoidPtr(a3, "APICheck3");
+            }
+
+            virtual bool ToMemory(PyObject* value, void* address) {
+                APICheck3* a3 = (APICheck3*)address;
+                a3->setToMemoryCalled();
+                *a3 = *(APICheck3*)CPyCppyy::Instance_AsVoidPtr(value);
+                return true;
+            }
+
+            virtual bool HasState() { return true; }
+        };
+
+        typedef CPyCppyy::ConverterFactory_t cf_t;
+        void register_a3() {
+            CPyCppyy::RegisterConverter("APICheck3", (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
+        }
+        void unregister_a3() {
+            CPyCppyy::UnregisterConverter("APICheck3");
+        }
+
+        APICheck3 gA3a, gA3b;
+        """)
+
+        cppyy.gbl.register_a3()
+
+        gA3a = cppyy.gbl.gA3a
+        assert gA3a
+        assert type(gA3a) == cppyy.gbl.APICheck3
+        assert gA3a.wasFromMemoryCalled()
+
+        cppyy.gbl.unregister_a3()
+
+        gA3b = cppyy.gbl.gA3b
+        assert gA3b
+        assert type(gA3b) == cppyy.gbl.APICheck3
+        assert not gA3b.wasFromMemoryCalled()
