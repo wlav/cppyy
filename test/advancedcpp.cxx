@@ -90,6 +90,7 @@ double my_global_array[500];
 static double sd = 1234.;
 double* my_global_ptr = &sd;
 const char my_global_string2[] = "zus jet teun";
+const char* my_global_string3[3] = {"aap", "noot", "mies"};
 some_int_holder my_global_int_holders[5] = {
     some_int_holder(13), some_int_holder(42), some_int_holder(88),
     some_int_holder(-1), some_int_holder(17) };

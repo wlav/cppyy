@@ -280,6 +280,7 @@ extern double my_global_array[500];
 extern double* my_global_ptr;
 static const char my_global_string1[] = "aap " " noot " " mies";
 extern const char my_global_string2[];
+extern const char* my_global_string3[3];
 
 class some_int_holder {
 public:
