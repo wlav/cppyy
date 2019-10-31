@@ -13,22 +13,23 @@ PyPy support lags CPython support.
 master: 1.5.6
 -------------
 
-* fix iteration over vector of shared_ptr
-* length checking on global variables of type 'signed char[N]'
-* properly support overloaded templated with non-templated  __setitem__
-* support for array of const char* as C-strings
+* Added public C++ API for some CPyCppyy core functions (CPython only)
+* Fix iteration over vector of shared_ptr
+* Length checking on global variables of type 'signed char[N]'
+* Properly support overloaded templated with non-templated  __setitem__
+* Support for array of const char* as C-strings
 
 
 2019-10-16: 1.5.5
 -----------------
 
-* added signal -> exception support in cppyy.ll
-* support for lazily combining overloads of operator*/+-
-* no longer call trivial destructors
-* support for free function unary operators
-* refactored and optimized operator==/!= usage
-* refactored converters/executors for lower memory usage
-* bug fixes in rootcling and _cppyy_generator.py
+* Added signal -> exception support in cppyy.ll
+* Support for lazily combining overloads of operator*/+-
+* No longer call trivial destructors
+* Support for free function unary operators
+* Refactored and optimized operator==/!= usage
+* Refactored converters/executors for lower memory usage
+* Bug fixes in rootcling and _cppyy_generator.py
 
 
 2019-09-25: 1.5.4
