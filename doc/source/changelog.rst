@@ -18,6 +18,7 @@ master: 1.5.6
 * Length checking on global variables of type 'signed char[N]'
 * Properly support overloaded templated with non-templated  __setitem__
 * Support for array of const char* as C-strings
+* Enable type resolution of clang's builtin __type_pack_element
 
 
 2019-10-16: 1.5.5
