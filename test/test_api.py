@@ -91,8 +91,10 @@ class TestAPI:
 
         class APICheck3Converter : CPyCppyy::Converter {
         public:
-            virtual bool SetArg(PyObject*, CPyCppyy::Parameter&, CPyCppyy::CallContext* = nullptr) {
-                return false;
+            virtual bool SetArg(PyObject* pyobject, CPyCppyy::Parameter&, CPyCppyy::CallContext* = nullptr) {
+                APICheck3* a3 = (APICheck3*)CPyCppyy::Instance_AsVoidPtr(pyobject);
+                a3->setSetArgCalled();
+                return true;
             }
 
             virtual PyObject* FromMemory(void* address) {
@@ -107,19 +109,19 @@ class TestAPI:
                 *a3 = *(APICheck3*)CPyCppyy::Instance_AsVoidPtr(value);
                 return true;
             }
-
-            virtual bool HasState() { return true; }
         };
 
         typedef CPyCppyy::ConverterFactory_t cf_t;
         void register_a3() {
-            CPyCppyy::RegisterConverter("APICheck3", (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
+            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
+            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
         }
         void unregister_a3() {
             CPyCppyy::UnregisterConverter("APICheck3");
         }
 
         APICheck3 gA3a, gA3b;
+        void CallWithAPICheck3(APICheck3&) {}
         """)
 
         cppyy.gbl.register_a3()
@@ -128,6 +130,10 @@ class TestAPI:
         assert gA3a
         assert type(gA3a) == cppyy.gbl.APICheck3
         assert gA3a.wasFromMemoryCalled()
+
+        assert not gA3a.wasSetArgCalled()
+        cppyy.gbl.CallWithAPICheck3(gA3a)
+        assert gA3a.wasSetArgCalled()
 
         cppyy.gbl.unregister_a3()
 
