@@ -3,8 +3,8 @@ from pytest import mark, raises
 from .support import setup_make
 
 noboost = False
-if not (os.path.exists(os.path.join('usr', 'include', 'boost')) or \
-        os.path.exists(os.path.join('usr', 'local', 'include', 'boost'))):
+if not (os.path.exists(os.path.join(os.path.sep, 'usr', 'include', 'boost')) or \
+        os.path.exists(os.path.join(os.path.sep, 'usr', 'local', 'include', 'boost'))):
     noboost = True
 
 
