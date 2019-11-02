@@ -1,14 +1,18 @@
 import py, os, sys
-from pytest import raises
+from pytest import mark, raises
 from .support import setup_make
 
+noboost = False
+if not (os.path.exists(os.path.join('usr', 'include', 'boost')) or \
+        os.path.exists(os.path.join('usr', 'local', 'include', 'boost'))):
+    noboost = True
 
+
+@mark.skipif(noboost == True, reason="boost not found")
 class TestBOOSTANY:
     def setup_class(cls):
         import cppyy
-        cppyy.include('boost/any.hpp')           # fails in an ugly way if not found
-        if not hasattr(cppyy.gbl, 'boost'):
-            py.test.skip('boost not found')
+        cppyy.include('boost/any.hpp')
 
     def test01_any_class(self):
         """Availability of boost::any"""
@@ -58,14 +62,40 @@ class TestBOOSTANY:
         extract = boost.any_cast[std.vector[int]](val)
         assert len(extract) == 200
 
-    def test03_variant_usage(self):
+
+@mark.skipif(noboost == True, reason="boost not found")
+class TestBOOSTOPERATORS:
+    def setup_class(cls):
+        import cppyy
+        cppyy.include('boost/operators.hpp')
+
+    def test01_ordered(self):
+        """ordered_field_operators as base used to crash"""
+
+        import cppyy
+
+        cppyy.include("gmpxx.h")
+        cppyy.cppdef("""
+            namespace boost_test {
+               class Derived : boost::ordered_field_operators<Derived>, boost::ordered_field_operators<Derived, mpq_class> {};
+            }
+        """)
+
+        assert cppyy.gbl.boost_test.Derived
+
+
+@mark.skipif(noboost == True, reason="boost not found")
+class TestBOOSTVARIANT:
+    def setup_class(cls):
+        import cppyy
+        cppyy.include("boost/variant/variant.hpp")
+        cppyy.include("boost/variant/get.hpp")
+
+    def test01_variant_usage(self):
         """boost::variant usage"""
 
       # as posted on stackoverflow as example
         import cppyy
-
-        cppyy.include("boost/variant/variant.hpp")
-        cppyy.include("boost/variant/get.hpp")
 
         cpp   = cppyy.gbl
         std   = cpp.std
@@ -94,23 +124,3 @@ class TestBOOSTANY:
         assert type(boost.get['BV::C'](v[2])) == cpp.BV.C
 
 
-class TestBOOSTOPERATORS:
-    def setup_class(cls):
-        import cppyy
-        cppyy.include('boost/operators.hpp')     # fails in an ugly way if not found
-        if not hasattr(cppyy.gbl, 'boost'):
-            py.test.skip('boost not found')
-
-    def test01_ordered(self):
-        """ordered_field_operators as base used to crash"""
-
-        import cppyy
-
-        cppyy.include("gmpxx.h")
-        cppyy.cppdef("""
-            namespace boost_test {
-               class Derived : boost::ordered_field_operators<Derived>, boost::ordered_field_operators<Derived, mpq_class> {};
-            }
-        """)
-
-        assert cppyy.gbl.boost_test.Derived
