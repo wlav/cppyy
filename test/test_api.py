@@ -89,7 +89,7 @@ class TestAPI:
             bool wasToMemoryCalled()   { return fFlags & 0x04; }
         };
 
-        class APICheck3Converter : CPyCppyy::Converter {
+        class APICheck3Converter : public CPyCppyy::Converter {
         public:
             virtual bool SetArg(PyObject* pyobject, CPyCppyy::Parameter&, CPyCppyy::CallContext* = nullptr) {
                 APICheck3* a3 = (APICheck3*)CPyCppyy::Instance_AsVoidPtr(pyobject);
@@ -141,3 +141,57 @@ class TestAPI:
         assert gA3b
         assert type(gA3b) == cppyy.gbl.APICheck3
         assert not gA3b.wasFromMemoryCalled()
+
+    def test05_custom_executor(self):
+        """Custom type executor"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        #include "CPyCppyy/API.h"
+
+        class APICheck4 {
+            int fFlags;
+        public:
+            APICheck4() : fFlags(0) {}
+            virtual ~APICheck4() {}
+
+            void setExecutorCalled() { fFlags |= 0x01; }
+            bool wasExecutorCalled() { return fFlags & 0x01; }
+        };
+
+        class APICheck4Executor : public CPyCppyy::Executor {
+        public:
+             virtual PyObject* Execute(Cppyy::TCppMethod_t meth, Cppyy::TCppObject_t obj, CPyCppyy::CallContext* ctxt) {
+                 APICheck4* a4 = (APICheck4*)CPyCppyy::CallVoidP(meth, obj, ctxt);
+                 a4->setExecutorCalled();
+                 return CPyCppyy::Instance_FromVoidPtr(a4, "APICheck4", true);
+             }
+        };
+
+        typedef CPyCppyy::ExecutorFactory_t ef_t;
+        void register_a4() {
+            CPyCppyy::RegisterExecutor("APICheck4*", (ef_t)+[]() { static APICheck4Executor c{}; return &c; });
+        }
+        void unregister_a4() {
+            CPyCppyy::UnregisterExecutor("APICheck4*");
+        }
+
+        APICheck4* CreateAPICheck4() { return new APICheck4{}; }
+        APICheck4* CreateAPICheck4b() { return new APICheck4{}; }
+        """)
+
+        cppyy.gbl.register_a4()
+
+        a4 = cppyy.gbl.CreateAPICheck4()
+        assert a4
+        assert type(a4) == cppyy.gbl.APICheck4
+        assert a4.wasExecutorCalled();
+        del a4
+
+        cppyy.gbl.unregister_a4()
+
+        a4 = cppyy.gbl.CreateAPICheck4b()
+        assert a4
+        assert type(a4) == cppyy.gbl.APICheck4
+        assert not a4.wasExecutorCalled();
