@@ -13,6 +13,8 @@ CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
     m_schar    = 'b';
     m_uchar    = 'c';
     m_wchar    = L'D';
+    m_char16   = u'\u00df';
+    m_char32   = U'\u00df';
     m_int8     =  -9;
     m_uint8    =   9;
     m_short    = -11;
@@ -110,6 +112,8 @@ char                 CppyyTestData::get_char()     { return m_char; }
 signed char          CppyyTestData::get_schar()    { return m_schar; }
 unsigned char        CppyyTestData::get_uchar()    { return m_uchar; }
 wchar_t              CppyyTestData::get_wchar()    { return m_wchar; }
+char16_t             CppyyTestData::get_char16()   { return m_char16; }
+char32_t             CppyyTestData::get_char32()   { return m_char32; }
 int8_t               CppyyTestData::get_int8()     { return m_int8; }
 uint8_t              CppyyTestData::get_uint8()    { return m_uint8; }
 short                CppyyTestData::get_short()    { return m_short; }
@@ -170,6 +174,8 @@ const char&                 CppyyTestData::get_char_cr()     { return m_char; }
 const signed char&          CppyyTestData::get_schar_cr()    { return m_schar; }
 const unsigned char&        CppyyTestData::get_uchar_cr()    { return m_uchar; }
 const wchar_t&              CppyyTestData::get_wchar_cr()    { return m_wchar; }
+const char16_t&             CppyyTestData::get_char16_cr()   { return m_char16; }
+const char32_t&             CppyyTestData::get_char32_cr()   { return m_char32; }
 const int8_t&               CppyyTestData::get_int8_cr()     { return m_int8; }
 const uint8_t&              CppyyTestData::get_uint8_cr()    { return m_uint8; }
 const short&                CppyyTestData::get_short_cr()    { return m_short; }
@@ -195,6 +201,8 @@ char&                 CppyyTestData::get_char_r()     { return m_char; }
 signed char&          CppyyTestData::get_schar_r()    { return m_schar; }
 unsigned char&        CppyyTestData::get_uchar_r()    { return m_uchar; }
 wchar_t&              CppyyTestData::get_wchar_r()    { return m_wchar; }
+char16_t&             CppyyTestData::get_char16_r()   { return m_char16; }
+char32_t&             CppyyTestData::get_char32_r()   { return m_char32; }
 int8_t&               CppyyTestData::get_int8_r()     { return m_int8; }
 uint8_t&              CppyyTestData::get_uint8_r()    { return m_uint8; }
 short&                CppyyTestData::get_short_r()    { return m_short; }
@@ -220,6 +228,8 @@ void CppyyTestData::set_char(char c)                       { m_char     = c; }
 void CppyyTestData::set_schar(signed char sc)              { m_schar    = sc; }
 void CppyyTestData::set_uchar(unsigned char uc)            { m_uchar    = uc; }
 void CppyyTestData::set_wchar(wchar_t wc)                  { m_wchar    = wc; }
+void CppyyTestData::set_char16(char16_t c16)               { m_char16   = c16; }
+void CppyyTestData::set_char32(char32_t c32)               { m_char32   = c32; }
 void CppyyTestData::set_int8(int8_t s8)                    { m_int8     = s8; }
 void CppyyTestData::set_uint8(uint8_t u8)                  { m_uint8    = u8; }
 void CppyyTestData::set_short(short s)                     { m_short    = s; }
@@ -258,6 +268,8 @@ void CppyyTestData::set_char_cr(const char& c)                   { m_char     = 
 void CppyyTestData::set_schar_cr(const signed char& sc)          { m_schar    = sc; }
 void CppyyTestData::set_uchar_cr(const unsigned char& uc)        { m_uchar    = uc; }
 void CppyyTestData::set_wchar_cr(const wchar_t& wc)              { m_wchar    = wc; }
+void CppyyTestData::set_char16_cr(const char16_t& c16)           { m_char16   = c16; }
+void CppyyTestData::set_char32_cr(const char32_t& c32)           { m_char32   = c32; }
 void CppyyTestData::set_int8_cr(const int8_t& s8)                { m_int8     = s8; }
 void CppyyTestData::set_uint8_cr(const uint8_t& u8)              { m_uint8    = u8; }
 void CppyyTestData::set_short_cr(const short& s)                 { m_short    = s; }
@@ -281,6 +293,8 @@ void CppyyTestData::set_enum_cr(const EWhat& w)                  { m_enum     = 
 void CppyyTestData::set_bool_r(bool& b)                   { b = true; }
 void CppyyTestData::set_char_r(char& c)                   { c = 'a'; }
 void CppyyTestData::set_wchar_r(wchar_t& wc)              { wc = 'b'; }
+void CppyyTestData::set_char16_r(char16_t& c16)           { c16 = u'\u6c24'; }
+void CppyyTestData::set_char32_r(char32_t& c32)           { c32 = U'\U0001f34e'; }
 void CppyyTestData::set_schar_r(signed char& sc)          { sc = 'c'; }
 void CppyyTestData::set_uchar_r(unsigned char& uc)        { uc = 'd'; }
 void CppyyTestData::set_short_r(short& s)                 { s = -1; }
@@ -299,6 +313,8 @@ void CppyyTestData::set_ldouble_r(long double& ld)        { ld = 10.l; }
 void CppyyTestData::set_bool_p(bool* b)                   { *b = true; }
 void CppyyTestData::set_char_p(char* c)                   { *c = 'a'; }
 void CppyyTestData::set_wchar_p(wchar_t* wc)              { *wc = 'b'; }
+void CppyyTestData::set_char16_p(char16_t* c16)           { *c16 = u'\u6c24'; }
+void CppyyTestData::set_char32_p(char32_t* c32)           { *c32 = U'\U0001f34e'; }
 void CppyyTestData::set_schar_p(signed char* sc)          { *sc = 'c'; }
 void CppyyTestData::set_uchar_p(unsigned char* uc)        { *uc = 'd'; }
 void CppyyTestData::set_short_p(short* s)                 { *s = -1; }
@@ -325,6 +341,14 @@ void CppyyTestData::set_char_ppa(char** c) {
 void CppyyTestData::set_wchar_ppa(wchar_t** wc) {
     (*wc) = new wchar_t[3];
     (*wc)[0] = 'd'; (*wc)[1] = 'e'; (*wc)[2] = 'f';
+}
+void CppyyTestData::set_char16_ppa(char16_t** c16) {
+    (*c16) = new char16_t[3];
+    (*c16)[0] = u'\u6c24'; (*c16)[1] = u'\u6c25'; (*c16)[2] = u'\u6c26';
+}
+void CppyyTestData::set_char32_ppa(char32_t** c32) {
+    (*c32) = new char32_t[3];
+    (*c32)[0] = U'\U0001f34d'; (*c32)[1] = U'\U0001f34e'; (*c32)[2] = U'\U0001f34f';
 }
 void CppyyTestData::set_schar_ppa(signed char** sc) {
     (*sc) = new signed char[3];
@@ -391,9 +415,25 @@ intptr_t CppyyTestData::set_wchar_ppm(wchar_t** w) {
     *w = (wchar_t*)malloc(4*sizeof(wchar_t));
     return (intptr_t)*w;
 }
+intptr_t CppyyTestData::set_char16_ppm(char16_t** c16) {
+    *c16 = (char16_t*)malloc(4*sizeof(char16_t));
+    return (intptr_t)*c16;
+}
+intptr_t CppyyTestData::set_char32_ppm(char32_t** c32) {
+    *c32 = (char32_t*)malloc(4*sizeof(char32_t));
+    return (intptr_t)*c32;
+}
 intptr_t CppyyTestData::set_cwchar_ppm(const wchar_t** cw) {
     *cw = (const wchar_t*)malloc(4*sizeof(wchar_t));
     return (intptr_t)*cw;
+}
+intptr_t CppyyTestData::set_cchar16_ppm(const char16_t** c16) {
+    *c16 = (const char16_t*)malloc(4*sizeof(char16_t));
+    return (intptr_t)*c16;
+}
+intptr_t CppyyTestData::set_cchar32_ppm(const char32_t** c32) {
+    *c32 = (const char32_t*)malloc(4*sizeof(char32_t));
+    return (intptr_t)*c32;
 }
 intptr_t CppyyTestData::set_void_ppm(void** v) {
     *v = malloc(4*sizeof(void*));
@@ -412,6 +452,8 @@ void CppyyTestData::set_char_rv(char&& c)                   { m_char     = c; }
 void CppyyTestData::set_schar_rv(signed char&& sc)          { m_schar    = sc; }
 void CppyyTestData::set_uchar_rv(unsigned char&& uc)        { m_uchar    = uc; }
 void CppyyTestData::set_wchar_rv(wchar_t&& wc)              { m_wchar    = wc; }
+void CppyyTestData::set_char16_rv(char16_t&& c16)           { m_char16   = c16; }
+void CppyyTestData::set_char32_rv(char32_t&& c32)           { m_char32   = c32; }
 void CppyyTestData::set_int8_rv(int8_t&& s8)                { m_int8     = s8; }
 void CppyyTestData::set_uint8_rv(uint8_t&& u8)              { m_uint8    = u8; }
 void CppyyTestData::set_short_rv(short&& s)                 { m_short    = s; }
@@ -449,6 +491,8 @@ char                 CppyyTestData::s_char     = 'c';
 signed char          CppyyTestData::s_schar    = 's';
 unsigned char        CppyyTestData::s_uchar    = 'u';
 wchar_t              CppyyTestData::s_wchar    = L'U';
+char16_t             CppyyTestData::s_char16   = u'\u6c29';
+char32_t             CppyyTestData::s_char32   = U'\U0001f34b';
 int8_t               CppyyTestData::s_int8     = - 87;
 uint8_t              CppyyTestData::s_uint8    =   87;
 short                CppyyTestData::s_short    = -101;
@@ -470,10 +514,14 @@ CppyyTestData::EWhat CppyyTestData::s_enum     = CppyyTestData::kNothing;
 void*                CppyyTestData::s_voidp    = (void*)0;
 
 //- strings -----------------------------------------------------------------
-const char*    CppyyTestData::get_valid_string(const char* in) { return in; }
-const char*    CppyyTestData::get_invalid_string() { return (const char*)0; }
-const wchar_t* CppyyTestData::get_valid_wstring(const wchar_t* in) { return in; }
-const wchar_t* CppyyTestData::get_invalid_wstring() { return (const wchar_t*)0; }
+const char*     CppyyTestData::get_valid_string(const char* in) { return in; }
+const char*     CppyyTestData::get_invalid_string() { return (const char*)0; }
+const wchar_t*  CppyyTestData::get_valid_wstring(const wchar_t* in) { return in; }
+const wchar_t*  CppyyTestData::get_invalid_wstring() { return (const wchar_t*)0; }
+const char16_t* CppyyTestData::get_valid_string16(const char16_t* in) { return in; }
+const char16_t* CppyyTestData::get_invalid_string16() { return (const char16_t*)0; }
+const char32_t* CppyyTestData::get_valid_string32(const char32_t* in) { return in; }
+const char32_t* CppyyTestData::get_invalid_string32() { return (const char32_t*)0; }
 
 
 //= global functions ========================================================
@@ -499,6 +547,8 @@ char               g_char     = 'w';
 signed char        g_schar    = 'v';
 unsigned char      g_uchar    = 'u';
 wchar_t            g_wchar    = L'U';
+char16_t           g_char16   = u'\u6c21';
+char32_t           g_char32   = U'\u6c21';
 int8_t             g_int8     =  -66;
 uint8_t            g_uint8    =   66;
 short              g_short    =  -88;

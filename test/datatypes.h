@@ -102,6 +102,8 @@ public:
     signed char          get_schar();
     unsigned char        get_uchar();
     wchar_t              get_wchar();
+    char16_t             get_char16();
+    char32_t             get_char32();
     int8_t               get_int8();
     uint8_t              get_uint8();
     short                get_short();
@@ -162,6 +164,8 @@ public:
     const signed char&        get_schar_cr();
     const unsigned char&      get_uchar_cr();
     const wchar_t&            get_wchar_cr();
+    const char16_t&           get_char16_cr();
+    const char32_t&           get_char32_cr();
     const int8_t&             get_int8_cr();
     const uint8_t&            get_uint8_cr();
     const short&              get_short_cr();
@@ -187,6 +191,8 @@ public:
     signed char&        get_schar_r();
     unsigned char&      get_uchar_r();
     wchar_t&            get_wchar_r();
+    char16_t&           get_char16_r();
+    char32_t&           get_char32_r();
     int8_t&             get_int8_r();
     uint8_t&            get_uint8_r();
     short&              get_short_r();
@@ -212,6 +218,8 @@ public:
     void set_schar(signed char);
     void set_uchar(unsigned char);
     void set_wchar(wchar_t);
+    void set_char16(char16_t);
+    void set_char32(char32_t);
     void set_int8(int8_t);
     void set_uint8(uint8_t);
     void set_short(short);
@@ -249,6 +257,8 @@ public:
     void set_schar_cr(const signed char&);
     void set_uchar_cr(const unsigned char&);
     void set_wchar_cr(const wchar_t&);
+    void set_char16_cr(const char16_t&);
+    void set_char32_cr(const char32_t&);
     void set_int8_cr(const int8_t&);
     void set_uint8_cr(const uint8_t&);
     void set_short_cr(const short&);
@@ -272,6 +282,8 @@ public:
     void set_bool_r(bool&);
     void set_char_r(char&);
     void set_wchar_r(wchar_t&);
+    void set_char16_r(char16_t&);
+    void set_char32_r(char32_t&);
     void set_schar_r(signed char&);
     void set_uchar_r(unsigned char&);
     void set_short_r(short&);
@@ -290,6 +302,8 @@ public:
     void set_bool_p(bool*);
     void set_char_p(char*);
     void set_wchar_p(wchar_t*);
+    void set_char16_p(char16_t*);
+    void set_char32_p(char32_t*);
     void set_schar_p(signed char*);
     void set_uchar_p(unsigned char*);
     void set_short_p(short*);
@@ -308,6 +322,8 @@ public:
     void set_bool_ppa(bool**);
     void set_char_ppa(char**);
     void set_wchar_ppa(wchar_t**);
+    void set_char16_ppa(char16_t**);
+    void set_char32_ppa(char32_t**);
     void set_schar_ppa(signed char**);
     void set_uchar_ppa(unsigned char**);
     void set_short_ppa(short**);
@@ -325,7 +341,11 @@ public:
     intptr_t set_char_ppm(char**);
     intptr_t set_cchar_ppm(const char**);
     intptr_t set_wchar_ppm(wchar_t**);
+    intptr_t set_char16_ppm(char16_t**);
+    intptr_t set_char32_ppm(char32_t**);
     intptr_t set_cwchar_ppm(const wchar_t**);
+    intptr_t set_cchar16_ppm(const char16_t**);
+    intptr_t set_cchar32_ppm(const char32_t**);
     intptr_t set_void_ppm(void**);
 
     intptr_t freeit(void*);
@@ -336,6 +356,8 @@ public:
     void set_schar_rv(signed char&&);
     void set_uchar_rv(unsigned char&&);
     void set_wchar_rv(wchar_t&&);
+    void set_char16_rv(char16_t&&);
+    void set_char32_rv(char32_t&&);
     void set_int8_rv(int8_t&&);
     void set_uint8_rv(uint8_t&&);
     void set_short_rv(short&&);
@@ -379,10 +401,14 @@ public:
     complex_t*      pass_void_array_Z(void* a) { return pass_array((complex_t*)a); }
 
 // strings
-    const char*    get_valid_string(const char* in);
-    const char*    get_invalid_string();
-    const wchar_t* get_valid_wstring(const wchar_t* in);
-    const wchar_t* get_invalid_wstring();
+    const char*     get_valid_string(const char* in);
+    const char*     get_invalid_string();
+    const wchar_t*  get_valid_wstring(const wchar_t* in);
+    const wchar_t*  get_invalid_wstring();
+    const char16_t* get_valid_string16(const char16_t* in);
+    const char16_t* get_invalid_string16();
+    const char32_t* get_valid_string32(const char32_t* in);
+    const char32_t* get_invalid_string32();
 
 public:
 // basic types
@@ -391,6 +417,8 @@ public:
     signed char          m_schar;
     unsigned char        m_uchar;
     wchar_t              m_wchar;
+    char16_t             m_char16;
+    char32_t             m_char32;
     int8_t               m_int8;
     uint8_t              m_uint8;
     short                m_short;
@@ -451,6 +479,8 @@ public:
     static signed char             s_schar;
     static unsigned char           s_uchar;
     static wchar_t                 s_wchar;
+    static char16_t                s_char16;
+    static char32_t                s_char32;
     static int8_t                  s_int8;
     static uint8_t                 s_uint8;
     static short                   s_short;
@@ -488,6 +518,8 @@ extern char               g_char;
 extern signed char        g_schar;
 extern unsigned char      g_uchar;
 extern wchar_t            g_wchar;
+extern char16_t           g_char16;
+extern char32_t           g_char32;
 extern int8_t             g_int8;
 extern uint8_t            g_uint8;
 extern short              g_short;
@@ -513,6 +545,8 @@ static const char               g_c_char    = 'z';
 static const signed char        g_c_schar   = 'y';
 static const unsigned char      g_c_uchar   = 'x';
 static const wchar_t            g_c_wchar   = L'U';
+static const char16_t           g_c_char16  = u'\u6c34';
+static const char32_t           g_c_char32  = U'\U0001f34c';
 static const int8_t             g_c_int8    =  -12;
 static const uint8_t            g_c_uint8   =   12;
 static const short              g_c_short   =  -99;
