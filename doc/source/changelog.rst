@@ -21,6 +21,7 @@ master: 1.5.6
 * Properly support overloaded templated with non-templated  __setitem__
 * Support for array of const char* as C-strings
 * Enable type resolution of clang's builtin __type_pack_element
+* Fix for inner class type naming when it directly declares a variable
 
 
 2019-10-16: 1.5.5
