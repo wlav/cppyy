@@ -109,12 +109,21 @@ class TestAPI:
                 *a3 = *(APICheck3*)CPyCppyy::Instance_AsVoidPtr(value);
                 return true;
             }
+        #ifdef WIN32
+            virtual bool HasState() { return true; }  // see register_a3 for reason
+        #endif
         };
 
         typedef CPyCppyy::ConverterFactory_t cf_t;
         void register_a3() {
+        #ifndef WIN32
             CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
             CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
+        #else
+        // Clang's JIT does not support relocation of the static variable
+            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](Py_ssize_t*) { return new APICheck3Converter{}; });
+            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](Py_ssize_t*) { return new APICheck3Converter{}; });
+        #endif
         }
         void unregister_a3() {
             CPyCppyy::UnregisterConverter("APICheck3");
@@ -167,11 +176,19 @@ class TestAPI:
                  a4->setExecutorCalled();
                  return CPyCppyy::Instance_FromVoidPtr(a4, "APICheck4", true);
              }
+        #ifdef WIN32
+            virtual bool HasState() { return true; }  // see register_a3 for reason
+        #endif
         };
 
         typedef CPyCppyy::ExecutorFactory_t ef_t;
         void register_a4() {
+        #ifndef WIN32
             CPyCppyy::RegisterExecutor("APICheck4*", (ef_t)+[]() { static APICheck4Executor c{}; return &c; });
+        #else
+        // Clang's JIT does not support relocation of the static variable
+            CPyCppyy::RegisterExecutor("APICheck4*", (ef_t)+[]() { return new APICheck4Executor{}; });
+        #endif
         }
         void unregister_a4() {
             CPyCppyy::UnregisterExecutor("APICheck4*");
