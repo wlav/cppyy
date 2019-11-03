@@ -289,3 +289,18 @@ class TestCPP11FEATURES:
         t = FunctionNS.FNTestStruct(27)
         f = FunctionNS.FNCreateTestStructFunc()
         assert f(t) == 27
+
+    def test12_stdhash(self):
+        """Use of std::hash"""
+
+        import cppyy
+        from cppyy.gbl import StructWithHash, StructWithoutHash
+
+        for i in range(3):   # to test effect of caching
+            swo = StructWithoutHash()
+            assert hash(swo) == object.__hash__(swo)
+            assert hash(swo) == object.__hash__(swo)
+
+            sw = StructWithHash()
+            assert hash(sw)  == 17
+            assert hash(sw)  == 17

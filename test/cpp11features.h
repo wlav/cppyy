@@ -96,4 +96,16 @@ namespace FunctionNS {
     std::function<int(const FNTestStruct& t)> FNCreateTestStructFunc();
 }
 
+
+//===========================================================================
+struct StructWithHash {};    // for std::hash<> testing
+struct StructWithoutHash {};
+
+namespace std {
+    template<>
+    struct hash<StructWithHash> {
+        size_t operator()(const StructWithHash&) const { return 17; }
+    };
+} // namespace std
+
 #endif // c++11 and later
