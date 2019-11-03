@@ -288,14 +288,27 @@ std::vector<float> some_foo_calling_python() {
                 baz[0].data.push_back(3.14);
                 baz[1].data.push_back(2.73);
             }
+        };
+
+        class Foo {
+        public:
+            class Bar {
+            public:
+                Bar(): x(5) {}
+                int x;
+            } bar;
+
         }; }""")
 
         from cppyy.gbl import struct_direct_definition as sds
 
-        f = sds.Bar()
+        b = sds.Bar()
 
-        assert len(f.baz) == 2
-        assert len(f.baz[0].data) == 1
-        assert f.baz[0].data[0]   == 3.14
-        assert len(f.baz[1].data) == 1
-        assert f.baz[1].data[0]   == 2.73
+        assert len(b.baz) == 2
+        assert len(b.baz[0].data) == 1
+        assert b.baz[0].data[0]   == 3.14
+        assert len(b.baz[1].data) == 1
+        assert b.baz[1].data[0]   == 2.73
+
+        f = sds.Foo()
+        assert f.bar.x == 5
