@@ -495,6 +495,9 @@ class TestDATATYPES:
         gbl.g_some_global_string2 = "Python"
         assert gbl.get_some_global_string2() == "Python"
 
+        assert gbl.g_some_global_string16 == u'z\u00df\u6c34'
+        assert gbl.g_some_global_string32 == u'z\u00df\u6c34\U0001f34c'
+
         NS = gbl.SomeStaticDataNS
         NS.s_some_static_string = "Python"
         assert NS.get_some_static_string() == "Python"
@@ -639,6 +642,12 @@ class TestDATATYPES:
 
         assert c.get_valid_wstring(u'aap') == u'aap'
         assert c.get_invalid_wstring() == u''
+
+        assert c.get_valid_string16(u'z\u00df\u6c34') == u'z\u00df\u6c34'
+        assert c.get_invalid_string16() == u''
+
+        assert c.get_valid_string32(u'z\u00df\u6c34\U0001f34c') == u'z\u00df\u6c34\U0001f34c'
+        assert c.get_invalid_string32() == u''
 
     def test12_copy_constructor(self):
         """Test copy constructor"""

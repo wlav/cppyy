@@ -602,6 +602,9 @@ std::string get_some_global_string() { return g_some_global_string; }
 std::string g_some_global_string2 = "C++";
 std::string get_some_global_string2() { return g_some_global_string2; }
 
+const char16_t* g_some_global_string16 = u"z\u00df\u6c34";
+const char32_t* g_some_global_string32 = U"z\u00df\u6c34\U0001f34c";
+
 std::string SomeStaticDataNS::s_some_static_string = "C++";
 std::string SomeStaticDataNS::get_some_static_string() { return s_some_static_string; }
 std::string SomeStaticDataNS::s_some_static_string2 = "C++";

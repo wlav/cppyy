@@ -583,6 +583,9 @@ std::string get_some_global_string();
 extern std::string g_some_global_string2;
 std::string get_some_global_string2();
 
+extern const char16_t* g_some_global_string16;
+extern const char32_t* g_some_global_string32;
+
 namespace SomeStaticDataNS {
     extern std::string s_some_static_string;
     std::string get_some_static_string();

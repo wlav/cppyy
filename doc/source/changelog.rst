@@ -14,6 +14,7 @@ master: 1.5.6
 -------------
 
 * Added public C++ API for some CPyCppyy core functions (CPython only)
+* Support for char16_t/char16_t* and char32_t/char32_t*
 * Fix iteration over vector of shared_ptr
 * Length checking on global variables of type 'signed char[N]'
 * Properly support overloaded templated with non-templated  __setitem__
