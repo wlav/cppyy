@@ -91,9 +91,11 @@ class TestAPI:
 
         class APICheck3Converter : public CPyCppyy::Converter {
         public:
-            virtual bool SetArg(PyObject* pyobject, CPyCppyy::Parameter&, CPyCppyy::CallContext* = nullptr) {
+            virtual bool SetArg(PyObject* pyobject, CPyCppyy::Parameter& para, CPyCppyy::CallContext* = nullptr) {
                 APICheck3* a3 = (APICheck3*)CPyCppyy::Instance_AsVoidPtr(pyobject);
                 a3->setSetArgCalled();
+                para.fValue.fVoidp = a3;
+                para.fTypeCode = 'V';
                 return true;
             }
 
