@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.5.6
--------------
+2019-11-03: 1.5.6
+-----------------
 
 * Added public C++ API for some CPyCppyy core functions (CPython only)
 * Support for char16_t/char16_t* and char32_t/char32_t*
