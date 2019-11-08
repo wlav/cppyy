@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.5.7
--------------
+2019-11-07: 1.5.7
+-----------------
 
 * Allow implicit converions for move arguments
 * Choose vector over initializer_list if part of the template argument list
