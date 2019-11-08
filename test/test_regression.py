@@ -180,16 +180,16 @@ class TestREGRESSION:
         something = 5.0
 
         code = """
-#include "Python.h"
+            #include "Python.h"
 
-std::vector<float> some_foo_calling_python() {
-   auto pyobj = reinterpret_cast<PyObject*>(ADDRESS);
-   float f = (float)PyFloat_AsDouble(pyobj);
-   std::vector<float> v;
-   v.push_back(f);
-   return v;
-}
-""".replace("ADDRESS", str(id(something)))
+            std::vector<float> some_foo_calling_python() {
+              auto pyobj = reinterpret_cast<PyObject*>(ADDRESS);
+              float f = (float)PyFloat_AsDouble(pyobj);
+              std::vector<float> v;
+              v.push_back(f);
+              return v;
+            }
+            """.replace("ADDRESS", str(id(something)))
 
         cppyy.cppdef(code)
         cppyy.gbl.some_foo_calling_python()
@@ -312,3 +312,35 @@ std::vector<float> some_foo_calling_python() {
 
         f = sds.Foo()
         assert f.bar.x == 5
+
+    def test14_vector_vs_initializer_list(self):
+        """Prefer vector in template and initializer_list in formal arguments"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace vec_vs_init {
+           template<class T>
+           std::string nameit1(const T& t) {
+               return typeid(T).name();
+           }
+           template<class T>
+           std::string nameit2(T&& t) {
+               return typeid(T).name();
+           }
+           template<class T>
+           size_t sizeit(T&& t) {
+               return t.size();
+           }
+        }""")
+
+        nameit1 = cppyy.gbl.vec_vs_init.nameit1
+        assert 'vector' in nameit1(range(10))
+        assert 'vector' in nameit1(cppyy.gbl.std.vector[int]())
+
+        nameit2 = cppyy.gbl.vec_vs_init.nameit2
+        assert 'vector' in nameit2(range(10))
+        assert 'vector' in nameit2(cppyy.gbl.std.vector[int]())
+
+        sizeit = cppyy.gbl.vec_vs_init.sizeit
+        assert sizeit(range(10)) == 10
