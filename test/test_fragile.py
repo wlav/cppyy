@@ -46,7 +46,7 @@ class TestFRAGILE:
         assert fragile.B is fragile.B
         assert fragile.B == fragile.B
         assert fragile.B().check() == ord('B')
-        raises(AttributeError, getattr, fragile.B().gime_no_such(), "_cpp_proxy")
+        assert not fragile.B().gime_no_such()
 
         assert fragile.C is fragile.C
         assert fragile.C == fragile.C
