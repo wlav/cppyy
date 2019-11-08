@@ -12,7 +12,7 @@ alphabetical order):
  * `cppyy-knearestneighbors`_
  * `python-vspline`_
 
-In addition, cppyy is being re-integrated in it's roots, which includes
+In addition, cppyy is being re-integrated in its roots, which includes
 several sophisticated pythonizations.
 See the "experimental" version of the `PyROOT`_ project.
 
