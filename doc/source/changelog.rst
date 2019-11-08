@@ -10,6 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.5.7
+-------------
+
+* Allow implicit converions for move arguments
+* Choose vector over initializer_list if part of the template argument list
+
+
 2019-11-03: 1.5.6
 -----------------
 
@@ -18,7 +25,7 @@ PyPy support lags CPython support.
 * Respect std::hash in __hash__
 * Fix iteration over vector of shared_ptr
 * Length checking on global variables of type 'signed char[N]'
-* Properly support overloaded templated with non-templated  __setitem__
+* Properly support overloaded templated with non-templated __setitem__
 * Support for array of const char* as C-strings
 * Enable type resolution of clang's builtin __type_pack_element
 * Fix for inner class type naming when it directly declares a variable
