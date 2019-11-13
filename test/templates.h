@@ -472,7 +472,7 @@ public:
    T & operator[](size_type index) { return fData[index]; }
 
    // The definition of this templated operator causes the issue
-   template <typename V> 
+   template <typename V>
    MyVec operator[](const MyVec<V> &conds) const { return MyVec(2); }
 };
 
