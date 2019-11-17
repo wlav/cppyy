@@ -1,7 +1,7 @@
 .. _basic_types:
 
 
-Basic Types
+Basic types
 ===========
 
 C++ has a far richer set of builtin types than Python.

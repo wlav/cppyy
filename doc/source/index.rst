@@ -10,15 +10,20 @@
 cppyy: Automatic Python-C++ bindings
 ====================================
 
-cppyy is an automatic Python-C++ bindings generator, for calling C++ from
-Python and Python from C++, designed for large scale programs in high
-performance computing that use modern C++, fully including the latest
-standard, C++17.
-Design and performance are described in this `PyHPC paper`_, albeit that the
+cppyy is an automatic, run-time, Python-C++ bindings generator, for calling
+C++ from Python and Python from C++.
+Run-time generation enables detailed specialization for higher performance,
+lazy loading for reduced memory use in large scale projects, Python-side
+cross-inheritance and callbacks for working with C++ frameworks, run-time
+template instantiation, automatic object downcasting, exception mapping, and
+interactive exploration of C++ libraries.
+cppyy delivers this without any language extensions, intermediate languages,
+or the need for boiler-plate hand-written code.
+For design and performance, see this `PyHPC paper`_, albeit that the
 CPython/cppyy performance has been vastly improved since.
 
-cppyy is based on `Cling`_, the C++ interpreter, to match Python's dynamism
-and interactivity.
+cppyy is based on `Cling`_, the C++ interpreter, to match Python's dynamism,
+interactivity, and run-time behavior.
 Consider this session, showing dynamic, interactive, mixing of C++ and Python
 features (more examples are in the `tutorial`_):
 
@@ -95,7 +100,7 @@ and heavy use of templates:
    [0, 1, 2, 3, 4, 5, 6, ..., 97, 98, 99]
    >>>
 
-And yes, there is no reason to use Boost from Python (in fact, this example
+Of course, there is no reason to use Boost from Python (in fact, this example
 calls out for :doc:`pythonizations <pythonizations>`), but it shows that
 cppyy seamlessly supports many advanced C++ features.
 
@@ -124,7 +129,9 @@ development environments.
    :maxdepth: 1
 
    installation
+   starting
    examples
+   bugs
    changelog
    license
 
@@ -156,7 +163,7 @@ development environments.
    repositories
 
 
-Comments and bugs
+Bugs and feedback
 -----------------
 
 Please report bugs or requests for improvement on the `issue tracker`_.

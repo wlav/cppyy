@@ -1,7 +1,7 @@
 .. _bindings_generation:
 
 ===================
-Bindings Generation
+Bindings generation
 ===================
 
 Binding developers have two levels of access to cling via ``cppyy``:
