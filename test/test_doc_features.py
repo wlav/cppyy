@@ -820,7 +820,6 @@ class TestADVERTISED:
     def test07_array_of_arrays(self):
         """Example of array of array usage"""
 
-
         import cppyy
         import cppyy.ll
 
@@ -853,3 +852,22 @@ class TestADVERTISED:
             image_array = cppyy.ll.cast['uint16_t*'](s.fField[i])
             for j in range (NPIXELS):
                  assert image_array[j] == i*NPIXELS+j
+
+    def test08_voidptr_array(self):
+        """Example of access to array of void ptrs"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace VoidPtrArray {
+            typedef struct _name {
+                _name() { p[0] = (void*)0x1; p[1] = (void*)0x2; p[2] = (void*)0x3; }
+                void* p[3];
+            } name;
+        }""")
+
+        n = cppyy.gbl.VoidPtrArray.name()
+        assert n.p[0] == 0x1
+        assert n.p[1] == 0x2
+        assert n.p[2] == 0x3
+        assert len(n.p) == 3
