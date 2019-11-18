@@ -156,8 +156,8 @@ development environments.
    :maxdepth: 1
 
    pythonizations
-   dictionaries
-   bindings_generation
+   utilities
+   cmake_interface
 
 .. toctree::
    :caption: Developers

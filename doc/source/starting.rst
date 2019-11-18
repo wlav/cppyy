@@ -7,7 +7,7 @@ This is a basic guide to try cppyy and see whether it works for you.
 Large code bases will benefit from more advanced features such as
 :doc:`pythonizations <pythonizations>` for a cleaner interface to clients;
 precompiled modules for faster parsing and reduced memory usage;
-":doc:`dictionaries <dictionaries>`" to package locations and manage
+":ref:`dictionaries <dictionaries>`" to package locations and manage
 dependencies; and mapping files for automatic, lazy, loading.
 You can, however, get very far with just the basics and it may even be
 completely sufficient for small packages with fewer classes.

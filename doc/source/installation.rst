@@ -52,8 +52,8 @@ Example::
  $ PATH=$HOME/.local/bin:$PATH python -m pip install cppyy --user
 
 
-Pre-compiled wheels on PyPI
----------------------------
+Wheels on PyPI
+--------------
 
 Wheels for the backend (``cppyy-cling``) are available on PyPI for GNU/Linux,
 MacOS-X, and MS Windows (both 32b and 64b).
@@ -72,8 +72,8 @@ There are no wheels for the ``CPyCppyy`` and ``cppyy`` packages, to allow
 the C++ standard chosen to match the local compiler.
 
 
-Combining conda and pip
------------------------
+pip with conda
+--------------
 
 Although installing ``cppyy`` through `conda-forge`_ is recommended, it is
 possible to build/install with ``pip`` under Anaconda/miniconda.
@@ -109,8 +109,8 @@ enough, the following can be made to work::
  (WORK) [current compiler] $ python -m pip install cppyy
 
 
-Switching C++ standard with pip
--------------------------------
+C++ standard with pip
+---------------------
 
 The C++17 standard is the default for Mac and Linux (both PyPI and
 conda-forge); but it is C++14 for MS Windows (compiler limitation).
@@ -121,8 +121,8 @@ Note that the build will lower your choice if the compiler used does not
 support a newer standard.
 
 
-Installing from source
-----------------------
+Install from source
+-------------------
 .. _installation_from_source:
 
 To build an existing release from source, tell ``pip`` to not download any
@@ -180,11 +180,11 @@ In that case, re-linking is highly recommended.
 
 Very old versions of PyPy (5.6.0 and earlier) have a built-in ``cppyy`` based
 on `Reflex`_, which is less feature-rich and no longer supported.
-However, both the :doc:`distribution tools <dictionaries>` and user-facing
+However, both the :doc:`distribution utilities <utilities>` and user-facing
 Python codes are very backwards compatible, making migration straightforward.
 
 
-Precompiled Header
+Precompiled header
 ------------------
 
 For performance reasons (reduced memory and CPU usage), a precompiled header
