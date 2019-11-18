@@ -125,6 +125,11 @@ development environments.
    Contents:
 
 .. toctree::
+
+   changelog
+   license
+
+.. toctree::
    :caption: Getting Started
    :maxdepth: 1
 
@@ -132,8 +137,6 @@ development environments.
    starting
    examples
    bugs
-   changelog
-   license
 
 .. toctree::
    :caption: Features
@@ -146,6 +149,7 @@ development environments.
    python
    lowlevel
    misc
+   debugging
 
 .. toctree::
    :caption: Redistribution
