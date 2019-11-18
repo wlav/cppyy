@@ -65,12 +65,16 @@ Optionally, the dictionary generation process also produces a mapping file,
 which lists the libraries needed to load C++ classes on request (for details,
 see the section on the class loader below).
 
+Structurally, you could have a single dictionary for a project as a whole,
+but more likely a large project will have a pre-existing functional
+decomposition that can be followed, with a dictionary per functional unit.
+
 
 Generation
 ^^^^^^^^^^
 
-There are two interfaces onto the dictionary generator: ``rootcling`` and
-``genreflex``.
+There are two interfaces onto the same underlying dictionary generator:
+``rootcling`` and ``genreflex``.
 The reason for having two is historic and they are not complete duplicates,
 so one or the other may suit your preference better.
 It is foreseen that both will be replaced once C++ modules become more
@@ -79,114 +83,169 @@ mainstream, as that will allow simplification and improved robustness.
 rootcling
 """""""""
 
-This provides basic access to ``cling``::
+The first interface is called ``rootcling``::
 
     $ rootcling
-    Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[LinkDef.h]
+    Usage: rootcling [-v][-v0-4] [-f] [out.cxx] [opts] file1.h[+][-][!] file2.h[+][-][!] ...[Linkdef.h]
     For more extensive help type: /usr/local/lib/python2.7/dist-packages/cppyy_backend/bin/rootcling -h
 
-The basic mode of operation is to process the header files ('fileN.h')
-according to certain `#pragmas in the LinkDef.h <https://root.cern.ch/root/html/guides/users-guide/AddingaClass.html#the-linkdef.h-file>`_
-file in order to generate bindings accessible in Python under the 'cppyy.gbl'
-namespace.
+Rather than providing command line options, the main steering of
+``rootcling`` behavior is done through
+`#pragmas in a Linkdef.h <https://root.cern.ch/root/html/guides/users-guide/AddingaClass.html#the-linkdef.h-file>`_
+file, with most pragmas dedicated to selecting/excluding (parts of) classes
+and functions.
+Additionally, the Linkdef.h file may contain preprocessor macros.
 
-The output is
-
-* A .cpp file (which, when compiled to a shared library)
-* A .rootmap file
-* A .pcm file
-
-which are used at runtime by ``cling`` to expose the semantics expressed by the
-header files to Python. Nominally, the compiled .cpp provides low-level Python
-access to the library API defined by the header files, while ``cling`` uses the
-other files to provide the rich features it supports. Thus, the shipping form
-of the bindings contains:
-
-* A shared library (which must be compiled from the .cpp)
-* A .rootmap file
-* A .pcm file
+The output consists of a dictionary file (to be compiled into a shared
+library), a C++ module, and an optional mapping file, as described above.
 
 genreflex
 """""""""
 
-The relevant headers are read by a tool called `genreflex`_ which generates
-C++ files that are to be compiled into a shared library.
-That library can further be linked with any relevant project libraries that
-contain the implementation of the functionality declared in the headers.
-For example, given a file called ``project_header.h`` and an implementation
-residing in ``libproject.so``, the following will generate a
-``libProjectDict.so`` reflection dictionary::
+The second interface is called ``genreflex``::
 
-    $ genreflex project_header.h
-    $ g++ -std=c++17 -fPIC -rdynamic -O2 -shared `genreflex --cppflags` project_header_rflx.cpp -o libProjectDict.so -L$PROJECTHOME/lib -lproject
+    $ genreflex
+    Generates dictionary sources and related ROOT pcm starting from an header.
+    Usage: genreflex headerfile.h [opts] [preproc. opts]
+    ...
 
-Instead of loading the header text into Cling, you can now load the
+``genreflex`` has a richer command line interface than ``rootcling`` as can
+be seen from the full help message.
+
+.. _selection-files:
+
+Selection/exclusion is driven through a `selection file`_ using an XML format
+that allows both exact and pattern matching to namespace, class, enum,
+function, and variable names.
+
+.. _`selection file`: https://linux.die.net/man/1/genreflex
+
+
+Example
+"""""""
+
+Consider the following basic example code, living in a header "MyClass.h":
+
+  .. code-block:: C++
+
+    class MyClass {
+    public:
+        MyClass(int i) : fInt(i) {}
+        int get_int() { return fInt; }
+
+    private:
+        int fInt;
+    };
+
+and a corresponding "Linkdef.h" file, selecting only ``MyClass``::
+
+    #ifdef __ROOTCLING__
+    #pragma link off all classes;
+    #pragma link off all functions;
+    #pragma link off all globals;
+    #pragma link off all typedef;
+
+    #pragma link C++ class MyClass;
+
+    #endif
+
+For more pragmas, see the `rootcling manual`_.
+E.g., a commonly useful pragma is one that selects all C++ entities that are
+declared in a specific header file::
+
+    #pragma link C++ defined_in "MyClass.h";
+
+Next, use ``rootcling`` to generate the dictionary (here:
+``MyClass_rflx.cxx``) and module files::
+
+    $ rootcling -f MyClass_rflx.cxx MyClass.h Linkdef.h
+
+Alternatively, define a "myclass_selection.xml" file::
+
+    <lcgdict>
+        <class name="MyClass" />
+    </lcgdict>
+
+serving the same purpose as the Linkdef.h file above (in fact, ``rootcling``
+accepts a "selection.xml" file in lieu of a "Linkdef.h").
+For more tags, see the `selection file`_ documentation.
+Commonly used are ``namespace``, ``function``, ``enum``, or ``variable``
+instead of the ``class`` tag, and ``pattern`` instead of ``name`` with
+wildcarding in the value string.
+
+Next, use ``genreflex`` to generate the dictionary (here:
+``MyClass_rflx.cxx``) and module files::
+
+    $ genreflex MyClass.h --selection=myclass_selection.xml -o MyClass_rflx.cxx
+
+From here, compile and link the generated dictionary file with the project
+and/or system specific options and libraries into a shared library, using
+``cling-config`` for the relevant cppyy compiler/linker flags.
+(For work on MS Windows, this `helper script`_ may be useful.)
+To continue the example, assuming Linux::
+
+    $ g++ `cling-config --cppflags` -fPIC -O2 -shared MyClass_rflx.cxx -o MyClassDict.so
+
+Instead of loading the header text into ``cling``, you can now load the
 dictionary:
 
 .. code-block:: python
 
     >>> import cppyy
-    >>> cppyy.load_reflection_info('libProjectDict.so')
-    <CPPLibrary object at 0xb6fd7c4c>
-    >>> from cppyy.gbl import SomeClassFromProject
+    >>> cppyy.load_reflection_info('MyClassDict')
+    >>> cppyy.gbl.MyClass(42)
+    <cppyy.gbl.MyClass object at 0x7ffb9f230950>
+    >>> print(_.get_int())
+    42
     >>>
 
-and use the C++ entities from the header as before.
+and use the selected C++ entities as if the header was loaded.
 
-.. _`genreflex`: https://linux.die.net/man/1/genreflex
+The dictionary shared library can be relocated, as long as it can be found
+by the dynamic loader (e.g. through ``LD_LIBRARY_PATH``) and the header file
+is fully embedded or still accessible (e.g. through a path added to
+``cppyy.add_include_path`` at run-time, or with ``-I`` to
+``rootcling``/``genreflex`` during build time).
+When relocating the shared library, move the .pcm with it.
+Once support for C++ modules is fully fleshed out, access to the header file
+will no longer be needed.
 
-
-.. _selection-files:
-
-Sometimes it is necessary to restrict or expand what genreflex will pick up
-from the header files.
-For example, to add or remove standard classes or to hide implementation
-details.
-This is where `selection files`_ come in.
-These are XML specifications that allow exact or pattern matching to classes,
-functions, etc.
-See ``genreflex --help`` for a detailed specification and add
-``--selection=project_selection.xml`` to the ``genreflex`` command line.
-
-With the aid of a selection file, a large project can be easily managed:
-simply ``#include`` all relevant headers into a single header file that is
-handed to ``genreflex``.
-
-.. _`selection files`: https://linux.die.net/man/1/genreflex
+.. _`rootcling manual`: https://root.cern.ch/root/html/guides/users-guide/AddingaClass.html#the-linkdef.h-file
+.. _`helper script`: https://bitbucket.org/wlav/cppyy/src/master/test/make_dict_win32.py
 
 
 Class loader
 ^^^^^^^^^^^^
 
 Explicitly loading dictionaries is fine if this is hidden under the hood of
-a Python package and thus simply done on import.
+a Python package and thus transparently done on ``import``.
 Otherwise, the automatic class loader is more convenient, as it allows direct
-use without having to manually find and load dictionaries.
+use without having to manually find and load dictionaries (assuming these are
+locatable by the dynamic loader).
 
 The class loader utilizes so-called rootmap files, which by convention should
-live alongside the dictionaries in places reachable by LD_LIBRARY_PATH.
+live alongside the dictionary shared library (and C++ module file).
 These are simple text files, which map C++ entities (such as classes) to the
 dictionaries and other libraries that need to be loaded for their use.
 
-The ``genreflex`` tool can produce rootmap files automatically.
-For example::
+With ``genreflex``, the mapping file can be automatically created with
+``--rootmap-lib=MyClassDict``, where "MyClassDict" is the name of the shared
+library (without the extension) build from the dictionary file.
+With ``rootcling``, create the same mapping file with
+``-rmf MyClassDict.rootmap -rml MyClassDict``.
+It is necessary to provide the final library name explicitly, since it is
+only in the separate linking step where these names are fixed and those names
+may not match the default choice.
 
-    $ genreflex project_header.h --rootmap=libProjectDict.rootmap --rootmap-lib=libProjectDict.so
-    $ g++ -std=c++17 -fPIC -rdynamic -O2 -shared `genreflex --cppflags` project_header_rflx.cpp -o libProjectDict.so -L$CPPYYHOME/lib -lCling -L$PROJECTHOME/lib -lproject
-
-where the first option (``--rootmap``) specifies the output file name, and the
-second option (``--rootmap-lib``) the name of the reflection library.
-It is necessary to provide that name explicitly, since it is only in the
-separate linking step where these names are fixed (if the second option is not
-given, the library is assumed to be libproject_header.so).
-
-With the rootmap file in place, the above example can be rerun without explicit
-loading of the reflection info library:
+With the mapping file in place, the above example can be rerun without
+explicit loading of the dictionary:
 
 .. code-block:: python
 
     >>> import cppyy
-    >>> from cppyy.gbl import SomeClassFromProject
+    >>> from cppyy.gbl import MyClass
+    >>> MyClass(42).get_int()
+    42
     >>>
 
 
