@@ -137,15 +137,6 @@ Example (using ``--verbose`` to see ``pip`` progress)::
 
  $ STDCXX=17 MAKE_NPROCS=32 pip install --verbose cppyy --no-binary=cppyy-cling
 
-On MS Windows, some temporary path names may be too long, causing the build to
-fail.
-To resolve this issue, point the ``TMP`` and ``TEMP`` envars to an existing
-directory with a short name before the build:
-For example::
-
- > set TMP=C:\TMP
- > set TEMP=C:\TMP
-
 Compilation of the backend, which contains a customized version of
 Clang/LLVM, can take a long time, so by default the setup script will use all
 cores (x2 if hyperthreading is enabled).

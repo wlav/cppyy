@@ -38,7 +38,7 @@ Contrast this to the (automatic) pythonization:
    0 2 4 6 8 10 12 14 16 18
    >>>
 
-Such a pythonization can be written completely in python using the bound C++
+Such a pythonization can be written completely in Python using the bound C++
 methods, with no intermediate language necessary.
 Since it is written on abstract features, there is also only one such
 pythonization that works for all STL map instantiations.
