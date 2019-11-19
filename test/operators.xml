@@ -30,4 +30,6 @@
   <function name="Unary::operator+" />
   <function name="Unary::operator~" />
 
+  <class name="CommaOperator" />
+
 </lcgdict>

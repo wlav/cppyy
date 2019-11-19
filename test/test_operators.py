@@ -300,3 +300,11 @@ class TestOPERATORS:
             assert (-n).i == -42
             assert (+n).i ==  42
             #assert (~n).i == ~42
+
+    def test13_comma_operator(self):
+        """Comma operator"""
+
+        import cppyy
+
+        c = cppyy.gbl.CommaOperator(1)
+        assert c.__comma__(2).__comma__(3).fInt == 6

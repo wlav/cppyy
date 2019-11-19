@@ -320,4 +320,13 @@ SomeNumber operator~(const SomeNumber&);
 
 }
 
+
+//----------------------------------------------------------------------------
+// comma operator (mapped to __comma__)
+struct CommaOperator {
+    CommaOperator(int i) : fInt(i) {}
+    CommaOperator& operator,(int i) { fInt += i; return *this; }
+    int fInt;
+};
+
 #endif // !CPPYY_TEST_OPERATORS_H
