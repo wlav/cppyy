@@ -29,6 +29,16 @@ class TestEIGEN:
         assert a.rows() == 2
         assert a.cols() == 2
 
+        b = cppyy.gbl.Eigen.MatrixXd(2, 2)
+        b[0,0] = 3
+        assert b(0,0) == 3.
+        b[1,0] = 2.5
+        assert b(1,0) == 2.5
+        b[0,1] = -1
+        assert b(0,1) == -1.
+        b[1,1] = b(1,0) + b(0,1)
+        assert b(1,1) == b[1,0] + b[0,1]
+
     def test02_comma_insertion(self):
         """Comma insertion overload"""
 
@@ -46,3 +56,26 @@ class TestEIGEN:
         m.resize(4, 3)
         assert m.rows() == 4
         assert m.cols() == 3
+
+        # equivalent of 'm << 12, 11, ..., 1' in C++
+        c = (m << 12)
+        for i in range(11, 0, -1):
+            c = c.__comma__(i)
+        assert m[0, 0] == 12.
+        assert m[0, 1] == 11.
+        assert m[0, 2] == 10.
+        assert m[1, 0] ==  9.
+        assert m[1, 1] ==  8.
+        assert m[1, 2] ==  7.
+        assert m[2, 0] ==  6.
+        assert m[2, 1] ==  5.
+        assert m[2, 2] ==  4.
+        assert m[3, 0] ==  3.
+        assert m[3, 1] ==  2.
+        assert m[3, 2] ==  1.
+
+        matA = cppyy.gbl.Eigen.MatrixXf(2, 2)
+        (matA << 1).__comma__(2).__comma__(3).__comma__(4)
+        matB = cppyy.gbl.Eigen.MatrixXf(4, 4)
+        # TODO: the insertion operator is a template that expect only the base class
+        #(matB << matA).__comma__(matA/10).__comma__(matA/10).__comma__(matA)
