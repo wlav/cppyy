@@ -503,6 +503,13 @@ class Printable5 : public PrintableBase1<int> {};
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const PrintableBase1<T>& y) { return os << "Ok."; }
 
+class Printable6 {
+public:
+    Printable6& operator<<(int);
+};
+
+std::ostream& operator<<(std::ostream& os, const Printable6& y);
+
 
 //===========================================================================
 namespace UsedSpace1 {             // for using directives testing

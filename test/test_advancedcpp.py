@@ -762,7 +762,8 @@ class TestADVANCEDCPP:
         assert str(ns.Printable1()) == "Printable1::operator<<"
         for tst in [(ns.Printable2,         "Cpp2PyPrinting::operator<<"),
                     (ns.Printable3,         "::operator<<(3)"),
-                    (cppyy.gbl.Printable4,  "::operator<<(4)")]:
+                    (cppyy.gbl.Printable4,  "::operator<<(4)"),
+                    (cppyy.gbl.Printable6,  "Printable6")]:
             assert str(tst[0]()) == tst[1]
             assert '__lshiftc__' in tst[0].__dict__
             assert tst[0].__lshiftc__

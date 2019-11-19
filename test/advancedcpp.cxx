@@ -164,6 +164,10 @@ std::ostream& operator<<(std::ostream& os, const Printable4&) {
      return os;
 }
 
+Printable6& Printable6::operator<<(int) { return *this; }
+
+std::ostream& operator<<(std::ostream& os, const Printable6& y) { return os << "Printable6"; }
+
 
 // for using directives testing
 int UsedSpace1::foo1() {
