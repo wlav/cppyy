@@ -84,14 +84,28 @@ class TestEIGEN:
         """Matrices and vectors"""
 
         import cppyy
+
+     # 'dynamic' matrices/vectors
         MatrixXd = cppyy.gbl.Eigen.MatrixXd
         VectorXd = cppyy.gbl.Eigen.VectorXd
 
         m = MatrixXd.Random(3, 3)
-        b = MatrixXd.Constant(3, 3, 1.2)
-        m = (m + MatrixXd.Constant(3, 3, 1.2)) * 50.
+        assert m.rows() == 3
+        assert m.cols() == 3
+        m = (m + MatrixXd.Constant(3, 3, 1.2)) * 50
 
         v = VectorXd(3)
         (v << 1).__comma__(2).__comma__(3);
+
+        assert (m*v).size() == v.size()
+
+     # 'static' matrices/vectors
+        Matrix3d = cppyy.gbl.Eigen.Matrix3d
+        Vector3d = cppyy.gbl.Eigen.Vector3d
+
+        m = Matrix3d.Random()
+        m = (m + Matrix3d.Constant(1.2)) * 50
+
+        v = Vector3d(1, 2, 3)
 
         assert (m*v).size() == v.size()
