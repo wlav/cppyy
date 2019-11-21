@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 master: 1.5.8
 -------------
 
+* Template handling detailing (for Eigen)
 * Extended documentation
 
 
