@@ -79,3 +79,19 @@ class TestEIGEN:
         matB = cppyy.gbl.Eigen.MatrixXf(4, 4)
         # TODO: the insertion operator is a template that expect only the base class
         #(matB << matA).__comma__(matA/10).__comma__(matA/10).__comma__(matA)
+
+    def test03_matrices_and_vectors(self):
+        """Matrices and vectors"""
+
+        import cppyy
+        MatrixXd = cppyy.gbl.Eigen.MatrixXd
+        VectorXd = cppyy.gbl.Eigen.VectorXd
+
+        m = MatrixXd.Random(3, 3)
+        b = MatrixXd.Constant(3, 3, 1.2)
+        m = (m + MatrixXd.Constant(3, 3, 1.2)) * 50.
+
+        v = VectorXd(3)
+        (v << 1).__comma__(2).__comma__(3);
+
+        assert (m*v).size() == v.size()
