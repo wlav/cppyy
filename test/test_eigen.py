@@ -20,8 +20,8 @@ class TestEIGEN:
         cppyy.add_include_path(eigen_path)
         cppyy.include('Eigen/Dense')
 
-    def test01_simple_matrix(self):
-        """Basic creation of an Eigen::Matrix"""
+    def test01_simple_matrix_and_vector(self):
+        """Basic creation of an Eigen::Matrix and Eigen::Vector"""
 
         import cppyy
 
@@ -38,6 +38,12 @@ class TestEIGEN:
         assert b(0,1) == -1.
         b[1,1] = b(1,0) + b(0,1)
         assert b(1,1) == b[1,0] + b[0,1]
+
+        v = cppyy.gbl.Eigen.VectorXd(2)
+        v[0] = 4
+        assert v[0] == 4 and v(0) == 4
+        v[1] = v(0) - 1
+        assert v(1) == 3 and v[1] == 3
 
     def test02_comma_insertion(self):
         """Comma insertion overload"""
@@ -80,6 +86,18 @@ class TestEIGEN:
         # TODO: the insertion operator is a template that expect only the base class
         #(matB << matA).__comma__(matA/10).__comma__(matA/10).__comma__(matA)
 
+        v = cppyy.gbl.Eigen.VectorXd(2)
+        v.resize(5)
+        assert v.size() == 5
+        assert v.rows() == 5
+        assert v.cols() == 1
+        # the following is equivalent to:
+        #   (v << 1).__comma__(2).__comma__(3).__comma__(4).__comma__(5)
+        from functools import reduce
+        reduce(lambda x, y: x.__comma__(y), range(2, 6), v << 1)
+        for i in range(5):
+            assert v(i) == i+1
+
     def test03_matrices_and_vectors(self):
         """Matrices and vectors"""
 
@@ -109,3 +127,16 @@ class TestEIGEN:
         v = Vector3d(1, 2, 3)
 
         assert (m*v).size() == v.size()
+
+    def test04_resizing_through_assignment(self):
+        """Resize on assignment"""
+
+        import cppyy
+
+        a = cppyy.gbl.Eigen.MatrixXf(2, 2) 
+        assert a.size() == 4
+        b = cppyy.gbl.Eigen.MatrixXf(3, 3)
+        assert b.size() == 9
+
+        a.__assign__(b)
+        assert a.size() == 9
