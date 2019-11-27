@@ -344,3 +344,59 @@ class TestREGRESSION:
 
         sizeit = cppyy.gbl.vec_vs_init.sizeit
         assert sizeit(list(range(10))) == 10
+
+    def test15_iterable_enum(self):
+        """Use template to iterate over an enum"""
+      # from: https://stackoverflow.com/questions/52459530/pybind11-emulate-python-enum-behaviour
+
+        import cppyy
+
+        cppyy.cppdef("""
+        template <typename Enum>
+        struct my_iter_enum {
+            struct iterator {
+                using value_type = Enum;
+                using difference_type = ptrdiff_t;
+                using reference = const Enum&;
+                using pointer = const Enum*;
+                using iterator_category = std::input_iterator_tag;
+
+                iterator(Enum value) : cur(value) {}
+
+                reference operator*() { return cur; }
+                pointer operator->() { return &cur; }
+                bool operator==(const iterator& other) { return cur == other.cur; }
+                bool operator!=(const iterator&other) { return !(*this == other); }
+                iterator& operator++() { if (cur != Enum::Unknown) cur = static_cast<Enum>(static_cast<std::underlying_type_t<Enum>>(cur) + 1); return *this; }
+                iterator operator++(int) { iterator other = *this; ++(*this); return other; }
+
+            private:
+                Enum cur;
+            };
+
+            iterator begin() {
+                return iterator(static_cast<Enum>(0));
+            }
+
+            iterator end() {
+                return iterator(Enum::Unknown);
+            }
+        };
+
+        enum class MyColorEnum : char {
+            Black = 0,
+            Blue,
+            Red,
+            Yellow,
+            Unknown
+        };""")
+
+        Color = cppyy.gbl.my_iter_enum['MyColorEnum']
+        assert Color.iterator
+
+        c_iterable = Color()
+        assert c_iterable.begin().__deref__() == 0
+
+        for c in c_iterable:
+            pass
+
