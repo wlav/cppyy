@@ -22,6 +22,7 @@ master: 1.5.8
 
 * Allow implicit converions for move arguments
 * Choose vector over initializer_list if part of the template argument list
+* Fix regression bug: #180
 
 
 2019-11-03: 1.5.6

@@ -400,3 +400,36 @@ class TestREGRESSION:
         for c in c_iterable:
             pass
 
+    def test16_operator_eq_pickup(self):
+        """Base class python-side operator== interered with derived one"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace SelectOpEq {
+        class Base {};
+
+        class Derived1 : public Base {
+        public:
+            bool operator==(Derived1&) { return true; }
+        };
+
+        class Derived2 : public Base {
+        public:
+            bool operator!=(Derived2&) { return true; }
+        }; }""")
+
+        soe = cppyy.gbl.SelectOpEq
+
+        soe.Base.__eq__ = lambda first, second: False
+        soe.Base.__ne__ = lambda first, second: False
+
+        a = soe.Derived1()
+        b = soe.Derived1()
+
+        assert a == b             # derived class' C++ operator== called
+
+        a = soe.Derived2()
+        b = soe.Derived2()
+
+        assert a != b             # derived class' C++ operator!= called
