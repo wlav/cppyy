@@ -433,3 +433,17 @@ class TestREGRESSION:
         b = soe.Derived2()
 
         assert a != b             # derived class' C++ operator!= called
+
+    def test17_operator_plus_overloads(self):
+        """operator+(string, string) should return a string"""
+
+        import cppyy
+
+        a = cppyy.gbl.std.string("a")
+        b = cppyy.gbl.std.string("b")
+
+        assert a == 'a'
+        assert b == 'b'
+
+        assert type(a+b) == cppyy.gbl.std.string
+        assert a+b == 'ab'
