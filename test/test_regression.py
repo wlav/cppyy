@@ -452,7 +452,7 @@ class TestREGRESSION:
         assert a+b == 'ab'
 
     def test18_std_string_hash(self):
-        """test hashing of std::string"""
+        """Hashing of std::string"""
 
         import cppyy
 
@@ -466,3 +466,21 @@ class TestREGRESSION:
       # was an issue on p3 anyway)
         for s in ['abc', 'text', '321', 'stuff', 'very long string']:
             d[s] = 1
+
+    def test19_signed_char_ref(self):
+        """Signed char executor was self-referencing"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        class SignedCharRefGetter {
+        public:
+            void setter(signed char sc) { m_c = sc; }
+            signed char& getter() { return m_c; }
+            signed char m_c;
+        };""")
+
+        obj = cppyy.gbl.SignedCharRefGetter()
+        obj.setter('c')
+
+        assert obj.getter() == 'c'
