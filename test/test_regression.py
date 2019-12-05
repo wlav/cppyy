@@ -375,7 +375,7 @@ class TestREGRESSION:
             };
 
             iterator begin() {
-                return iterator(static_cast<Enum>(0));
+                return iterator(Enum::Black);
             }
 
             iterator end() {
@@ -384,7 +384,7 @@ class TestREGRESSION:
         };
 
         enum class MyColorEnum : char {
-            Black = 0,
+            Black = 1,
             Blue,
             Red,
             Yellow,
@@ -395,10 +395,12 @@ class TestREGRESSION:
         assert Color.iterator
 
         c_iterable = Color()
-        assert c_iterable.begin().__deref__() == 0
+        assert c_iterable.begin().__deref__() == 1
 
+        all_enums = []
         for c in c_iterable:
-            pass
+            all_enums.append(int(c))
+        assert all_enums == range(1, 5)
 
     def test16_operator_eq_pickup(self):
         """Base class python-side operator== interered with derived one"""
