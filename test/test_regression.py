@@ -450,3 +450,19 @@ class TestREGRESSION:
 
         assert type(a+b) == str
         assert a+b == 'ab'
+
+    def test18_std_string_hash(self):
+        """test hashing of std::string"""
+
+        import cppyy
+
+        import cppyy
+
+        s = cppyy.gbl.std.string("text")
+        d = {}
+
+      # hashes of std::string larger than 2**31 would fail; run a couple of
+      # strings to check although it may still succeed by accident (and never
+      # was an issue on p3 anyway)
+        for s in ['abc', 'text', '321', 'stuff', 'very long string']:
+            d[s] = 1
