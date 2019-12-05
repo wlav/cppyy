@@ -15,6 +15,7 @@ master: 1.5.8
 
 * Template handling detailing (for Eigen)
 * Extended documentation
+* Fix regression bugs: #179, #180, #182
 
 
 2019-11-07: 1.5.7
@@ -22,7 +23,6 @@ master: 1.5.8
 
 * Allow implicit converions for move arguments
 * Choose vector over initializer_list if part of the template argument list
-* Fix regression bugs: #179, #180
 
 
 2019-11-03: 1.5.6
