@@ -366,12 +366,13 @@ class TestREGRESSION:
                 reference operator*() { return cur; }
                 pointer operator->() { return &cur; }
                 bool operator==(const iterator& other) { return cur == other.cur; }
-                bool operator!=(const iterator&other) { return !(*this == other); }
+                bool operator!=(const iterator& other) { return !(*this == other); }
                 iterator& operator++() { if (cur != Enum::Unknown) cur = static_cast<Enum>(static_cast<std::underlying_type_t<Enum>>(cur) + 1); return *this; }
                 iterator operator++(int) { iterator other = *this; ++(*this); return other; }
 
             private:
                 Enum cur;
+                int TODO_why_is_this_placeholder_needed; // JIT error? Too aggressive optimization?
             };
 
             iterator begin() {
@@ -400,7 +401,7 @@ class TestREGRESSION:
         all_enums = []
         for c in c_iterable:
             all_enums.append(int(c))
-        assert all_enums == range(1, 5)
+        assert all_enums == list(range(1, 5))
 
     def test16_operator_eq_pickup(self):
         """Base class python-side operator== interered with derived one"""
