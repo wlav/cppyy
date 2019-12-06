@@ -484,3 +484,15 @@ class TestREGRESSION:
         obj.setter('c')
 
         assert obj.getter() == 'c'
+
+    def test20_temporaries_and_vector(self):
+        """Extend a life line to references into a vector if needed"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+            std::vector<std::string> get_some_temporary_vector() { return { "x", "y", "z" }; }
+        """)
+
+        l = [e for e in cppyy.gbl.get_some_temporary_vector()]
+        assert l == ['x', 'y', 'z']

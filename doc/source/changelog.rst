@@ -15,7 +15,7 @@ master: 1.5.8
 
 * Template handling detailing (for Eigen)
 * Extended documentation
-* Fix regression bugs: #179, #180, #182
+* Fix regression bugs: #176, #179, #180, #182
 
 
 2019-11-07: 1.5.7
