@@ -14,6 +14,7 @@ master: 1.5.8
 -------------
 
 * Template handling detailing (for Eigen)
+* Support keyword arguments
 * Extended documentation
 * Fix regression bugs: #176, #179, #180, #182
 

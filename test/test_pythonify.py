@@ -392,6 +392,50 @@ class TestPYTHONIFY:
 
         assert cppyy.gbl.Lifeline.gime(42).get()[0].get()[0].get()[0].get()[0].x == 42
 
+    def test18_keywords(self):
+        """Use of keyword arguments"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace KeyWords {
+        struct A {
+ 	    A(std::initializer_list<int> vals) : fVals(vals) {}
+            std::vector<int> fVals;
+        };
+
+        struct B {
+	    B() = default;
+	    B(const A& in_A, const A& out_A) : fVal(42), fIn(in_A), fOut(out_A) {}
+            B(int val, const A& in_A, const A& out_A) : fVal(val), fIn(in_A), fOut(out_A) {}
+            int fVal;
+            A fIn, fOut;
+        }; }""")
+
+        A = cppyy.gbl.KeyWords.A
+        B = cppyy.gbl.KeyWords.B
+
+        def verify_b(b, val, ti, to):
+            assert b.fVal              == val
+            assert b.fIn.fVals.size()  == len(ti)
+            assert tuple(b.fIn.fVals)  == ti
+            assert b.fOut.fVals.size() == len(to)
+            assert tuple(b.fOut.fVals) == to
+
+        b = B(in_A=(256,), out_A=(32,))
+        verify_b(b, 42, (256,), (32,))
+
+        b = B(out_A=(32,), in_A=(256,))
+        verify_b(b, 42, (256,), (32,))
+
+        with raises(TypeError):
+            b = B(in_B=(256,), out_A=(32,))
+
+        b = B(17, in_A=(23,), out_A=(78,))
+        verify_b(b, 17, (23,), (78,))
+
+        with raises(TypeError):
+            B(17, val=(23,), out_A=(78,))
+
 
 class TestPYTHONIFY_UI:
     def setup_class(cls):
