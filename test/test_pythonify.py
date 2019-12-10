@@ -409,8 +409,23 @@ class TestPYTHONIFY:
             B(int val, const A& in_A, const A& out_A) : fVal(val), fIn(in_A), fOut(out_A) {}
             int fVal;
             A fIn, fOut;
-        }; }""")
+        };
 
+        int callme(int choice, int a, int b, int c) {
+            if (choice == 0) return a;
+            if (choice == 1) return b;
+            return c;
+        }
+
+        struct C {
+            int fChoice;
+        };
+
+        int callme_c(const C& o, int a, int b, int c) {
+            return callme(o.fChoice, a, b, c);
+        } }""")
+
+      # constructor and implicit conversion with keywords
         A = cppyy.gbl.KeyWords.A
         B = cppyy.gbl.KeyWords.B
 
@@ -438,6 +453,42 @@ class TestPYTHONIFY:
 
         with raises(TypeError):
             b = B(17, out_A=(78,)) 
+
+      # global function with keywords
+        callme = cppyy.gbl.KeyWords.callme
+        for i in range(3):
+            assert callme(i, a=1, b=2, c=3) == i+1
+            assert callme(i, b=2, c=3, a=1) == i+1
+            assert callme(i, c=3, a=1, b=2) == i+1
+
+        with raises(TypeError):
+            callme(0, a=1, b=2, d=3)
+
+        with raises(TypeError):
+            callme(0, 1, a=2, c=3)
+
+        with raises(TypeError):
+            callme(0, a=1, b=2)
+
+      # global function as method with keywords
+        c = cppyy.gbl.KeyWords.C()
+        cppyy.gbl.KeyWords.C.callme = cppyy.gbl.KeyWords.callme_c
+
+        for i in range(3):
+            c.fChoice = i
+            assert c.callme(a=1, b=2, c=3) == i+1
+            assert c.callme(b=2, c=3, a=1) == i+1
+            assert c.callme(c=3, a=1, b=2) == i+1
+
+        c.fChoice = 0
+        with raises(TypeError):
+            c.callme(a=1, b=2, d=3)
+
+        with raises(TypeError):
+            c.callme(1, a=2, c=3)
+
+        with raises(TypeError):
+            c.callme(a=1, b=2)
 
 
 class TestPYTHONIFY_UI:
