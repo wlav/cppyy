@@ -434,7 +434,10 @@ class TestPYTHONIFY:
         verify_b(b, 17, (23,), (78,))
 
         with raises(TypeError):
-            B(17, val=(23,), out_A=(78,))
+            b = B(17, val=23, out_A=(78,))
+
+        with raises(TypeError):
+            b = B(17, out_A=(78,)) 
 
 
 class TestPYTHONIFY_UI:
