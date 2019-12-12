@@ -981,3 +981,28 @@ class TestSTLPAIR:
 
         assert a == 1
         assert b == 2
+
+
+class TestSTLEXCEPTION:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+
+    def test01_raising(self):
+        """Raise a C++ std::exception derived class as a Python excption"""
+
+        import cppyy
+
+        #assert issubclass(cppyy.gbl.MyError, BaseException)
+
+        def raiseit():
+            raise cppyy.gbl.MyError('Oops')
+
+        #raises(cppyy.gbl.MyError, raiseit)
+        raises(Exception, raiseit)
+
+        try:
+            raiseit()
+        except Exception as e:
+            assert e.what() == 'Oops'

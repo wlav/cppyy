@@ -1,3 +1,4 @@
+#include <exception>
 #include <list>
 #include <map>
 #include <string>
@@ -175,3 +176,14 @@ namespace StringViewTest {
     std::string_view::size_type count_cr(const std::string_view& arg);
 }
 #endif
+
+
+// helper for exception base class testing
+class MyError : public std::exception {
+public:
+    explicit MyError(const std::string& msg) : fMsg(msg) {}
+    const char* what() const throw() override { return fMsg.c_str(); }
+
+private:
+    std::string fMsg;
+};

@@ -22,4 +22,7 @@
   <namespace name="StringViewTest" />
   <function pattern="StringViewTest::*" />
 
+  <class name="std::exception" />
+  <class name="MyError" />
+
 </lcgdict>
