@@ -994,15 +994,20 @@ class TestSTLEXCEPTION:
 
         import cppyy
 
-        #assert issubclass(cppyy.gbl.MyError, BaseException)
+        assert issubclass(cppyy.gbl.MyError, BaseException)
 
         def raiseit():
             raise cppyy.gbl.MyError('Oops')
 
-        #raises(cppyy.gbl.MyError, raiseit)
         raises(Exception, raiseit)
+        raises(cppyy.gbl.MyError, raiseit)
 
         try:
             raiseit()
         except Exception as e:
+            assert e.what() == 'Oops'
+
+        try:
+            raiseit()
+        except cppyy.gbl.MyError as e:
             assert e.what() == 'Oops'
