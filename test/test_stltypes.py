@@ -989,25 +989,76 @@ class TestSTLEXCEPTION:
         import cppyy
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
 
-    def test01_raising(self):
+    def test01_basics(self):
+        """Test behavior of std::exception derived classes"""
+
+        import cppyy
+
+        assert issubclass(cppyy.gbl.std.exception, BaseException)
+        assert cppyy.gbl.std.exception is cppyy.gbl.std.exception
+
+        MyError = cppyy.gbl.MyError
+        assert MyError is cppyy.gbl.MyError
+        assert issubclass(MyError, BaseException)
+        assert issubclass(MyError, cppyy.gbl.std.exception)
+        assert MyError.__name__     == 'MyError'
+        assert MyError.__cpp_name__ == 'MyError'
+        assert MyError.__module__   == 'cppyy.gbl'
+
+        YourError = cppyy.gbl.YourError
+        assert YourError is cppyy.gbl.YourError
+        assert issubclass(YourError, MyError)
+        assert YourError.__name__     == 'YourError'
+        assert YourError.__cpp_name__ == 'YourError'
+        assert YourError.__module__   == 'cppyy.gbl'
+
+        MyError = cppyy.gbl.ErrorNamespace.MyError
+        assert MyError is not cppyy.gbl.MyError
+        assert MyError is cppyy.gbl.ErrorNamespace.MyError
+        assert issubclass(MyError, BaseException)
+        assert issubclass(MyError, cppyy.gbl.std.exception)
+        assert MyError.__name__     == 'MyError'
+        assert MyError.__cpp_name__ == 'ErrorNamespace::MyError'
+        assert MyError.__module__   == 'cppyy.gbl.ErrorNamespace'
+
+        YourError = cppyy.gbl.ErrorNamespace.YourError
+        assert YourError is not cppyy.gbl.YourError
+        assert YourError is cppyy.gbl.ErrorNamespace.YourError
+        assert issubclass(YourError, MyError)
+        assert YourError.__name__     == 'YourError'
+        assert YourError.__cpp_name__ == 'ErrorNamespace::YourError'
+        assert YourError.__module__   == 'cppyy.gbl.ErrorNamespace'
+
+    def test02_raising(self):
         """Raise a C++ std::exception derived class as a Python excption"""
 
         import cppyy
 
         assert issubclass(cppyy.gbl.MyError, BaseException)
 
-        def raiseit():
-            raise cppyy.gbl.MyError('Oops')
+        def raiseit(cls):
+            raise cls('Oops')
 
         raises(Exception, raiseit)
-        raises(cppyy.gbl.MyError, raiseit)
+        with raises(cppyy.gbl.MyError):
+            raiseit(cppyy.gbl.MyError)
 
         try:
-            raiseit()
+            raiseit(cppyy.gbl.MyError)
         except Exception as e:
             assert e.what() == 'Oops'
 
         try:
-            raiseit()
+            raiseit(cppyy.gbl.MyError)
         except cppyy.gbl.MyError as e:
+            assert e.what() == 'Oops'
+
+        try:
+            raiseit(cppyy.gbl.YourError)
+        except cppyy.gbl.MyError as e:
+            assert e.what() == 'Oops'
+
+        try:
+            raiseit(cppyy.gbl.YourError)
+        except cppyy.gbl.YourError as e:
             assert e.what() == 'Oops'

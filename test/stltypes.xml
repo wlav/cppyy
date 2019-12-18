@@ -24,5 +24,8 @@
 
   <class name="std::exception" />
   <class name="MyError" />
+  <class name="YourError" />
+  <namespace name="ErrorNamespace" />
+  <class pattern="ErrorNamespace::*" />
 
 </lcgdict>

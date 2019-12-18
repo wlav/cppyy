@@ -187,3 +187,26 @@ public:
 private:
     std::string fMsg;
 };
+
+class YourError : public MyError {
+public:
+    using MyError::MyError;
+};
+
+namespace ErrorNamespace {
+
+class MyError : public std::exception {
+public:
+    explicit MyError(const std::string& msg) : fMsg(msg) {}
+    const char* what() const throw() override { return fMsg.c_str(); }
+
+private:
+    std::string fMsg;
+};
+
+class YourError : public MyError {
+public:
+    using MyError::MyError;
+};
+
+} // ErrorNamespace
