@@ -1039,7 +1039,9 @@ class TestSTLEXCEPTION:
         def raiseit(cls):
             raise cls('Oops')
 
-        raises(Exception, raiseit)
+        with raises(Exception):
+            raiseit(cppyy.gbl.MyError)
+
         with raises(cppyy.gbl.MyError):
             raiseit(cppyy.gbl.MyError)
 
@@ -1062,3 +1064,47 @@ class TestSTLEXCEPTION:
             raiseit(cppyy.gbl.YourError)
         except cppyy.gbl.YourError as e:
             assert e.what() == 'Oops'
+
+    def test03_memory(self):
+        """Test memory handling of C++ c// helper for exception base class testing"""
+
+        import cppyy, gc
+
+        MyError   = cppyy.gbl.MyError
+        YourError = cppyy.gbl.YourError
+
+        gc.collect()
+        assert cppyy.gbl.GetMyErrorCount() == 0
+
+        m = MyError('Oops')
+        assert cppyy.gbl.GetMyErrorCount() == 1
+        del m
+        gc.collect()
+        assert cppyy.gbl.GetMyErrorCount() == 0
+
+        def raiseit(cls):
+            raise cls('Oops')
+
+        def run_raiseit(t1, t2):
+            try:
+                raiseit(t1)
+            except t2 as e:
+                assert e.what() == 'Oops'
+                return
+            assert not "should not reach this point"
+
+        for t1, t2 in [(MyError,   Exception),
+                       (MyError,   MyError),
+                       (YourError, MyError),
+                       (YourError, YourError)]:
+            with raises(t2):
+                raiseit(t1)
+            gc.collect()
+            assert cppyy.gbl.GetMyErrorCount() == 0
+
+            run_raiseit(t1, t2)
+            gc.collect()
+            assert cppyy.gbl.GetMyErrorCount() == 0
+
+        gc.collect()
+        assert cppyy.gbl.GetMyErrorCount() == 0

@@ -1,3 +1,6 @@
+#ifndef CPPYY_TEST_STLTYPES_H
+#define CPPYY_TEST_STLTYPES_H
+
 #include <exception>
 #include <list>
 #include <map>
@@ -181,12 +184,24 @@ namespace StringViewTest {
 // helper for exception base class testing
 class MyError : public std::exception {
 public:
-    explicit MyError(const std::string& msg) : fMsg(msg) {}
+    static int s_count;
+    static int get_count() { return s_count; }
+
+public:
+    explicit MyError(const std::string& msg);
+    MyError(const MyError&);
+    MyError(const MyError&&) = delete;
+    ~MyError();
+    MyError& operator=(const MyError&) = default;
     const char* what() const throw() override { return fMsg.c_str(); }
 
 private:
     std::string fMsg;
 };
+
+inline int GetMyErrorCount() {
+    return MyError::s_count;
+}
 
 class YourError : public MyError {
 public:
@@ -210,3 +225,5 @@ public:
 };
 
 } // ErrorNamespace
+
+#endif // !CPPYY_TEST_STLTYPES_H

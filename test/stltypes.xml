@@ -28,4 +28,6 @@
   <namespace name="ErrorNamespace" />
   <class pattern="ErrorNamespace::*" />
 
+  <function name="GetMyErrorCount" />
+
 </lcgdict>

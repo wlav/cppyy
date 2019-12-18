@@ -64,4 +64,20 @@ std::string_view::size_type StringViewTest::count(const std::string_view arg) {
 std::string_view::size_type StringViewTest::count_cr(const std::string_view& arg) {
     return arg.size();
 }
+
+
+// helper for exception base class testing
+int MyError::s_count = 0;
+MyError::MyError(const std::string& msg) : fMsg(msg) {
+    s_count += 1;
+}
+
+MyError::MyError(const MyError& other) : fMsg(other.fMsg) {
+    s_count += 1;
+}
+
+MyError::~MyError() {
+    s_count -= 1;
+}
+
 #endif
