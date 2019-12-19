@@ -382,6 +382,29 @@ class TestSTLVECTOR:
         assert vv[1][0] == 3
         assert vv[1][1] == 4
 
+    def test15_vector_slicing(self):
+        """Advanced test of vector slicing"""
+
+        from cppyy.gbl.std import vector
+
+        l = list(range(10))
+        v = vector[int](range(10))
+
+        assert list(v[2:2])    == l[2:2]
+        assert list(v[2:2:-1]) == l[2:2:-1]
+        assert list(v[2:5])    == l[2:5]
+        assert list(v[5:2])    == l[5:2]
+        assert list(v[2:5:-1]) == l[2:5:-1]
+        assert list(v[5:2:-1]) == l[5:2:-1]
+        assert list(v[2:5: 2]) == l[2:5: 2]
+        assert list(v[5:2: 2]) == l[5:2: 2]
+        assert list(v[2:5:-2]) == l[2:5:-2]
+        assert list(v[5:2:-2]) == l[5:2:-2]
+        assert list(v[2:5: 7]) == l[2:5: 7]
+        assert list(v[5:2: 7]) == l[5:2: 7]
+        assert list(v[2:5:-7]) == l[2:5:-7]
+        assert list(v[5:2:-7]) == l[5:2:-7]
+
 
 class TestSTLSTRING:
     def setup_class(cls):
