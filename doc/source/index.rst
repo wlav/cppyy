@@ -146,6 +146,7 @@ development environments.
    classes
    functions
    type_conversions
+   stl
    python
    lowlevel
    misc
