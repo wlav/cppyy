@@ -308,7 +308,7 @@ class TestSTLVECTOR:
         raises(TypeError, a.vector_pair, ll4)
 
     def test12_vector_lifeline(self):
-        """Check lifeline setting on vectors of objects."""
+        """Check lifeline setting on vectors of objects"""
 
         import cppyy
 
@@ -335,7 +335,7 @@ class TestSTLVECTOR:
         assert cppyy.gbl.Lifeline.count == 0
 
     def test13_vector_smartptr_iteration(self):
-        """Iteration over smart pointers."""
+        """Iteration over smart pointers"""
 
         import cppyy
 
@@ -366,6 +366,21 @@ class TestSTLVECTOR:
             assert res.y == i
             i += 1
         assert i == len(result)
+
+    def test14_vector_of_vector_of_(self):
+        """Nested vectors"""
+
+        from cppyy.gbl.std import vector
+
+        vv = vector[vector[int]](((1, 2), [3, 4]))
+
+        assert len(vv) == 2
+        assert list(vv[0]) == [1, 2]
+        assert vv[0][0] == 1
+        assert vv[0][1] == 2
+        assert list(vv[1]) == [3, 4]
+        assert vv[1][0] == 3
+        assert vv[1][1] == 4
 
 
 class TestSTLSTRING:
