@@ -80,4 +80,11 @@ MyError::~MyError() {
     s_count -= 1;
 }
 
+void ErrorNamespace::throw_error(int i) {
+    if (i == 0) throw ::MyError("first error");
+    else if (i == 1) throw ::YourError("second error");
+    else if (i == 2) throw MyError("third error");
+    throw YourError("fourth error");
+}
+
 #endif

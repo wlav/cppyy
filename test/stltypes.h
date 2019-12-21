@@ -191,7 +191,7 @@ public:
     explicit MyError(const std::string& msg);
     MyError(const MyError&);
     MyError(const MyError&&) = delete;
-    ~MyError();
+    virtual ~MyError();
     MyError& operator=(const MyError&) = default;
     const char* what() const throw() override { return fMsg.c_str(); }
 
@@ -205,7 +205,8 @@ inline int GetMyErrorCount() {
 
 class YourError : public MyError {
 public:
-    using MyError::MyError;
+    explicit YourError(const std::string& msg) : MyError(msg) {}
+    YourError(const YourError& s) : MyError(s) {}
 };
 
 namespace ErrorNamespace {
@@ -223,6 +224,8 @@ class YourError : public MyError {
 public:
     using MyError::MyError;
 };
+
+void throw_error(int i);
 
 } // ErrorNamespace
 

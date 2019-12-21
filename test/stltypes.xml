@@ -27,6 +27,7 @@
   <class name="YourError" />
   <namespace name="ErrorNamespace" />
   <class pattern="ErrorNamespace::*" />
+  <function pattern="ErrorNamespace::*" />
 
   <function name="GetMyErrorCount" />
 

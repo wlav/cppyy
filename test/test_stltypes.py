@@ -1104,7 +1104,7 @@ class TestSTLEXCEPTION:
             assert e.what() == 'Oops'
 
     def test03_memory(self):
-        """Test memory handling of C++ c// helper for exception base class testing"""
+        """Memory handling of C++ c// helper for exception base class testing"""
 
         import cppyy, gc
 
@@ -1146,3 +1146,26 @@ class TestSTLEXCEPTION:
 
         gc.collect()
         assert cppyy.gbl.GetMyErrorCount() == 0
+
+    def test04_from_cpp(self):
+        """Catch C++ exceptiosn from C++"""
+
+        import cppyy
+
+        with raises(cppyy.gbl.MyError):
+            cppyy.gbl.ErrorNamespace.throw_error(0)
+
+        with raises(cppyy.gbl.MyError):
+            cppyy.gbl.ErrorNamespace.throw_error(1)
+
+        #with raises(cppyy.gbl.YourError):
+        #cppyy.gbl.ErrorNamespace.throw_error(1)
+
+        with raises(cppyy.gbl.ErrorNamespace.MyError):
+            cppyy.gbl.ErrorNamespace.throw_error(2)
+
+        with raises(cppyy.gbl.ErrorNamespace.MyError):
+            cppyy.gbl.ErrorNamespace.throw_error(3)
+
+        with raises(cppyy.gbl.ErrorNamespace.YourError):
+            cppyy.gbl.ErrorNamespace.throw_error(3)
