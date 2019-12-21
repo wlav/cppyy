@@ -42,6 +42,7 @@ __all__ = [
     'sizeof',                 # size of a C++ type
     'typeid',                 # typeid of a C++ type
     'add_include_path',       # add a path to search for headers
+    'add_library_path',       # add a path to search for headers
     'add_autoload_map',       # explicitly include an autoload map
     ]
 
@@ -162,6 +163,12 @@ def add_include_path(path):
     if not os.path.isdir(path):
         raise OSError("no such directory: %s" % path)
     gbl.gInterpreter.AddIncludePath(path)
+
+def add_library_path(path):
+    """Add a path to the library search paths available to Cling."""
+    if not os.path.isdir(path):
+        raise OSError("no such directory: %s" % path)
+    gbl.gSystem.AddDynamicPath(path)
 
 # add access to Python C-API headers
 apipath = sysconfig.get_path('include', 'posix_prefix' if os.name == 'posix' else os.name)

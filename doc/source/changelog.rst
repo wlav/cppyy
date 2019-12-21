@@ -10,11 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.5.8
+master: 1.6.0
 -------------
 
+* Classes derived from std::exception can be used as Python exceptions
 * Template handling detailing (for Eigen)
 * Support keyword arguments
+* Added add_library_path at module level
 * Extended documentation
 * Fix regression bugs: #176, #179, #180, #182
 
