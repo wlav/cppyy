@@ -1150,7 +1150,10 @@ class TestSTLEXCEPTION:
     def test04_from_cpp(self):
         """Catch C++ exceptiosn from C++"""
 
-        import cppyy
+        import cppyy, gc
+
+        gc.collect()
+        assert cppyy.gbl.GetMyErrorCount() == 0
 
         with raises(cppyy.gbl.MyError):
             cppyy.gbl.ErrorNamespace.throw_error(0)
@@ -1158,8 +1161,8 @@ class TestSTLEXCEPTION:
         with raises(cppyy.gbl.MyError):
             cppyy.gbl.ErrorNamespace.throw_error(1)
 
-        #with raises(cppyy.gbl.YourError):
-        #cppyy.gbl.ErrorNamespace.throw_error(1)
+        with raises(cppyy.gbl.YourError):
+            cppyy.gbl.ErrorNamespace.throw_error(1)
 
         with raises(cppyy.gbl.ErrorNamespace.MyError):
             cppyy.gbl.ErrorNamespace.throw_error(2)
@@ -1169,3 +1172,6 @@ class TestSTLEXCEPTION:
 
         with raises(cppyy.gbl.ErrorNamespace.YourError):
             cppyy.gbl.ErrorNamespace.throw_error(3)
+
+        gc.collect()
+        assert cppyy.gbl.GetMyErrorCount() == 0
