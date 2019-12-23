@@ -185,7 +185,7 @@ namespace StringViewTest {
 class MyError : public std::exception {
 public:
     static int s_count;
-    static int get_count() { return s_count; }
+    static int get_count();
 
 public:
     explicit MyError(const std::string& msg);
@@ -193,28 +193,26 @@ public:
     MyError(const MyError&&) = delete;
     virtual ~MyError();
     MyError& operator=(const MyError&) = default;
-    const char* what() const throw() override { return fMsg.c_str(); }
+    const char* what() const throw() override;
 
 private:
     std::string fMsg;
 };
 
-inline int GetMyErrorCount() {
-    return MyError::s_count;
-}
+int GetMyErrorCount();
 
 class YourError : public MyError {
 public:
-    explicit YourError(const std::string& msg) : MyError(msg) {}
-    YourError(const YourError& s) : MyError(s) {}
+    explicit YourError(const std::string& msg);
+    YourError(const YourError& s);
 };
 
 namespace ErrorNamespace {
 
 class MyError : public std::exception {
 public:
-    explicit MyError(const std::string& msg) : fMsg(msg) {}
-    const char* what() const throw() override { return fMsg.c_str(); }
+    explicit MyError(const std::string& msg);
+    const char* what() const throw() override;
 
 private:
     std::string fMsg;

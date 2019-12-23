@@ -68,6 +68,8 @@ std::string_view::size_type StringViewTest::count_cr(const std::string_view& arg
 
 // helper for exception base class testing
 int MyError::s_count = 0;
+int MyError::get_count() { return s_count; }
+
 MyError::MyError(const std::string& msg) : fMsg(msg) {
     s_count += 1;
 }
@@ -79,6 +81,18 @@ MyError::MyError(const MyError& other) : fMsg(other.fMsg) {
 MyError::~MyError() {
     s_count -= 1;
 }
+
+const char* MyError::what() const throw() { return fMsg.c_str(); }
+
+int GetMyErrorCount() {
+    return MyError::s_count;
+}
+
+YourError::YourError(const std::string& msg) : MyError(msg) {}
+YourError::YourError(const YourError& s) : MyError(s) {}
+
+ErrorNamespace::MyError::MyError(const std::string& msg) : fMsg(msg) {}
+const char* ErrorNamespace::MyError::what() const throw() { return fMsg.c_str(); }
 
 void ErrorNamespace::throw_error(int i) {
     if (i == 0) throw ::MyError("first error");
