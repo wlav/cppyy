@@ -707,10 +707,13 @@ class TestADVANCEDCPP:
         assert raises(Exception, t.throw_anything)
         assert raises(Exception, t.throw_exception)
 
+        caught = False
         try:
             t.throw_exception()
         except Exception as e:
-            "C++ function failed" in str(e)
+            assert "C++ function failed" in str(e)
+            caught = True
+        assert caught == True
 
     def test23_using(self):
         """Accessibility of using declarations"""
