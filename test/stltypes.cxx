@@ -64,7 +64,7 @@ std::string_view::size_type StringViewTest::count(const std::string_view arg) {
 std::string_view::size_type StringViewTest::count_cr(const std::string_view& arg) {
     return arg.size();
 }
-
+#endif // __cplusplus > 201402L
 
 // helper for exception base class testing
 int MyError::s_count = 0;
@@ -100,5 +100,3 @@ void ErrorNamespace::throw_error(int i) {
     else if (i == 2) throw MyError("third error");
     throw YourError("fourth error");
 }
-
-#endif
