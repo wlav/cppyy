@@ -27,9 +27,11 @@ try:
     elif version[0] == 7:
         if version[1] <= 2:
             requirements = ['cppyy-cling<=6.18.2.3', 'cppyy-backend<=1.10']
+        else:
+            requirements = ['cppyy-cling<=6.18.2.6', 'cppyy-backend<=1.10']
 except ImportError:
     # CPython
-    requirements = ['cppyy-cling==6.18.2.6', 'cppyy-backend==1.10.7', 'CPyCppyy==1.9.8']
+    requirements = ['cppyy-cling==6.18.2.6', 'cppyy-backend==1.10.7', 'CPyCppyy==1.10.0']
 
 setup_requirements = ['wheel']
 if 'build' in sys.argv or 'install' in sys.argv:
