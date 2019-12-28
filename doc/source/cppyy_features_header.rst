@@ -121,3 +121,18 @@ File features.h
     //-----
     enum EFruit {kApple=78, kBanana=29, kCitrus=34};
     enum class NamedClassEnum { E1 = 42 };
+
+    //-----
+    class SomeError : public std::exception {
+    public:
+        explicit SomeError(const std::string& msg) : fMsg(msg) {}
+        const char* what() const throw() override { return fMsg.c_str(); }
+
+    private:
+        std::string fMsg;
+    };
+
+    class SomeOtherError : public SomeError {
+    public:
+         using SomeError::SomeError;
+    };

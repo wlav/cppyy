@@ -83,8 +83,9 @@ and heavy use of templates:
    >>> extract = boost.any_cast[int](std.move(val))   # wrong cast
    Traceback (most recent call last):
      File "<stdin>", line 1, in <module>
-   Exception: int boost::any_cast(boost::any&& operand) =>
-       boost::bad_any_cast: failed conversion using boost::any_cast (C++ exception)
+   cppyy.gbl.boost.bad_any_cast: Could not instantiate any_cast<int>:
+     int boost::any_cast(boost::any&& operand) =>
+       wrapexcept<boost::bad_any_cast>: boost::bad_any_cast: failed conversion using boost::any_cast
    >>> extract = boost.any_cast[std.vector[int]](val) # correct cast
    >>> type(extract) is std.vector[int]
    True
