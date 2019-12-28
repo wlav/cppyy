@@ -10,6 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.6.1
+-------------
+
+* Mapped C++ exception reporting detailing
+* Extended documentation
+
+
 2019-12-23: 1.6.0
 -----------------
 
