@@ -1,13 +1,23 @@
 import py, os, sys
 from pytest import raises
+from .support import setup_make
+
+currpath = py.path.local(__file__).dirpath()
+test_dct = str(currpath.join("doc_helperDict"))
+
+def setup_module(mod):
+    setup_make("doc_helper")
 
 
 class TestDOCFEATURES:
     def setup_class(cls):
+        cls.test_dct = test_dct
         import cppyy
 
         # touch __version__ as a test
         assert hasattr(cppyy, '__version__')
+
+        cls.doc_helper = cppyy.load_reflection_info(cls.test_dct)
 
         cppyy.cppdef("""
 #include <cmath>
@@ -122,6 +132,10 @@ namespace Namespace {
         return 2*::global_function(d);
     }
 
+    //-----
+    enum EFruit {kApple=78, kBanana=29, kCitrus=34};
+    enum class NamedClassEnum { E1 = 42 };
+
 } // namespace Namespace
 
 """)
@@ -193,6 +207,25 @@ namespace Namespace {
         args = (27,)
         c = Concrete(*args)
         assert c.m_int == 27
+
+    def test_keyword_arguments(self):
+        import cppyy
+        from cppyy.gbl import Concrete
+
+        c = Concrete(n=17)
+        assert c.m_int == 17
+
+        caught = False
+        try:
+            c = Concrete(m=18)    # unknown keyword
+        except TypeError as e:
+            assert 'unexpected keyword argument' in str(e)
+            caught = True
+        assert caught == True
+
+        kwds = {'n' : 18}
+        c = Concrete(**kwds)
+        assert c.m_int == 18
 
     def test_doc_strings(self):
         import cppyy
@@ -375,6 +408,20 @@ namespace Namespace {
 
         pc = PyConcrete4()
         assert call_abstract_method(pc) == "Hello, Python World! (4)"
+
+    def test_exceptions(self):
+        """Exception throwing and catching"""
+
+        import cppyy
+
+        caught = False
+        try:
+            cppyy.gbl.DocHelper.throw_an_error(1)
+        except cppyy.gbl.SomeError as e:
+            assert 'this is an error' in str(e)
+            assert e.what() == 'this is an error'
+            caught = True
+        assert caught == True
 
 
 class TestTUTORIALFEATURES:
@@ -609,7 +656,7 @@ namespace Zoo {
         assert mul['double, double, double'](1., 5) == 5.
 
     def test10_stl_algorithm(self):
-        """Test STL algorithm on std::string"""
+        """STL algorithm on std::string"""
 
         import cppyy
 

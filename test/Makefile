@@ -4,6 +4,7 @@ dicts = advancedcppDict.so \
         cpp11featuresDict.so \
         crossinheritanceDict.so \
         datatypesDict.so \
+        doc_helperDict.so \
         example01Dict.so \
         fragileDict.so \
         operatorsDict.so \
