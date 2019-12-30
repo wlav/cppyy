@@ -14,6 +14,7 @@ master: 1.6.1
 -------------
 
 * Mapped C++ exception reporting detailing
+* STL vector slicing passes the Python slicing tests
 * Extended documentation
 
 

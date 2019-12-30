@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pyunicode, maxvalue
+from .support import setup_make, pylong, pyunicode, maxvalue
 
 try:
     import __pypy__
@@ -14,6 +14,49 @@ test_dct = str(currpath.join("stltypesDict"))
 
 def setup_module(mod):
     setup_make("stltypes")
+
+
+# after CPython's Lib/test/seq_tests.py
+def getslice_cpython_test(type2test):
+    """Detailed slicing tests from CPython"""
+
+    l = [0, 1, 2, 3, 4]
+    u = type2test(l)
+
+    assert u[0:0]        == type2test()
+    assert u[1:2]        == type2test([1])
+    assert u[-2:-1]      == type2test([3])
+    assert u[-1000:1000] == u
+    assert u[1000:-1000] == type2test([])
+    assert u[:]          == u
+    assert u[1:None]     == type2test([1, 2, 3, 4])
+    assert u[None:3]     == type2test([0, 1, 2])
+
+  # Extended slices
+    assert u[::]          == u
+    assert u[::2]         == type2test([0, 2, 4])
+    assert u[1::2]        == type2test([1, 3])
+    assert u[::-1]        == type2test([4, 3, 2, 1, 0])
+    assert u[::-2]        == type2test([4, 2, 0])
+    assert u[3::-2]       == type2test([3, 1])
+    assert u[3:3:-2]      == type2test([])
+    assert u[3:2:-2]      == type2test([3])
+    assert u[3:1:-2]      == type2test([3])
+    assert u[3:0:-2]      == type2test([3, 1])
+    assert u[::-100]      == type2test([4])
+    assert u[100:-100:]   == type2test([])
+    assert u[-100:100:]   == u
+    assert u[100:-100:-1] == u[::-1]
+    assert u[-100:100:-1] == type2test([])
+    assert u[-pylong(100):pylong(100):pylong(2)] == type2test([0, 2, 4])
+
+  # Test extreme cases with long ints
+    a = type2test([0,1,2,3,4])
+    # the following two fail b/c PySlice_GetIndices succeeds w/o error, while
+    # returning an overflown value (list object uses different internal APIs)
+    #assert a[ -pow(2,128): 3 ] == type2test([0,1,2])
+    #assert a[ 3: pow(2,145) ]  == type2test([3,4])
+    assert a[3::maxvalue]      == type2test([3])
 
 
 class TestSTLVECTOR:
@@ -404,6 +447,9 @@ class TestSTLVECTOR:
         assert list(v[5:2: 7]) == l[5:2: 7]
         assert list(v[2:5:-7]) == l[2:5:-7]
         assert list(v[5:2:-7]) == l[5:2:-7]
+
+      # additional test from CPython's test suite
+        getslice_cpython_test(vector[int])
 
 
 class TestSTLSTRING:
