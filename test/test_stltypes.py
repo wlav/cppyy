@@ -17,6 +17,145 @@ def setup_module(mod):
 
 
 # after CPython's Lib/test/seq_tests.py
+def iterfunc(seqn):
+    """Regular generator"""
+    for i in seqn:
+        yield i
+
+class Sequence:
+    """Sequence using __getitem__"""
+    def __init__(self, seqn):
+        self.seqn = seqn
+    def __getitem__(self, i):
+        return self.seqn[i]
+
+class IterFunc:
+    """Sequence using iterator protocol"""
+    def __init__(self, seqn):
+        self.seqn = seqn
+        self.i = 0
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if self.i >= len(self.seqn): raise StopIteration
+        v = self.seqn[self.i]
+        self.i += 1
+        return v
+    next = __next__ # p2.7
+
+class IterGen:
+    """Sequence using iterator protocol defined with a generator"""
+    def __init__(self, seqn):
+        self.seqn = seqn
+        self.i = 0
+    def __iter__(self):
+        for val in self.seqn:
+            yield val
+
+class IterNextOnly:
+    """Missing __getitem__ and __iter__"""
+    def __init__(self, seqn):
+        self.seqn = seqn
+        self.i = 0
+    def __next__(self):
+        if self.i >= len(self.seqn): raise StopIteration
+        v = self.seqn[self.i]
+        self.i += 1
+        return v
+    next = __next__ # p2.7
+
+class IterNoNext:
+    """Iterator missing __next__()"""
+    def __init__(self, seqn):
+        self.seqn = seqn
+        self.i = 0
+    def __iter__(self):
+        return self
+
+class IterGenExc:
+    """Test propagation of exceptions"""
+    def __init__(self, seqn):
+        self.seqn = seqn
+        self.i = 0
+    def __iter__(self):
+        return self
+    def __next__(self):
+        3 // 0
+    next = __next__ # p2.7
+
+class IterFuncStop:
+    """Test immediate stop"""
+    def __init__(self, seqn):
+        pass
+    def __iter__(self):
+        return self
+    def __next__(self):
+        raise StopIteration
+    next = __next__ # p2.7
+
+from itertools import chain
+def itermulti(seqn):
+    """Test multiple tiers of iterators"""
+    return chain(map(lambda x:x, iterfunc(IterGen(Sequence(seqn)))))
+
+class LyingTuple(tuple):
+    def __iter__(self):
+        yield 1
+
+class LyingList(list):
+    def __iter__(self):
+        yield 1
+
+def constructors_cpython_test(type2test):
+    l0 = []
+    l1 = [0]
+    l2 = [0, 1]
+
+    u = type2test()
+    u0 = type2test(l0)
+    u1 = type2test(l1)
+    u2 = type2test(l2)
+
+    uu = type2test(u)
+    uu0 = type2test(u0)
+    uu1 = type2test(u1)
+    uu2 = type2test(u2)
+
+    v = type2test(tuple(u))
+    class OtherSeq:
+        def __init__(self, initseq):
+            self.__data = initseq
+        def __len__(self):
+            return len(self.__data)
+        def __getitem__(self, i):
+            return self.__data[i]
+    s = OtherSeq(u0)
+    v0 = type2test(s)
+    assert len(v0) == len(s)
+
+    # the following does not work for type-checked containers
+    #s = "this is also a sequence"
+    #vv = type2test(s)
+    #assert len(vv) == len(s)
+
+  # Create from various iteratables
+    # as above, can not put strings in type-checked containers
+    #for s in ("123", "", range(1000), ('do', 1.2), range(2000,2200,5)):
+    for s in (range(1000), range(2000,2200,5)):
+        for g in (Sequence, IterFunc, IterGen,
+                  itermulti, iterfunc):
+            assert type2test(g(s)) == type2test(s)
+        assert type2test(IterFuncStop(s))  ==  type2test()
+        # as above, no strings
+        #assert type2test(c for c in "123") == type2test("123")
+        raises(TypeError, type2test, IterNextOnly(s))
+        raises(TypeError, type2test, IterNoNext(s))
+        raises(ZeroDivisionError, type2test, IterGenExc(s))
+
+  # Issue #23757 (in CPython)
+    #assert type2test(LyingTuple((2,))) == type2test((1,))
+    #assert type2test(LyingList([2]))   == type2test([1])
+
 def getslice_cpython_test(type2test):
     """Detailed slicing tests from CPython"""
 
@@ -450,6 +589,13 @@ class TestSTLVECTOR:
 
       # additional test from CPython's test suite
         getslice_cpython_test(vector[int])
+
+    def test16_vector_construction(self):
+        """Vector construction following CPython's sequence"""
+
+        import cppyy
+
+        constructors_cpython_test(cppyy.gbl.std.vector[int])
 
 
 class TestSTLSTRING:
