@@ -31,7 +31,7 @@ try:
             requirements = ['cppyy-cling<=6.18.2.6', 'cppyy-backend<=1.10']
 except ImportError:
     # CPython
-    requirements = ['cppyy-cling==6.18.2.6', 'cppyy-backend==1.10.7', 'CPyCppyy==1.10.0']
+    requirements = ['cppyy-cling==6.18.2.6', 'cppyy-backend==1.10.7', 'CPyCppyy==1.10.1']
 
 setup_requirements = ['wheel']
 if 'build' in sys.argv or 'install' in sys.argv:

@@ -10,11 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.6.1
--------------
+2019-01-04: 1.6.1
+-----------------
 
 * Mapped C++ exception reporting detailing
-* STL vector slicing passes the Python slicing tests
+* Mapped C++ exception cleanup bug fix
+* STL vector constructor passes the CPython sequence construction
+* STL vector slicing passes the CPython sequence slicing tests
 * Extended documentation
 
 
