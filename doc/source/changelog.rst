@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+Master: 1.6.2
+-------------
+
+* Lower priority of implicit conversion to temporary with initializer_list ctor
+
+
 2019-01-04: 1.6.1
 -----------------
 

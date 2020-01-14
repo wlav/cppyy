@@ -496,3 +496,51 @@ class TestREGRESSION:
 
         l = [e for e in cppyy.gbl.get_some_temporary_vector()]
         assert l == ['x', 'y', 'z']
+
+    def test21_initializer_list_and_temporary(self):
+        """Conversion rules when selecting intializer_list v.s. temporary"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace regression_test21 {
+        std::string what_called = "";
+        class Foo {
+        public:
+            Foo() = default;
+            Foo(int i) {
+                what_called += "Foo(int)";
+            }
+            Foo(std::initializer_list<uint8_t> il) {
+                std::ostringstream os;
+                os << "Foo(il<size=" << il.size() << ">)";
+                what_called += os.str();
+            }
+        };
+
+        class Bar {
+        public:
+            Bar() = default;
+            Bar(int i) {
+                what_called = "Bar(int)";
+            }
+            Bar(std::initializer_list<uint8_t> il) {
+                std::ostringstream os;
+                os << "Bar(il<size=" << il.size() << ">)";
+                what_called += os.str();
+            }
+            Bar(Foo x) {
+                what_called += "Bar(Foo)";
+            }
+        }; }""")
+
+        r21 = cppyy.gbl.regression_test21
+
+        assert len(r21.what_called) == 0
+
+        r21.Bar(1)
+        assert r21.what_called == 'Bar(int)'
+
+        r21.what_called = ''
+        r21.Bar([1,2])  # used to call Bar(Foo x) through implicit conversion
+        assert r21.what_called == 'Bar(il<size=2>)'
