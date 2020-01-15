@@ -59,6 +59,7 @@ source code):
   * Jonsomi
   * Max Kolin
   * Alvaro Moran
+  * Tarmo Pikaro
   * Matti Picus
   * Camille Scott
   * Toby StClere-Smithe
