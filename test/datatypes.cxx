@@ -624,11 +624,18 @@ int sum_of_int2(int i1, int i2) {
 
 int (*sum_of_int_ptr)(int, int) = sum_of_int1;
 
+int call_sum_of_int(int i1, int i2) {
+    if (sum_of_int_ptr)
+        return (*sum_of_int_ptr)(i1, i2);
+    return -1;
+}
+
 double sum_of_double(double d1, double d2) {
     return d1+d2;
 }
 
 double call_double_double(double (*f)(double, double), double d1, double d2) {
+    if (!f) return -1.;
     return f(d1, d2);
 }
 

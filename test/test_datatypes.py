@@ -930,7 +930,8 @@ class TestDATATYPES:
 
         raises(TypeError, fdd, fi1, 2, 3)
 
-        assert 5. == fdd(fd, 5., 0.)
+        assert  5. == fdd(fd, 5., 0.)
+        assert -1. == fdd(cppyy.nullptr, 5., 0.)
 
         fip = cppyy.gbl.sum_of_int_ptr
         assert 5 == fip(2, 3)
@@ -943,6 +944,20 @@ class TestDATATYPES:
             cppyy.gbl.sum_of_int_ptr
         with raises(AttributeError):
             cppyy.gbl.sim_of_int_ptr   # incorrect spelling
+
+        cppyy.gbl.sum_of_int_ptr = cppyy.gbl.sum_of_int1
+        assert fip == cppyy.gbl.sum_of_int_ptr   # b/c cached
+
+        def sum_in_python(i1, i2):
+            return i1-i2
+        cppyy.gbl.sum_of_int_ptr = sum_in_python
+        assert 1 == cppyy.gbl.call_sum_of_int(3, 2)
+
+        def sum_in_python(i1, i2, i3):
+            return i1+i2+i3
+        cppyy.gbl.sum_of_int_ptr = sum_in_python
+        with raises(TypeError):
+            cppyy.gbl.call_sum_of_int(3, 2)
 
     def test22_callable_passing(self):
         """Passing callables through function pointers"""

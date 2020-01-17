@@ -36,6 +36,7 @@
   <function name="sum_of_int1" />
   <function name="sum_of_int2" />
   <variable name="sum_of_int_ptr" />
+  <function name="call_sum_of_int" />
   <function name="sum_of_double" />
   <function name="call_double_double" />
 
