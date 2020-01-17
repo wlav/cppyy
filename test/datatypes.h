@@ -602,7 +602,8 @@ extern StorableData gData;
 
 
 //= function pointer passing ================================================
-int sum_of_int(int i1, int i2);
+int sum_of_int1(int i1, int i2);
+int sum_of_int2(int i1, int i2);
 extern int (*sum_of_int_ptr)(int, int);
 
 double sum_of_double(double d1, double d2);

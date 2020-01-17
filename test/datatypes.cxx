@@ -614,11 +614,15 @@ StorableData gData{5.};
 
 
 //= function pointer passing ================================================
-int sum_of_int(int i1, int i2) {
+int sum_of_int1(int i1, int i2) {
     return i1+i2;
 }
 
-int (*sum_of_int_ptr)(int, int) = sum_of_int;
+int sum_of_int2(int i1, int i2) {
+    return 2*i1+i2;
+}
+
+int (*sum_of_int_ptr)(int, int) = sum_of_int1;
 
 double sum_of_double(double d1, double d2) {
     return d1+d2;

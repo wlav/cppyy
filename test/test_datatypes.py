@@ -920,19 +920,29 @@ class TestDATATYPES:
 
         import cppyy
 
-        f1  = cppyy.gbl.sum_of_int
-        f2  = cppyy.gbl.sum_of_double
+        fi1 = cppyy.gbl.sum_of_int1
+        fi2 = cppyy.gbl.sum_of_int2
+        fd  = cppyy.gbl.sum_of_double
         fdd = cppyy.gbl.call_double_double
 
-        assert 5 == f1(2, 3)
-        assert 5. == f2(5., 0.)
+        assert 5 == fi1(2, 3)
+        assert 5. == fd(5., 0.)
 
-        raises(TypeError, fdd, f1, 2, 3)
+        raises(TypeError, fdd, fi1, 2, 3)
 
-        assert 5. == fdd(f2, 5., 0.)
+        assert 5. == fdd(fd, 5., 0.)
 
-        f1p = cppyy.gbl.sum_of_int_ptr
-        assert 5 == f1p(2, 3)
+        fip = cppyy.gbl.sum_of_int_ptr
+        assert 5 == fip(2, 3)
+
+        cppyy.gbl.sum_of_int_ptr = cppyy.gbl.sum_of_int2
+        assert 7 == cppyy.gbl.sum_of_int_ptr(2, 3)
+
+        cppyy.gbl.sum_of_int_ptr = cppyy.nullptr
+        with raises(TypeError):        # not attribute error!
+            cppyy.gbl.sum_of_int_ptr
+        with raises(AttributeError):
+            cppyy.gbl.sim_of_int_ptr   # incorrect spelling
 
     def test22_callable_passing(self):
         """Passing callables through function pointers"""
