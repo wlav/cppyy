@@ -14,6 +14,9 @@ Master: 1.6.2
 -------------
 
 * Lower priority of implicit conversion to temporary with initializer_list ctor
+* Enable assignment to function pointer variable
+* Allow passing cppyy.nullptr where are function pointer is expected
+* Remove '-isystem' from makepch flags
 
 
 2019-01-04: 1.6.1
