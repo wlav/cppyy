@@ -948,6 +948,13 @@ class TestDATATYPES:
         cppyy.gbl.sum_of_int_ptr = cppyy.gbl.sum_of_int1
         assert fip == cppyy.gbl.sum_of_int_ptr   # b/c cached
 
+        o = cppyy.gbl.sum_of_int_struct()
+        o.sum_of_int_ptr = cppyy.gbl.sum_of_int1
+        assert 5 == o.sum_of_int_ptr(2, 3)
+
+        o.sum_of_int_ptr = cppyy.gbl.sum_of_int2
+        assert 7 == o.sum_of_int_ptr(2, 3)
+
         def sum_in_python(i1, i2):
             return i1-i2
         cppyy.gbl.sum_of_int_ptr = sum_in_python
