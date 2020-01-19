@@ -993,7 +993,7 @@ class TestDATATYPES:
             cppyy.gbl.sim_of_int_ptr   # incorrect spelling
 
         cppyy.gbl.sum_of_int_ptr = cppyy.gbl.sum_of_int1
-        assert fip == cppyy.gbl.sum_of_int_ptr   # b/c cached
+        assert fip is cppyy.gbl.sum_of_int_ptr   # b/c cached
 
         o = cppyy.gbl.sum_of_int_struct()
         o.sum_of_int_ptr = cppyy.gbl.sum_of_int1
