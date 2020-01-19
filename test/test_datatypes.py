@@ -15,6 +15,7 @@ class TestDATATYPES:
         import cppyy
         cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
         cls.N = cppyy.gbl.N
+        cls.has_byte = 201402 < cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;")
 
     def test01_instance_data_read_access(self):
         """Read access to instance public data and verify values"""
@@ -43,6 +44,8 @@ class TestDATATYPES:
         # reading integer types
         assert c.m_int8    == - 9; assert c.get_int8_cr()    == - 9; assert c.get_int8_r()    == - 9
         assert c.m_uint8   ==   9; assert c.get_uint8_cr()   ==   9; assert c.get_uint8_r()   ==   9 
+        if self.has_byte:
+            assert c.m_byte == ord('d'); assert c.get_byte_cr() == ord('d'); assert c.get_byte_r() == ord('d')
         assert c.m_short   == -11; assert c.get_short_cr()   == -11; assert c.get_short_r()   == -11
         assert c.m_ushort  ==  11; assert c.get_ushort_cr()  ==  11; assert c.get_ushort_r()  ==  11
         assert c.m_int     == -22; assert c.get_int_cr()     == -22; assert c.get_int_r()     == -22
@@ -104,8 +107,8 @@ class TestDATATYPES:
             assert c.get_bool_array2()[i]   ==   bool((i+1)%2)
 
         # reading of integer array types
-        names = ['schar', 'uchar',  'short', 'ushort',    'int', 'uint',    'long',  'ulong']
-        alpha = [ (1, 2), (1, 2), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
+        names = ['schar', 'uchar',  'byte', 'short', 'ushort',    'int', 'uint',    'long',  'ulong']
+        alpha = [ (1, 2), (1, 2),  (3, 4), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
         for j in range(self.N):
             assert getattr(c, 'm_%s_array'    % names[i])[i]   == alpha[i][0]*i
             assert getattr(c, 'get_%s_array'  % names[i])()[i] == alpha[i][0]*i
@@ -122,6 +125,7 @@ class TestDATATYPES:
         # out-of-bounds checks
         raises(IndexError, c.m_schar_array.__getitem__,  self.N)
         raises(IndexError, c.m_uchar_array.__getitem__,  self.N)
+        raises(IndexError, c.m_byte_array.__getitem__,   self.N)
         raises(IndexError, c.m_short_array.__getitem__,  self.N)
         raises(IndexError, c.m_ushort_array.__getitem__, self.N)
         raises(IndexError, c.m_int_array.__getitem__,    self.N)
@@ -193,7 +197,7 @@ class TestDATATYPES:
         raises(ValueError, c.set_char32, "string")
 
         # integer types
-        names = ['int8', 'uint8', 'short', 'ushort', 'int', 'uint', 'long', 'ulong', 'llong', 'ullong']
+        names = ['byte', 'int8', 'uint8', 'short', 'ushort', 'int', 'uint', 'long', 'ulong', 'llong', 'ullong']
         for i in range(len(names)):
             setattr(c, 'm_'+names[i], i)
             assert eval('c.get_%s()' % names[i]) == i
@@ -233,10 +237,10 @@ class TestDATATYPES:
         c.destroy_arrays()
 
         # integer arrays
-        names = ['uchar', 'short', 'ushort', 'int', 'uint', 'long', 'ulong']
+        names = ['uchar', 'byte', 'short', 'ushort', 'int', 'uint', 'long', 'ulong']
         import array
         a = range(self.N)
-        atypes = ['B', 'h', 'H', 'i', 'I', 'l', 'L']
+        atypes = ['B', 'B', 'h', 'H', 'i', 'I', 'l', 'L']
         for j in range(len(names)):
             b = array.array(atypes[j], a)
             setattr(c, 'm_'+names[j]+'_array', b)     # buffer copies
@@ -322,6 +326,9 @@ class TestDATATYPES:
         assert type(CppyyTestData.s_char32) == pyunicode
 
         # integer types
+        if self.has_byte:
+            assert CppyyTestData.s_byte == ord('b')
+            assert c.s_byte             == ord('b')
         assert CppyyTestData.s_int8     == - 87
         assert c.s_int8                 == - 87
         assert CppyyTestData.s_uint8    ==   87
@@ -387,6 +394,10 @@ class TestDATATYPES:
         assert CppyyTestData.s_char32   == u'\u00ef'
 
         # integer types
+        c.s_byte                         =   66
+        assert CppyyTestData.s_byte     ==   66
+        CppyyTestData.s_byte             =   66
+        assert c.s_byte                 ==   66
         c.s_short                        = - 88
         assert CppyyTestData.s_short    == - 88
         CppyyTestData.s_short            =   88
@@ -847,6 +858,7 @@ class TestDATATYPES:
 
         c = CppyyTestData()
         for func in ['get_bool_array',   'get_bool_array2',
+                     'get_byte_array',   'get_byte_array2',
                      'get_uchar_array',  'get_uchar_array2',
                      'get_ushort_array', 'get_ushort_array2',
                      'get_int_array',    'get_int_array2',
