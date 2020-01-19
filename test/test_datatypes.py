@@ -927,7 +927,42 @@ class TestDATATYPES:
         c.s_voidp = c2
         address_equality_test(c.s_voidp, c2)
 
-    def test21_function_pointers(self):
+    def test21_byte_arrays(self):
+        """Usage of unsigned char* as byte array and std::byte*"""
+
+        import array, cppyy, ctypes
+
+        buf = b'123456789'
+        total = 0
+        for c in buf:
+            try:
+                total += ord(c)        # p2
+            except TypeError:
+                total += c             # p3
+
+        def run(self, f, buf, total):
+
+            # The following create a unique type for fixed-size C arrays: ctypes.c_char_Array_9
+            # and neither inherits from a non-sized type nor implements the buffer interface.
+            # As such, it can't be handled. TODO?
+            #pbuf = ctypes.create_string_buffer(len(buf), buf)
+            #assert f(pbuf, len(buf)) == total
+
+            pbuf = array.array('B', buf)
+            assert f(pbuf, len(buf)) == total
+
+            pbuf = (ctypes.c_ubyte * len(buf)).from_buffer_copy(buf)
+            assert f(pbuf, len(buf)) == total
+
+            pbuf = ctypes.cast(buf, ctypes.POINTER(ctypes.c_ubyte * len(buf)))[0]
+            assert f(pbuf, len(buf)) == total
+
+        run(self, cppyy.gbl.sum_uc_data, buf, total)
+
+        if self.has_byte:
+            run(self, cppyy.gbl.sum_byte_data, buf, total)
+
+    def test22_function_pointers(self):
         """Function pointer passing"""
 
         import cppyy
@@ -978,7 +1013,7 @@ class TestDATATYPES:
         with raises(TypeError):
             cppyy.gbl.call_sum_of_int(3, 2)
 
-    def test22_callable_passing(self):
+    def test23_callable_passing(self):
         """Passing callables through function pointers"""
 
         import cppyy
@@ -1046,7 +1081,7 @@ class TestDATATYPES:
         c.set_callable(lambda x, y: x*y)
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test23_callable_through_function_passing(self):
+    def test24_callable_through_function_passing(self):
         """Passing callables through std::function"""
 
         import cppyy
@@ -1114,7 +1149,7 @@ class TestDATATYPES:
         c.set_callable(lambda x, y: x*y)
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test24_multi_dim_arrays_of_builtins(test):
+    def test25_multi_dim_arrays_of_builtins(test):
         """Multi-dim arrays of builtins"""
 
         import cppyy, ctypes
@@ -1148,7 +1183,7 @@ class TestDATATYPES:
                 p = (ctype * len(buf)).from_buffer(buf)
                 assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
 
-    def test25_anonymous_union(self):
+    def test26_anonymous_union(self):
         """Anonymous unions place there fields in the parent scope"""
 
         import cppyy

@@ -649,6 +649,13 @@ struct StorableData {
 extern StorableData gData;
 
 
+//= special case of "byte" arrays ===========================================
+int64_t sum_uc_data(unsigned char* data, int size);
+#if __cplusplus > 201402L
+int64_t sum_byte_data(std::byte* data, int size);
+#endif
+
+
 //= function pointer passing ================================================
 int sum_of_int1(int i1, int i2);
 int sum_of_int2(int i1, int i2);

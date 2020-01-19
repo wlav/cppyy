@@ -33,6 +33,9 @@
   <variable name="SomeStaticDataNS::s_some_static_string2" />
   <function name="SomeStaticDataNS::get_some_static_string2" />
 
+  <function name="sum_uc_data" />
+  <function name="sum_byte_data" />
+
   <function name="sum_of_int1" />
   <function name="sum_of_int2" />
   <variable name="sum_of_int_ptr" />

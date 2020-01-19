@@ -666,6 +666,22 @@ std::string SomeStaticDataNS::get_some_static_string2() { return s_some_static_s
 StorableData gData{5.};
 
 
+//= special case of "byte" arrays ===========================================
+int64_t sum_uc_data(unsigned char* data, int size)
+{
+    int64_t total = 0;
+    for (int i = 0; i < size; ++i) total += int64_t(data[i]);
+    return total;
+}
+
+#if __cplusplus > 201402L
+int64_t sum_byte_data(std::byte* data, int size)
+{
+    return sum_uc_data((unsigned char*)data, size);
+}
+#endif
+
+
 //= function pointer passing ================================================
 int sum_of_int1(int i1, int i2) {
     return i1+i2;
