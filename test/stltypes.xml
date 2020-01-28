@@ -19,6 +19,9 @@
 
   <variable pattern="str_array_*" />
 
+  <namespace name="UnicodeAndSTL" />
+  <function pattern="UnicodeAndSTL::*" />
+
   <namespace name="StringViewTest" />
   <function pattern="StringViewTest::*" />
 

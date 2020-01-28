@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import py, os, sys
 from pytest import raises
 from .support import setup_make, pylong, pyunicode, maxvalue
@@ -704,6 +705,15 @@ class TestSTLSTRING:
             for j in range(2):
                 for k in range(2):
                     assert str_array_4[i][j][k] == vals[i*4+j*2+k]
+
+    def test05_stlstring_and_unicode(self):
+        """Mixing unicode and std::string"""
+
+        import cppyy
+
+        uas = cppyy.gbl.UnicodeAndSTL
+
+        assert uas.get_size('ℕ') == len(u'ℕ'.encode(encoding='UTF-8'))
 
 
 class TestSTLLIST:

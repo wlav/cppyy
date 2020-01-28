@@ -55,6 +55,18 @@ std::string str_array_4[4][2][2] = {
 };
 
 
+// helpers for mixing unicode and std::string
+size_t UnicodeAndSTL::get_size(std::string s)
+{
+    return s.size();
+}
+
+std::string UnicodeAndSTL::get_string(std::string s)
+{
+    return s;
+}
+
+
 // helpers for string_view testing
 #if __cplusplus > 201402L
 std::string_view::size_type StringViewTest::count(const std::string_view arg) {

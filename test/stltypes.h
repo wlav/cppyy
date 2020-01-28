@@ -172,6 +172,13 @@ extern std::string str_array_3[3][2];
 extern std::string str_array_4[4][2][2];
 
 
+// helpers for mixing unicode and std::string
+namespace UnicodeAndSTL {
+    size_t get_size(std::string s);
+    std::string get_string(std::string s);
+}
+
+
 // helpers for string_view testing
 #if __cplusplus > 201402L
 namespace StringViewTest {
