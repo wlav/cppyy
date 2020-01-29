@@ -1,5 +1,7 @@
 #include "stltypes.h"
 
+#include <string.h>
+
 
 //- explicit instantiations of used comparisons
 #if defined __clang__ || defined(__GNUC__) || defined(__GNUG__)
@@ -56,15 +58,12 @@ std::string str_array_4[4][2][2] = {
 
 
 // helpers for mixing unicode and std::string
-size_t UnicodeAndSTL::get_size(std::string s)
-{
-    return s.size();
-}
-
-std::string UnicodeAndSTL::get_string(std::string s)
-{
-    return s;
-}
+size_t UnicodeAndSTL::get_size(std::string s)           { return s.size(); }
+size_t UnicodeAndSTL::get_size_cr(const std::string& s) { return s.size(); }
+size_t UnicodeAndSTL::get_size_cc(const char* s)        { return strlen(s); }
+std::string UnicodeAndSTL::get_string(std::string s)           { return s; }
+std::string UnicodeAndSTL::get_string_cr(const std::string& s) { return s; }
+std::string UnicodeAndSTL::get_string_cc(const char* s)        { return s; }
 
 
 // helpers for string_view testing

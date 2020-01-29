@@ -175,7 +175,11 @@ extern std::string str_array_4[4][2][2];
 // helpers for mixing unicode and std::string
 namespace UnicodeAndSTL {
     size_t get_size(std::string s);
+    size_t get_size_cr(const std::string& s);
+    size_t get_size_cc(const char* s);
     std::string get_string(std::string s);
+    std::string get_string_cr(const std::string& s);
+    std::string get_string_cc(const char* s);
 }
 
 

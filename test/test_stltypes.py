@@ -713,7 +713,14 @@ class TestSTLSTRING:
 
         uas = cppyy.gbl.UnicodeAndSTL
 
-        assert uas.get_size('ℕ') == len(u'ℕ'.encode(encoding='UTF-8'))
+        actlen = len(u'ℕ'.encode(encoding='UTF-8'))
+        assert uas.get_size('ℕ')    == actlen
+        assert uas.get_size_cr('ℕ') == actlen
+        assert uas.get_size_cc('ℕ') == actlen
+
+        assert str(uas.get_string('ℕ'))    == 'ℕ'
+        assert str(uas.get_string_cr('ℕ')) == 'ℕ'
+        assert str(uas.get_string_cc('ℕ')) == 'ℕ'
 
 
 class TestSTLLIST:
