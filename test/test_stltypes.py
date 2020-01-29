@@ -722,6 +722,16 @@ class TestSTLSTRING:
         assert str(uas.get_string_cr('ℕ')) == 'ℕ'
         assert str(uas.get_string_cc('ℕ')) == 'ℕ'
 
+        bval = u'ℕ'.encode(encoding='UTF-8')
+        actlen = len(bval)
+        assert uas.get_size(bval)    == actlen
+        assert uas.get_size_cr(bval) == actlen
+        assert uas.get_size_cc(bval) == actlen
+
+        assert str(uas.get_string(bval))    == bval
+        assert str(uas.get_string_cr(bval)) == bval
+        assert str(uas.get_string_cc(bval)) == bval
+
 
 class TestSTLLIST:
     def setup_class(cls):
