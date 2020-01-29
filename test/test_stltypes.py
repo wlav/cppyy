@@ -728,9 +728,9 @@ class TestSTLSTRING:
         assert uas.get_size_cr(bval) == actlen
         assert uas.get_size_cc(bval) == actlen
 
-        assert str(uas.get_string(bval))    == bval
-        assert str(uas.get_string_cr(bval)) == bval
-        assert str(uas.get_string_cc(bval)) == bval
+        assert str(uas.get_string(bval))    == 'ℕ'
+        assert str(uas.get_string_cr(bval)) == 'ℕ'
+        assert str(uas.get_string_cc(bval)) == 'ℕ'
 
 
 class TestSTLLIST:

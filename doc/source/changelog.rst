@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 Master: 1.6.2
 -------------
 
+* Support UTF-8 encoded unicode through std::string
 * Support for std::byte
 * Enable assignment to function pointer variable
 * Allow passing cppyy.nullptr where are function pointer is expected
