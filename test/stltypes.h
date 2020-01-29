@@ -177,9 +177,13 @@ namespace UnicodeAndSTL {
     size_t get_size(std::string s);
     size_t get_size_cr(const std::string& s);
     size_t get_size_cc(const char* s);
-    std::string get_string(std::string s);
-    std::string get_string_cr(const std::string& s);
-    std::string get_string_cc(const char* s);
+    size_t get_size_w(std::wstring s);
+    size_t get_size_wcr(const std::wstring& s);
+    std::string  get_string(std::string s);
+    std::string  get_string_cr(const std::string& s);
+    std::string  get_string_cc(const char* s);
+    std::wstring get_string_w(std::wstring s);
+    std::wstring get_string_wcr(const std::wstring& s);
 }
 
 

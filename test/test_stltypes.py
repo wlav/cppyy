@@ -718,9 +718,14 @@ class TestSTLSTRING:
         assert uas.get_size_cr('ℕ') == actlen
         assert uas.get_size_cc('ℕ') == actlen
 
-        assert str(uas.get_string('ℕ'))    == 'ℕ'
-        assert str(uas.get_string_cr('ℕ')) == 'ℕ'
-        assert str(uas.get_string_cc('ℕ')) == 'ℕ'
+        assert uas.get_size_w('ℕ')   == 1
+        assert uas.get_size_wcr('ℕ') == 1
+
+        assert str(uas.get_string('ℕ'))     == 'ℕ'
+        assert str(uas.get_string_cr('ℕ'))  == 'ℕ'
+        assert str(uas.get_string_cc('ℕ'))  == 'ℕ'
+        assert str(uas.get_string_w('ℕ'))   == 'ℕ'
+        assert str(uas.get_string_wcr('ℕ')) == 'ℕ'
 
         bval = u'ℕ'.encode(encoding='UTF-8')
         actlen = len(bval)
