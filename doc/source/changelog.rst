@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 Master: 1.6.2
 -------------
 
+* Respect __len__ when using bound C++ objects in boolean expressions
 * Support UTF-8 encoded unicode through std::string
 * Support for std::byte
 * Enable assignment to function pointer variable

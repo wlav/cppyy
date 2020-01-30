@@ -229,7 +229,10 @@ class TestSTLVECTOR:
             assert tv1.iterator is cppyy.gbl.std.vector(p_type).iterator
 
             #----- 
-            v = tv1(); v += range(self.N)
+            v = tv1()
+            assert not v
+            v += range(self.N)
+            assert v
             if p_type == int:
                 assert v.begin().__eq__(v.begin())
                 assert v.begin() == v.begin()
@@ -296,6 +299,7 @@ class TestSTLVECTOR:
         import cppyy
 
         v = cppyy.gbl.std.vector(int)()
+        assert not v
         for arg in v:
             pass
         v.__destruct__()
@@ -765,8 +769,10 @@ class TestSTLLIST:
 
             #-----
             a = tl1()
+            assert not a
             for i in range(self.N):
                 a.push_back(i)
+            assert a
 
             assert len(a) == self.N
             assert 11 < self.N
@@ -787,6 +793,7 @@ class TestSTLLIST:
         from cppyy.gbl import std
 
         a = std.list(int)()
+        assert not a
         for arg in a:
             pass
 
@@ -854,9 +861,11 @@ class TestSTLMAP:
         std = cppyy.gbl.std
 
         a = std.map(std.string, int)()
+        assert not a
         for i in range(self.N):
             a[str(i)] = i
             assert a[str(i)] == i
+        assert a
 
         assert len(a) == self.N
 
@@ -867,6 +876,7 @@ class TestSTLMAP:
         std = cppyy.gbl.std
 
         m = std.map(int, int)()
+        assert not m
         for key, value in m:
             pass
 
@@ -1106,7 +1116,8 @@ class TestSTLDEQUE:
         """Return by value of a deque used to crash"""
 
         import cppyy
-        assert cppyy.cppdef("std::deque<long double> f() { std::deque<long double> d ; return d ; }")
+        assert cppyy.cppdef("""std::deque<long double> f() {
+            std::deque<long double> d; d.push_back(0); return d ; }""")
         x = cppyy.gbl.f()
         assert x
         del x
