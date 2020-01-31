@@ -22,7 +22,7 @@ Master: 1.6.2
 * Remove '-isystem' from makepch flags
 
 
-2019-01-04: 1.6.1
+2020-01-04: 1.6.1
 -----------------
 
 * Mapped C++ exception reporting detailing
