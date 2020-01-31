@@ -28,7 +28,9 @@ Thus, for example, ``std::vector`` grows a pythonistic ``__len__`` method,
 but does not lose its C++ ``size`` method.
 Passing a Python container through a const reference to a ``std::vector``
 will trigger automatic conversion, but such an attempt through a non-const
-reference will fail.
+reference will fail since a non-temporary C++ object is required [#f1]_ to
+return any updates/changes.
+
 ``std::string`` is almost always converted to Python's ``str`` on function
 returns (the exception is return-by-reference when assigning), but not when
 its direct use is more likely such as in the case of (global) variables or
@@ -206,3 +208,6 @@ To be sure, the code is `too` strict in the simplistic example above, and
 with a future version of Cling it should be possible to lift some of these
 restrictions without causing incorrect results.
 
+.. rubric:: Footnotes
+
+.. [#f1] The meaning of "temporary" differs between Python and C++: in a statement such as ``func(std.vector[int]((1, 2, 3)))``, there is no temporary as far as Python is concerned, even as there clearly is in the case of a similar statement in C++. Thus that call will succeed even if ``func`` takes a non-const reference.
