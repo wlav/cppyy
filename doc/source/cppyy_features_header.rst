@@ -123,6 +123,8 @@ File features.h
     enum class NamedClassEnum { E1 = 42 };
 
     //-----
+    void throw_an_error(int i);
+
     class SomeError : public std::exception {
     public:
         explicit SomeError(const std::string& msg) : fMsg(msg) {}
@@ -134,5 +136,6 @@ File features.h
 
     class SomeOtherError : public SomeError {
     public:
-         using SomeError::SomeError;
+        explicit SomeOtherError(const std::string& msg) : SomeError(msg) {}
+        SomeOtherError(const SomeOtherError& s) : SomeError(s) {}
     };

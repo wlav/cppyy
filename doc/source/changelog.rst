@@ -20,6 +20,7 @@ Master: 1.6.2
 * Allow passing cppyy.nullptr where are function pointer is expected
 * Lower priority of implicit conversion to temporary with initializer_list ctor
 * Remove '-isystem' from makepch flags
+* Extended documentation
 
 
 2020-01-04: 1.6.1

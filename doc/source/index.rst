@@ -148,6 +148,7 @@ development environments.
    functions
    type_conversions
    stl
+   exceptions
    python
    lowlevel
    misc

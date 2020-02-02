@@ -423,6 +423,20 @@ namespace Namespace {
             caught = True
         assert caught == True
 
+        caught = False
+        for exc_type in (cppyy.gbl.SomeOtherError,
+                         cppyy.gbl.SomeError,
+                         cppyy.gbl.std.exception,
+                         Exception,
+                         BaseException):
+            caught = False
+            try:
+                cppyy.gbl.DocHelper.throw_an_error(0)
+            except exc_type as e:
+                 caught = True
+            assert caught == True
+        assert caught == True
+
 
 class TestTUTORIALFEATURES:
     def setup_class(cls):

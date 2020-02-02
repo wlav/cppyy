@@ -18,7 +18,8 @@ private:
 
 class SomeOtherError : public SomeError {
 public:
-     using SomeError::SomeError;
+    explicit SomeOtherError(const std::string& msg) : SomeError(msg) {}
+    SomeOtherError(const SomeOtherError& s) : SomeError(s) {}
 };
 
 namespace DocHelper {
