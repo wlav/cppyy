@@ -168,6 +168,7 @@ development environments.
 
    packages
    repositories
+   testing
 
 
 Bugs and feedback
