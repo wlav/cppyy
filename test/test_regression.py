@@ -544,3 +544,50 @@ class TestREGRESSION:
         r21.what_called = ''
         r21.Bar([1,2])  # used to call Bar(Foo x) through implicit conversion
         assert r21.what_called == 'Bar(il<size=2>)'
+
+    def test22_copy_constructor(self):
+        """Copy construct an object into an empty (NULL) proxy"""
+
+        import cppyy, gc
+
+        cppyy.cppdef("""
+        namespace regression_test22 {
+        struct Countable {
+             static int s_count;
+             Countable() { ++s_count; }
+             Countable(const Countable&) { ++s_count; }
+             Countable& operator=(const Countable&) { return *this; }
+             ~Countable() { --s_count; }
+        };
+        int Countable::s_count = 0;
+        }""")
+
+        r22 = cppyy.gbl.regression_test22
+
+        assert r22.Countable.s_count == 0
+        c = r22.Countable()
+        assert r22.Countable.s_count == 1
+
+        raises(ReferenceError, c.__init__, r22.Countable())
+        gc.collect()
+        assert r22.Countable.s_count == 1
+
+        c.__assign__(r22.Countable())
+        gc.collect()
+        assert r22.Countable.s_count == 1
+
+        c.__destruct__()
+        assert r22.Countable.s_count == 0
+        c.__init__(r22.Countable())
+        gc.collect()
+        assert r22.Countable.s_count == 1
+
+        del c
+        gc.collect()
+        assert r22.Countable.s_count == 0
+
+        c = cppyy.bind_object(cppyy.nullptr, r22.Countable)
+        assert r22.Countable.s_count == 0
+        c.__init__(r22.Countable())
+        gc.collect()
+        assert r22.Countable.s_count == 1
