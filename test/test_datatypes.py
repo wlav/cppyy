@@ -107,8 +107,10 @@ class TestDATATYPES:
             assert c.get_bool_array2()[i]   ==   bool((i+1)%2)
 
         # reading of integer array types
-        names = ['schar', 'uchar',  'byte', 'short', 'ushort',    'int', 'uint',    'long',  'ulong']
-        alpha = [ (1, 2), (1, 2),  (3, 4), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
+        names = ['schar', 'uchar', 'short', 'ushort',    'int', 'uint',    'long',  'ulong']
+        alpha = [ (1, 2), (1, 2), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
+        if self.has_byte: names.append('byte'); alpha.append((3,4))
+
         for j in range(self.N):
             assert getattr(c, 'm_%s_array'    % names[i])[i]   == alpha[i][0]*i
             assert getattr(c, 'get_%s_array'  % names[i])()[i] == alpha[i][0]*i
@@ -125,7 +127,8 @@ class TestDATATYPES:
         # out-of-bounds checks
         raises(IndexError, c.m_schar_array.__getitem__,  self.N)
         raises(IndexError, c.m_uchar_array.__getitem__,  self.N)
-        raises(IndexError, c.m_byte_array.__getitem__,   self.N)
+        if self.has_byte:
+            raises(IndexError, c.m_byte_array.__getitem__,   self.N)
         raises(IndexError, c.m_short_array.__getitem__,  self.N)
         raises(IndexError, c.m_ushort_array.__getitem__, self.N)
         raises(IndexError, c.m_int_array.__getitem__,    self.N)
@@ -197,7 +200,9 @@ class TestDATATYPES:
         raises(ValueError, c.set_char32, "string")
 
         # integer types
-        names = ['byte', 'int8', 'uint8', 'short', 'ushort', 'int', 'uint', 'long', 'ulong', 'llong', 'ullong']
+        names = ['int8', 'uint8', 'short', 'ushort', 'int', 'uint', 'long', 'ulong', 'llong', 'ullong']
+        if self.has_byte: names.append('byte')
+
         for i in range(len(names)):
             setattr(c, 'm_'+names[i], i)
             assert eval('c.get_%s()' % names[i]) == i
@@ -237,10 +242,13 @@ class TestDATATYPES:
         c.destroy_arrays()
 
         # integer arrays
-        names = ['uchar', 'byte', 'short', 'ushort', 'int', 'uint', 'long', 'ulong']
+        names = ['uchar', 'short', 'ushort', 'int', 'uint', 'long', 'ulong']
+        if self.has_byte: names.append('byte')
+
         import array
         a = range(self.N)
-        atypes = ['B', 'B', 'h', 'H', 'i', 'I', 'l', 'L']
+        atypes = ['B', 'h', 'H', 'i', 'I', 'l', 'L']
+        if self.has_byte: atypes.append('B')
         for j in range(len(names)):
             b = array.array(atypes[j], a)
             setattr(c, 'm_'+names[j]+'_array', b)     # buffer copies
@@ -394,10 +402,11 @@ class TestDATATYPES:
         assert CppyyTestData.s_char32   == u'\u00ef'
 
         # integer types
-        c.s_byte                         =   66
-        assert CppyyTestData.s_byte     ==   66
-        CppyyTestData.s_byte             =   66
-        assert c.s_byte                 ==   66
+        if self.has_byte:
+            c.s_byte                     =   66
+            assert CppyyTestData.s_byte ==   66
+            CppyyTestData.s_byte         =   66
+            assert c.s_byte             ==   66
         c.s_short                        = - 88
         assert CppyyTestData.s_short    == - 88
         CppyyTestData.s_short            =   88
@@ -857,14 +866,17 @@ class TestDATATYPES:
         CppyyTestData = cppyy.gbl.CppyyTestData
 
         c = CppyyTestData()
+        byte_array_names = []
+        if self.has_byte:
+            byte_array_names = ['get_byte_array', 'get_byte_array2']
         for func in ['get_bool_array',   'get_bool_array2',
-                     'get_byte_array',   'get_byte_array2',
                      'get_uchar_array',  'get_uchar_array2',
                      'get_ushort_array', 'get_ushort_array2',
                      'get_int_array',    'get_int_array2',
                      'get_uint_array',   'get_uint_array2',
                      'get_long_array',   'get_long_array2',
-                     'get_ulong_array',  'get_ulong_array2']:
+                     'get_ulong_array',  'get_ulong_array2']+\
+                     byte_array_names:
             arr = getattr(c, func)()
             arr.reshape((self.N,))
             assert len(arr) == self.N
