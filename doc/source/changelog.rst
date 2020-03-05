@@ -19,6 +19,7 @@ Master: 1.6.2
 * Enable assignment to function pointer variable
 * Allow passing cppyy.nullptr where are function pointer is expected
 * Disable copy construction into constructed object (use ``__assign__`` instead)
+* Cover more cases when to set a lifeline
 * Lower priority of implicit conversion to temporary with initializer_list ctor
 * Remove '-isystem' from makepch flags
 * Extended documentation
