@@ -509,6 +509,7 @@ class TestSTLVECTOR:
             int x;
         };
         auto foo() { return std::vector<C<int>>({C<int>(1337)}); }
+        auto bar() { return std::vector<std::string>{1024, "hello"}; }
         }""")
 
         assert cppyy.gbl.Lifeline.count == 0
@@ -520,6 +521,10 @@ class TestSTLVECTOR:
         import gc
         gc.collect()
         assert cppyy.gbl.Lifeline.count == 0
+
+        l = list(cppyy.gbl.Lifeline.bar())
+        for val in l:
+            assert hasattr(val, '__lifeline')
 
     def test13_vector_smartptr_iteration(self):
         """Iteration over smart pointers"""
