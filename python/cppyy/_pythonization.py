@@ -5,6 +5,7 @@ __all__ = [
     'add_pythonization',
     'remove_pythonization',
     'pin_type',
+    'add_type_reducer',
     ]
 
 def _set_backend(backend):
@@ -29,6 +30,14 @@ def remove_pythonization(pythonizor, scope = ''):
 # prevent auto-casting (e.g. for interfaces)
 def pin_type(klass):
     return _backend._pin_type(klass)
+
+
+# mapper to reduce template expression trees
+def add_type_reducer(reducable, reduced):
+    """Reduce <reducable> to <reduced> type on returns from function calls.
+    """
+    return _backend._add_type_reducer(reducable, reduced)
+
 
 # exception pythonizations
 def add_exception_mapping(cpp_exception, py_exception):
