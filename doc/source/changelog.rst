@@ -21,6 +21,7 @@ Master: 1.6.2
 * Disable copy construction into constructed object (use ``__assign__`` instead)
 * Cover more cases when to set a lifeline
 * Lower priority of implicit conversion to temporary with initializer_list ctor
+* Add type reduction pythonization for trimming expression template type trees
 * Remove '-isystem' from makepch flags
 * Extended documentation
 

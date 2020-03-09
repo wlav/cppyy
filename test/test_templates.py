@@ -636,3 +636,22 @@ class TestTEMPLATED_TYPEDEFS:
         w = cppyy.gbl.DeductTest_Wrap[int]()
         three = w.whatis(3)
         assert three == 3
+
+
+class TestTEMPLATE_TYPE_REDUCTION:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.templates = cppyy.load_reflection_info(cls.test_dct)
+
+    def test01_reduce_binary(self):
+        """Squash template expressions for binary operations (like in gmpxx)"""
+
+        import cppyy
+
+        e1 = cppyy.gbl.TypeReduction.Expr[int]()
+        e2 = cppyy.gbl.TypeReduction.Expr[int]()
+
+        cppyy.py.add_type_reducer('TypeReduction::BinaryExpr<int>', 'TypeReduction::Expr<int>')
+
+        assert type(e1+e2) == cppyy.gbl.TypeReduction.Expr[int]

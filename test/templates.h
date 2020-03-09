@@ -478,4 +478,30 @@ public:
 
 } // namespace TemplateWithSetItem
 
+
+//===========================================================================
+// type reduction examples on gmpxx-like template expressions
+namespace TypeReduction {
+
+template <typename T>
+struct BinaryExpr;
+
+template <typename T>
+struct Expr {
+    Expr() {}
+    Expr(const BinaryExpr<T>&) {}
+};
+
+template <typename T>
+struct BinaryExpr {
+    BinaryExpr(const Expr<T>&, const Expr<T>&) {}
+};
+
+template<typename T>
+BinaryExpr<T> operator+(const Expr<T>& e1, const Expr<T>& e2) {
+    return BinaryExpr<T>(e1, e2);
+}
+
+} // namespace TypeReduction
+
 #endif // !CPPYY_TEST_TEMPLATES_H
