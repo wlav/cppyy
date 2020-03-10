@@ -747,6 +747,17 @@ class TestSTLSTRING:
         assert str(uas.get_string_cr(bval)) == 'ℕ'
         assert str(uas.get_string_cc(bval)) == 'ℕ'
 
+    def test06_stlstring_in_dictionaries(self):
+        """Mixing str and std::string as dictionary keys"""
+
+        import cppyy
+
+        x = cppyy.gbl.std.string("x")
+        d = { x : 0 }
+
+        assert d[x] == 0
+        assert d['x'] == 0
+
 
 class TestSTLLIST:
     def setup_class(cls):

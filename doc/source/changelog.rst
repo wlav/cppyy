@@ -22,6 +22,7 @@ Master: 1.6.2
 * Cover more cases when to set a lifeline
 * Lower priority of implicit conversion to temporary with initializer_list ctor
 * Add type reduction pythonization for trimming expression template type trees
+* Allow mixing std::string and str as dictionary keys
 * Remove '-isystem' from makepch flags
 * Extended documentation
 
