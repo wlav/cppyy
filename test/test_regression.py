@@ -591,3 +591,28 @@ class TestREGRESSION:
         c.__init__(r22.Countable())
         gc.collect()
         assert r22.Countable.s_count == 1
+
+    def test23_C_style_enum(self):
+        """Support C-style enum variable declarations"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace CStyleEnum {
+           enum MyEnum { kOne, kTwo };
+           MyEnum my_enum = kOne;
+
+           enum YourEnum { kThree, kFour };
+           enum YourEnum your_enum = kThree;
+        }""")
+
+        CSE = cppyy.gbl.CStyleEnum
+
+        assert CSE.my_enum == CSE.MyEnum.kOne
+        CSE.my_enum = CSE.MyEnum.kTwo
+        assert CSE.my_enum == CSE.MyEnum.kTwo
+
+      # the following would fail b/c the type was not properly resolved
+        assert CSE.your_enum == CSE.YourEnum.kThree
+        CSE.your_enum = CSE.YourEnum.kFour
+        assert CSE.your_enum == CSE.YourEnum.kFour

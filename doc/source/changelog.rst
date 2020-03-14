@@ -24,6 +24,7 @@ Master: 1.6.2
 * Add type reduction pythonization for trimming expression template type trees
 * Allow mixing std::string and str as dictionary keys
 * Support C-style pointer-to-struct as array
+* Support C-style enum variable declarations
 * Remove '-isystem' from makepch flags
 * Extended documentation
 
