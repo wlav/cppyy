@@ -1286,3 +1286,27 @@ class TestDATATYPES:
         assert type(p.x) == float
         assert type(p.data_c[0]) == float
         assert p.intensity == 5.
+
+    def test27_pointer_to_array(self):
+        """Usability of pointer to array."""
+
+        import cppyy
+
+        AoS = cppyy.gbl.ArrayOfStruct
+
+        bar = AoS.Bar1()
+        assert bar.fArr[0].fVal == 42
+        assert bar.fArr[1].fVal == 13
+
+        bar = AoS.Bar2(4)
+        for i in range(4):
+            assert bar.fArr[i].fVal == 2*i
+
+        bar = AoS.Bar3()
+        assert cppyy.sizeof(AoS.Bar3) >= cppyy.sizeof(AoS.Foo)
+        arr = bar.fArr
+        arr.size = 1
+        for f in arr:
+            assert type(f) == AoS.Foo
+        assert type(bar.fArr[0]) == AoS.Foo
+

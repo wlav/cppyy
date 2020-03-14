@@ -702,4 +702,33 @@ public:
     double operator()(double, double);
 };
 
+//= array of struct variants ================================================
+namespace ArrayOfStruct {
+
+struct Foo {
+    int fVal;
+};
+
+struct Bar1 {
+    Bar1() : fArr(new Foo[2]) { fArr[0].fVal = 42; fArr[1].fVal = 13; }
+    Bar1(const Bar1&) = delete;
+    Bar1& operator=(const Bar1&) = delete;
+    ~Bar1() { delete[] fArr; }
+    Foo* fArr;
+};
+
+struct Bar2 {
+    Bar2(int num_foo) : fArr(std::unique_ptr<Foo[]>{new Foo[num_foo]}) {
+        for (int i = 0; i < num_foo; ++i) fArr[i].fVal = 2*i;
+    }
+    std::unique_ptr<Foo[]> fArr;
+};
+
+union Bar3 {
+    Foo fArr[];
+    int fBuf;      // to allow indexing fArr w/o crashing
+};
+
+} // namespace ArrayOfStruct
+
 #endif // !CPPYY_TEST_DATATYPES_H
