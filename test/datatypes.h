@@ -725,13 +725,6 @@ struct Bar2 {
     std::unique_ptr<Foo[]> fArr;
 };
 
-union Bar3 {
-#ifdef __clang__
-    Foo fArr[];
-#endif
-    int fBuf;      // to allow indexing fArr w/o crashing
-};
-
 } // namespace ArrayOfStruct
 
 #endif // !CPPYY_TEST_DATATYPES_H

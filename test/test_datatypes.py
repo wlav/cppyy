@@ -1302,6 +1302,14 @@ class TestDATATYPES:
         for i in range(4):
             assert bar.fArr[i].fVal == 2*i
 
+        cppyy.cppdef("""
+        namespace ArrayOfStruct {
+        union Bar3 {         // not supported in dictionary
+            Foo fArr[];      // clang only
+            int fBuf;        // to allow indexing fArr w/o crashing
+        };
+        }""")
+
         bar = AoS.Bar3()
         assert cppyy.sizeof(AoS.Bar3) >= cppyy.sizeof(AoS.Foo)
         arr = bar.fArr
