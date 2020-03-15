@@ -616,3 +616,30 @@ class TestREGRESSION:
         assert CSE.your_enum == CSE.YourEnum.kThree
         CSE.your_enum = CSE.YourEnum.kFour
         assert CSE.your_enum == CSE.YourEnum.kFour
+
+    def test24_const_iterator(self):
+        """const_iterator failed to resolve the proper return type"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace RooStuff {
+            struct RooArg {};
+
+            struct RooCollection {
+                using const_iterator = std::vector<RooArg*>::const_iterator;
+                std::vector<RooArg*> _list;
+
+                RooCollection() { _list.emplace_back(); }
+                const_iterator begin() const { return _list.begin(); }
+                const_iterator end() const { return _list.end(); }
+            };
+        }""")
+
+        l = cppyy.gbl.RooStuff.RooCollection()
+
+        i = 0
+        for e in l:
+            assert type(e) == cppyy.gbl.RooStuff.RooArg
+            i += 1
+        assert i

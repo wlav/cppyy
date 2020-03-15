@@ -25,6 +25,7 @@ Master: 1.6.2
 * Allow mixing std::string and str as dictionary keys
 * Support C-style pointer-to-struct as array
 * Support C-style enum variable declarations
+* Fixed const_iterator by-ref return type regression
 * Remove '-isystem' from makepch flags
 * Extended documentation
 
