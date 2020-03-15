@@ -734,8 +734,12 @@ class TestSTLSTRING:
         assert str(uas.get_string_cr('ℕ'))  == 'ℕ'
         assert str(uas.get_string_cc('ℕ'))  == 'ℕ'
 
-        assert uas.get_string_w('ℕ').encode(encoding='UTF-8')   == 'ℕ'
-        assert uas.get_string_wcr('ℕ').encode(encoding='UTF-8') == 'ℕ'
+        if sys.hexversion >= 0x3000000:
+            assert uas.get_string_w('ℕ')   == 'ℕ'
+            assert uas.get_string_wcr('ℕ') == 'ℕ'
+        else:
+            assert uas.get_string_w('ℕ').encode(encoding='UTF-8')   == 'ℕ'
+            assert uas.get_string_wcr('ℕ').encode(encoding='UTF-8') == 'ℕ'
 
         bval = u'ℕ'.encode(encoding='UTF-8')
         actlen = len(bval)

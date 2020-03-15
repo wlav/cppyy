@@ -17,6 +17,7 @@ typedef unsigned long long ULong64_t;//Portable unsigned long integer 8 bytes
 #include <cstdint>
 #include <complex>
 #include <functional>
+#include <memory>
 #include <vector>
 #include <wchar.h>
 #include <sys/types.h>
@@ -725,7 +726,9 @@ struct Bar2 {
 };
 
 union Bar3 {
+#ifdef __clang__
     Foo fArr[];
+#endif
     int fBuf;      // to allow indexing fArr w/o crashing
 };
 
