@@ -396,11 +396,11 @@ class TestREGRESSION:
         assert Color.iterator
 
         c_iterable = Color()
-        assert c_iterable.begin().__deref__() == 1
+        assert c_iterable.begin().__deref__() == chr(1)
 
         all_enums = []
         for c in c_iterable:
-            all_enums.append(int(c))
+            all_enums.append(ord(c))
         assert all_enums == list(range(1, 5))
 
     def test16_operator_eq_pickup(self):

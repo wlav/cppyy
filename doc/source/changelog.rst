@@ -26,6 +26,7 @@ Master: 1.6.2
 * Support C-style pointer-to-struct as array
 * Support C-style enum variable declarations
 * Fixed const_iterator by-ref return type regression
+* Resolve enums into the actual underlying type instead of int
 * Remove '-isystem' from makepch flags
 * Extended documentation
 
