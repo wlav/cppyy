@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-Master: 1.6.2
--------------
+2020-03-15: 1.6.2
+-----------------
 
 * Respect __len__ when using bound C++ objects in boolean expressions
 * Support UTF-8 encoded unicode through std::string
