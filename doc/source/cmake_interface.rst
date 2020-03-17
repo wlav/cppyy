@@ -27,6 +27,17 @@ packaging and CMake where CMake provides:
 * An facility for CMake-based projects to automate the entire bindings
   generation process, including basic automated tests.
 
+.. note::
+
+    The JIT needs to resolve linker symbols in order to call them through
+    generated wrappers.
+    Thus, any classes, functions, and data that will be used in Python need
+    to be exported.
+    This is the default behavior on Mac and Linux, but not on Windows.
+    On that platform, use ``__declspec(dllexport)`` to explicitly export the
+    classes and function you expect to call.
+    CMake has simple `support for exporting all`_ C++ symbols.
+
 
 Python packaging
 ----------------
@@ -238,3 +249,6 @@ cppyy_find_pips
 ^^^^^^^^^^^^^^^
 
 Return a list of available pip programs.
+
+
+.. _`support for exporting all`: https://cmake.org/cmake/help/latest/prop_tgt/WINDOWS_EXPORT_ALL_SYMBOLS.html
