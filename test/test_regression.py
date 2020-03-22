@@ -108,14 +108,13 @@ class TestREGRESSION:
                 if 'avx' in line:
                     has_avx = True
                     break
+            f.close()
         except Exception:
             try:
                 cli_arg = subprocess.check_output(['sysctl', 'machdep.cpu.features'])
                 has_avx = 'avx' in cli_arg.decode("utf-8").strip().lower()
             except Exception:
                 pass
-        finally:
-            f.close()
 
         if has_avx:
             assert cppyy.cppdef('int check_avx() { return (int) __AVX__; }')
