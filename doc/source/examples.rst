@@ -1,7 +1,7 @@
 .. _examples:
 
-Examples
-========
+Example repos
+=============
 
 The detailed feature lists have examples that work using a header file, and
 there is the `tutorial`_ that shows mixing of C++ and Python interactively.

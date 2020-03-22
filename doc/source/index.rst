@@ -73,7 +73,7 @@ and heavy use of templates:
 .. code-block:: python
 
    >>> import cppyy
-   >>> cppyy.include('boost/any.hpp')
+   >>> cppyy.include('boost/any.hpp')       # assumes you have boost installed
    >>> from cppyy.gbl import std, boost
    >>> val = boost.any()                    # the capsule 
    >>> val.__assign__(std.vector[int]())    # assign it a std::vector<int>
@@ -126,6 +126,7 @@ development environments.
    Contents:
 
 .. toctree::
+   :maxdepth: 1
 
    changelog
    license
@@ -175,5 +176,6 @@ Bugs and feedback
 -----------------
 
 Please report bugs or requests for improvement on the `issue tracker`_.
+
 
 .. _`issue tracker`: https://bitbucket.org/wlav/cppyy/issues
