@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.7.0
+-------------
+
+* Upgrade to cppyy-cling 6.20.2
+
+
 2020-03-15: 1.6.2
 -----------------
 
