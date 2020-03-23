@@ -311,7 +311,11 @@ bool is_valid(T&& new_value) {
 namespace some_variadic {
 
 #ifdef _WIN32
+#ifdef __CLING__
+extern __declspec(dllimport) std::string gTypeName;
+#else
 extern __declspec(dllexport) std::string gTypeName;
+#endif
 #else
 extern std::string gTypeName;
 #endif
@@ -410,7 +414,11 @@ T fn_T(Args&&... args) {
 namespace T_WithEmptyBody {
 
 #ifdef _WIN32
+#ifdef __CLING__
+extern __declspec(dllimport) std::string side_effect;
+#else
 extern __declspec(dllexport) std::string side_effect;
+#endif
 #else
 extern std::string side_effect;
 #endif
