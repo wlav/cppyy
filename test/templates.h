@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <cxxabi.h>
 inline std::string demangle_it(const char* name, const char* errmsg) {
     int status;
@@ -310,7 +310,7 @@ bool is_valid(T&& new_value) {
 // variadic templates
 namespace some_variadic {
 
-#ifdef WIN32
+#ifdef _WIN32
 extern __declspec(dllimport) std::string gTypeName;
 #else
 extern std::string gTypeName;
@@ -409,7 +409,7 @@ T fn_T(Args&&... args) {
 // template with empty body
 namespace T_WithEmptyBody {
 
-#ifdef WIN32
+#ifdef _WIN32
 extern __declspec(dllimport) std::string side_effect;
 #else
 extern std::string side_effect;
