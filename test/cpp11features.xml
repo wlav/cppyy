@@ -4,6 +4,7 @@
   <class name="DerivedTestSharedPtr" />
   <function name="create_shared_ptr_instance" />
   <function name="pass_shared_ptr" />
+  <function name="create_TestSharedPtr_by_value" />
 
   <class pattern="TestMoving*" />
   <class name="TestData" />

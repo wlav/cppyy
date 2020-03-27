@@ -123,7 +123,11 @@ class py_make_shared(object):
         return gbl.std.shared_ptr[self.cls](obj)
 
 class make_shared(object):
+    def __call__(self, ptr):
+        return py_make_shared(type(ptr))(ptr)
     def __getitem__(self, cls):
+        if type(cls) == str:
+            cls = getattr(gbl, cls)
         return py_make_shared(cls)
 
 gbl.std.make_shared = make_shared()

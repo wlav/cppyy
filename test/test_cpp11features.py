@@ -110,9 +110,9 @@ class TestCPP11FEATURES:
         """Ability to pass shared_ptr<Derived> through shared_ptr<Base>"""
 
         from cppyy.gbl import std, TestSharedPtr, DerivedTestSharedPtr
-        from cppyy.gbl import pass_shared_ptr
+        from cppyy.gbl import pass_shared_ptr, create_TestSharedPtr_by_value
 
-    # proper memory accounting
+      # proper memory accounting
         assert TestSharedPtr.s_counter == 0
 
         dd = std.make_shared[DerivedTestSharedPtr](DerivedTestSharedPtr(24))
@@ -123,6 +123,28 @@ class TestCPP11FEATURES:
         del dd
 
         import gc
+        gc.collect()
+        assert TestSharedPtr.s_counter == 0
+
+      # ability to take over by-value python-owned objects
+        tsp = create_TestSharedPtr_by_value()
+        assert TestSharedPtr.s_counter == 1
+        assert tsp.__python_owns__
+
+        shared_stp = std.make_shared[TestSharedPtr](tsp)
+        assert TestSharedPtr.s_counter == 1
+        assert not tsp.__python_owns__
+
+        del shared_stp
+
+        gc.collect()
+        assert TestSharedPtr.s_counter == 0
+
+      # alternative make_shared with type taken from pointer
+        tsp = create_TestSharedPtr_by_value()
+        shared_stp = std.make_shared(tsp)
+        assert TestSharedPtr.s_counter == 1
+        del shared_stp
         gc.collect()
         assert TestSharedPtr.s_counter == 0
 

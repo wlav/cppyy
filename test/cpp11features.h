@@ -32,6 +32,8 @@ public:
 
 int pass_shared_ptr(std::shared_ptr<TestSharedPtr> p);
 
+TestSharedPtr create_TestSharedPtr_by_value();
+
 
 //===========================================================================
 class TestMoving1 {          // for move ctors etc.

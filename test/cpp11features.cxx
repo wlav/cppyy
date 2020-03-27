@@ -22,6 +22,10 @@ int pass_shared_ptr(std::shared_ptr<TestSharedPtr> p) {
     return p->get_value();
 }
 
+TestSharedPtr create_TestSharedPtr_by_value() {
+    return TestSharedPtr{};
+}
+
 
 // for move ctors etc.
 int TestMoving1::s_move_counter = 0;
