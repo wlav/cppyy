@@ -124,3 +124,34 @@ class TestBOOSTVARIANT:
         assert type(boost.get['BV::C'](v[2])) == cpp.BV.C
 
 
+@mark.skipif(noboost == True, reason="boost not found")
+class TestBOOSTERASURE:
+    def setup_class(cls):
+        import cppyy
+        cppyy.include("boost/type_erasure/any.hpp")
+        cppyy.include("boost/type_erasure/member.hpp")
+
+    def test01_erasure_usage(self):
+        """boost::type_erasure usage"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+            BOOST_TYPE_ERASURE_MEMBER((has_member_f), f, 0)
+
+            using LengthsInterface = boost::mpl::vector<
+                boost::type_erasure::copy_constructible<>,
+                has_member_f<std::vector<int>() const>>;
+
+            using Lengths = boost::type_erasure::any<LengthsInterface>;
+
+            struct Unerased {
+                std::vector<int> f() const { return std::vector<int>{}; }
+            };
+
+            Lengths lengths() {
+                return Unerased{};
+            }
+        """)
+
+        assert cppyy.gbl.lengths() is not None
