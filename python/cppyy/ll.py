@@ -18,7 +18,7 @@ __all__ = [
     'malloc',
     'free',
     'array_new',
-    'array_detele',
+    'array_delete',
     'signals_as_exception',
     'set_signals_as_exception'
     'FatalError'
