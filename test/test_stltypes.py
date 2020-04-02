@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong, pyunicode, maxvalue
+from .support import setup_make, pylong, pyunicode, maxvalue, ispypy
 
 try:
     import __pypy__
@@ -1405,6 +1405,9 @@ class TestSTLEXCEPTION:
 
     def test04_from_cpp(self):
         """Catch C++ exceptiosn from C++"""
+
+        if ispypy:
+            py.test.skip('currently terminates')
 
         import cppyy, gc
 

@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
+from .support import setup_make, ispypy
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("doc_helperDict"))
@@ -412,6 +412,9 @@ namespace Namespace {
     def test_exceptions(self):
         """Exception throwing and catching"""
 
+        if ispypy:
+            py.test.skip('currently terminates')
+
         import cppyy
 
         caught = False
@@ -744,6 +747,9 @@ class TestADVERTISED:
 
     def test03_use_of_ctypes_and_enum(self):
         """Use of (opaque) enum through ctypes.c_void_p"""
+
+        if ispypy:
+            py.test.skip('RPython error: NotImplementedError')
 
         import cppyy, ctypes
 

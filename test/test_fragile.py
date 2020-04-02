@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, IS_WINDOWS
+from .support import setup_make, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("fragileDict"))
@@ -418,6 +418,9 @@ class TestSIGNALS:
 
     def test01_abortive_signals(self):
         """Conversion from abortive signals to Python exceptions"""
+
+        if ispypy:
+            py.test.skip('signals not yet implemented')
 
         import cppyy
         import cppyy.ll

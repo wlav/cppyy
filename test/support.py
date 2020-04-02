@@ -32,3 +32,9 @@ if 'win32' in sys.platform:
          maxvalue = 2**31-1
      else:
          IS_WINDOWS = 32
+
+try:
+    import __pypy__
+    ispypy = True
+except ImportError:
+    ispypy = False

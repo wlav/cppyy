@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong, pyunicode, IS_WINDOWS
+from .support import setup_make, pylong, pyunicode, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("datatypesDict"))
@@ -248,6 +248,9 @@ class TestLOWLEVEL:
 
     def test06_ctypes_pointer_types(self):
         """Use ctypes for pass-by-ptr/ptr-ptr"""
+
+        if ispypy:
+            py.test.skip('memory corruption')
 
         # See:
         #  https://docs.python.org/2/library/ctypes.html#fundamental-data-types
