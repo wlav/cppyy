@@ -80,10 +80,13 @@ class TestOVERLOADS:
         dd_ol = cppyy.gbl.dd_ol
 
         assert more_overloads().call(aa_ol()) == "aa_ol"
-        bb = cppyy.bind_object(cppyy.nullptr, bb_ol)
+        bb = cppyy.gbl.get_bb_ol()
         assert more_overloads().call(bb     ) == "bb_ol"
         assert more_overloads().call(cc_ol()) == "cc_ol"
         dd = cppyy.bind_object(cppyy.nullptr, dd_ol)
+        with raises(TypeError):
+            more_overloads().call(dd)
+        dd = cppyy.gbl.get_dd_ol()
         assert more_overloads().call(dd     ) == "dd_ol"
 
     def test04_fully_fragile_overloads(self):

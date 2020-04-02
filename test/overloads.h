@@ -60,8 +60,11 @@ public:
 
 class aa_ol {};
 class bb_ol;
+bb_ol* get_bb_ol();
 class cc_ol {};
 class dd_ol;
+dd_ol* get_dd_ol();
+
 
 class more_overloads {
 public:

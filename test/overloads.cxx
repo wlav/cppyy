@@ -26,6 +26,10 @@ int d_overload::get_int(ns_b_overload::a_overload* a) { return a->i1; }
 int d_overload::get_int(ns_a_overload::a_overload* a) { return a->i1; }
 int d_overload::get_int(a_overload* a)                { return a->i1; }
 
+class bb_ol {};
+bb_ol* get_bb_ol() { return new bb_ol{}; }
+class dd_ol {};
+dd_ol* get_dd_ol() { return new dd_ol{}; }
 
 more_overloads::more_overloads() {}
 std::string more_overloads::call(const aa_ol&) { return "aa_ol"; }

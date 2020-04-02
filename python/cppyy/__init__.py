@@ -109,29 +109,34 @@ if not ispypy:
 # TODO: PyPy still has the old-style pythonizations, which require the full
 # class name (not possible for std::tuple ...)
 
-# std::make_shared creates needless templates: rely on Python's introspection
+# std::make_shared/unique create needless templates: rely on Python's introspection
 # instead. This also allows Python derived classes to be handled correctly.
-class py_make_shared(object):
-    def __init__(self, cls):
-        self.cls = cls
+class py_make_smartptr(object):
+    __slots__ = ['cls', 'ptrcls']
+    def __init__(self, cls, ptrcls):
+        self.cls    = cls
+        self.ptrcls = ptrcls
     def __call__(self, *args):
         if len(args) == 1 and type(args[0]) == self.cls:
             obj = args[0]
         else:
             obj = self.cls(*args)
-        obj.__python_owns__ = False     # C++ to take ownership
-        return gbl.std.shared_ptr[self.cls](obj)
+        return self.ptrcls[self.cls](obj)   # C++ takes ownership
 
-class make_shared(object):
+class make_smartptr(object):
+    __slots__ = ['ptrcls']
+    def __init__(self, ptrcls):
+        self.ptrcls = ptrcls
     def __call__(self, ptr):
-        return py_make_shared(type(ptr))(ptr)
+        return py_make_smartptr(type(ptr), self.ptrcls)(ptr)
     def __getitem__(self, cls):
         if type(cls) == str:
             cls = getattr(gbl, cls)
-        return py_make_shared(cls)
+        return py_make_smartptr(cls, self.ptrcls)
 
-gbl.std.make_shared = make_shared()
-del make_shared
+gbl.std.make_shared = make_smartptr(gbl.std.shared_ptr)
+gbl.std.make_unique = make_smartptr(gbl.std.unique_ptr)
+del make_smartptr
 
 
 #--- CFFI style interface ----------------------------------------------------
