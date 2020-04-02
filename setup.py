@@ -17,21 +17,21 @@ try:
     requirements = ['cppyy-backend']
     if version[0] == 5:
         if version[1] <= 9:
-            requirements = ['cppyy-cling<6.12', 'cppyy-backend<0.3']
+            requirements = ['cppyy-backend<0.3', 'cppyy-cling<6.12']
             add_pkg += ['cppyy_compat']
         elif version[1] <= 10:
-            requirements = ['cppyy-cling<=6.15', 'cppyy-backend<0.4']
+            requirements = ['cppyy-backend<0.4', 'cppyy-cling<=6.15']
     elif version[0] == 6:
         if version[1] <= 0:
-            requirements = ['cppyy-cling<=6.15', 'cppyy-backend<1.1']
+            requirements = ['cppyy-backend<1.1', 'cppyy-cling<=6.15']
     elif version[0] == 7:
-        if version[1] <= 2:
-            requirements = ['cppyy-cling<=6.18.2.3', 'cppyy-backend<=1.10']
+        if version[1] <= 3 and version[2] < 2:
+            requirements = ['cppyy-backend<=1.10', 'cppyy-cling<=6.18.2.3']
         else:
-            requirements = ['cppyy-cling<=6.18.2.7', 'cppyy-backend<=1.10']
+            requirements = ['cppyy-backend<=1.11', 'cppyy-cling<=6.20.2']
 except ImportError:
     # CPython
-    requirements = ['cppyy-cling==6.20.2.0', 'cppyy-backend==1.11.0', 'CPyCppyy==1.10.3']
+    requirements = ['CPyCppyy==1.10.3', 'cppyy-backend==1.11.0', 'cppyy-cling==6.20.2.0']
 
 setup_requirements = ['wheel']
 if 'build' in sys.argv or 'install' in sys.argv:
