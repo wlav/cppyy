@@ -36,9 +36,9 @@ class TestDATATYPES:
         assert c.m_uchar == 'c'
         assert type(c.m_wchar) == pyunicode
         assert c.m_wchar == u'D'
-        assert type(c.m_char32) == pyunicode
-        assert c.m_char16 == u'\u00df'
         assert type(c.m_char16) == pyunicode
+        assert c.m_char16 == u'\u00df'
+        assert type(c.m_char32) == pyunicode
         assert c.m_char32 == u'\u00df'
 
         # reading integer types
