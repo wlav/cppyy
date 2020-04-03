@@ -3,13 +3,6 @@ import py, os, sys
 from pytest import raises
 from .support import setup_make, pylong, pyunicode, maxvalue, ispypy
 
-try:
-    import __pypy__
-    is_pypy = True
-except ImportError:
-    is_pypy = False
-
-
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("stltypesDict"))
 
@@ -1060,7 +1053,7 @@ class TestSTLARRAY:
             a[i].py = i**2
             assert a[i].py == i**2
 
-        if is_pypy:
+        if ispypy:
             raise RuntimeError("test fails with crash")
         # test assignment
         assert a[2]
@@ -1082,7 +1075,7 @@ class TestSTLARRAY:
 
         a = std.array['ArrayTest::Point*', 4]()
         assert len(a) == 4
-        if is_pypy:
+        if ispypy:
             raise RuntimeError("test fails with crash")
         for i in range(len(a)):
             a[i] = ll[i]

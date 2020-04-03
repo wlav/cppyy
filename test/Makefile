@@ -13,6 +13,7 @@ dicts = advancedcppDict.so \
         std_streamsDict.so \
         stltypesDict.so \
         templatesDict.so
+
 all : $(dicts)
 
 genreflex_flags := $(shell genreflex --cppflags)
