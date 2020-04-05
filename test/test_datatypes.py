@@ -316,9 +316,8 @@ class TestDATATYPES:
         # char types
         assert CppyyTestData.s_char     == 'c'
         assert c.s_char                 == 'c'
-        assert c.s_uchar                == 'u'
         assert CppyyTestData.s_uchar    == 'u'
-        assert c.s_wchar                == u'U'
+        assert c.s_uchar                == 'u'
         assert CppyyTestData.s_wchar    == u'U'
         assert c.s_wchar                == u'U'
         assert CppyyTestData.s_char16   == u'\u6c29'
