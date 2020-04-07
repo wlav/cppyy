@@ -406,10 +406,6 @@ class TestDATATYPES:
             assert CppyyTestData.s_byte ==   66
             CppyyTestData.s_byte         =   66
             assert c.s_byte             ==   66
-        c.s_short                        = - 88
-        assert CppyyTestData.s_short    == - 88
-        CppyyTestData.s_short            =   88
-        assert c.s_short                ==   88
         c.s_short                        = -102
         assert CppyyTestData.s_short    == -102
         CppyyTestData.s_short            = -203
