@@ -16,6 +16,7 @@ master: 1.7.0
 * Upgrade to cppyy-cling 6.20.2
 * Fix crash when handing a by-value object to make_shared
 * Fixed a few shared/unique_ptr corner cases
+* No longer attempt auto-cast on classes without RTTI
 
 
 2020-03-15: 1.6.2
