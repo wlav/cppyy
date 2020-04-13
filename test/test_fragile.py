@@ -388,13 +388,13 @@ class TestFRAGILE:
         import cppyy
 
         cppyy.cppdef("""struct Variable {
-            Variable(double lb, double ub, double value, bool binary, bool integer, const string& name) {}
+            Variable(double lb, double ub, double value, bool binary, bool integer, const std::string& name) {}
             Variable(int) {}
         };""")
 
-        for sig in ['double, double, double, bool, bool, const string&',
-                    'double,double,double,bool,bool,const string&',
-                    'double lb, double ub, double value, bool binary, bool integer, const string& name']:
+        for sig in ['double, double, double, bool, bool, const std::string&',
+                    'double,double,double,bool,bool,const std::string&',
+                    'double lb, double ub, double value, bool binary, bool integer, const std::string& name']:
             assert cppyy.gbl.Variable.__init__.__overload__(sig)
 
     def test19_gbl_contents(self):
@@ -460,3 +460,51 @@ class TestSIGNALS:
             f.sigabort.__sig2exc__ = True
             with raises(cppyy.ll.AbortSignal):
                 f.sigabort()
+
+
+class TestSTDNOTINGLOBAL:
+    def setup_class(cls):
+        import cppyy
+
+    def test01_stl_in_std(self):
+        """STL classes should live in std:: only"""
+
+        import cppyy
+
+        for name in ['array', 'byte', 'function', 'list', 'set', 'vector']:
+            getattr(cppyy.gbl.std, name)
+            with raises(AttributeError):
+                getattr(cppyy.gbl, name)
+
+      # inject a vector in the global namespace
+        cppyy.cppdef("class vector{};")
+        v = cppyy.gbl.vector()
+        assert cppyy.gbl.vector is not cppyy.gbl.std.vector
+
+    def test02_ctypes_in_both(self):
+        """Standard int types live in both global and std::"""
+
+        import cppyy
+
+        for name in ['int8_t', 'uint8_t']:
+            getattr(cppyy.gbl.std, name)
+            getattr(cppyy.gbl, name)
+
+        # TODO: get the types to match exactly as well
+        assert cppyy.gbl.std.int8_t(-42) == cppyy.gbl.int8_t(-42)
+        assert cppyy.gbl.std.uint8_t(42) == cppyy.gbl.uint8_t(42)
+
+    def test03_clashing_using_in_global(self):
+        """Redefines of std:: typedefs should be possible in global"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+            using uint   = unsigned int;
+            using ushort = unsigned short;
+            using uchar  = unsigned char;
+            using byte   = unsigned char;
+        """ )
+
+        for name in ['int', 'uint', 'ushort', 'uchar', 'byte']:
+            getattr(cppyy.gbl, name)

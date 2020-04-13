@@ -337,7 +337,7 @@ class TestCPP11FEATURES:
             a = cppyy.gbl.std.optional[cppyy.gbl.Enum]()
             assert cppyy.gbl.callopt(a)
 
-            c = cppyy.gbl.nullopt
+            c = cppyy.gbl.std.nullopt
             assert cppyy.gbl.callopt(c)
 
     def test11_chrono(self):
