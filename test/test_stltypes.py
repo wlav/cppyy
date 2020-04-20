@@ -822,7 +822,9 @@ class TestSTLLIST:
             }""")
 
         a = cppyy.gbl.std.list[int]()
-        a.begin().__class__.__eq__ = cppyy.gbl.cont_eq[cppyy.gbl.std.list[int]]
+        icls = a.begin().__class__
+        oldeq = icls.__eq__
+        icls.__eq__ = cppyy.gbl.cont_eq[cppyy.gbl.std.list[int]]
         assert not (a.begin() == a.end())
 
         a = cppyy.gbl.std.list[float]()
@@ -830,6 +832,21 @@ class TestSTLLIST:
         assert not cppyy.gbl.cont_eq[cppyy.gbl.std.list[float]](a.begin(), a.begin())
         a.push_back(1)
         assert     cppyy.gbl.cont_eq[cppyy.gbl.std.list[float]](a.begin(), a.end())
+
+        icls.__eq__ = oldeq
+
+    def test04_iter_of_iter(self):
+        """Iteration using iter()"""
+
+        import cppyy
+
+        l = cppyy.gbl.std.list['int']((1, 2, 3))
+        assert [x for x in l] == [1, 2, 3]
+
+        i = 1
+        for a in iter(l):
+            assert a == i
+            i += 1
 
 
 class TestSTLMAP:
