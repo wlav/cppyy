@@ -18,6 +18,7 @@ master: 1.7.0
 * Fix crash when handing a by-value object to make_shared
 * Fixed a few shared/unique_ptr corner cases
 * No longer attempt auto-cast on classes without RTTI
+* Fix for ``iter()`` iteration on generic STL container
 
 
 2020-03-15: 1.6.2
