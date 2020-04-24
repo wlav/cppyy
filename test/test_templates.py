@@ -554,6 +554,32 @@ class TestTEMPLATES:
         v = MyVec["float"](2)
         v[0] = 1        # used to throw TypeError
 
+    def test23_stdfunction_templated_arguments(self):
+        """Use of std::function with templated arguments"""
+
+        import cppyy
+
+        def callback(x):
+            return sum(x)
+
+        cppyy.cppdef("""double callback_vector(
+            const std::function<double(std::vector<double>)>& callback, std::vector<double> x) {
+                return callback(x);
+        }""")
+
+        assert cppyy.gbl.std.function['double(std::vector<double>)']
+
+        assert cppyy.gbl.callback_vector(callback, [1, 2, 3]) == 6
+
+        cppyy.cppdef("""double wrap_callback_vector(
+             double (*callback)(std::vector<double>), std::vector<double> x) {
+                 return callback_vector(callback, x);
+        }""")
+
+        assert cppyy.gbl.wrap_callback_vector(callback, [4, 5, 6]) == 15
+
+        assert cppyy.gbl.std.function['double(std::vector<double>)']
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
