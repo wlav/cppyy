@@ -17,6 +17,7 @@ master: 1.7.0
 * Pre-empt upstream's propensity of making ``std`` classes etc. global
 * Fix crash when handing a by-value object to make_shared
 * Fixed a few shared/unique_ptr corner cases
+* Fixed conversion of std::function taking an STL class parameter
 * No longer attempt auto-cast on classes without RTTI
 
 
