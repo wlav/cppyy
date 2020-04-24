@@ -472,7 +472,7 @@ class TestSTDNOTINGLOBAL:
 
         import cppyy
 
-        names = ['array', 'byte', 'function', 'list', 'set', 'vector']
+        names = ['array', 'function', 'list', 'set', 'vector']
         if self.has_byte:
             names.append('byte')
 
