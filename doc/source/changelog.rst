@@ -19,6 +19,7 @@ master: 1.7.0
 * Fixed a few shared/unique_ptr corner cases
 * Fixed conversion of std::function taking an STL class parameter
 * No longer attempt auto-cast on classes without RTTI
+* Fix for ``iter()`` iteration on generic STL container
 
 
 2020-03-15: 1.6.2
