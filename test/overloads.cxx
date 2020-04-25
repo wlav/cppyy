@@ -58,3 +58,7 @@ double calc_mean(long n, const double* a)    { return calc_mean<double>(n, a); }
 double calc_mean(long n, const int* a)       { return calc_mean<int>(n, a); }
 double calc_mean(long n, const short* a)     { return calc_mean<short>(n, a); }
 double calc_mean(long n, const long* a)      { return calc_mean<long>(n, a); }
+
+
+std::string more_overloads3::slice(size_t i) const { return "const"; }
+std::string more_overloads3::slice(size_t i) { return "non-const"; }

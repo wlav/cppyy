@@ -109,3 +109,9 @@ double calc_mean(long n, const double* a);
 double calc_mean(long n, const int* a);
 double calc_mean(long n, const short* a);
 double calc_mean(long n, const long* a);
+
+class more_overloads3 {
+public:
+     std::string slice(size_t) const;
+     std::string slice(size_t);
+};

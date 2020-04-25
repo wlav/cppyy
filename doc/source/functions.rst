@@ -190,8 +190,12 @@ matching a specific function signature:
      2.718281828459045
      >>>
 
+An optional boolean second parameter can be used to restrict the selected
+method to be const (if ``True``) or non-const (if ``False``).
+
 Note that ``__overload__`` only does a lookup; it performs no (implicit)
-conversions.
+conversions and the types in the signature to match should be the fully
+resolved ones (no typedefs).
 To see all available overloads, use ``help()`` or look at the ``__doc__``
 string of the function:
 
@@ -201,6 +205,14 @@ string of the function:
      int ::global_function(int)
      double ::global_function(double)
      >>>
+
+For convenience, the ``:any:`` signature, allows matching any signature, for
+example to reduce the general method to the const (or non-const) overload
+only, use:
+
+  .. code-block:: python
+
+     MyClass.some_method = MyClass.some_method.__overload__(':any:', True)
 
 
 `Return values`

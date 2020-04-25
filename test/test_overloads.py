@@ -141,3 +141,20 @@ class TestOVERLOADS:
         for l in ['f', 'd', 'i', 'h', 'l']:
             a = array.array(l, numbers)
             assert round(cmean(len(a), a) - mean, 8) == 0
+
+    def test08_const_non_const_overloads(self):
+        """Check selectability of const/non-const overloads"""
+
+        import cppyy
+
+        m = cppyy.gbl.more_overloads3()
+
+        assert m.slice.__overload__(':any:', True)(0)  == 'const'
+        assert m.slice.__overload__(':any:', False)(0) == 'non-const'
+
+        if m.slice(0) == 'const':
+            cppyy.gbl.more_overloads3.slice = cppyy.gbl.more_overloads3.slice.__overload__(':any:', False)
+            assert m.slice(0) == 'non-const'
+        else:
+            cppyy.gbl.more_overloads3.slice = cppyy.gbl.more_overloads3.slice.__overload__(':any:', True)
+            assert m.slice(0) == 'const'
