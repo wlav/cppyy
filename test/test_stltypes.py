@@ -1214,6 +1214,25 @@ class TestSTLSET:
         assert s.rbegin() != s.rend()
         assert s.rbegin().__preinc__() == s.rend()
 
+    def test03_initialize_from_set(self):
+        """Test std::set initializion from Python set"""
+
+        import cppyy
+
+        N = 10
+
+        s = cppyy.gbl.std.set[int](set(range(N)))
+        assert list(range(N)) == list(s)
+
+        s = cppyy.gbl.std.set[int](range(10))
+        assert list(range(N)) == list(s)
+
+        with raises(TypeError):
+            s = cppyy.gbl.std.set[int](set([1, "2"]))
+
+        with raises(TypeError):
+            s = cppyy.gbl.std.set[int](set(["aap", "noot", "mies"]))
+
 
 class TestSTLTUPLE:
     def setup_class(cls):
