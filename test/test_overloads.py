@@ -152,9 +152,12 @@ class TestOVERLOADS:
         assert m.slice.__overload__(':any:', True)(0)  == 'const'
         assert m.slice.__overload__(':any:', False)(0) == 'non-const'
 
-        if m.slice(0) == 'const':
-            cppyy.gbl.more_overloads3.slice = cppyy.gbl.more_overloads3.slice.__overload__(':any:', False)
-            assert m.slice(0) == 'non-const'
-        else:
-            cppyy.gbl.more_overloads3.slice = cppyy.gbl.more_overloads3.slice.__overload__(':any:', True)
-            assert m.slice(0) == 'const'
+        allmeths = cppyy.gbl.more_overloads3.slice.__overload__(':any:')
+        cppyy.gbl.more_overloads3.slice        = allmeths.__overload__(':any:', False)
+        cppyy.gbl.more_overloads3.slice_const =  allmeths.__overload__(':any:', True)
+        del allmeths
+
+        assert m.slice(0)          == 'non-const'
+        assert m,slice(0, 0)       == 'non-const'
+        assert m.slice_const(0)    ==     'const'
+        assert m,slice_const(0, 0) ==     'const'

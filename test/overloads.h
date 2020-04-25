@@ -114,4 +114,6 @@ class more_overloads3 {
 public:
      std::string slice(size_t) const;
      std::string slice(size_t);
+     std::string slice(size_t, size_t);
+     std::string slice(size_t, size_t) const;
 };
