@@ -1002,6 +1002,19 @@ class TestSTLMAP:
                 count += 1
             assert count == 10
 
+    def test08_initialize_from_dict(self):
+        """Test std::map initializion from Python dict"""
+
+        import cppyy
+
+        m = cppyy.gbl.std.map[str, int]({'1' : 1, '2' : 2})
+
+        assert m['1'] == 1
+        assert m['2'] == 2
+
+        with raises(TypeError):
+            m = cppyy.gbl.std.map[int, str]({'1' : 1, '2' : 2})
+
 
 class TestSTLITERATOR:
     def setup_class(cls):
