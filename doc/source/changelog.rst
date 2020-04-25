@@ -18,6 +18,7 @@ master: 1.7.0
 * Allow initialization of std::map from dict with the correct types
 * Allow initialization of std::set from set with the correct types
 * Add optional nonst/non-const selection to ``__overload__``
+* Automatic smartification of normal object passed as smartptr by value
 * Fix crash when handing a by-value object to make_shared
 * Fixed a few shared/unique_ptr corner cases
 * Fixed conversion of std::function taking an STL class parameter

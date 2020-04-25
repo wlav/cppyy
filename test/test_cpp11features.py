@@ -390,3 +390,28 @@ class TestCPP11FEATURES:
             sw = StructWithHash()
             assert hash(sw)  == 17
             assert hash(sw)  == 17
+
+    def test14_shared_ptr_passing(self):
+        """Ability to pass normal pointers through shared_ptr by value"""
+
+        from cppyy.gbl import std, TestSmartPtr, DerivedTestSmartPtr
+        from cppyy.gbl import pass_shared_ptr
+        import gc
+
+        for cls, val in [(lambda: TestSmartPtr(), 17), (lambda: DerivedTestSmartPtr(24), 100)]:
+            assert TestSmartPtr.s_counter == 0
+
+            obj = cls()
+
+            assert TestSmartPtr.s_counter == 1
+            assert not obj.__smartptr__()
+            assert pass_shared_ptr(obj) == val
+            assert obj.__smartptr__()
+            assert obj.__python_owns__
+            assert TestSmartPtr.s_counter == 1
+
+            assert not not obj    # pass was by shared copy
+
+            del obj
+            gc.collect()
+            assert TestSmartPtr.s_counter == 0
