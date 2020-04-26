@@ -13,7 +13,7 @@ PyPy support lags CPython support.
 master: 1.7.0
 -------------
 
-* Upgrade to cppyy-cling 6.20.2
+* Upgrade to cppyy-cling 6.20.4
 * Pre-empt upstream's propensity of making ``std`` classes etc. global
 * Allow initialization of std::map from dict with the correct types
 * Allow initialization of std::set from set with the correct types
