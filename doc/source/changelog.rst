@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.7.0
--------------
+2020-04-27: 1.7.0
+-----------------
 
 * Upgrade to cppyy-cling 6.20.4
 * Pre-empt upstream's propensity of making ``std`` classes etc. global
