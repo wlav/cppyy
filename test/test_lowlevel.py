@@ -294,3 +294,17 @@ class TestLOWLEVEL:
         for ext in ['_r', '_p']:
             for meth in meth_types:
                 with raises(TypeError): getattr(ctd, 'set_'+meth+ext)(i)
+
+    def test08_numpy_bool_array(self):
+        """Test passing of numpy bool array"""
+
+        import cppyy
+        try:
+            import numpy as np
+        except ImportError:
+            py.test.skip('numpy is not installed')
+
+        cppyy.cppdef('int convert_bool(bool* x) {return *x;}')
+
+        x = np.array([True], dtype=np.bool)
+        assert cppyy.gbl.convert_bool(x)
