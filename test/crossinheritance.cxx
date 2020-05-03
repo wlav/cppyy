@@ -76,3 +76,12 @@ CrossInheritance::CountableBase::~CountableBase() {
 int CrossInheritance::CountableBase::call() {
     return -1;
 }
+
+// for protected member testing
+AccessProtected::MyBase::MyBase() : my_data(101) {
+    /* empty */
+}
+
+AccessProtected::MyBase::~MyBase() {
+    /* empty */
+}

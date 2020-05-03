@@ -420,3 +420,19 @@ class TestCROSSINHERITANCE:
 
         class MyPyDerived4(VD.MyClass4[int]):
             pass
+
+    def test15_protected_access(self):
+        """Derived classes should have access to protected members"""
+
+        import cppyy
+
+        ns = cppyy.gbl.AccessProtected
+
+        assert not 'my_data' in ns.MyBase.__dict__
+        assert not hasattr(ns.MyBase(), 'my_data')
+
+        class MyPyDerived(ns.MyBase):
+            pass
+
+        assert 'my_data' in MyPyDerived.__dict__
+        assert MyPyDerived().my_data == 101

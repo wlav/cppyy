@@ -3,4 +3,7 @@
    <namespace name="CrossInheritance" />
    <class pattern="CrossInheritance::*" />
 
+   <namespace name="AccessProtected" />
+   <class pattern="AccessProtected::*" />
+
 </lcgdict>

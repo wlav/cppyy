@@ -97,4 +97,19 @@ public:
 
 } // namespace CrossInheritance
 
+
+//===========================================================================
+namespace AccessProtected {  // for protected member testing
+
+class MyBase {
+public:
+    MyBase();
+    virtual ~MyBase();
+
+protected:
+    int my_data;
+};
+
+} // AccessProtected
+
 #endif // !CPPYY_TEST_CROSSINHERITANCE_H
