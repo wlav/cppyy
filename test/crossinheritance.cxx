@@ -85,3 +85,11 @@ AccessProtected::MyBase::MyBase() : my_data(101) {
 AccessProtected::MyBase::~MyBase() {
     /* empty */
 }
+
+int AccessProtected::MyBase::get_data_v() {
+    return my_data;
+}
+
+int AccessProtected::MyBase::get_data() {
+    return my_data;
+}

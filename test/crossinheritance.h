@@ -107,6 +107,10 @@ public:
     virtual ~MyBase();
 
 protected:
+    virtual int get_data_v();
+    int get_data();
+
+protected:
     int my_data;
 };
 

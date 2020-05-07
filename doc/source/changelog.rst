@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 master: 1.7.1
 -------------
 
+* Expose protected members in Python derived classes
 * Fix for passing numpy boolean array through ``bool*``
 
 

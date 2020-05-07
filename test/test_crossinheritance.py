@@ -436,3 +436,17 @@ class TestCROSSINHERITANCE:
 
         assert 'my_data' in MyPyDerived.__dict__
         assert MyPyDerived().my_data == 101
+
+        class MyPyDerived(ns.MyBase):
+            def __init__(self):
+                super().__init__()
+                assert self.my_data == 101
+                self.py_data = 13
+                self.my_data = 42
+
+        m = MyPyDerived()
+        assert m.py_data      == 13
+        assert m.my_data      == 42
+        assert m.get_data()   == 42
+        assert m.get_data_v() == 42
+
