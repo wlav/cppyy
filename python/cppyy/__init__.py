@@ -191,9 +191,11 @@ elif ispypy:
 
 # add access to extra headers for dispatcher (CPyCppyy only (?))
 if not ispypy:
-    if 'CPPYY_API_PATH' in os.environ:
+    try:
         apipath_extra = os.environ['CPPYY_API_PATH']
-    else:
+        if os.path.basename(apipath_extra) == 'CPyCppyy':
+            apipath_extra = os.path.dirname(apipath_extra)
+    except KeyError:
         apipath_extra = os.path.join(os.path.dirname(apipath), 'site', 'python'+sys.version[:3])
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
             import glob, libcppyy
@@ -205,17 +207,16 @@ if not ispypy:
                     apipath_extra = os.path.dirname(apipath_extra)
 
             apipath_extra = os.path.join(apipath_extra, 'include')
-          # add back pythonx.y or site/pythonx.y if available
+          # add back pythonx.y or site/pythonx.y if present
             for p in glob.glob(os.path.join(apipath_extra, 'python'+sys.version[:3]+'*'))+\
                      glob.glob(os.path.join(apipath_extra, '*', 'python'+sys.version[:3]+'*')):
                 if os.path.exists(os.path.join(p, 'CPyCppyy')):
                     apipath_extra = p
                     break
 
-    cpycppyy_path = os.path.join(apipath_extra, 'CPyCppyy')
     if apipath_extra.lower() != 'none':
-        if not os.path.exists(cpycppyy_path):
-            warnings.warn("CPyCppyy API path not found (tried: %s); set CPPYY_API_PATH to fix" % os.path.dirname(cpycppyy_path))
+        if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
+            warnings.warn("CPyCppyy API not found (tried: %s); set CPPYY_API_PATH envar to the 'CPyCppyy' API directory to fix" % apipath_extra)
         else:
             add_include_path(apipath_extra)
 
