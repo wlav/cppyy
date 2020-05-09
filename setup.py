@@ -28,7 +28,7 @@ try:
         if version[1] <= 3 and version[2] < 2:
             requirements = ['cppyy-backend<=1.10', 'cppyy-cling<=6.18.2.3']
         else:
-            requirements = ['cppyy-backend<=1.12', 'cppyy-cling<=6.20.4']
+            requirements = ['cppyy-backend<=1.11', 'cppyy-cling<=6.20.4']
 except ImportError:
     # CPython
     requirements = ['CPyCppyy==1.10.4', 'cppyy-backend==1.12.0', 'cppyy-cling==6.20.4.1']

@@ -439,7 +439,7 @@ class TestCROSSINHERITANCE:
 
         class MyPyDerived(ns.MyBase):
             def __init__(self):
-                super().__init__()
+                super(MyPyDerived, self).__init__()
                 assert self.my_data == 101
                 self.py_data = 13
                 self.my_data = 42

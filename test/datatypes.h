@@ -543,6 +543,8 @@ public:
     static icomplex_t              s_icomplex;
     static EWhat                   s_enum;
     static void*                   s_voidp;
+    static std::string             s_strv;
+    static std::string*            s_strp;
 
 private:
     bool m_owns_arrays;

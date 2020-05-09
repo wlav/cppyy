@@ -1283,7 +1283,7 @@ class TestDATATYPES:
         assert p.intensity == 5.
 
     def test27_pointer_to_array(self):
-        """Usability of pointer to array."""
+        """Usability of pointer to array"""
 
         import cppyy
 
@@ -1313,3 +1313,27 @@ class TestDATATYPES:
             assert type(f) == AoS.Foo
         assert type(bar.fArr[0]) == AoS.Foo
 
+    def test28_object_pointers(self):
+        """Read/write access to objects through pointers"""
+
+        import cppyy
+
+        c = cppyy.gbl.CppyyTestData()
+
+        assert cppyy.gbl.CppyyTestData.s_strv == "Hello"
+        assert c.s_strv                       == "Hello"
+        assert not cppyy.gbl.CppyyTestData.s_strp
+        assert not c.s_strp
+
+        c.s_strv                               = "World"
+        assert cppyy.gbl.CppyyTestData.s_strv == "World"
+
+      # assign on nullptr is a pointer copy
+        sn = cppyy.gbl.std.string("aap")
+        cppyy.gbl.CppyyTestData.s_strp = sn
+        assert c.s_strp               == "aap"
+
+      # assign onto the existing object
+        cppyy.gbl.CppyyTestData.s_strp.__assign__(cppyy.gbl.std.string("noot"))
+        assert c.s_strp               == "noot"
+        assert sn                     == "noot"  # set through pointer

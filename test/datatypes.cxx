@@ -562,6 +562,8 @@ complex_t            CppyyTestData::s_complex  = {909., -909.};
 icomplex_t           CppyyTestData::s_icomplex = {979, -979};
 CppyyTestData::EWhat CppyyTestData::s_enum     = CppyyTestData::kNothing;
 void*                CppyyTestData::s_voidp    = (void*)0;
+std::string          CppyyTestData::s_strv     = "Hello";
+std::string*         CppyyTestData::s_strp     = nullptr;
 
 //- strings -----------------------------------------------------------------
 const char*     CppyyTestData::get_valid_string(const char* in) { return in; }
