@@ -450,3 +450,70 @@ class TestCROSSINHERITANCE:
         assert m.get_data()   == 42
         assert m.get_data_v() == 42
 
+    def test16_object_returns(self):
+        """Return of C++ objects from overridden functions"""
+
+        import cppyy
+
+      # Part 1: return of a new C++ object
+        cppyy.cppdef("""namespace test16_object_returns {
+          class Base {
+          public:
+            virtual Base* foo() { return new Base(); }
+            virtual ~Base() {}
+            virtual std::string whoami() { return "Base"; }
+          };
+
+          class CppDerived : public Base {
+            CppDerived* foo() { return new CppDerived(); }
+            ~CppDerived() {}
+            virtual std::string whoami() { return "CppDerived"; }
+          };
+
+          Base* call_foo(Base& obj) { return obj.foo(); }
+        }""")
+
+        ns = cppyy.gbl.test16_object_returns
+
+        class PyDerived1(ns.Base):
+            def foo(self):
+                return ns.CppDerived()
+
+        obj = PyDerived1()
+        assert not ns.call_foo(obj)
+
+        class PyDerived2(ns.Base):
+            def foo(self):
+                x = ns.CppDerived()
+                x.__python_owns__ = False
+                return x
+
+        obj = PyDerived2()
+        assert not not ns.call_foo(obj)
+
+      # Part 2: return of a new Python derived object
+        class PyDerived3(ns.Base):
+            def foo(self):
+                return PyDerived3()
+
+            def whoami(self):
+                return "PyDerived3"
+
+        obj = PyDerived3()
+        newobj = ns.call_foo(obj)
+        assert not newobj
+
+        class PyDerived4(ns.Base):
+            def foo(self):
+                d = PyDerived4()
+                d.__python_owns__ = False
+                d.alpha = 2
+                return d
+
+            def whoami(self):
+                return "PyDerived4"
+
+        obj = PyDerived4()
+        new_obj = ns.call_foo(obj)
+        assert not not new_obj
+        assert new_obj.whoami() == "PyDerived4"
