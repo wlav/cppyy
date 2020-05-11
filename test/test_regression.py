@@ -645,3 +645,32 @@ class TestREGRESSION:
             assert type(e) == cppyy.gbl.RooStuff.RooArg
             i += 1
         assert i
+
+    def test25_const_charptr_data(self):
+        """const char* is not const; const char* const is"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace ConstCharStar {
+            struct ImGuiIO1 {
+               ImGuiIO1() : BackendPlatformName(nullptr) {}
+               const char* BackendPlatformName;
+            };
+            struct ImGuiIO2 {
+               ImGuiIO2() : BackendPlatformName(nullptr) {}
+               const char* const BackendPlatformName;
+            };
+        }""")
+
+        io = cppyy.gbl.ConstCharStar.ImGuiIO1()
+
+        io.BackendPlatformName = "aap"
+        assert io.BackendPlatformName == "aap"
+
+        io.BackendPlatformName = "aap\0noot"
+        io.BackendPlatformName = "aap\0noot"
+
+        io = cppyy.gbl.ConstCharStar.ImGuiIO2()
+        with raises(TypeError):
+            io.BackendPlatformName = "aap"
