@@ -143,7 +143,7 @@ del make_smartptr
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
     if not gbl.gInterpreter.Declare(src):
-        return False
+        raise SyntaxError('failed to parse the given C++ code')
     return True
 
 def load_library(name):
@@ -159,24 +159,28 @@ def load_library(name):
 
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
-    gbl.gInterpreter.Declare('#include "%s"' % header)
+    if not gbl.gInterpreter.Declare('#include "%s"' % header):
+        raise ImportError('failed to load header file "%s"' % (header,))
+    return True
 
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
-    gbl.gInterpreter.Declare("""extern "C" {
+    if not gbl.gInterpreter.Declare("""extern "C" {
 #include "%s"
-}""" % header)
+}""" % header):
+        raise ImportError('failed to load header file "%s"' % (header,))
+    return True
 
 def add_include_path(path):
     """Add a path to the include paths available to Cling."""
     if not os.path.isdir(path):
-        raise OSError("no such directory: %s" % path)
+        raise OSError('no such directory: %s' % path)
     gbl.gInterpreter.AddIncludePath(path)
 
 def add_library_path(path):
     """Add a path to the library search paths available to Cling."""
     if not os.path.isdir(path):
-        raise OSError("no such directory: %s" % path)
+        raise OSError('no such directory: %s' % path)
     gbl.gSystem.AddDynamicPath(path)
 
 # add access to Python C-API headers

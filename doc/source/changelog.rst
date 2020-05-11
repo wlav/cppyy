@@ -14,6 +14,7 @@ master: 1.7.1
 -------------
 
 * Expose protected members in Python derived classes
+* include, c_include, and cppdef now raise exceptions on error
 * Fix by-ptr return of objects in Python derived classes
 * Fix for passing numpy boolean array through ``bool*``
 * Fix assignment to ``const char*`` data members

@@ -400,7 +400,6 @@ class TestFRAGILE:
     def test19_gbl_contents(self):
         """Assure cppyy.gbl is mostly devoid of ROOT thingies"""
 
-
         import cppyy
 
         dd = dir(cppyy.gbl)
@@ -408,6 +407,18 @@ class TestFRAGILE:
         assert not 'TCanvasImp' in dd
         assert not 'ESysConstants' in dd
         assert not 'kDoRed' in dd
+
+    def test20_failing_cppcode(self):
+        """Check error behavior of failing C++ code"""
+
+        import cppyy
+
+        with raises(ImportError):
+            cppyy.include("doesnotexist.h")
+        with raises(ImportError):
+            cppyy.c_include("doesnotexist.h")
+        with raises(SyntaxError):
+            cppyy.cppdef("1aap = 42;")
 
 
 class TestSIGNALS:
