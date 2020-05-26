@@ -308,3 +308,35 @@ class TestLOWLEVEL:
 
         x = np.array([True], dtype=np.bool)
         assert cppyy.gbl.convert_bool(x)
+
+    def test09_array_of_const_char_star(self):
+        """Test passting of const char*[]"""
+
+        import cppyy, ctypes
+
+        def py2c(pyargs):
+            cargsn = (ctypes.c_char_p * len(pyargs))(*pyargs)
+            return ctypes.POINTER(ctypes.c_char_p)(cargsn)
+
+        pyargs = [b'hello', b'world']
+
+        cargs = py2c(pyargs)
+        v = cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(cargs, len(pyargs))
+        assert len(v) == len(pyargs)
+        assert list(v) == pyargs
+
+        for t in (tuple, list):
+            for pyargs in (t(['aap', 'noot', 'mies']), t([b'zus', 'jet', 'tim'])):
+                v = cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(pyargs, len(pyargs))
+                assert len(v) == len(pyargs)
+                assert t(v) == pyargs
+
+      # debatable, but the following works:
+        pyargs = ['aap', 1, 'mies']
+        with raises(TypeError):
+            cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(pyargs, len(pyargs))
+
+        pyargs = ['aap', None, 'mies']
+        with raises(TypeError):
+            cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(pyargs, len(pyargs))
+

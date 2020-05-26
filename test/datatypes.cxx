@@ -782,3 +782,15 @@ void StoreCallable_sf::set_callable(const std::function<double(double, double)>&
 double StoreCallable_sf::operator()(double d1, double d2) {
     return fF(d1, d2);
 }
+
+
+//= array of C strings passing ==============================================
+std::vector<std::string> ArrayOfCStrings::takes_array_of_cstrings(const char* args[], int len)
+{
+    std::vector<std::string> v;
+    v.reserve(len);
+    for (int i = 0; i < len; ++i)
+        v.emplace_back(args[i]);
+
+    return v;
+}

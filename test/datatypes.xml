@@ -58,4 +58,7 @@
   <namespace name="ArrayOfStruct" />
   <class pattern="ArrayOfStruct::*" />
 
+  <namespace name="ArrayOfCStrings" />
+  <function pattern="ArrayOfCStrings::*" />
+
 </lcgdict>

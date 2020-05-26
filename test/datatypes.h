@@ -705,6 +705,7 @@ public:
     double operator()(double, double);
 };
 
+
 //= array of struct variants ================================================
 namespace ArrayOfStruct {
 
@@ -728,5 +729,11 @@ struct Bar2 {
 };
 
 } // namespace ArrayOfStruct
+
+
+//= array of C strings passing ==============================================
+namespace ArrayOfCStrings {
+    std::vector<std::string> takes_array_of_cstrings(const char* args[], int len);
+}
 
 #endif // !CPPYY_TEST_DATATYPES_H
