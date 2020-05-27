@@ -517,3 +517,46 @@ class TestCROSSINHERITANCE:
         new_obj = ns.call_foo(obj)
         assert not not new_obj
         assert new_obj.whoami() == "PyDerived4"
+
+    def test17_cctor_access_controlled(self):
+        """Python derived class of C++ class with access controlled cctor"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace test17_private_cctor {
+          class CommonBase {
+          public:
+            virtual ~CommonBase() {}
+            virtual std::string whoami() = 0;
+          };
+
+          class Base1 : public CommonBase {
+            Base1(const Base1&) {}
+          public:
+            Base1() {}
+            virtual ~Base1() {}
+            virtual std::string whoami() { return "Base1"; }
+          };
+
+          class Base2 : public CommonBase {
+          protected:
+            Base2(const Base2&) {}
+          public:
+            Base2() {}
+            virtual ~Base2() {}
+            virtual std::string whoami() { return "Base2"; }
+          };
+
+          std::string callit(CommonBase& obj) { return obj.whoami(); }
+        }""")
+
+        ns = cppyy.gbl.test17_private_cctor
+
+        for base in (ns.Base1, ns.Base2):
+            class PyDerived(base):
+                def whoami(self):
+                    return "PyDerived"
+
+            obj = PyDerived()
+            assert ns.callit(obj) == "PyDerived"
+
