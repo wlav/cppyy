@@ -415,3 +415,19 @@ class TestCPP11FEATURES:
             del obj
             gc.collect()
             assert TestSmartPtr.s_counter == 0
+
+    def test15_unique_ptr_template_deduction(self):
+        """Argument type deduction with std::unique_ptr"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace UniqueTempl {
+            template <typename T>
+            std::unique_ptr<T> returnptr(std::unique_ptr<T> a) {
+                return a;
+            }
+        }""")
+
+        uptr_in = cppyy.gbl.std.make_unique[int]()
+        uptr_in = cppyy.gbl.std.make_unique['int']()
+        #uptr_out = cppyy.gbl.UniqueTempl.returnptr["int"](cppyy.gbl.std.move(uptr_in))

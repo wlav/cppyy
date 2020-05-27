@@ -124,18 +124,24 @@ class py_make_smartptr(object):
         return self.ptrcls[self.cls](obj)   # C++ takes ownership
 
 class make_smartptr(object):
-    __slots__ = ['ptrcls']
-    def __init__(self, ptrcls):
+    __slots__ = ['ptrcls', 'maker']
+    def __init__(self, ptrcls, maker):
         self.ptrcls = ptrcls
+        self.maker  = maker
     def __call__(self, ptr):
         return py_make_smartptr(type(ptr), self.ptrcls)(ptr)
     def __getitem__(self, cls):
-        if type(cls) == str:
-            cls = getattr(gbl, cls)
-        return py_make_smartptr(cls, self.ptrcls)
+        try:
+            if not cls.__module__ == int.__module__:
+                return py_make_smartptr(cls, self.ptrcls)
+        except AttributeError:
+            pass
+        if type(cls) == str and not cls in ('int', 'float'):
+            return py_make_smartptr(getattr(gbl, cls), self.ptrcls)
+        return self.maker[cls]
 
-gbl.std.make_shared = make_smartptr(gbl.std.shared_ptr)
-gbl.std.make_unique = make_smartptr(gbl.std.unique_ptr)
+gbl.std.make_shared = make_smartptr(gbl.std.shared_ptr, gbl.std.make_shared)
+gbl.std.make_unique = make_smartptr(gbl.std.unique_ptr, gbl.std.make_unique)
 del make_smartptr
 
 
