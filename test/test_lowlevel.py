@@ -323,13 +323,13 @@ class TestLOWLEVEL:
         cargs = py2c(pyargs)
         v = cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(cargs, len(pyargs))
         assert len(v) == len(pyargs)
-        assert list(v) == pyargs
+        assert list(v) == [x.decode() for x in pyargs]
 
         for t in (tuple, list):
             for pyargs in (t(['aap', 'noot', 'mies']), t([b'zus', 'jet', 'tim'])):
                 v = cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(pyargs, len(pyargs))
                 assert len(v) == len(pyargs)
-                assert t(v) == pyargs
+                assert t(v) == t([type(x) == str and x or x.decode() for x in pyargs])
 
       # debatable, but the following works:
         pyargs = ['aap', 1, 'mies']
