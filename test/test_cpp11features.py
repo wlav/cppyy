@@ -429,6 +429,9 @@ class TestCPP11FEATURES:
         }""")
 
         uptr_in = cppyy.gbl.std.make_unique[int]()
-        uptr_in = cppyy.gbl.std.make_unique['int']()
         uptr_out = cppyy.gbl.UniqueTempl.returnptr["int"](cppyy.gbl.std.move(uptr_in))
         assert not not uptr_out
+
+        uptr_in = cppyy.gbl.std.make_unique['int']()
+        with raises(ValueError):  # not an RValue
+            cppyy.gbl.UniqueTempl.returnptr[int](uptr_in)
