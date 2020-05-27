@@ -523,7 +523,7 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""namespace test17_private_cctor {
+        cppyy.cppdef("""namespace test17_cctor_access_controlled {
           class CommonBase {
           public:
             virtual ~CommonBase() {}
@@ -550,7 +550,7 @@ class TestCROSSINHERITANCE:
           std::string callit(CommonBase& obj) { return obj.whoami(); }
         }""")
 
-        ns = cppyy.gbl.test17_private_cctor
+        ns = cppyy.gbl.test17_cctor_access_controlled
 
         for base in (ns.Base1, ns.Base2):
             class PyDerived(base):
@@ -559,4 +559,51 @@ class TestCROSSINHERITANCE:
 
             obj = PyDerived()
             assert ns.callit(obj) == "PyDerived"
+
+    def test18_deep_hierarchy(self):
+        """Test a deep Python hierarchy with pure virtual functions"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace test18_deep_hierarchy {
+          class Base {
+          public:
+            virtual ~Base() {}
+            virtual std::string whoami() = 0;
+          };
+
+          std::string callit(Base& obj) { return obj.whoami(); }
+        }""")
+
+        ns = cppyy.gbl.test18_deep_hierarchy
+
+        class PyDerived1(ns.Base):
+            def whoami(self):
+                return "PyDerived1"
+
+        obj = PyDerived1()
+        assert ns.callit(obj) == "PyDerived1"
+
+        class PyDerived2(PyDerived1):
+            pass
+
+        obj = PyDerived2()
+        assert obj.whoami()   == "PyDerived1"
+        assert ns.callit(obj) == "PyDerived1"
+
+        class PyDerived3(PyDerived1):
+            def whoami(self):
+                return "PyDerived3"
+
+        obj = PyDerived3()
+        assert obj.whoami()   == "PyDerived3"
+        assert ns.callit(obj) == "PyDerived3"
+
+        class PyDerived4(PyDerived2):
+            def whoami(self):
+                return "PyDerived4"
+
+        obj = PyDerived4()
+        assert obj.whoami()   == "PyDerived4"
+        assert ns.callit(obj) == "PyDerived4"
 
