@@ -423,11 +423,12 @@ class TestCPP11FEATURES:
 
         cppyy.cppdef("""namespace UniqueTempl {
             template <typename T>
-            std::unique_ptr<T> returnptr(std::unique_ptr<T> a) {
-                return a;
+            std::unique_ptr<T> returnptr(std::unique_ptr<T>&& a) {
+                return std::move(a);
             }
         }""")
 
         uptr_in = cppyy.gbl.std.make_unique[int]()
         uptr_in = cppyy.gbl.std.make_unique['int']()
-        #uptr_out = cppyy.gbl.UniqueTempl.returnptr["int"](cppyy.gbl.std.move(uptr_in))
+        uptr_out = cppyy.gbl.UniqueTempl.returnptr["int"](cppyy.gbl.std.move(uptr_in))
+        assert not not uptr_out
