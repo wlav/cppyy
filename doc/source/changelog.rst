@@ -20,6 +20,7 @@ master: 1.7.1
 * Fix by-ptr return of objects in Python derived classes
 * Fix for passing numpy boolean array through ``bool*``
 * Fix assignment to ``const char*`` data members
+* Support __restrict and __restrict__ in interfaces
 * Allow passing sequence of strings through ``const char*[]`` argument
 
 

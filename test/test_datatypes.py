@@ -1337,3 +1337,12 @@ class TestDATATYPES:
         cppyy.gbl.CppyyTestData.s_strp.__assign__(cppyy.gbl.std.string("noot"))
         assert c.s_strp               == "noot"
         assert sn                     == "noot"  # set through pointer
+
+    def test29_restrict(self):
+        """Strip __restrict keyword from use"""
+
+        import cppyy
+
+        cppyy.cppdef("std::string restrict_call(const char*__restrict s) { return s; }")
+
+        assert cppyy.gbl.restrict_call("aap") == "aap"
