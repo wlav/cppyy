@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.7.1
--------------
+20200-06-06: 1.7.1
+------------------
 
 * Expose protected members in Python derived classes
 * Support for deep Python-side derived hierarchies
