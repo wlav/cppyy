@@ -17,6 +17,7 @@ master: 1.7.1
 * Support for deep Python-side derived hierarchies
 * Do not generate a copy ctor in the Python derived class if private
 * include, c_include, and cppdef now raise exceptions on error
+* Allow mixing of keywords and default values
 * Fix by-ptr return of objects in Python derived classes
 * Fix for passing numpy boolean array through ``bool*``
 * Fix assignment to ``const char*`` data members

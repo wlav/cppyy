@@ -490,6 +490,46 @@ class TestPYTHONIFY:
         with raises(TypeError):
             c.callme(a=1, b=2)
 
+    def test19_keywords_and_defaults(self):
+        """Use of keyword arguments mixed with defaults"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace KeyWordsAndDefaults {
+        int foo(int a=10, int b=20, int c=5, int d=4) {
+            return a-b/c*d;
+        }
+
+        std::string bar(const std::string& a = "a", const std::string& b = "b") {
+            return a+b;
+        }
+
+        class MyClass {};
+
+        void foobar(const MyClass& m1 = MyClass(), const MyClass& m2 = MyClass()) {
+            /* empty */
+        } }""")
+
+        def pyfoo(a=10, b=20, c=5, d=4):
+            return a-b//c*d;
+
+        ns = cppyy.gbl.KeyWordsAndDefaults
+
+        assert ns.foo()                  == pyfoo()
+        assert ns.foo(a=100)             == pyfoo(a=100)
+        assert ns.foo(b=100)             == pyfoo(b=100)
+        assert ns.foo(a=100, b=200)      == pyfoo(a=100, b=200)
+        assert ns.foo(a=100, b=200, d=0) == pyfoo(a=100, b=200, d=0)
+        assert ns.foo(b=100, a=200)      == pyfoo(b=100, a=200)
+
+        with raises(TypeError):
+            ns.foo(1, 2, 3, 4, b=5)
+
+        assert ns.bar() == "ab"
+        assert ns.bar(b = " greeting") == "a greeting"
+
+        ns.foobar(m2 = ns.MyClass())
+
 
 class TestPYTHONIFY_UI:
     def setup_class(cls):
