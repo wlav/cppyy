@@ -760,16 +760,27 @@ class TestSTLSTRING:
 
         import cppyy
 
-        for t in (cppyy.gbl.std.string, cppyy.gbl.std.wstring):
-            s1 = t("Hello")
-            s2 = ", World!"
+      # note order in these checks: the first is str then unicode, the other is
+      # the reverse; this exercises both paths (once resolved, the operator+ can
+      # handle both str and unicde
+        s1 = cppyy.gbl.std.string("Hello")
+        s2 = ", World!"
 
-            assert s1+s2 == "Hello, World!"
-            assert s2+s1 == ", World!Hello"
+        assert s1+s2 == "Hello, World!"
+        assert s2+s1 == ", World!Hello"
 
-            s2 = u", World!"
-            assert s1+s2 == "Hello, World!"
-            assert s2+s1 == ", World!Hello"
+        s2 = u", World!"
+        assert s1+s2 == "Hello, World!"
+        assert s2+s1 == ", World!Hello"
+
+        s1 = cppyy.gbl.std.wstring("Hello")
+
+        assert s1+s2 == "Hello, World!"
+        assert s2+s1 == ", World!Hello"
+
+        s2 = ", World!"
+        assert s1+s2 == "Hello, World!"
+        assert s2+s1 == ", World!Hello"
 
 
 class TestSTLLIST:
