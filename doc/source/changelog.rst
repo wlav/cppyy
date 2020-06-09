@@ -10,8 +10,14 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-20200-06-06: 1.7.1
-------------------
+master: 1.7.2
+-------------
+
+* Support mixing of Python and C++ types in global operators
+
+
+2020-06-06: 1.7.1
+-----------------
 
 * Expose protected members in Python derived classes
 * Support for deep Python-side derived hierarchies

@@ -755,6 +755,20 @@ class TestSTLSTRING:
         assert d[x] == 0
         assert d['x'] == 0
 
+    def test07_string_operators(self):
+        """Mixing of C++ and Python types in global operators"""
+
+        import cppyy
+
+        for t in (cppyy.gbl.std.string, cppyy.gbl.std.wstring):
+            s1 = t("Hello")
+            s2 = ", World!"
+
+            assert s1+s2 == "Hello, World!"
+
+            s2 = u", World!"
+            assert s1+s2 == "Hello, World!"
+
 
 class TestSTLLIST:
     def setup_class(cls):
