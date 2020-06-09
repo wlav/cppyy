@@ -765,9 +765,11 @@ class TestSTLSTRING:
             s2 = ", World!"
 
             assert s1+s2 == "Hello, World!"
+            assert s2+s1 == ", World!Hello"
 
             s2 = u", World!"
             assert s1+s2 == "Hello, World!"
+            assert s2+s1 == ", World!Hello"
 
 
 class TestSTLLIST:
