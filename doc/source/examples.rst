@@ -12,7 +12,9 @@ alphabetical order):
  * `PyEtaler`_
  * `gmpxxyy`_
  * `cppyy-knearestneighbors`_
+ * `lyncs`_
  * `libsemigroups_cppyy`_
+ * `SopraClient`_
  * `python-vspline`_
 
 In addition, cppyy is being re-integrated in its roots, which includes
@@ -24,6 +26,8 @@ See the "experimental" version of the `PyROOT`_ project.
 .. _PyEtaler: https://github.com/etaler/PyEtaler
 .. _gmpxxyy: https://github.com/flatsurf/gmpxxyy
 .. _cppyy-knearestneighbors: https://github.com/jclay/cppyy-knearestneighbors-example
+.. _lyncs: https://github.com/sbacchio/lyncs
 .. _libsemigroups_cppyy: https://github.com/libsemigroups/libsemigroups_cppyy
+.. _SopraClient: https://github.com/SoPra-Team-17/Client
 .. _python-vspline: https://bitbucket.org/kfj/python-vspline
-.. _PyROOT: https://root.cern.ch/gitweb/?p=root.git;a=tree;f=bindings/pyroot_experimental/PyROOT
+.. _PyROOT: https://root.cern.ch/
