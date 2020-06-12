@@ -1148,6 +1148,21 @@ class TestSTLARRAY:
             assert gbl.ArrayTest.get_pa_px(a.data(), i) == 13*i
             assert gbl.ArrayTest.get_pa_py(a.data(), i) == 42*i
 
+    def test04_array_from_aggregate(self):
+        """Initialize an array from an aggregate contructor"""
+
+        import cppyy
+
+        l = [1.0, 1.0, 1.0]
+        t = cppyy.gbl.std.array["double",3](l)
+        assert list(t) == l
+
+        with raises(ValueError):
+            cppyy.gbl.std.array["double",3]([1.0, 1.0, 1.0, 1.0])
+
+        with raises(TypeError):
+            cppyy.gbl.std.array["double",3](['a', 1.0, 1.0])
+
 
 class TestSTLSTRING_VIEW:
     def setup_class(cls):

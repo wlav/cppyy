@@ -15,7 +15,8 @@ master: 1.7.2
 
 * Support mixing of Python and C++ types in global operators
 * Capture Cling error messages from cppdef and include in the Python exception
-* Add a cppexec method to evalutate statements i Cling's global scope
+* Add a cppexec method to evalutate statements in Cling's global scope
+* Support initialization of std::array<> from sequences
 
 
 2020-06-06: 1.7.1
