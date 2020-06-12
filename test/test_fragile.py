@@ -413,12 +413,27 @@ class TestFRAGILE:
 
         import cppyy
 
-        with raises(ImportError):
+        with raises(ImportError) as include_exc:
             cppyy.include("doesnotexist.h")
-        with raises(ImportError):
+        assert "Failed to load header file \"doesnotexist.h\"" in str(include_exc.value)
+        assert """ fatal error: \'doesnotexist.h\' file not found
+#include "doesnotexist.h"
+         ^~~~~~~~~~~~~~~~""" in str(include_exc.value)
+
+        with raises(ImportError) as c_include_exc:
             cppyy.c_include("doesnotexist.h")
-        with raises(SyntaxError):
+        assert "Failed to load header file \"doesnotexist.h\"" in str(c_include_exc.value)
+        assert """ fatal error: \'doesnotexist.h\' file not found
+#include "doesnotexist.h"
+         ^~~~~~~~~~~~~~~~""" in str(c_include_exc.value)
+
+        with raises(SyntaxError) as cppdef_exc:
             cppyy.cppdef("1aap = 42;")
+        assert "Failed to parse the given C++ code" in str(cppdef_exc.value)
+        assert """error: expected unqualified-id
+1aap = 42;
+^
+""" in str(cppdef_exc.value)
 
 
 class TestSIGNALS:

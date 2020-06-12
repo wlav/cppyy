@@ -11,6 +11,8 @@ __all__ = [
     'bind_object',
     'nullptr',
     '_backend',
+    '_begin_capture_stderr',
+    '_end_capture_stderr'
     ]
 
 # first load the dependency libraries of the backend, then pull in the
@@ -135,3 +137,12 @@ def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)
     if sc == -1:
         raise RuntimeError("Unable to load reflection library "+name)
+
+def _begin_capture_stderr():
+    _backend._begin_capture_stderr()
+
+def _end_capture_stderr():
+    err = _backend._end_capture_stderr()
+    if err:
+        return "\n%s" % err
+    return ""
