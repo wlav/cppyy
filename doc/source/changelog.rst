@@ -14,6 +14,7 @@ master: 1.7.2
 -------------
 
 * Support mixing of Python and C++ types in global operators
+* Capture Cling error messages from cppdef and include in the Python exception
 
 
 2020-06-06: 1.7.1
