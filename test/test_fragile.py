@@ -435,6 +435,17 @@ class TestFRAGILE:
 ^
 """ in str(cppdef_exc.value)
 
+    def test21_cppexec(self):
+        """Interactive access to the Cling global scope"""
+
+        import cppyy
+
+        cppyy.cppexec("int interactive_b = 4")
+        assert cppyy.gbl.interactive_b == 4
+
+        with raises(SyntaxError):
+            cppyy.cppexec("doesnotexist");
+
 
 class TestSIGNALS:
     def setup_class(cls):

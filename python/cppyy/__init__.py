@@ -35,6 +35,7 @@ __author__ = 'Wim Lavrijsen <WLavrijsen@lbl.gov>'
 
 __all__ = [
     'cppdef',                 # declare C++ source to Cling
+    'cppexec',                # execute a C++ statement
     'include',                # load and jit a header file
     'c_include',              # load and jit a C header file
     'load_library',           # load a shared library
@@ -48,7 +49,7 @@ __all__ = [
 
 from ._version import __version__
 
-import os, sys, sysconfig, warnings
+import ctypes, os, sys, sysconfig, warnings
 
 if not 'CLING_STANDARD_PCH' in os.environ:
     local_pch = os.path.join(os.path.dirname(__file__), 'allDict.cxx.pch')
@@ -145,7 +146,7 @@ gbl.std.make_unique = make_smartptr(gbl.std.unique_ptr, gbl.std.make_unique)
 del make_smartptr
 
 
-#--- CFFI style interface ----------------------------------------------------
+#--- interface to Cling ------------------------------------------------------
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
     _begin_capture_stderr()
@@ -153,6 +154,23 @@ def cppdef(src):
         err = _end_capture_stderr()
         raise SyntaxError('Failed to parse the given C++ code%s' % err)
     return True
+
+def cppexec(stmt):
+    """Execute C++ statement <stmt> in Cling's global scope."""
+    if stmt and stmt[-1] != ';':
+        stmt += ';'
+
+  # capture stderr, but note that ProcessLine could legitimately be writing to
+  # std::cerr, in which case the captured output needs to be printed as normal
+    _begin_capture_stderr()
+    errcode = ctypes.c_uint(0)
+    gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
+    err = _end_capture_stderr()
+
+    if errcode.value:
+        raise SyntaxError('Failed to parse the given C++ code%s' % err)
+    elif err and err[1:] != '\n':
+        sys.stderr.write(err[1:]) 
 
 def load_library(name):
     """Explicitly load a shared library."""
