@@ -150,8 +150,9 @@ del make_smartptr
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
     _begin_capture_stderr()
-    if not gbl.gInterpreter.Declare(src):
-        err = _end_capture_stderr()
+    errcode = gbl.gInterpreter.Declare(src)
+    err = _end_capture_stderr()
+    if not errcode:
         raise SyntaxError('Failed to parse the given C++ code%s' % err)
     return True
 
@@ -181,25 +182,27 @@ def load_library(name):
                gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
             name = 'lib'+name
     sc = gSystem.Load(name)
+    err = _end_capture_stderr()
     if sc == -1:
-        err = _end_capture_stderr()
         raise RuntimeError('Unable to load library "%s"%s' % (name, err))
 
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
     _begin_capture_stderr()
-    if not gbl.gInterpreter.Declare('#include "%s"' % header):
-        err = _end_capture_stderr()
+    errcode = gbl.gInterpreter.Declare('#include "%s"' % header)
+    err = _end_capture_stderr()
+    if not errcode:
         raise ImportError('Failed to load header file "%s"%s' % (header, err))
     return True
 
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
     _begin_capture_stderr()
-    if not gbl.gInterpreter.Declare("""extern "C" {
+    errcode = gbl.gInterpreter.Declare("""extern "C" {
 #include "%s"
-}""" % header):
-        err = _end_capture_stderr()
+}""" % header)
+    err = _end_capture_stderr()
+    if not errcode:
         raise ImportError('Failed to load header file "%s"%s' % (header, err))
     return True
 
