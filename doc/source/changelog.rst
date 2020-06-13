@@ -17,6 +17,7 @@ master: 1.7.2
 * Capture Cling error messages from cppdef and include in the Python exception
 * Add a cppexec method to evalutate statements in Cling's global scope
 * Support initialization of std::array<> from sequences
+* Support C++17 style initialization of STL containers
 
 
 2020-06-06: 1.7.1

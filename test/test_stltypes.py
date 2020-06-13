@@ -600,6 +600,15 @@ class TestSTLVECTOR:
 
         constructors_cpython_test(cppyy.gbl.std.vector[int])
 
+    def test17_vector_cpp17_style(self):
+        """C++17 style initialization of std::vector"""
+
+        import cppyy
+
+        l = [1.0, 2.0, 3.0]
+        v = cppyy.gbl.std.vector(l)
+        assert list(l) == l
+
 
 class TestSTLSTRING:
     def setup_class(cls):
@@ -874,6 +883,24 @@ class TestSTLLIST:
         for a in iter(l):
             assert a == i
             i += 1
+
+    def test05_list_cpp17_style(self):
+        """C++17 style initialization of std::list"""
+
+        import cppyy
+
+        l = [1.0, 2.0, 3.0]
+        v = cppyy.gbl.std.list(l)
+        assert list(l) == l
+
+    def test06_map_cpp17_style(self):
+        """C++17 style initialization of std::map"""
+
+        import cppyy
+
+        m = cppyy.gbl.std.map({'1': 2, '2':1})
+        assert m['1'] == 2
+        assert m['2'] == 1
 
 
 class TestSTLMAP:
@@ -1208,6 +1235,15 @@ class TestSTLDEQUE:
         assert x
         del x
 
+    def test02_deque_cpp17_style(self):
+        """C++17 style initialization of std::deque"""
+
+        import cppyy
+
+        l = [1.0, 2.0, 3.0]
+        v = cppyy.gbl.std.deque(l)
+        assert list(l) == l
+
 
 class TestSTLSET:
     def setup_class(cls):
@@ -1274,6 +1310,15 @@ class TestSTLSET:
 
         with raises(TypeError):
             s = cppyy.gbl.std.set[int](set(["aap", "noot", "mies"]))
+
+    def test04_set_cpp17_style(self):
+        """C++17 style initialization of std::set"""
+
+        import cppyy
+
+        l = [1.0, 2.0, 3.0]
+        v = cppyy.gbl.std.set(l)
+        assert list(l) == l
 
 
 class TestSTLTUPLE:
