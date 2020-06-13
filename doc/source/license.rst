@@ -51,6 +51,7 @@ the same conditions (except for some compatible licenses as retained in the
 source code):
 
   * CERN
+  * Lucio Asnaghi
   * Simone Bacchio
   * Robert Bradshaw
   * Ellis Breen

@@ -35,6 +35,7 @@ __author__ = 'Wim Lavrijsen <WLavrijsen@lbl.gov>'
 
 __all__ = [
     'cppdef',                 # declare C++ source to Cling
+    'cppexec',                # execute a C++ statement
     'include',                # load and jit a header file
     'c_include',              # load and jit a C header file
     'load_library',           # load a shared library
@@ -48,7 +49,7 @@ __all__ = [
 
 from ._version import __version__
 
-import os, sys, sysconfig, warnings
+import ctypes, os, sys, sysconfig, warnings
 
 if not 'CLING_STANDARD_PCH' in os.environ:
     local_pch = os.path.join(os.path.dirname(__file__), 'allDict.cxx.pch')
@@ -145,48 +146,76 @@ gbl.std.make_unique = make_smartptr(gbl.std.unique_ptr, gbl.std.make_unique)
 del make_smartptr
 
 
-#--- CFFI style interface ----------------------------------------------------
+#--- interface to Cling ------------------------------------------------------
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
-    if not gbl.gInterpreter.Declare(src):
-        raise SyntaxError('failed to parse the given C++ code')
+    _begin_capture_stderr()
+    errcode = gbl.gInterpreter.Declare(src)
+    err = _end_capture_stderr()
+    if not errcode:
+        raise SyntaxError('Failed to parse the given C++ code%s' % err)
     return True
+
+def cppexec(stmt):
+    """Execute C++ statement <stmt> in Cling's global scope."""
+    if stmt and stmt[-1] != ';':
+        stmt += ';'
+
+  # capture stderr, but note that ProcessLine could legitimately be writing to
+  # std::cerr, in which case the captured output needs to be printed as normal
+    _begin_capture_stderr()
+    errcode = ctypes.c_uint(0)
+    gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
+    err = _end_capture_stderr()
+
+    if errcode.value:
+        raise SyntaxError('Failed to parse the given C++ code%s' % err)
+    elif err and err[1:] != '\n':
+        sys.stderr.write(err[1:]) 
 
 def load_library(name):
     """Explicitly load a shared library."""
+    _begin_capture_stderr()
     gSystem = gbl.gSystem
     if name[:3] != 'lib':
         if not gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
                gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
             name = 'lib'+name
     sc = gSystem.Load(name)
+    err = _end_capture_stderr()
     if sc == -1:
-        raise RuntimeError("Unable to load library "+name)
+        raise RuntimeError('Unable to load library "%s"%s' % (name, err))
 
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
-    if not gbl.gInterpreter.Declare('#include "%s"' % header):
-        raise ImportError('failed to load header file "%s"' % (header,))
+    _begin_capture_stderr()
+    errcode = gbl.gInterpreter.Declare('#include "%s"' % header)
+    err = _end_capture_stderr()
+    if not errcode:
+        raise ImportError('Failed to load header file "%s"%s' % (header, err))
     return True
 
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
-    if not gbl.gInterpreter.Declare("""extern "C" {
+    _begin_capture_stderr()
+    errcode = gbl.gInterpreter.Declare("""extern "C" {
 #include "%s"
-}""" % header):
-        raise ImportError('failed to load header file "%s"' % (header,))
+}""" % header)
+    err = _end_capture_stderr()
+    if not errcode:
+        raise ImportError('Failed to load header file "%s"%s' % (header, err))
     return True
 
 def add_include_path(path):
     """Add a path to the include paths available to Cling."""
     if not os.path.isdir(path):
-        raise OSError('no such directory: %s' % path)
+        raise OSError('No such directory: %s' % path)
     gbl.gInterpreter.AddIncludePath(path)
 
 def add_library_path(path):
     """Add a path to the library search paths available to Cling."""
     if not os.path.isdir(path):
-        raise OSError('no such directory: %s' % path)
+        raise OSError('No such directory: %s' % path)
     gbl.gSystem.AddDynamicPath(path)
 
 # add access to Python C-API headers

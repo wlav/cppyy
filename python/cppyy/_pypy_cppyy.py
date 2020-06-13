@@ -11,6 +11,8 @@ __all__ = [
     'addressof',
     'bind_object',
     'nullptr',
+    '_begin_capture_stderr',
+    '_end_capture_stderr'
     ]
 
 # first load the dependency libraries of the backend, then
@@ -46,6 +48,14 @@ def load_reflection_info(name):
     if sc == -1:
         raise RuntimeError("Unable to load reflection library "+name)
 
+def _begin_capture_stderr():
+    pass
+
+def _end_capture_stderr():
+    return ""
+
 # add other exports to all
 __all__.append('load_reflection_info')
 __all__.append('_backend')
+__all__.append('_begin_capture_stderr')
+__all__.append('_end_capture_stderr')

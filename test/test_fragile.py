@@ -411,14 +411,40 @@ class TestFRAGILE:
     def test20_failing_cppcode(self):
         """Check error behavior of failing C++ code"""
 
+        import cppyy, string
+
+        with raises(ImportError) as include_exc:
+            cppyy.include("doesnotexist.h")
+        err = str(include_exc.value)
+        assert "Failed to load header file \"doesnotexist.h\"" in err
+        assert "fatal error:" in err
+        assert "\'doesnotexist.h\' file not found" in err
+
+        with raises(ImportError) as c_include_exc:
+            cppyy.c_include("doesnotexist.h")
+        err = str(c_include_exc.value)
+        assert "Failed to load header file \"doesnotexist.h\"" in err
+        assert "fatal error:" in err
+        assert "\'doesnotexist.h\' file not found" in err
+
+        with raises(SyntaxError) as cppdef_exc:
+            cppyy.cppdef("1aap = 42;")
+        err = str(cppdef_exc.value)
+        assert "Failed to parse the given C++ code" in err
+        assert "error:" in err
+        assert "expected unqualified-id" in err
+        assert "1aap = 42;" in err
+
+    def test21_cppexec(self):
+        """Interactive access to the Cling global scope"""
+
         import cppyy
 
-        with raises(ImportError):
-            cppyy.include("doesnotexist.h")
-        with raises(ImportError):
-            cppyy.c_include("doesnotexist.h")
+        cppyy.cppexec("int interactive_b = 4")
+        assert cppyy.gbl.interactive_b == 4
+
         with raises(SyntaxError):
-            cppyy.cppdef("1aap = 42;")
+            cppyy.cppexec("doesnotexist");
 
 
 class TestSIGNALS:
