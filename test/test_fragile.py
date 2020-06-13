@@ -380,7 +380,13 @@ class TestFRAGILE:
     def test17_interactive(self):
         """Test the usage of 'from cppyy.interactive import *'"""
 
-        import assert_interactive
+        import sys
+        oldsp = sys.path[:]
+        sys.path.append('.')
+        try:
+            import assert_interactive
+        finally:
+            sys.path = oldsp
 
     def test18_overload(self):
         """Test usage of __overload__"""
