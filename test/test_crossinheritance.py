@@ -607,3 +607,46 @@ class TestCROSSINHERITANCE:
         assert obj.whoami()   == "PyDerived4"
         assert ns.callit(obj) == "PyDerived4"
 
+    def test19_abstract_hierarchy(self):
+        """Test hierarchie with abstract classes"""
+
+
+        import cppyy
+
+        cppyy.cppdef("""namespace test19_abstract_classes {
+          class Base {
+          public:
+            virtual ~Base() {}
+            virtual std::string whoami()  = 0;
+            virtual std::string message() = 0;
+          };
+
+          std::string whois(Base& obj) { return obj.whoami(); }
+          std::string saywot(Base& obj) { return obj.message(); }
+        }""")
+
+        ns = cppyy.gbl.test19_abstract_classes
+
+        class PyDerived1(ns.Base):
+            def __init__(self):
+                super().__init__()
+                self._name = "PyDerived1"
+
+            def whoami(self):
+                return self._name
+
+        class PyDerived2(PyDerived1):
+            def __init__(self):
+                super().__init__()
+                self._message = "Hello, World!"
+
+            def message(self):
+                return self._message
+
+        obj = PyDerived2()
+        assert obj.whoami()  == "PyDerived1"
+        assert ns.whois(obj) == "PyDerived1"
+
+        assert obj.message()  == "Hello, World!"
+        assert ns.saywot(obj) == "Hello, World!"
+
