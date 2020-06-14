@@ -109,7 +109,10 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
 
             if args0 and type(args0) is dict:
                 if self.__name__ in self.stl_mapping_types:
-                    pair = args0.items()[0]
+                    try:
+                        pair = args0.items().__iter__().__next__()
+                    except AttributeError:
+                        pair = args0.items()[0]
                     t1 = type(pair[0])
                     if t1 is float: t1 = 'double'
                     t2 = type(pair[1])

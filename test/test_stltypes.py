@@ -893,15 +893,6 @@ class TestSTLLIST:
         v = cppyy.gbl.std.list(l)
         assert list(l) == l
 
-    def test06_map_cpp17_style(self):
-        """C++17 style initialization of std::map"""
-
-        import cppyy
-
-        m = cppyy.gbl.std.map({'1': 2, '2':1})
-        assert m['1'] == 2
-        assert m['2'] == 1
-
 
 class TestSTLMAP:
     def setup_class(cls):
@@ -1068,6 +1059,15 @@ class TestSTLMAP:
 
         with raises(TypeError):
             m = cppyy.gbl.std.map[int, str]({'1' : 1, '2' : 2})
+
+    def test09_map_cpp17_style(self):
+        """C++17 style initialization of std::map"""
+
+        import cppyy
+
+        m = cppyy.gbl.std.map({'1': 2, '2':1})
+        assert m['1'] == 2
+        assert m['2'] == 1
 
 
 class TestSTLITERATOR:
