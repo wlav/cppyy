@@ -417,29 +417,34 @@ class TestFRAGILE:
     def test20_failing_cppcode(self):
         """Check error behavior of failing C++ code"""
 
-        import cppyy, string
+        import cppyy, string, re
+
+        allspace = re.compile(r'\s+')
+        def get_errmsg(exc, allspace=allspace):
+            err = str(exc.value)
+            return re.sub(allspace, '', err)
 
         with raises(ImportError) as include_exc:
             cppyy.include("doesnotexist.h")
-        err = str(include_exc.value)
-        assert "Failed to load header file \"doesnotexist.h\"" in err
-        assert "fatal error:" in err
-        assert "\'doesnotexist.h\' file not found" in err
+        err = get_errmsg(include_exc)
+        assert "Failedtoloadheaderfile\"doesnotexist.h\"" in err
+        assert "fatalerror:" in err
+        assert "\'doesnotexist.h\'filenotfound" in err
 
         with raises(ImportError) as c_include_exc:
             cppyy.c_include("doesnotexist.h")
-        err = str(c_include_exc.value)
-        assert "Failed to load header file \"doesnotexist.h\"" in err
-        assert "fatal error:" in err
-        assert "\'doesnotexist.h\' file not found" in err
+        err = get_errmsg(c_include_exc)
+        assert "Failedtoloadheaderfile\"doesnotexist.h\"" in err
+        assert "fatalerror:" in err
+        assert "\'doesnotexist.h\'filenotfound" in err
 
         with raises(SyntaxError) as cppdef_exc:
             cppyy.cppdef("1aap = 42;")
-        err = str(cppdef_exc.value)
-        assert "Failed to parse the given C++ code" in err
+        err = get_errmsg(cppdef_exc)
+        assert "FailedtoparsethegivenC++code" in err
         assert "error:" in err
-        assert "expected unqualified-id" in err
-        assert "1aap = 42;" in err
+        assert "expectedunqualified-id" in err
+        assert "1aap=42;" in err
 
     def test21_cppexec(self):
         """Interactive access to the Cling global scope"""
