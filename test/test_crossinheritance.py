@@ -608,7 +608,7 @@ class TestCROSSINHERITANCE:
         assert ns.callit(obj) == "PyDerived4"
 
     def test19_abstract_hierarchy(self):
-        """Test hierarchie with abstract classes"""
+        """Hierarchy with abstract classes"""
 
 
         import cppyy
@@ -650,3 +650,37 @@ class TestCROSSINHERITANCE:
         assert obj.message()  == "Hello, World!"
         assert ns.saywot(obj) == "Hello, World!"
 
+    def test20_cpp_side_multiple_inheritance(self):
+        """Hierarchy with multiple inheritance on the C++ side"""
+
+        import cppyy
+
+        cppyy.cppdef(""" namespace test20_cpp_side_multiple_inheritance {
+        struct Result {
+            Result() : result(1337) {}
+            Result(int r) : result(r) {}
+            int result;
+        };
+
+        class Base1 {
+        public:
+            virtual ~Base1() {}
+            virtual Result abstract1() = 0;
+        };
+
+        class Base2 {
+        public:
+            virtual ~Base2() {}
+            virtual Result abstract2() = 0;
+        };
+
+        class Base : public Base1, public Base2 {
+        public:
+            Result abstract2() override { return Result(999); } 
+        }; } """)
+
+        ns = cppyy.gbl.test20_cpp_side_multiple_inheritance
+
+        class Derived(ns.Base):
+            def abstract1(self):
+                return ns.Result(1)
