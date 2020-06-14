@@ -42,6 +42,7 @@ __all__ = [
     'nullptr',                # unique pointer representing NULL
     'sizeof',                 # size of a C++ type
     'typeid',                 # typeid of a C++ type
+    'multi',                  # helper for multiple inheritance
     'add_include_path',       # add a path to search for headers
     'add_library_path',       # add a path to search for headers
     'add_autoload_map',       # explicitly include an autoload map
@@ -316,3 +317,12 @@ def typeid(tt):
         tid = getattr(gbl._cppyy_internal, tidname)
         _typeids[tt] = tid
         return tid
+
+def multi(*bases):      # after six, see also _typemap.py
+    """Resolve metaclasses for multiple inheritance."""
+    class no_conflict(*(type(b) for b in bases)):
+          pass
+    class faux_meta(type):
+        def __new__(cls, name, this_bases, d):
+            return no_conflict(name, bases, d)
+    return type.__new__(faux_meta, 'faux_meta', (), {})
