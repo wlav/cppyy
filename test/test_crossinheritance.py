@@ -621,7 +621,7 @@ class TestCROSSINHERITANCE:
 
         class PyDerived1(ns.Base):
             def __init__(self):
-                super().__init__()
+                super(PyDerived1, self).__init__()
                 self._name = "PyDerived1"
 
             def whoami(self):
@@ -629,7 +629,7 @@ class TestCROSSINHERITANCE:
 
         class PyDerived2(PyDerived1):
             def __init__(self):
-                super().__init__()
+                super(PyDerived2, self).__init__()
                 self._message = "Hello, World!"
 
             def message(self):
