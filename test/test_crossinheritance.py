@@ -313,20 +313,18 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""
-        namespace MakeSharedTest {
+        cppyy.cppdef("""namespace MakeSharedTest {
         class Abstract {
         public:
-            virtual ~Abstract() = 0;
-            virtual int some_imp() = 0;
+          virtual ~Abstract() = 0;
+          virtual int some_imp() = 0;
         };
 
         Abstract::~Abstract() {}
 
         int call_shared(std::shared_ptr<Abstract>& ptr) {
-            return ptr->some_imp();
-        } }
-        """)
+          return ptr->some_imp();
+        } }""")
 
         from cppyy.gbl import std, MakeSharedTest
         from cppyy.gbl.MakeSharedTest import Abstract, call_shared
@@ -380,13 +378,12 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""
-        namespace VirtualDtor {
+        cppyy.cppdef("""namespace VirtualDtor {
         class MyClass1 {};    // no virtual dtor ...
 
         class MyClass2 {
         public:
-            virtual ~MyClass2() {}
+          virtual ~MyClass2() {}
         };
 
         class MyClass3 : public MyClass2 {};
@@ -394,9 +391,8 @@ class TestCROSSINHERITANCE:
         template<class T>
         class MyClass4 {
         public:
-            virtual ~MyClass4() {}
-        }; }
-        """)
+          virtual ~MyClass4() {}
+        }; }""")
 
         VD = cppyy.gbl.VirtualDtor
 
@@ -457,21 +453,20 @@ class TestCROSSINHERITANCE:
 
       # Part 1: return of a new C++ object
         cppyy.cppdef("""namespace test16_object_returns {
-          class Base {
-          public:
-            virtual Base* foo() { return new Base(); }
-            virtual ~Base() {}
-            virtual std::string whoami() { return "Base"; }
-          };
+        class Base {
+        public:
+          virtual Base* foo() { return new Base(); }
+          virtual ~Base() {}
+          virtual std::string whoami() { return "Base"; }
+        };
 
-          class CppDerived : public Base {
-            CppDerived* foo() { return new CppDerived(); }
-            ~CppDerived() {}
-            virtual std::string whoami() { return "CppDerived"; }
-          };
+        class CppDerived : public Base {
+          CppDerived* foo() { return new CppDerived(); }
+          ~CppDerived() {}
+          virtual std::string whoami() { return "CppDerived"; }
+        };
 
-          Base* call_foo(Base& obj) { return obj.foo(); }
-        }""")
+        Base* call_foo(Base& obj) { return obj.foo(); } }""")
 
         ns = cppyy.gbl.test16_object_returns
 
@@ -524,31 +519,30 @@ class TestCROSSINHERITANCE:
         import cppyy
 
         cppyy.cppdef("""namespace test17_cctor_access_controlled {
-          class CommonBase {
-          public:
-            virtual ~CommonBase() {}
-            virtual std::string whoami() = 0;
-          };
+        class CommonBase {
+        public:
+          virtual ~CommonBase() {}
+          virtual std::string whoami() = 0;
+        };
 
-          class Base1 : public CommonBase {
-            Base1(const Base1&) {}
-          public:
-            Base1() {}
-            virtual ~Base1() {}
-            virtual std::string whoami() { return "Base1"; }
-          };
+        class Base1 : public CommonBase {
+          Base1(const Base1&) {}
+        public:
+          Base1() {}
+          virtual ~Base1() {}
+          virtual std::string whoami() { return "Base1"; }
+        };
 
-          class Base2 : public CommonBase {
-          protected:
-            Base2(const Base2&) {}
-          public:
-            Base2() {}
-            virtual ~Base2() {}
-            virtual std::string whoami() { return "Base2"; }
-          };
+        class Base2 : public CommonBase {
+        protected:
+          Base2(const Base2&) {}
+        public:
+          Base2() {}
+          virtual ~Base2() {}
+          virtual std::string whoami() { return "Base2"; }
+        };
 
-          std::string callit(CommonBase& obj) { return obj.whoami(); }
-        }""")
+        std::string callit(CommonBase& obj) { return obj.whoami(); } }""")
 
         ns = cppyy.gbl.test17_cctor_access_controlled
 
@@ -566,14 +560,13 @@ class TestCROSSINHERITANCE:
         import cppyy
 
         cppyy.cppdef("""namespace test18_deep_hierarchy {
-          class Base {
-          public:
-            virtual ~Base() {}
-            virtual std::string whoami() = 0;
-          };
+        class Base {
+        public:
+          virtual ~Base() {}
+          virtual std::string whoami() = 0;
+        };
 
-          std::string callit(Base& obj) { return obj.whoami(); }
-        }""")
+        std::string callit(Base& obj) { return obj.whoami(); } }""")
 
         ns = cppyy.gbl.test18_deep_hierarchy
 
@@ -608,22 +601,21 @@ class TestCROSSINHERITANCE:
         assert ns.callit(obj) == "PyDerived4"
 
     def test19_abstract_hierarchy(self):
-        """Test hierarchie with abstract classes"""
+        """Hierarchy with abstract classes"""
 
 
         import cppyy
 
         cppyy.cppdef("""namespace test19_abstract_classes {
-          class Base {
-          public:
-            virtual ~Base() {}
-            virtual std::string whoami()  = 0;
-            virtual std::string message() = 0;
-          };
+        class Base {
+        public:
+          virtual ~Base() {}
+          virtual std::string whoami()  = 0;
+          virtual std::string message() = 0;
+        };
 
-          std::string whois(Base& obj) { return obj.whoami(); }
-          std::string saywot(Base& obj) { return obj.message(); }
-        }""")
+        std::string whois(Base& obj) { return obj.whoami(); }
+        std::string saywot(Base& obj) { return obj.message(); } }""")
 
         ns = cppyy.gbl.test19_abstract_classes
 
@@ -650,3 +642,83 @@ class TestCROSSINHERITANCE:
         assert obj.message()  == "Hello, World!"
         assert ns.saywot(obj) == "Hello, World!"
 
+    def test20_cpp_side_multiple_inheritance(self):
+        """Hierarchy with multiple inheritance on the C++ side"""
+
+        import cppyy
+
+        cppyy.cppdef(""" namespace test20_cpp_side_multiple_inheritance {
+        struct Result {
+          Result() : result(1337) {}
+          Result(int r) : result(r) {}
+          int result;
+        };
+
+        class Base1 {
+        public:
+          virtual ~Base1() {}
+          virtual Result abstract1() = 0;
+        };
+
+        class Base2 {
+        public:
+          virtual ~Base2() {}
+          virtual Result abstract2() = 0;
+        };
+
+        class Base : public Base1, public Base2 {
+        public:
+          Result abstract2() override { return Result(999); } 
+        }; } """)
+
+        ns = cppyy.gbl.test20_cpp_side_multiple_inheritance
+
+        class Derived(ns.Base):
+            def abstract1(self):
+                return ns.Result(1)
+
+    def test21_basic_multiple_inheritance(self):
+        """Basic multiple inheritance"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace test21_basic_multiple_inheritance {
+        class MyClass1 {
+        public:
+          MyClass1() : m_1(13) {}
+          virtual ~MyClass1() {}
+          virtual int y() = 0;
+
+        public:
+          int m_1;
+        };
+        int cally(MyClass1& m) { return m.y(); }
+
+        class MyClass2 {
+        public:
+            MyClass2() : m_2(42) {}
+            virtual ~MyClass2() {}
+            virtual int x() = 0;
+
+        public:
+            int m_2;
+        };
+        int callx(MyClass2& m) { return m.x(); } } """)
+
+        ns = cppyy.gbl.test21_basic_multiple_inheritance
+
+        class MyPyDerived(cppyy.multi(ns.MyClass1, ns.MyClass2)):
+            def x(self):
+                return 16
+
+            def y(self):
+                return 32
+
+        assert len(MyPyDerived.__bases__) == 2
+
+        a = MyPyDerived()
+        assert a.x() == ns.callx(a)
+        assert a.y() == ns.cally(a)
+
+        assert a.m_1 == 13
+        assert a.m_2 == 42

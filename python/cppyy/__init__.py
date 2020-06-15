@@ -320,9 +320,9 @@ def typeid(tt):
 
 def multi(*bases):      # after six, see also _typemap.py
     """Resolve metaclasses for multiple inheritance."""
-    class no_conflict(*(type(b) for b in bases)):
-          pass
+  # contruct a "no conflict" meta class; the '_meta' is needed by convention
+    nc_meta = type.__new__(type, 'cppyy_nc_meta', tuple(type(b) for b in bases), {})
     class faux_meta(type):
         def __new__(cls, name, this_bases, d):
-            return no_conflict(name, bases, d)
+            return nc_meta(name, bases, d)
     return type.__new__(faux_meta, 'faux_meta', (), {})
