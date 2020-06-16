@@ -409,6 +409,9 @@ class TestCROSSINHERITANCE:
             assert issubclass(w[-1].category, RuntimeWarning)
             assert "has no virtual destructor" in str(w[-1].message)
 
+            d = MyPyDerived1()
+            del d             # used to crash
+
         class MyPyDerived2(VD.MyClass2):
             pass
 
