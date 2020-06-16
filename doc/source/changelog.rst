@@ -18,6 +18,8 @@ master: 1.7.2
 * Add a cppexec method to evalutate statements in Cling's global scope
 * Support initialization of std::array<> from sequences
 * Support C++17 style initialization of STL containers
+* Allow base classes with no virtual destructor (with warning)
+* Support const by-value returns in Python-side method overrides
 
 
 2020-06-06: 1.7.1

@@ -29,6 +29,9 @@ class TestCROSSINHERITANCE:
 
         assert Derived().get_value() == 13
 
+        assert 'Derived' in str(Derived())
+        assert 'Derived' in repr(Derived())
+
         assert Base1.call_get_value(Base1())   == 42
         assert Base1.call_get_value(Derived()) == 13
 
@@ -376,7 +379,7 @@ class TestCROSSINHERITANCE:
     def test14_virtual_dtors_and_del(self):
         """Usage of virtual destructors and Python-side del."""
 
-        import cppyy
+        import cppyy, warnings
 
         cppyy.cppdef("""namespace VirtualDtor {
         class MyClass1 {};    // no virtual dtor ...
@@ -396,13 +399,18 @@ class TestCROSSINHERITANCE:
 
         VD = cppyy.gbl.VirtualDtor
 
-        try:
+      # rethought this: just issue a warning if there is no virtual destructor
+      # as the C++ side now carries the type of the dispatcher, not the type of
+      # the direct base class
+        with warnings.catch_warnings(record=True) as w:
             class MyPyDerived1(VD.MyClass1):
-                pass
-        except TypeError:
-            pass
-        else:
-            assert not "should have failed"
+                pass        # TODO: verify warning is given
+            assert len(w) == 1
+            assert issubclass(w[-1].category, RuntimeWarning)
+            assert "has no virtual destructor" in str(w[-1].message)
+
+            d = MyPyDerived1()
+            del d             # used to crash
 
         class MyPyDerived2(VD.MyClass2):
             pass
@@ -621,7 +629,7 @@ class TestCROSSINHERITANCE:
 
         class PyDerived1(ns.Base):
             def __init__(self):
-                super().__init__()
+                super(PyDerived1, self).__init__()
                 self._name = "PyDerived1"
 
             def whoami(self):
@@ -629,7 +637,7 @@ class TestCROSSINHERITANCE:
 
         class PyDerived2(PyDerived1):
             def __init__(self):
-                super().__init__()
+                super(PyDerived2, self).__init__()
                 self._message = "Hello, World!"
 
             def message(self):
@@ -722,3 +730,32 @@ class TestCROSSINHERITANCE:
 
         assert a.m_1 == 13
         assert a.m_2 == 42
+
+    def test22_const_byvalue_return(self):
+        """Const by-value return in overridden method"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace test22_const_byvalue_return {
+        struct Const {
+            Const() = default;
+            explicit Const(const std::string& s) { m_value = s; }
+            std::string m_value;
+        };
+
+        struct Abstract {
+            virtual ~Abstract() {}
+            virtual const Const return_const() = 0;
+        };
+
+        const Const callit(Abstract* a) { return a->return_const(); } }""")
+
+        ns = cppyy.gbl.test22_const_byvalue_return
+
+        class ReturnConstByValue(ns.Abstract):
+             def return_const(self):
+                 return ns.Const("abcdef")
+
+        a = ReturnConstByValue()
+        assert a.return_const().m_value == "abcdef"
+        assert ns.callit(a).m_value     == "abcdef"
