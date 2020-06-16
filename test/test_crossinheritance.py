@@ -182,7 +182,7 @@ class TestCROSSINHERITANCE:
         assert d.sum_all(-7, -5)             == 1
         assert Base1.call_sum_all(d, -7, -5) == 1
 
-    def test07_const_methods(self):
+    def test06_const_methods(self):
         """Declared const methods should keep that qualifier"""
 
         import cppyy
@@ -204,7 +204,7 @@ class TestCROSSINHERITANCE:
         assert CX.IBase4.call_get_value(c1) == 17
         assert CX.IBase4.call_get_value(c2) == 27
 
-    def test08_templated_base(self):
+    def test07_templated_base(self):
         """Derive from a base class that is instantiated from a template"""
 
         import cppyy
@@ -228,7 +228,7 @@ class TestCROSSINHERITANCE:
         p1 = TPyDerived1()
         assert p1.get_value() == 13
 
-    def test09_error_handling(self):
+    def test08_error_handling(self):
         """Python errors should propagate through wrapper"""
 
         import cppyy
@@ -250,7 +250,7 @@ class TestCROSSINHERITANCE:
         except ValueError as e:
             assert errmsg in str(e)
 
-    def test10_interface_checking(self):
+    def test09_interface_checking(self):
         """Conversion errors should be Python exceptions"""
 
         import cppyy
@@ -266,7 +266,7 @@ class TestCROSSINHERITANCE:
         d = Derived(4)
         assert raises(TypeError, Base1.call_get_value, d)
 
-    def test11_python_in_templates(self):
+    def test10_python_in_templates(self):
         """Usage of Python derived objects in std::vector"""
 
         import cppyy, gc
@@ -311,7 +311,7 @@ class TestCROSSINHERITANCE:
         gc.collect()
         assert CB.s_count == 0 + start_count
 
-    def test12_python_in_make_shared(self):
+    def test11_python_in_make_shared(self):
         """Usage of Python derived objects with std::make_shared"""
 
         import cppyy
@@ -349,7 +349,7 @@ class TestCROSSINHERITANCE:
         assert call_shared(v) == 13
         assert v.some_imp() == 13
 
-    def test13_python_shared_ptr_memory(self):
+    def test12_python_shared_ptr_memory(self):
         """Usage of Python derived objects with std::shared_ptr"""
 
         import cppyy, gc
@@ -376,7 +376,7 @@ class TestCROSSINHERITANCE:
         gc.collect()
         assert CB.s_count == 0 + start_count
 
-    def test14_virtual_dtors_and_del(self):
+    def test13_virtual_dtors_and_del(self):
         """Usage of virtual destructors and Python-side del."""
 
         import cppyy, warnings
@@ -425,7 +425,7 @@ class TestCROSSINHERITANCE:
         class MyPyDerived4(VD.MyClass4[int]):
             pass
 
-    def test15_protected_access(self):
+    def test14_protected_access(self):
         """Derived classes should have access to protected members"""
 
         import cppyy
@@ -454,7 +454,7 @@ class TestCROSSINHERITANCE:
         assert m.get_data()   == 42
         assert m.get_data_v() == 42
 
-    def test16_object_returns(self):
+    def test15_object_returns(self):
         """Return of C++ objects from overridden functions"""
 
         import cppyy
@@ -521,7 +521,7 @@ class TestCROSSINHERITANCE:
         assert not not new_obj
         assert new_obj.whoami() == "PyDerived4"
 
-    def test17_cctor_access_controlled(self):
+    def test16_cctor_access_controlled(self):
         """Python derived class of C++ class with access controlled cctor"""
 
         import cppyy
@@ -562,7 +562,7 @@ class TestCROSSINHERITANCE:
             obj = PyDerived()
             assert ns.callit(obj) == "PyDerived"
 
-    def test18_deep_hierarchy(self):
+    def test17_deep_hierarchy(self):
         """Test a deep Python hierarchy with pure virtual functions"""
 
         import cppyy
@@ -608,7 +608,7 @@ class TestCROSSINHERITANCE:
         assert obj.whoami()   == "PyDerived4"
         assert ns.callit(obj) == "PyDerived4"
 
-    def test19_abstract_hierarchy(self):
+    def test18_abstract_hierarchy(self):
         """Hierarchy with abstract classes"""
 
 
@@ -650,7 +650,7 @@ class TestCROSSINHERITANCE:
         assert obj.message()  == "Hello, World!"
         assert ns.saywot(obj) == "Hello, World!"
 
-    def test20_cpp_side_multiple_inheritance(self):
+    def test19_cpp_side_multiple_inheritance(self):
         """Hierarchy with multiple inheritance on the C++ side"""
 
         import cppyy
@@ -685,7 +685,7 @@ class TestCROSSINHERITANCE:
             def abstract1(self):
                 return ns.Result(1)
 
-    def test21_basic_multiple_inheritance(self):
+    def test20_basic_multiple_inheritance(self):
         """Basic multiple inheritance"""
 
         import cppyy
@@ -731,7 +731,7 @@ class TestCROSSINHERITANCE:
         assert a.m_1 == 13
         assert a.m_2 == 42
 
-    def test22_const_byvalue_return(self):
+    def test21_const_byvalue_return(self):
         """Const by-value return in overridden method"""
 
         import cppyy
