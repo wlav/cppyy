@@ -460,7 +460,7 @@ class TestCROSSINHERITANCE:
         import cppyy
 
       # Part 1: return of a new C++ object
-        cppyy.cppdef("""namespace test16_object_returns {
+        cppyy.cppdef("""namespace object_returns {
         class Base {
         public:
           virtual Base* foo() { return new Base(); }
@@ -476,7 +476,7 @@ class TestCROSSINHERITANCE:
 
         Base* call_foo(Base& obj) { return obj.foo(); } }""")
 
-        ns = cppyy.gbl.test16_object_returns
+        ns = cppyy.gbl.object_returns
 
         class PyDerived1(ns.Base):
             def foo(self):
@@ -526,7 +526,7 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""namespace test17_cctor_access_controlled {
+        cppyy.cppdef("""namespace cctor_access_controlled {
         class CommonBase {
         public:
           virtual ~CommonBase() {}
@@ -552,7 +552,7 @@ class TestCROSSINHERITANCE:
 
         std::string callit(CommonBase& obj) { return obj.whoami(); } }""")
 
-        ns = cppyy.gbl.test17_cctor_access_controlled
+        ns = cppyy.gbl.cctor_access_controlled
 
         for base in (ns.Base1, ns.Base2):
             class PyDerived(base):
@@ -567,7 +567,7 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""namespace test18_deep_hierarchy {
+        cppyy.cppdef("""namespace deep_hierarchy {
         class Base {
         public:
           virtual ~Base() {}
@@ -576,7 +576,7 @@ class TestCROSSINHERITANCE:
 
         std::string callit(Base& obj) { return obj.whoami(); } }""")
 
-        ns = cppyy.gbl.test18_deep_hierarchy
+        ns = cppyy.gbl.deep_hierarchy
 
         class PyDerived1(ns.Base):
             def whoami(self):
@@ -614,7 +614,7 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""namespace test19_abstract_classes {
+        cppyy.cppdef("""namespace abstract_classes {
         class Base {
         public:
           virtual ~Base() {}
@@ -625,7 +625,7 @@ class TestCROSSINHERITANCE:
         std::string whois(Base& obj) { return obj.whoami(); }
         std::string saywot(Base& obj) { return obj.message(); } }""")
 
-        ns = cppyy.gbl.test19_abstract_classes
+        ns = cppyy.gbl.abstract_classes
 
         class PyDerived1(ns.Base):
             def __init__(self):
@@ -655,7 +655,7 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef(""" namespace test20_cpp_side_multiple_inheritance {
+        cppyy.cppdef(""" namespace cpp_side_multiple_inheritance {
         struct Result {
           Result() : result(1337) {}
           Result(int r) : result(r) {}
@@ -679,7 +679,7 @@ class TestCROSSINHERITANCE:
           Result abstract2() override { return Result(999); } 
         }; } """)
 
-        ns = cppyy.gbl.test20_cpp_side_multiple_inheritance
+        ns = cppyy.gbl.cpp_side_multiple_inheritance
 
         class Derived(ns.Base):
             def abstract1(self):
@@ -690,7 +690,7 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""namespace test21_basic_multiple_inheritance {
+        cppyy.cppdef("""namespace basic_multiple_inheritance {
         class MyClass1 {
         public:
           MyClass1() : m_1(13) {}
@@ -713,7 +713,7 @@ class TestCROSSINHERITANCE:
         };
         int callx(MyClass2& m) { return m.x(); } } """)
 
-        ns = cppyy.gbl.test21_basic_multiple_inheritance
+        ns = cppyy.gbl.basic_multiple_inheritance
 
         class MyPyDerived(cppyy.multi(ns.MyClass1, ns.MyClass2)):
             def x(self):
@@ -731,12 +731,63 @@ class TestCROSSINHERITANCE:
         assert a.m_1 == 13
         assert a.m_2 == 42
 
-    def test21_const_byvalue_return(self):
+    def test21_multiple_inheritance_with_constructors(self):
+        """Basic multiple inheritance"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace multiple_inheritance_with_constructors {
+        class MyClass1 {
+        public:
+          MyClass1() : m_1(13) {}
+          MyClass1(int i) : m_1(i) {}
+          virtual ~MyClass1() {}
+          virtual int y() = 0;
+
+        public:
+          int m_1;
+        };
+        int cally(MyClass1& m) { return m.y(); }
+
+        class MyClass2 {
+        public:
+            MyClass2() : m_2(42) {}
+            MyClass2(int i) : m_2(i) {}
+            virtual ~MyClass2() {}
+            virtual int x() = 0;
+
+        public:
+            int m_2;
+        };
+        int callx(MyClass2& m) { return m.x(); } } """)
+
+        ns = cppyy.gbl.multiple_inheritance_with_constructors
+
+        class MyPyDerived(cppyy.multi(ns.MyClass1, ns.MyClass2)):
+            def __init__(self, val1, val2):
+                super(MyPyDerived, self).__init__((val1,), (val2,))
+
+            def x(self):
+                return 16
+
+            def y(self):
+                return 32
+
+        assert len(MyPyDerived.__bases__) == 2
+
+        a = MyPyDerived(27, 88)
+        assert a.x() == ns.callx(a)
+        assert a.y() == ns.cally(a)
+
+        assert a.m_1 == 27
+        assert a.m_2 == 88
+
+    def test22_const_byvalue_return(self):
         """Const by-value return in overridden method"""
 
         import cppyy
 
-        cppyy.cppdef("""namespace test22_const_byvalue_return {
+        cppyy.cppdef("""namespace const_byvalue_return {
         struct Const {
             Const() = default;
             explicit Const(const std::string& s) { m_value = s; }
@@ -750,7 +801,7 @@ class TestCROSSINHERITANCE:
 
         const Const callit(Abstract* a) { return a->return_const(); } }""")
 
-        ns = cppyy.gbl.test22_const_byvalue_return
+        ns = cppyy.gbl.const_byvalue_return
 
         class ReturnConstByValue(ns.Abstract):
              def return_const(self):
