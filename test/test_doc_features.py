@@ -938,3 +938,56 @@ class TestADVERTISED:
         assert n.p[1] == 0x2
         assert n.p[2] == 0x3
         assert len(n.p) == 3
+
+    def test09_cpp_threading(self):
+        """Example with releasing the GIL"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace thread_test {
+        #include <thread>
+
+        struct consumer {
+            virtual ~consumer() {}
+            virtual void process(int) = 0;
+        };
+
+        struct worker {
+            worker(consumer* c) : cons(c) { }
+            ~worker() { wait(); }
+
+            void start() {
+                t = std::thread([this] {
+                    int counter = 0;
+                    while (counter++ < 10)
+                        cons->process(counter);
+                });
+            }
+
+            void wait() {
+                if (t.joinable())
+                    t.join();
+            }
+
+            std::thread t;
+            consumer* cons = nullptr;
+        }; }""")
+
+        ns = cppyy.gbl.thread_test
+        consumer = ns.consumer
+        worker = ns.worker
+        worker.wait.__release_gil__ = True
+
+        class C(consumer):
+            count = 0
+            def process(self, c):
+                self.count += 1
+
+        c = C()
+        assert c.count == 0
+
+        w = worker(c)
+        w.start()
+        w.wait()
+
+        assert c.count == 10
