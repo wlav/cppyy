@@ -695,23 +695,34 @@ class TestCROSSINHERITANCE:
         public:
           MyClass1() : m_1(13) {}
           virtual ~MyClass1() {}
-          virtual int y() = 0;
+          virtual int x() = 0;
 
         public:
           int m_1;
         };
-        int cally(MyClass1& m) { return m.y(); }
+        int callx(MyClass1& m) { return m.x(); }
 
         class MyClass2 {
         public:
             MyClass2() : m_2(42) {}
             virtual ~MyClass2() {}
-            virtual int x() = 0;
+            virtual int y() = 0;
 
         public:
             int m_2;
         };
-        int callx(MyClass2& m) { return m.x(); } } """)
+        int cally(MyClass2& m) { return m.y(); }
+
+        class MyClass3 {
+        public:
+            MyClass3() : m_3(67) {}
+            virtual ~MyClass3() {}
+            virtual int z() = 0;
+
+        public:
+            int m_3;
+        };
+        int callz(MyClass3& m) { return m.z(); } }""")
 
         ns = cppyy.gbl.basic_multiple_inheritance
 
@@ -731,6 +742,27 @@ class TestCROSSINHERITANCE:
         assert a.m_1 == 13
         assert a.m_2 == 42
 
+        class MyPyDerived2(cppyy.multi(ns.MyClass1, ns.MyClass2, ns.MyClass3)):
+            def x(self):
+                return 16
+
+            def y(self):
+                return 32
+
+            def z(self):
+                return 64
+
+        assert len(MyPyDerived2.__bases__) == 3
+
+        a = MyPyDerived2()
+        assert a.x() == ns.callx(a)
+        assert a.y() == ns.cally(a)
+        assert a.z() == ns.callz(a)
+
+        assert a.m_1 == 13
+        assert a.m_2 == 42
+        assert a.m_3 == 67
+
     def test21_multiple_inheritance_with_constructors(self):
         """Basic multiple inheritance"""
 
@@ -742,24 +774,36 @@ class TestCROSSINHERITANCE:
           MyClass1() : m_1(13) {}
           MyClass1(int i) : m_1(i) {}
           virtual ~MyClass1() {}
-          virtual int y() = 0;
+          virtual int x() = 0;
 
         public:
           int m_1;
         };
-        int cally(MyClass1& m) { return m.y(); }
+        int callx(MyClass1& m) { return m.x(); }
 
         class MyClass2 {
         public:
             MyClass2() : m_2(42) {}
             MyClass2(int i) : m_2(i) {}
             virtual ~MyClass2() {}
-            virtual int x() = 0;
+            virtual int y() = 0;
 
         public:
             int m_2;
         };
-        int callx(MyClass2& m) { return m.x(); } } """)
+        int cally(MyClass2& m) { return m.y(); }
+
+        class MyClass3 {
+        public:
+            MyClass3() : m_3(67) {}
+            MyClass3(int i) : m_3(i) {}
+            virtual ~MyClass3() {}
+            virtual int z() = 0;
+
+        public:
+            int m_3;
+        };
+        int callz(MyClass3& m) { return m.z(); } }""")
 
         ns = cppyy.gbl.multiple_inheritance_with_constructors
 
@@ -781,6 +825,30 @@ class TestCROSSINHERITANCE:
 
         assert a.m_1 == 27
         assert a.m_2 == 88
+
+        class MyPyDerived2(cppyy.multi(ns.MyClass1, ns.MyClass2, ns.MyClass3)):
+            def __init__(self, val1, val2, val3):
+                super(MyPyDerived2, self).__init__((val1,), (val2,), (val3,))
+
+            def x(self):
+                return 16
+
+            def y(self):
+                return 32
+
+            def z(self):
+                return 64
+
+        assert len(MyPyDerived2.__bases__) == 3
+
+        a = MyPyDerived2(27, 88, -11)
+        assert a.x() == ns.callx(a)
+        assert a.y() == ns.cally(a)
+        assert a.z() == ns.callz(a)
+
+        assert a.m_1 ==  27
+        assert a.m_2 ==  88
+        assert a.m_3 == -11
 
     def test22_const_byvalue_return(self):
         """Const by-value return in overridden method"""
