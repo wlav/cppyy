@@ -764,7 +764,7 @@ class TestCROSSINHERITANCE:
         assert a.m_3 == 67
 
     def test21_multiple_inheritance_with_constructors(self):
-        """Basic multiple inheritance"""
+        """Multiple inheritance with constructors"""
 
         import cppyy
 
@@ -850,7 +850,97 @@ class TestCROSSINHERITANCE:
         assert a.m_2 ==  88
         assert a.m_3 == -11
 
-    def test22_const_byvalue_return(self):
+    def test22_multiple_inheritance_with_defaults(self):
+        """Multiple inheritance with defaults"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace multiple_inheritance_with_defaults {
+        class MyClass1 {
+        public:
+          MyClass1(int i=13) : m_1(i) {}
+          virtual ~MyClass1() {}
+          virtual int x() = 0;
+
+        public:
+          int m_1;
+        };
+        int callx(MyClass1& m) { return m.x(); }
+
+        class MyClass2 {
+        public:
+            MyClass2(int i=42) : m_2(i) {}
+            virtual ~MyClass2() {}
+            virtual int y() = 0;
+
+        public:
+            int m_2;
+        };
+        int cally(MyClass2& m) { return m.y(); }
+
+        class MyClass3 {
+        public:
+            MyClass3(int i=67) : m_3(i) {}
+            virtual ~MyClass3() {}
+            virtual int z() = 0;
+
+        public:
+            int m_3;
+        };
+        int callz(MyClass3& m) { return m.z(); } }""")
+
+        ns = cppyy.gbl.multiple_inheritance_with_defaults
+
+        class MyPyDerived(cppyy.multi(ns.MyClass1, ns.MyClass2, ns.MyClass3)):
+            def __init__(self, val1=None, val2=None, val3=None, nArgs=3):
+                a1 = val1 is not None and (val1,) or ()
+                a2 = val2 is not None and (val2,) or ()
+                a3 = val3 is not None and (val3,) or ()
+                if nArgs == 3:
+                    super(MyPyDerived, self).__init__(a1, a2, a3)
+                elif nArgs == 0:
+                    super(MyPyDerived, self).__init__()
+                elif nArgs == 1:
+                    super(MyPyDerived, self).__init__(a1)
+                elif nArgs == 2:
+                    super(MyPyDerived, self).__init__(a1, a2)
+
+            def x(self):
+                return 16
+
+            def y(self):
+                return 32
+
+            def z(self):
+                return 64
+
+        assert len(MyPyDerived.__bases__) == 3
+
+        def verify(a, n1, n2, n3):
+            assert a.m_1 == n1
+            assert a.m_2 == n2
+            assert a.m_3 == n3
+
+        a = MyPyDerived(27, 88, -11)
+        assert a.x() == ns.callx(a)
+        assert a.y() == ns.cally(a)
+        assert a.z() == ns.callz(a)
+
+        verify(a, 27, 88, -11)
+
+        a = MyPyDerived(val2=27)
+        verify(a, 13, 27, 67)
+
+        a = MyPyDerived(nArgs=0)
+        verify(a, 13, 42, 67)
+
+        a = MyPyDerived(27, nArgs=1)
+        verify(a, 27, 42, 67)
+
+        a = MyPyDerived(27, 55, nArgs=2)
+        verify(a, 27, 55, 67)
+
+    def test23_const_byvalue_return(self):
         """Const by-value return in overridden method"""
 
         import cppyy
