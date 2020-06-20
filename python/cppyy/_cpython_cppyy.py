@@ -55,6 +55,7 @@ if sys.hexversion < 0x3000000:
 ### template support ---------------------------------------------------------
 class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
     stl_sequence_types   = ['std::vector', 'std::list', 'std::set', 'std::deque']
+    stl_unrolled_types   = ['std::pair']
     stl_fixed_size_types = ['std::array']
     stl_mapping_types    = ['std::map']
 
@@ -106,6 +107,8 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
                     return self[t](*args)
                 if self.__name__ in self.stl_fixed_size_types:
                     return self[t, len(args0)](*args)
+                if self.__name__ in self.stl_unrolled_types:
+                    return self[tuple(type(a) for a in args0)](*args0)
 
             if args0 and type(args0) is dict:
                 if self.__name__ in self.stl_mapping_types:
