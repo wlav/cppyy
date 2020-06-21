@@ -968,3 +968,43 @@ class TestCROSSINHERITANCE:
         a = ReturnConstByValue()
         assert a.return_const().m_value == "abcdef"
         assert ns.callit(a).m_value     == "abcdef"
+
+    def test24_non_copyable(self):
+        """Inheriting from a non-copyable base class"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace non_copyable {
+        struct Copyable {
+            Copyable() = default;
+            virtual ~Copyable() {}
+
+            Copyable(const Copyable&) = default;
+            Copyable& operator=(const Copyable&) = default;
+        };
+
+        struct Movable {
+            Movable() = default;
+            virtual ~Movable() {}
+
+            Movable(const Movable&) = delete;
+            Movable& operator=(const Movable&) = delete;
+            Movable(Movable&&) = default;
+            Movable& operator=(Movable&&) = default;
+        }; }""")
+
+        ns = cppyy.gbl.non_copyable
+
+        Copyable = ns.Copyable
+        Movable  = ns.Movable
+
+        class DerivedCopyable(Copyable):
+            pass
+
+      # used to fail with compilation error
+        class DerivedMovable(Movable):
+            pass
+
+      # used to fail with compilation error
+        class DerivedMulti(cppyy.multi(Movable, Copyable)):
+            pass

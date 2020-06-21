@@ -458,3 +458,25 @@ class TestCPP11FEATURES:
 
         with raises(TypeError):
             ns.returnptr_move(up)
+
+    def test17_unique_ptr_data(self):
+        """std::unique_ptr as data means implicitly no copy ctor"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace unique_ptr_data{
+        class Example {
+        private:
+          std::unique_ptr<double> x;
+        public:
+          Example() {}
+          virtual ~Example() = default;
+          double y = 66.;
+        }; }""")
+
+        class Inherit(cppyy.gbl.unique_ptr_data.Example):
+            pass
+
+        a = Inherit()
+      # Test whether this attribute was inherited
+        assert a.y == 66.
