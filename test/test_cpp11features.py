@@ -330,8 +330,8 @@ class TestCPP11FEATURES:
             assert cppyy.gbl.std.nullopt
 
             cppyy.cppdef("""
-                enum Enum { A = -1 };
-                bool callopt(std::optional<Enum>) { return true; }
+            enum Enum { A = -1 };
+            bool callopt(std::optional<Enum>) { return true; }
             """)
 
             a = cppyy.gbl.std.optional[cppyy.gbl.Enum]()
@@ -366,8 +366,8 @@ class TestCPP11FEATURES:
 
       # and for good measure, inline
         cppyy.cppdef("""namespace FunctionNS2 {
-            struct FNTestStruct { FNTestStruct(int i) : t(i) {} int t; };
-            std::function<int(const FNTestStruct& t)> FNCreateTestStructFunc() { return [](const FNTestStruct& t) { return t.t; }; }
+        struct FNTestStruct { FNTestStruct(int i) : t(i) {} int t; };
+        std::function<int(const FNTestStruct& t)> FNCreateTestStructFunc() { return [](const FNTestStruct& t) { return t.t; }; }
         }""")
 
         from cppyy.gbl import FunctionNS2
@@ -422,11 +422,10 @@ class TestCPP11FEATURES:
         import cppyy
 
         cppyy.cppdef("""namespace UniqueTempl {
-            template <typename T>
-            std::unique_ptr<T> returnptr(std::unique_ptr<T>&& a) {
-                return std::move(a);
-            }
-        }""")
+        template <typename T>
+        std::unique_ptr<T> returnptr(std::unique_ptr<T>&& a) {
+          return std::move(a);
+        } }""")
 
         uptr_in = cppyy.gbl.std.make_unique[int]()
         uptr_out = cppyy.gbl.UniqueTempl.returnptr["int"](cppyy.gbl.std.move(uptr_in))
@@ -435,3 +434,27 @@ class TestCPP11FEATURES:
         uptr_in = cppyy.gbl.std.make_unique['int']()
         with raises(ValueError):  # not an RValue
             cppyy.gbl.UniqueTempl.returnptr[int](uptr_in)
+
+    def test16_unique_ptr_moves(self):
+        """std::unique_ptr requires moves"""
+
+        import cppyy
+        cppyy.cppdef("""namespace unique_ptr_moves {
+        template <typename T>
+        std::unique_ptr<T> returnptr_value(std::unique_ptr<T> a) {
+          return std::move(a);
+        }
+        template <typename T>
+        std::unique_ptr<T> returnptr_move(std::unique_ptr<T>&& a) {
+          return std::move(a);
+        } }""")
+
+        up = cppyy.gbl.std.make_unique[int](42)
+
+        ns = cppyy.gbl.unique_ptr_moves
+        up = ns.returnptr_value(up)                    ; assert up and up.get()[0] == 42
+        up = ns.returnptr_value(cppyy.gbl.std.move(up)); assert up and up.get()[0] == 42
+        up = ns.returnptr_move(cppyy.gbl.std.move(up)) ; assert up and up.get()[0] == 42
+
+        with raises(TypeError):
+            ns.returnptr_move(up)
