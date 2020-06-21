@@ -21,6 +21,7 @@ master: 1.7.2
 * Allow base classes with no virtual destructor (with warning)
 * Support const by-value returns in Python-side method overrides
 * Support for cross-language multiple inheritance of C++ bases
+* Allow for pass-by-value of std::unique_ptr through move
 
 
 2020-06-06: 1.7.1
