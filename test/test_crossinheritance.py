@@ -704,23 +704,23 @@ class TestCROSSINHERITANCE:
 
         class MyClass2 {
         public:
-            MyClass2() : m_2(42) {}
-            virtual ~MyClass2() {}
-            virtual int y() = 0;
+          MyClass2() : m_2(42) {}
+          virtual ~MyClass2() {}
+          virtual int y() = 0;
 
         public:
-            int m_2;
+          int m_2;
         };
         int cally(MyClass2& m) { return m.y(); }
 
         class MyClass3 {
         public:
-            MyClass3() : m_3(67) {}
-            virtual ~MyClass3() {}
-            virtual int z() = 0;
+          MyClass3() : m_3(67) {}
+         virtual ~MyClass3() {}
+          virtual int z() = 0;
 
         public:
-            int m_3;
+          int m_3;
         };
         int callz(MyClass3& m) { return m.z(); } }""")
 
@@ -783,25 +783,25 @@ class TestCROSSINHERITANCE:
 
         class MyClass2 {
         public:
-            MyClass2() : m_2(42) {}
-            MyClass2(int i) : m_2(i) {}
-            virtual ~MyClass2() {}
-            virtual int y() = 0;
+          MyClass2() : m_2(42) {}
+          MyClass2(int i) : m_2(i) {}
+          virtual ~MyClass2() {}
+          virtual int y() = 0;
 
         public:
-            int m_2;
+          int m_2;
         };
         int cally(MyClass2& m) { return m.y(); }
 
         class MyClass3 {
         public:
-            MyClass3() : m_3(67) {}
-            MyClass3(int i) : m_3(i) {}
-            virtual ~MyClass3() {}
-            virtual int z() = 0;
+          MyClass3() : m_3(67) {}
+          MyClass3(int i) : m_3(i) {}
+          virtual ~MyClass3() {}
+          virtual int z() = 0;
 
         public:
-            int m_3;
+          int m_3;
         };
         int callz(MyClass3& m) { return m.z(); } }""")
 
@@ -869,9 +869,9 @@ class TestCROSSINHERITANCE:
 
         class MyClass2 {
         public:
-            MyClass2(int i=42) : m_2(i) {}
-            virtual ~MyClass2() {}
-            virtual int y() = 0;
+          MyClass2(int i=42) : m_2(i) {}
+          virtual ~MyClass2() {}
+          virtual int y() = 0;
 
         public:
             int m_2;
@@ -947,14 +947,14 @@ class TestCROSSINHERITANCE:
 
         cppyy.cppdef("""namespace const_byvalue_return {
         struct Const {
-            Const() = default;
-            explicit Const(const std::string& s) { m_value = s; }
-            std::string m_value;
+          Const() = default;
+          explicit Const(const std::string& s) { m_value = s; }
+          std::string m_value;
         };
 
         struct Abstract {
-            virtual ~Abstract() {}
-            virtual const Const return_const() = 0;
+          virtual ~Abstract() {}
+          virtual const Const return_const() = 0;
         };
 
         const Const callit(Abstract* a) { return a->return_const(); } }""")
@@ -976,21 +976,21 @@ class TestCROSSINHERITANCE:
 
         cppyy.cppdef("""namespace non_copyable {
         struct Copyable {
-            Copyable() = default;
-            virtual ~Copyable() {}
+          Copyable() = default;
+          virtual ~Copyable() {}
 
-            Copyable(const Copyable&) = default;
-            Copyable& operator=(const Copyable&) = default;
+          Copyable(const Copyable&) = default;
+          Copyable& operator=(const Copyable&) = default;
         };
 
         struct Movable {
-            Movable() = default;
-            virtual ~Movable() {}
+          Movable() = default;
+          virtual ~Movable() {}
 
-            Movable(const Movable&) = delete;
-            Movable& operator=(const Movable&) = delete;
-            Movable(Movable&&) = default;
-            Movable& operator=(Movable&&) = default;
+          Movable(const Movable&) = delete;
+          Movable& operator=(const Movable&) = delete;
+          Movable(Movable&&) = default;
+          Movable& operator=(Movable&&) = default;
         }; }""")
 
         ns = cppyy.gbl.non_copyable
@@ -1016,25 +1016,25 @@ class TestCROSSINHERITANCE:
 
         cppyy.cppdef("""namespace default_ctor_and_multiple {
         struct Copyable {
-            Copyable() = default;
-            virtual ~Copyable() {}
+          Copyable() = default;
+          virtual ~Copyable() {}
 
-            Copyable(const Copyable&) = default;
-            Copyable& operator=(const Copyable&) = default;
+          Copyable(const Copyable&) = default;
+          Copyable& operator=(const Copyable&) = default;
         };
 
         struct Movable {
-            Movable() = default;
-            virtual ~Movable() {}
+          Movable() = default;
+          virtual ~Movable() {}
 
-            Movable(const Movable&) = delete;
-            Movable& operator=(const Movable&) = delete;
-            Movable(Movable&&) = default;
-            Movable& operator=(Movable&&) = default;
+          Movable(const Movable&) = delete;
+          Movable& operator=(const Movable&) = delete;
+          Movable(Movable&&) = default;
+          Movable& operator=(Movable&&) = default;
         };
 
         struct SomeClass {
-            virtual ~SomeClass() {}
+          virtual ~SomeClass() {}
         }; }""")
 
         ns = cppyy.gbl.default_ctor_and_multiple
@@ -1048,3 +1048,53 @@ class TestCROSSINHERITANCE:
 
         d = DerivedMulti()
         assert d
+
+    def test26_no_default_ctor(self):
+        """Make sure no default ctor is created if not viable"""
+
+        import cppyy, warnings
+
+        cppyy.cppdef("""namespace no_default_ctor {
+        struct NoDefCtor1 {
+          NoDefCtor1(int) {}
+          virtual ~NoDefCtor1() {}
+        };
+
+        struct NoDefCtor2 {
+          NoDefCtor2() = delete;
+          virtual ~NoDefCtor2() {}
+        };
+
+        class NoDefCtor3 {
+          NoDefCtor3() = default;
+        public:
+          virtual ~NoDefCtor3() {}
+        };
+
+        class Simple {}; }""")
+
+        ns = cppyy.gbl.no_default_ctor
+
+        for kls in (ns.NoDefCtor1, ns.NoDefCtor2, ns.NoDefCtor3):
+            class PyDerived(kls):
+                def __init__(self):
+                    super(PyDerived, self).__init__()
+
+            with raises(TypeError):
+                PyDerived()
+
+            with warnings.catch_warnings(record=True) as w:
+                class PyDerived(cppyy.multi(kls, ns.Simple)):
+                    def __init__(self):
+                        super(PyDerived, self).__init__()
+
+            with raises(TypeError):
+                PyDerived()
+
+            with warnings.catch_warnings(record=True) as w:
+                class PyDerived(cppyy.multi(ns.Simple, kls)):
+                    def __init__(self):
+                        super(PyDerived, self).__init__()
+
+            with raises(TypeError):
+                PyDerived()
