@@ -1008,3 +1008,43 @@ class TestCROSSINHERITANCE:
       # used to fail with compilation error
         class DerivedMulti(cppyy.multi(Movable, Copyable)):
             pass
+
+    def test25_default_ctor_and_multiple_inheritance(self):
+        """Regression test: default ctor did not get added"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace default_ctor_and_multiple {
+        struct Copyable {
+            Copyable() = default;
+            virtual ~Copyable() {}
+
+            Copyable(const Copyable&) = default;
+            Copyable& operator=(const Copyable&) = default;
+        };
+
+        struct Movable {
+            Movable() = default;
+            virtual ~Movable() {}
+
+            Movable(const Movable&) = delete;
+            Movable& operator=(const Movable&) = delete;
+            Movable(Movable&&) = default;
+            Movable& operator=(Movable&&) = default;
+        };
+
+        struct SomeClass {
+            virtual ~SomeClass() {}
+        }; }""")
+
+        ns = cppyy.gbl.default_ctor_and_multiple
+        Copyable  = ns.Copyable
+        Movable   = ns.Movable
+        SomeClass = ns.SomeClass
+
+        class DerivedMulti(cppyy.multi(Movable, Copyable, SomeClass)):
+            def __init__(self):
+                super(DerivedMulti, self).__init__()
+
+        d = DerivedMulti()
+        assert d
