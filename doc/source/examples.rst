@@ -17,10 +17,6 @@ alphabetical order):
  * `SopraClient`_
  * `python-vspline`_
 
-In addition, cppyy is being re-integrated in its roots, which includes
-several sophisticated pythonizations.
-See the "experimental" version of the `PyROOT`_ project.
-
 .. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash
 .. _PyEtaler: https://github.com/etaler/PyEtaler
@@ -30,4 +26,3 @@ See the "experimental" version of the `PyROOT`_ project.
 .. _libsemigroups_cppyy: https://github.com/libsemigroups/libsemigroups_cppyy
 .. _SopraClient: https://github.com/SoPra-Team-17/Client
 .. _python-vspline: https://bitbucket.org/kfj/python-vspline
-.. _PyROOT: https://root.cern.ch/

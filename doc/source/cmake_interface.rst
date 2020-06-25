@@ -88,7 +88,7 @@ variables:
     Cppyy_FOUND - set to true if Cppyy is found
     Cppyy_DIR - the directory where Cppyy is installed
     Cppyy_EXECUTABLE - the path to the Cppyy executable
-    Cppyy_INCLUDE_DIRS - Where to find the ROOT header files.
+    Cppyy_INCLUDE_DIRS - Where to find the Cppyy header files.
     Cppyy_VERSION - the version number of the Cppyy backend.
 
 and also defines the following functions::
@@ -170,8 +170,7 @@ The bindings are generated/built/packaged using 3 environments:
 +----------------------+---------------------------------------------------------------------------------------------+
 |GENERATE_OPTIONS optio| Options which are to be passed into the rootcling                                           |
 |                      | command. For example, bindings which depend on Qt                                           |
-|                      | may need "-D__PIC__;-Wno-macro-redefined" as per                                            |
-|                      | https://sft.its.cern.ch/jira/browse/ROOT-8719.                                              |
+|                      | may need "-D__PIC__;-Wno-macro-redefined".                                                  |
 +----------------------+---------------------------------------------------------------------------------------------+
 |LINKDEFS def          | Files or lines which contain extra #pragma content                                          |
 |                      | for the linkdef.h file used by rootcling. See                                               |

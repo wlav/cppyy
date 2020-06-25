@@ -32,7 +32,7 @@ if sys.hexversion < 0x3000000:
   # TODO: this reliese on CPPOverload cooking up a func_code object, which atm
   # is simply not implemented for p3 :/
 
-  # convince inspect that PyROOT method proxies are possible drop-ins for python
+  # convince inspect that cppyy method proxies are possible drop-ins for python
   # methods and classes for pydoc
     import inspect
 
