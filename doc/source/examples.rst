@@ -10,6 +10,7 @@ alphabetical order):
 
  * `cppyy-bbhash`_
  * `PyEtaler`_
+ * 'pyflatsurf`_
  * `gmpxxyy`_
  * `cppyy-knearestneighbors`_
  * `lyncs`_
@@ -20,6 +21,7 @@ alphabetical order):
 .. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash
 .. _PyEtaler: https://github.com/etaler/PyEtaler
+.. _pyflatsurf: https://github.com/flatsurf/flatsurf
 .. _gmpxxyy: https://github.com/flatsurf/gmpxxyy
 .. _cppyy-knearestneighbors: https://github.com/jclay/cppyy-knearestneighbors-example
 .. _lyncs: https://github.com/sbacchio/lyncs
