@@ -179,8 +179,8 @@ def load_library(name):
     _begin_capture_stderr()
     gSystem = gbl.gSystem
     if name[:3] != 'lib':
-        if not gSystem.FindDynamicLibrary(gbl.TString(name), True) and\
-               gSystem.FindDynamicLibrary(gbl.TString('lib'+name), True):
+        if not gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString(name), True) and\
+               gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString('lib'+name), True):
             name = 'lib'+name
     sc = gSystem.Load(name)
     err = _end_capture_stderr()
