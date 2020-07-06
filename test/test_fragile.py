@@ -561,3 +561,22 @@ class TestSTDNOTINGLOBAL:
 
         for name in ['int', 'uint', 'ushort', 'uchar', 'byte']:
             getattr(cppyy.gbl, name)
+
+    def test04_no_legacy(self):
+        """Test some functions that previously crashed"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        enum ELogLevel {
+          kLogEmerg          = 0,
+          kLogAlert          = 1,
+          kLogCrit           = 2,
+          kLogErr            = 3,
+          kLogWarning        = 4,
+          kLogNotice         = 5,
+          kLogInfo           = 6,
+          kLogDebug          = 7
+        };""")
+
+        assert cppyy.gbl.ELogLevel != cppyy.gbl.CppyyLegacy.ELogLevel

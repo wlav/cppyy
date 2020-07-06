@@ -13,11 +13,7 @@ ifeq ($(CHECK_SWIG),0)
 endif
 all : $(dicts) $(libs) $(execs) $(modules)
 
-ifeq ($(ROOTSYS),)
-  clingconfig := cling-config
-else
-  clingconfig := root-config
-endif
+clingconfig := cling-config
 
 cppflags:=-O3 -fPIC
 cppyy_cppflags=$(shell $(clingconfig) --cflags) $(cppflags)

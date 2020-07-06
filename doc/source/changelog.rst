@@ -22,6 +22,8 @@ master: 1.7.2
 * Support const by-value returns in Python-side method overrides
 * Support for cross-language multiple inheritance of C++ bases
 * Allow for pass-by-value of std::unique_ptr through move
+* Reduced dependencies on upstream code
+* Put remaining upstream code in CppyyLegacy namespace
 
 
 2020-06-06: 1.7.1
