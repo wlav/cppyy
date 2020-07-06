@@ -1,17 +1,12 @@
 #ifndef CPPYY_TEST_DATATYPES_H
 #define CPPYY_TEST_DATATYPES_H
 
-#ifndef CPPYY_DUMMY_BACKEND
-#include "RtypesCore.h"
+#ifdef _WIN32
+typedef __int64          Long64_t;
+typedef unsigned __int64 ULong64_t;
 #else
-// copied from RtypesCore.h ...
-#if defined(R__WIN32) && !defined(__CINT__)
-typedef __int64          Long64_t;  //Portable signed long integer 8 bytes
-typedef unsigned __int64 ULong64_t; //Portable unsigned long integer 8 bytes
-#else
-typedef long long          Long64_t; //Portable signed long integer 8 bytes
-typedef unsigned long long ULong64_t;//Portable unsigned long integer 8 bytes
-#endif
+typedef long long          Long64_t;
+typedef unsigned long long ULong64_t;
 #endif
 #include <cstddef>
 #include <cstdint>
