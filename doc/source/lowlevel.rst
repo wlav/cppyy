@@ -183,7 +183,7 @@ above for cppyy) the result of at least one of the following:
   Takes an optional ``byref`` parameter and if set to true, returns a pointer
   to the address instead.
 
-* **as_ctypes**: Takes a cppyy bound C++ object and returns its address as
+* **ll.as_ctypes**: Takes a cppyy bound C++ object and returns its address as
   a ``ctypes.c_void_p`` object.
   Takes an optional ``byref`` parameter and if set to true, returns a pointer
   to the address instead.
