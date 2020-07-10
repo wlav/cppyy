@@ -10,7 +10,7 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.7.2
+master: 1.8.0
 -------------
 
 * Support mixing of Python and C++ types in global operators
