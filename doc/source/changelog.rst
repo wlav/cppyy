@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.8.0
--------------
+2020-07-12: 1.8.0
+-----------------
 
 * Support mixing of Python and C++ types in global operators
 * Capture Cling error messages from cppdef and include in the Python exception
