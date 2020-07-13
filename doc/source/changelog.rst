@@ -16,12 +16,12 @@ PyPy support lags CPython support.
 * Support mixing of Python and C++ types in global operators
 * Capture Cling error messages from cppdef and include in the Python exception
 * Add a cppexec method to evalutate statements in Cling's global scope
-* Support initialization of std::array<> from sequences
+* Support initialization of ``std::array<>`` from sequences
 * Support C++17 style initialization of common STL containers
 * Allow base classes with no virtual destructor (with warning)
 * Support const by-value returns in Python-side method overrides
 * Support for cross-language multiple inheritance of C++ bases
-* Allow for pass-by-value of std::unique_ptr through move
+* Allow for pass-by-value of ``std::unique_ptr`` through move
 * Reduced dependencies on upstream code
 * Put remaining upstream code in CppyyLegacy namespace
 
@@ -37,7 +37,7 @@ PyPy support lags CPython support.
 * Fix by-ptr return of objects in Python derived classes
 * Fix for passing numpy boolean array through ``bool*``
 * Fix assignment to ``const char*`` data members
-* Support __restrict and __restrict__ in interfaces
+* Support ``__restrict`` and ``__restrict__`` in interfaces
 * Allow passing sequence of strings through ``const char*[]`` argument
 
 
@@ -46,13 +46,13 @@ PyPy support lags CPython support.
 
 * Upgrade to cppyy-cling 6.20.4
 * Pre-empt upstream's propensity of making ``std`` classes etc. global
-* Allow initialization of std::map from dict with the correct types
-* Allow initialization of std::set from set with the correct types
+* Allow initialization of ``std::map`` from dict with the correct types
+* Allow initialization of ``std::set`` from set with the correct types
 * Add optional nonst/non-const selection to ``__overload__``
 * Automatic smartification of normal object passed as smartptr by value
 * Fix crash when handing a by-value object to make_shared
 * Fixed a few shared/unique_ptr corner cases
-* Fixed conversion of std::function taking an STL class parameter
+* Fixed conversion of ``std::function`` taking an STL class parameter
 * No longer attempt auto-cast on classes without RTTI
 * Fix for ``iter()`` iteration on generic STL container
 
@@ -60,16 +60,16 @@ PyPy support lags CPython support.
 2020-03-15: 1.6.2
 -----------------
 
-* Respect __len__ when using bound C++ objects in boolean expressions
-* Support UTF-8 encoded unicode through std::string
-* Support for std::byte
+* Respect ``__len__`` when using bound C++ objects in boolean expressions
+* Support UTF-8 encoded ``unicode`` through ``std::string``
+* Support for ``std::byte``
 * Enable assignment to function pointer variable
-* Allow passing cppyy.nullptr where are function pointer is expected
+* Allow passing cppyy.nullptr where a function pointer is expected
 * Disable copy construction into constructed object (use ``__assign__`` instead)
 * Cover more cases when to set a lifeline
 * Lower priority of implicit conversion to temporary with initializer_list ctor
 * Add type reduction pythonization for trimming expression template type trees
-* Allow mixing std::string and str as dictionary keys
+* Allow mixing ``std::string`` and ``str`` as dictionary keys
 * Support C-style pointer-to-struct as array
 * Support C-style enum variable declarations
 * Fixed const_iterator by-ref return type regression
@@ -91,7 +91,7 @@ PyPy support lags CPython support.
 2019-12-23: 1.6.0
 -----------------
 
-* Classes derived from std::exception can be used as Python exceptions
+* Classes derived from ``std::exception`` can be used as Python exceptions
 * Template handling detailing (for Eigen)
 * Support keyword arguments
 * Added add_library_path at module level
@@ -111,12 +111,12 @@ PyPy support lags CPython support.
 
 * Added public C++ API for some CPyCppyy core functions (CPython only)
 * Support for char16_t/char16_t* and char32_t/char32_t*
-* Respect std::hash in __hash__
+* Respect ``std::hash`` in ``__hash__``
 * Fix iteration over vector of shared_ptr
 * Length checking on global variables of type 'signed char[N]'
-* Properly support overloaded templated with non-templated __setitem__
+* Properly support overloaded templated with non-templated ``__setitem__``
 * Support for array of const char* as C-strings
-* Enable type resolution of clang's builtin __type_pack_element
+* Enable type resolution of clang's builtin ``__type_pack_element``
 * Fix for inner class type naming when it directly declares a variable
 
 
@@ -152,7 +152,7 @@ PyPy support lags CPython support.
 -----------------
 
 * Added a "low level" interface (cppyy.ll) for hard-casting and ll types
-* Extened support for passing ctypes arguments through ptr, ref, ptr-ptr
+* Extended support for passing ctypes arguments through ptr, ref, ptr-ptr
 * Fixed crash when creating an array of instances of a scoped inner struct
 * Extended documentation
 
@@ -164,7 +164,7 @@ PyPy support lags CPython support.
 * Various patches to upstream's pre-compiled header generation and use
 * Instantiate templates with larger integer types if argument values require
 * Improve cppyy.interactive and partially enable it on PyPy, IPython, etc.
-* Let __overload__ be more flexible in signature matching
+* Let ``__overload__`` be more flexible in signature matching
 * Make list filtering of dir(cppyy.gbl) on Windows same as Linux/Mac
 * Extended documentation
 
@@ -181,11 +181,11 @@ PyPy support lags CPython support.
 * Allow implicit conversion from a tuple of arguments
 * Data set on namespaces reflected on C++ even if data not yet bound
 * Generalized resolution of binary operators in wrapper generation
-* Proper naming of arguments in namespaces for std::function<>
+* Proper naming of arguments in namespaces for ``std::function<>``
 * Cover more cases of STL-liker iterators
-* Allow std::vector initialization with a list of constructor arguments
+* Allow ``std::vector`` initialization with a list of constructor arguments
 * Consistent naming of ``__cppname__`` to ``__cpp_name__``
-* Added __set_lifeline__ attribute to overloads
+* Added ``__set_lifeline__`` attribute to overloads
 * Fixes to the cmake fragments for Ubuntu
 * Fixes linker errors on Windows in some configurations
 * Support C++ naming of typedef of bool types
@@ -196,10 +196,10 @@ PyPy support lags CPython support.
 2019-07-01 : 1.4.12
 -------------------
 
-* Automatic conversion of python functions to std::function arguments
+* Automatic conversion of python functions to ``std::function`` arguments
 * Fix for templated operators that can map to different python names
 * Fix on p3 crash when setting a detailed exception during exception handling
-* Fix lookup of std::nullopt
+* Fix lookup of ``std::nullopt``
 * Fix bug that prevented certain templated constructors from being considered
 * Support for enum values as data members on "enum class" enums
 * Support for implicit conversion when passing by-value
@@ -233,7 +233,7 @@ PyPy support lags CPython support.
 2019-04-22 : 1.4.8
 ------------------
 
-* std::tuple is now iterable for return assignments w/o tie
+* ``std::tuple`` is now iterable for return assignments w/o tie
 * Support for opaque handles and typedefs of pointers to classes
 * Keep unresolved enums desugared and provide generic converters
 * Treat int8_t and uint8_t as integers (even when they are chars)
@@ -275,7 +275,7 @@ PyPy support lags CPython support.
 * Allow templated free functions to be attached as methods to classes
 * Allow cross-derivation from templated classes
 * More support for 'using' declarations (methods and inner namespaces)
-* Fix overload resolution for std::set::rbegin()/rend() operator ==
+* Fix overload resolution for ``std::set::rbegin()``/``rend()`` ``operator==``
 * Fixes for bugs #61, #67
 * Several pointer truncation fixes for 64b Windows
 * Linker and lookup fixes for Windows
@@ -301,7 +301,7 @@ PyPy support lags CPython support.
 * Preserve 'const' when overriding virtual functions
 * Support for by-ref (using ctypes) for function callbacks
 * Identity of nested typedef'd classes matches actual
-* Expose function pointer variables as std::function's
+* Expose function pointer variables as ``std::function``'s
 * More descriptive printout of global functions
 * Ensure that standard pch is up-to-date and that it is removed on
   uninstall
