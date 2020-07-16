@@ -732,3 +732,18 @@ class TestREGRESSION:
         del c
         gc.collect()
         assert ns.count() == 0
+
+    def test27_exception_as_shared_ptr(self):
+        """shared_ptr of an exception object null-checking"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace exception_as_shared_ptr {
+            std::shared_ptr<std::exception> get_shared_null() {
+                return std::shared_ptr<std::exception>();
+            }
+        }""")
+
+        null = cppyy.gbl.exception_as_shared_ptr.get_shared_null()
+        assert not null
