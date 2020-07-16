@@ -504,7 +504,7 @@ class TestREGRESSION:
 
         import cppyy
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace regression_test21 {
         std::string what_called = "";
         class Foo {
@@ -552,16 +552,20 @@ class TestREGRESSION:
 
         import cppyy, gc
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace regression_test22 {
         struct Countable {
-             static int s_count;
-             Countable() { ++s_count; }
-             Countable(const Countable&) { ++s_count; }
-             Countable& operator=(const Countable&) { return *this; }
-             ~Countable() { --s_count; }
+            static int s_count;
+            Countable() { ++s_count; }
+            Countable(const Countable&) { ++s_count; }
+            Countable& operator=(const Countable&) { return *this; }
+            ~Countable() { --s_count; }
         };
         int Countable::s_count = 0;
+
+        Countable copy_creation() { return Countable{}; }
+        Countable* c;
+        void destroyit() { delete c; }
         }""")
 
         r22 = cppyy.gbl.regression_test22
@@ -594,12 +598,33 @@ class TestREGRESSION:
         gc.collect()
         assert r22.Countable.s_count == 1
 
+        del c
+        gc.collect()
+        assert r22.Countable.s_count == 0
+
+        c = r22.copy_creation()
+        assert r22.Countable.s_count == 1
+        del c
+        gc.collect()
+        assert r22.Countable.s_count == 0
+
+        c = r22.copy_creation()
+        r22.c = c
+        c.__python_owns__ = False
+        del c
+        gc.collect()
+        assert r22.Countable.s_count == 1
+
+        r22.destroyit()
+        r22.c = cppyy.nullptr
+        assert r22.Countable.s_count == 0
+
     def test23_C_style_enum(self):
         """Support C-style enum variable declarations"""
 
         import cppyy
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace CStyleEnum {
            enum MyEnum { kOne, kTwo };
            MyEnum my_enum = kOne;
@@ -624,19 +649,18 @@ class TestREGRESSION:
 
         import cppyy
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace RooStuff {
-            struct RooArg {};
+        struct RooArg {};
 
-            struct RooCollection {
-                using const_iterator = std::vector<RooArg*>::const_iterator;
-                std::vector<RooArg*> _list;
+        struct RooCollection {
+            using const_iterator = std::vector<RooArg*>::const_iterator;
+            std::vector<RooArg*> _list;
 
-                RooCollection() { _list.emplace_back(); }
-                const_iterator begin() const { return _list.begin(); }
-                const_iterator end() const { return _list.end(); }
-            };
-        }""")
+            RooCollection() { _list.emplace_back(); }
+            const_iterator begin() const { return _list.begin(); }
+            const_iterator end() const { return _list.end(); }
+        }; }""")
 
         l = cppyy.gbl.RooStuff.RooCollection()
 
@@ -653,15 +677,14 @@ class TestREGRESSION:
 
         cppyy.cppdef("""
         namespace ConstCharStar {
-            struct ImGuiIO1 {
-               ImGuiIO1() : BackendPlatformName(nullptr) {}
-               const char* BackendPlatformName;
-            };
-            struct ImGuiIO2 {
-               ImGuiIO2() : BackendPlatformName(nullptr) {}
-               const char* const BackendPlatformName;
-            };
-        }""")
+        struct ImGuiIO1 {
+            ImGuiIO1() : BackendPlatformName(nullptr) {}
+            const char* BackendPlatformName;
+        };
+        struct ImGuiIO2 {
+            ImGuiIO2() : BackendPlatformName(nullptr) {}
+            const char* const BackendPlatformName;
+        }; }""")
 
         io = cppyy.gbl.ConstCharStar.ImGuiIO1()
 
@@ -674,3 +697,38 @@ class TestREGRESSION:
         io = cppyy.gbl.ConstCharStar.ImGuiIO2()
         with raises(TypeError):
             io.BackendPlatformName = "aap"
+
+    def test26_exception_by_value(self):
+        """Proper memory management of exception return by value"""
+
+        import cppyy, gc
+
+        cppyy.cppdef("""\
+        namespace ExceptionByValue {
+        class Countable : std::exception {
+        public:
+            static int s_count;
+            Countable() : fMsg("error") { ++s_count; }
+            Countable(const Countable&) { ++s_count; }
+            Countable& operator=(const Countable&) { return *this; }
+            ~Countable() { --s_count; }
+            const char* what() const throw() override { return fMsg.c_str(); }
+        private:
+            std::string fMsg;
+        };
+
+        int Countable::s_count = 0;
+
+        Countable create_one() { return Countable{}; }
+        int count() { return Countable::s_count; }
+        }""")
+
+        ns = cppyy.gbl.ExceptionByValue
+
+        assert ns.count() == 0
+        c = ns.create_one()
+        assert ns.count() == 1
+
+        del c
+        gc.collect()
+        assert ns.count() == 0

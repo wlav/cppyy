@@ -399,13 +399,13 @@ class TestPYTHONIFY:
 
         cppyy.cppdef("""namespace KeyWords {
         struct A {
- 	    A(std::initializer_list<int> vals) : fVals(vals) {}
+            A(std::initializer_list<int> vals) : fVals(vals) {}
             std::vector<int> fVals;
         };
 
         struct B {
-	    B() = default;
-	    B(const A& in_A, const A& out_A) : fVal(42), fIn(in_A), fOut(out_A) {}
+            B() = default;
+            B(const A& in_A, const A& out_A) : fVal(42), fIn(in_A), fOut(out_A) {}
             B(int val, const A& in_A, const A& out_A) : fVal(val), fIn(in_A), fOut(out_A) {}
             int fVal;
             A fIn, fOut;
