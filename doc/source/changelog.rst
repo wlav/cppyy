@@ -10,6 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.8.1
+-------------
+
+* Simplified flow of pointer types for callbacks and cross-derivation
+* Pointer-comparing objects performs auto-cast as needed
+
+
 2020-07-12: 1.8.0
 -----------------
 
