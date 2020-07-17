@@ -693,6 +693,13 @@ class TestADVANCEDCPP:
         for i in range(len(v)):
             assert v[i].m_val == expected_vals[i]
 
+        o = cppyy.gbl.some_concrete_class()
+        assert type(o) != type(cppyy.gbl.g_abstract_ptr)
+        cppyy.gbl.g_abstract_ptr = o
+        assert type(o) != type(cppyy.gbl.g_abstract_ptr)
+        assert cppyy.gbl.g_abstract_ptr == o
+        cppyy.gbl.g_abstract_ptr = cppyy.nullptr
+
     def test22_exceptions(self):
         """Catching of C++ exceptions"""
 

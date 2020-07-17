@@ -84,9 +84,9 @@ class TestFRAGILE:
 
         e = fragile.E()
         raises(TypeError, e.overload, None)
-        # allowing access to e.m_pp_no_such is debatable, but it provides a raw pointer
-        # which may be useful ...
-        assert e.m_pp_no_such[0] == 0xdead
+        # allowing access to e.m_pp_no_such is debatable, but it allows a typed address
+        # to be passed back into C++, which may be useful ...
+        assert cppyy.addressof(e.m_pp_no_such[0]) == 0xdead
 
     def test05_wrong_arg_addressof(self):
         """Test addressof() error reporting"""

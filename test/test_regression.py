@@ -747,3 +747,139 @@ class TestREGRESSION:
 
         null = cppyy.gbl.exception_as_shared_ptr.get_shared_null()
         assert not null
+
+    def test28_callback_pointer_values(self):
+        """Make sure pointer comparisons in callbacks work as expected"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace addressof_regression {
+        class ChangeBroadcaster;
+
+        class ChangeListener {
+        public:
+            virtual ~ChangeListener() = default;
+            virtual void changeCallback(ChangeBroadcaster*) = 0;
+        };
+
+        class ChangeBroadcaster {
+        public:
+            virtual ~ChangeBroadcaster() = default;
+            void triggerChange() {
+                std::for_each(l.begin(), l.end(), [this](auto* p) { p->changeCallback(this); });
+            }
+
+            void addChangeListener(ChangeListener* x) {
+                l.push_back(x);
+            }
+
+        private:
+            std::vector<ChangeListener*> l;
+        };
+
+        class BaseClass {
+        public:
+            virtual ~BaseClass() = default;
+        };
+
+        class DerivedClass : public BaseClass, public ChangeBroadcaster {
+            /* empty */
+        };
+
+        class Implementation {
+        public:
+            Implementation() { }
+            virtual ~Implementation() = default;
+            DerivedClass derived;
+        }; }""")
+
+        ns = cppyy.gbl.addressof_regression
+
+        class Glue(cppyy.multi(ns.Implementation, ns.ChangeListener)):
+            def __init__(self):
+                super(ns.Implementation, self).__init__()
+                self.derived.addChangeListener(self)
+                self.success = False
+
+            def triggerChange(self):
+                self.derived.triggerChange()
+
+            def changeCallback(self, b):
+                assert type(b) == type(self.derived)
+                assert b == self.derived
+                cast = cppyy.gbl.std.addressof[type(b)]
+                assert cast(b) == cast(self.derived)
+                self.success = True
+
+        g = Glue()
+        assert not g.success
+
+        g.triggerChange()
+        assert g.success
+
+    def test29_float2d_callback(self):
+        """Passing of 2-dim float arguments"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace FloatDim2 {
+        #include <thread>
+
+        struct Buffer {
+            Buffer() = default;
+
+            void setData(float** newData) {
+                data = newData;
+            }
+
+            void setSample(int newChannel, int newSample, float value) {
+                data[newChannel][newSample] = value;
+            }
+
+            float** data = nullptr;
+        };
+
+        struct Processor {
+            virtual ~Processor() = default;
+            virtual void process(float** data, int channels, int samples) = 0;
+        };
+
+        void callback(Processor& p) {
+            std::thread t([&p] {
+                int channels = 2;
+                int samples = 32;
+
+                float** data = new float*[channels];
+                for (int i = 0; i < channels; ++i)
+                    data[i] = new float[samples];
+
+                p.process(data, channels, samples);
+
+                for (int i = 0; i < channels; ++i)
+                    delete[] data[i];
+
+                delete[] data;
+            });
+
+            t.join();
+        } }""")
+
+        cppyy.gbl.FloatDim2.callback.__release_gil__ = True
+
+        class Processor(cppyy.gbl.FloatDim2.Processor):
+            buffer = cppyy.gbl.FloatDim2.Buffer()
+
+            def process(self, data, channels, samples):
+                self.buffer.setData(data)
+
+                try:
+                    for c in range(channels):
+                        for s in range(samples):
+                            self.buffer.setSample(c, s, 0.0) # < used to crash here
+                except Exception as e:
+                    print(e)
+
+        p = Processor()
+        cppyy.gbl.FloatDim2.callback(p)
