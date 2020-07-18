@@ -139,7 +139,7 @@ Example:
     >>> from cppyy.gbl import Abstract, call_abstract_method
     >>> class PyConcrete(Abstract):
     ...     def abstract_method(self):
-    ...         print("Hello, Python World!\n")
+    ...         return "Hello, Python World!\n"
     ...     def concrete_method(self):
     ...         pass
     ...
@@ -151,6 +151,49 @@ Example:
 Note that it is not necessary to provide a constructor (``__init__``), but
 if you do, you *must* call the base class constructor through the ``super``
 mechanism.
+
+
+`Multiple cross-inheritance`
+----------------------------
+
+Python requires that any multiple inheritance (also in pure Python) has an
+unambiguous method resolution order (mro), including for classes and thus
+also for meta-classes.
+In Python2, it was possible to resolve any mro conflicts automatically, but
+meta-classes in Python3, although syntactically richer, have functionally
+become far more limited.
+In particular, the mro is checked in the builtin class builder, instead of
+in the meta-class of the meta-class (which in Python3 is the builtin ``type``
+rather than the meta-class itself as in Python2, another limitation, and
+which actually checks the mro a second time for no reason).
+The upshot is that a helper is required (``cppyy.multi``) to resolve the mro
+to support Python3.
+The helper is written to also work in Python2.
+Example:
+
+  .. code-block:: python
+
+    >>> class PyConcrete(cppyy.multi(cppyy.gbl.Abstract1, cppyy.gbl.Abstract2)):
+    ...     def abstract_method1(self):
+    ...         return "first message"
+    ...     def abstract_method2(self):
+    ...         return "second message"
+    ...
+    >>> pc = PyConcrete()
+    >>> cppyy.gbl.call_abstract_method1(pc)
+    first message
+    >>> cppyy.gbl/call_abstract_method2(pc)
+    second message
+    >>>
+
+Contrary to multiple inheritance in Python, in C++ there are no two separate
+instances representing the base classes.
+Thus, a single ``__init__`` call needs to construct and initialize all bases,
+rather than calling ``__init__`` on each base independently.
+To support this syntax, the arguments to each base class should be grouped
+together in a tuple.
+If there are no arguments, provide an empty tuple (or omit them altogether,
+if these arguments apply to the right-most base(s)).
 
 
  .. _sec-methods-label:

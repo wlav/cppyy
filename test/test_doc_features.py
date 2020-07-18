@@ -95,6 +95,27 @@ std::string call_abstract_method(Abstract* a) {
 }
 
 //-----
+class Abstract1 {
+public:
+    virtual ~Abstract1() {}
+    virtual std::string abstract_method1() = 0;
+};
+
+class Abstract2 {
+public:
+    virtual ~Abstract2() {}
+    virtual std::string abstract_method2() = 0;
+};
+
+std::string call_abstract_method1(Abstract1* a) {
+    return a->abstract_method1();
+}
+
+std::string call_abstract_method2(Abstract2* a) {
+    return a->abstract_method2();
+}
+
+//-----
 int global_function(int) {
     return 42;
 }
@@ -408,6 +429,23 @@ namespace Namespace {
 
         pc = PyConcrete4()
         assert call_abstract_method(pc) == "Hello, Python World! (4)"
+
+    def test_multi_x_inheritance(self):
+        """Multiple cross-inheritance"""
+
+        import cppyy
+
+        class PyConcrete(cppyy.multi(cppyy.gbl.Abstract1, cppyy.gbl.Abstract2)):
+            def abstract_method1(self):
+                return "first message"
+
+            def abstract_method2(self):
+                return "second message"
+
+        pc = PyConcrete()
+
+        assert cppyy.gbl.call_abstract_method1(pc) == "first message"
+        assert cppyy.gbl.call_abstract_method2(pc) == "second message"
 
     def test_exceptions(self):
         """Exception throwing and catching"""
