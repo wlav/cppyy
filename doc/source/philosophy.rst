@@ -181,6 +181,26 @@ software stacks of many thousands of classes, where this advantage is very
 important.
 
 
+`Distributing headers`
+----------------------
+
+cppyy requires C/C++ headers to be available at run-time, which was never a
+problem in the developer-centric world from which it originated: software
+always had supported C++ APIs already, made available through header files,
+and Python simply piggy-backed onto those.
+JIT-ing code in those headers, which potentially picked up system headers
+that were configured differently, was thus also never a problem.
+Or rather, the same problem exists for C++, and configuration for C++ to
+resolve potential issues translates transparently to Python.
+
+There are only two alternatives: precompile headers into LLVM bitcode and
+distribute those or provide a restricted set of headers.
+Precompiled headers (and modules) were never designed to be portable and
+relocatable, however, thus that may not be the panacea it seems.
+A restricted set of headers is some work, but cppyy can operate on abstract
+interface classes just fine (including Python-side cross-inheritance).
+
+
 `Large deployment`
 ------------------
 
