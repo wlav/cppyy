@@ -10,8 +10,11 @@ As a Python-C++ language binder, cppyy has several unique features: it fills
 gaps and covers use cases not available through other binders.
 This document explains some of the design choices made and the thinking
 behind the implementations of those features.
-Its purpose is to help you decide whether cppyy covers your use cases and
-binding requirements.
+It's categorized as "philosophy" because a lot of it is open to
+interpretation.
+Its main purpose is simply to help you decide whether cppyy covers your use
+cases and binding requirements, before committing any time to
+:ref:`trying it out <starting>`.
 
 
 Run-time v.s. compile-time
@@ -20,7 +23,7 @@ Run-time v.s. compile-time
 What performs better, run-time or compile-time?
 The obvious answer is compile-time: see the performance differences between
 C++ and Python, for example.
-Obvious, but completely wrong however.
+Obvious, but completely wrong, however.
 In fact, when it comes to Python, it is even the `wrong question.`
 
 Everything in Python is run-time: modules, classes, functions, etc. are all
@@ -81,6 +84,65 @@ for your most performance-sensitive use cases.
 The only way to know for sure is to write a test application and measure, but
 a binder that provides more specializations, or makes it easy to add your
 own, is more likely to deliver.
+
+
+`Manual v.s. automatic`
+-----------------------
+
+Python is, today, one of the most popular programming languages and has a
+rich and mature eco-system around it.
+But when the project that became cppyy started in the field of High Energy
+Physics (HEP), Python usage was non-existent there.
+As a Python user to work in this predominantly C++ environment, you had to
+bring your own bindings, thus automatic was the only way to go.
+Binders such as SWIG, SIP (or even boost.python with Pyste) all had the fatal
+assumption that you were providing Python bindings to your `own` C++ code,
+and that you were thus able to modify those (many) areas of the C++ codes
+that their parsers could not handle.
+The `CINT`_ interpreter was already well established in HEP, however, and
+although it, too, had many limitations, C++ developers took care not to write
+code that it could not parse.
+In particular, since CINT drove automatic I/O, all data classes as needed for
+analysis were parsable by CINT and consequently, by using CINT for the
+bindings, at the very least one could run any analysis in Python.
+This was key.
+
+Besides not being able to parse some code (a problem that's history for cppyy
+since moving to Cling), all automatic parsers suffer from the problem that
+the bindings produced have a strong "C++ look-and-feel" and that choices need
+to be made in cases that can be bound in different, equally valid, ways.
+As an example of the latter, consider the return of an ``std::vector``:
+should this be automatically converted to a Python ``list``?
+Doing so is more "pythonic", but incurs a significant overhead, and no
+automatic choice will satisfy all cases: user input is needed.
+
+The typical way to solve these issues, is to provide an intermediate language
+where corner cases can be brushed up, code can be made more Python friendly,
+and design choices can be resolved.
+Unfortunately, learning an intermediate language is quite an investment in
+time and effort.
+With cppyy, however, no such extra language is needed: using Cling, C++ code
+can be embedded and JIT-ed for the same purpose.
+In particular, cppyy can handle `boxed` Python objects and the full Python
+C-API is available through Cling, allowing complete manual control where
+necessary, and all within a single code base.
+Similarly, a more pythonistic look-and-feel can be achieved in Python itself.
+As a rule, Python is always the best place, far more so than any intermediate
+language, to do Python-thingies.
+Since all bound proxies are normal Python classes, functions, etc., Python's
+introspection (and regular expressions engine) can be used to provide rule
+based improvements in a way similar to the use of directives in an
+intermediate language.
+
+On a practical note, it's often said that an automatic binder can provide
+bindings to 95% of your code out-of-the-box, with only the remaining part
+needing manual intervention.
+This is broadly true, but realize that that 5% contains the most difficult
+cases and is where 20-30% of the effort would have gone in case the bindings
+were done fully manually.
+It is therefore important to consider what manual tools an automatic binder
+offers and to make sure they fit your work style and needs, because you are
+going to spend a significant amount of time with them.
 
 
 `LLVM dependency`
@@ -149,5 +211,6 @@ rebuild in full.
 .. _`SWIG`: http://swig.org/
 .. _`pybind11`: https://pybind11.readthedocs.io/en/stable/
 .. _`PyPy`: https://www.pypy.org/
+.. _`CINT`: https://en.wikipedia.org/wiki/CINT
 .. _`LLVM`: https://llvm.org/
 .. _`Numba`: http://numba.pydata.org/
