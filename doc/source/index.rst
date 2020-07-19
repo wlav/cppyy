@@ -171,6 +171,13 @@ development environments.
    repositories
    testing
 
+.. toctree::
+   :caption: Background
+   :maxdepth: 1
+
+   history
+   philosophy
+
 
 Bugs and feedback
 -----------------
