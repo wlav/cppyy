@@ -51,4 +51,4 @@ bench: all
 	pytest -s bench_runvector.py --benchmark-sort=mean
 
 clean:
-	-rm -f $(dicts) $(libs) $(execs) $(modules) $(wildcard *.rootmap) $(wildcard *_rdict.pcm)
+	-rm -f $(dicts) $(libs) $(execs) $(modules) $(wildcard *.rootmap) $(wildcard *_rdict.pcm) $(wildcard *_wrap.cxx)
