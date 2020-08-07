@@ -883,3 +883,37 @@ class TestREGRESSION:
 
         p = Processor()
         cppyy.gbl.FloatDim2.callback(p)
+
+    def test30_uint64_t(self):
+        """Failure due to typo"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        #include <limits>
+        namespace UInt64_Typo {
+        uint64_t Test(uint64_t v) { return v; }
+        template <typename T> struct Struct { Struct(T t) : fT(t) {}; T fT; };
+        template <typename T> Struct<T> TTest(T t) { return Struct<T>{t}; }
+        }""")
+
+        from cppyy.gbl import UInt64_Typo as ns
+
+        std = cppyy.gbl.std
+        uint64_t = cppyy.gbl.uint64_t
+        umax64   = std.numeric_limits[uint64_t].max()
+        int64_t  = cppyy.gbl.int64_t
+        max64    = std.numeric_limits[int64_t].max()
+        min64    = std.numeric_limits[int64_t].min()
+
+        assert max64 < umax64
+        assert min64 < max64
+        assert umax64 == ns.Test(umax64)
+
+        assert ns.TTest(umax64).fT == umax64
+        assert ns.TTest(max64).fT  ==  max64
+        print(type(ns.TTest(max64)))
+        assert ns.TTest(min64).fT  ==  min64
+        print(type(ns.TTest(min64)))
+        assert ns.TTest(1.01).fT == 1.01
+        #assert ns.TTest(True).fT == bool

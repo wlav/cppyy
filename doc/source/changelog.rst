@@ -16,6 +16,7 @@ master: 1.8.1
 * Simplified flow of pointer types for callbacks and cross-derivation
 * Pointer-comparing objects performs auto-cast as needed
 * Add main dimension for ptr-ptr to builtin returns
+* Fix uint64_t template instantiation regression
 * Extended documentation
 
 
