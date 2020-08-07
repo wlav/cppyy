@@ -1346,3 +1346,54 @@ class TestDATATYPES:
         cppyy.cppdef("std::string restrict_call(const char*__restrict s) { return s; }")
 
         assert cppyy.gbl.restrict_call("aap") == "aap"
+
+    def test30_legacy_matrix(self):
+        """Handling of legacy matrix"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace Pointer2D {
+        int** g_matrix;
+
+        int** create_matrix(int n, int m) {
+            int** mat = (int**)malloc(n*sizeof(int*));
+            int* arr = (int*)malloc(n*m*sizeof(int));
+            for (int i = 0; i < n; ++i) {
+                mat[i] = arr + i*m;
+                for(int j = 0; j < m; ++j) {
+                    mat[i][j] = 13+i*n+j;
+                }
+            }
+            g_matrix = mat;
+            return mat;
+        }
+
+        bool destroy_matrix(int** mat, int n, int m) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < m; ++j) {
+                    if (mat[i][j] != 13+i*n+j)
+                        return false;
+                }
+            }
+            g_matrix = nullptr;
+            free(mat[0]);
+            free(mat);
+            return true;
+        } }""")
+
+        ns = cppyy.gbl.Pointer2D;
+
+        N, M = 2, 3
+        m = ns.create_matrix(N, M)
+        g = ns.g_matrix;
+
+        for i in range(N):
+            for j in range(M):
+                assert m[i][j] == 13+i*N+j
+                assert g[i][j] == 13+i*N+j
+
+        assert ns.destroy_matrix(m, N, M)
+
+        m = ns.create_matrix(N, M)
+        assert ns.destroy_matrix(ns.g_matrix, N, M)
