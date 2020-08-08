@@ -1397,3 +1397,66 @@ class TestDATATYPES:
 
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
+
+    def test31_legacy_matrix_of_structs(self):
+        """Handling of legacy matrix of structs"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace StructPointer2D {
+        typedef struct {
+            int x,y;
+        } xy;
+
+        xy** g_matrix;
+
+        xy** create_matrix(int n, int m) {
+            xy** mat = (xy**)malloc(n*sizeof(xy*));
+            xy* arr = (xy*)malloc(n*m*sizeof(xy));
+            for(int i=0; i<n; i++) {
+                mat[i] = arr + i*m;
+                for(int j=0; j<m; j++) {
+                    mat[i][j].x = i+13;
+                    mat[i][j].y = j+7;
+                }
+            }
+            g_matrix = mat;
+            return mat;
+        }
+
+        bool destroy_matrix(xy** mat, int n, int m) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < m; ++j) {
+                    if (mat[i][j].x != i+13)
+                        return false;
+                    if (mat[i][j].y != j+7)
+                        return false;
+                }
+            }
+            g_matrix = nullptr;
+            free(mat[0]);
+            free(mat);
+            return true;
+        } }""")
+
+        ns = cppyy.gbl.StructPointer2D;
+
+        N, M = 2, 3
+        m = ns.create_matrix(N, M)
+        g = ns.g_matrix;
+
+        assert (m.x, m.y) == (13, 7)
+        assert (g.x, g.y) == (13, 7)
+
+        for i in range(N):
+            assert (m[i].x, m[i].y) == (i+13, 7)
+            assert (g[i].x, g[i].y) == (i+13, 7)
+            for j in range(M):
+                assert (m[i][j].x, m[i][j].y) == (i+13, j+7)
+                assert (g[i][j].x, g[i][j].y) == (i+13, j+7)
+
+        assert ns.destroy_matrix(m, N, M)
+
+        m = ns.create_matrix(N, M)
+        assert ns.destroy_matrix(ns.g_matrix, N, M)
