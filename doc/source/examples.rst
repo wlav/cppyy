@@ -14,6 +14,7 @@ alphabetical order):
  * `gmpxxyy`_
  * `cppyy-knearestneighbors`_
  * `lyncs`_
+ * `popsicle`_
  * `libsemigroups_cppyy`_
  * `SopraClient`_
  * `python-vspline`_
@@ -25,6 +26,7 @@ alphabetical order):
 .. _gmpxxyy: https://github.com/flatsurf/gmpxxyy
 .. _cppyy-knearestneighbors: https://github.com/jclay/cppyy-knearestneighbors-example
 .. _lyncs: https://github.com/sbacchio/lyncs
+.. _popsicle: https://github.com/kunitoki/popsicle
 .. _libsemigroups_cppyy: https://github.com/libsemigroups/libsemigroups_cppyy
 .. _SopraClient: https://github.com/SoPra-Team-17/Client
 .. _python-vspline: https://bitbucket.org/kfj/python-vspline
