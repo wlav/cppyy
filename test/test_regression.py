@@ -912,8 +912,6 @@ class TestREGRESSION:
 
         assert ns.TTest(umax64).fT == umax64
         assert ns.TTest(max64).fT  ==  max64
-        print(type(ns.TTest(max64)))
         assert ns.TTest(min64).fT  ==  min64
-        print(type(ns.TTest(min64)))
         assert ns.TTest(1.01).fT == 1.01
         #assert ns.TTest(True).fT == bool
