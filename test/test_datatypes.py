@@ -95,6 +95,37 @@ class TestDATATYPES:
         assert round(c.get_icomplex_r().imag  - 141., 11) == 0
         assert complex(cppyy.gbl.std.complex['int'](1, 2)) == complex(1, 2)
 
+        # complex overloads
+        cppyy.cppdef("""
+        namespace ComplexOverload {
+          template<typename T>
+          struct CO {
+            CO(std::size_t sz) : m_size(sz), m_cplx(std::complex<T>(7,42)) {}
+            CO(std::complex<T> cplx) : m_size(42), m_cplx(cplx) {}
+
+            std::size_t m_size;
+            std::complex<T> m_cplx;
+          };
+        }""")
+
+        COd = cppyy.gbl.ComplexOverload.CO['double']
+        COf = cppyy.gbl.ComplexOverload.CO['float']
+        scf = cppyy.gbl.std.complex['float']
+
+        assert COd(2).m_size     == 2
+        assert COd(2).m_cplx     == 7.+42j
+        assert COd(3.14).m_size  == 42
+        assert COd(3.14).m_cplx  == 3.14+0j
+        assert COd(9.+7j).m_size == 42
+        assert COd(9.+7j).m_cplx == 9.+7j
+
+        assert COf(2).m_size     == 2
+        assert COf(2).m_cplx     == scf(7, 42)
+        assert COf(3.14).m_size  == 42
+        assert COf(3.14).m_cplx  == scf(3.14, 0)
+        assert COf(9.+7j).m_size == 42
+        assert COf(9.+7j).m_cplx == scf(9., 7.)
+
         # reading of enum types
         assert c.m_enum == CppyyTestData.kNothing
         assert c.m_enum == c.kNothing
