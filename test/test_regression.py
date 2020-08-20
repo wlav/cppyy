@@ -914,7 +914,8 @@ class TestREGRESSION:
         assert ns.TTest(max64).fT  ==  max64
         assert ns.TTest(min64).fT  ==  min64
         assert ns.TTest(1.01).fT == 1.01
-        #assert ns.TTest(True).fT == bool
+        assert ns.TTest(True).fT == True
+        assert type(ns.TTest(True).fT) == bool
 
     def test31_enum_in_dir(self):
         """Failed to pick up enum data"""

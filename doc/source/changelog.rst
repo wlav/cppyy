@@ -17,6 +17,7 @@ master: 1.8.1
 * Pointer-comparing objects performs auto-cast as needed
 * Add main dimension for ptr-ptr to builtin returns
 * Transparant handling of ptr-ptr to instance returns
+* Stricter handling of bool type in overload with int types
 * Fix uint64_t template instantiation regression
 * Do not filter out enum data for ``__dir__``
 * Extended documentation
