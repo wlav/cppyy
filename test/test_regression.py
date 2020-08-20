@@ -892,9 +892,9 @@ class TestREGRESSION:
         cppyy.cppdef("""\
         #include <limits>
         namespace UInt64_Typo {
-        uint64_t Test(uint64_t v) { return v; }
-        template <typename T> struct Struct { Struct(T t) : fT(t) {}; T fT; };
-        template <typename T> Struct<T> TTest(T t) { return Struct<T>{t}; }
+            uint64_t Test(uint64_t v) { return v; }
+            template <typename T> struct Struct { Struct(T t) : fT(t) {}; T fT; };
+            template <typename T> Struct<T> TTest(T t) { return Struct<T>{t}; }
         }""")
 
         from cppyy.gbl import UInt64_Typo as ns
@@ -915,3 +915,25 @@ class TestREGRESSION:
         assert ns.TTest(min64).fT  ==  min64
         assert ns.TTest(1.01).fT == 1.01
         #assert ns.TTest(True).fT == bool
+
+    def test31_enum_in_dir(self):
+        """Failed to pick up enum data"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace enum_in_dir {
+            long prod (long a, long b) { return a * b; }
+            long prod (long a, long b, long c) { return a * b * c; }
+
+            int a = 10;
+            int b = 40;
+
+            enum smth { ONE, };
+            enum smth my_enum = smth::ONE;
+        }""")
+
+        all_names = set(dir(cppyy.gbl.enum_in_dir))
+
+        required = {'prod', 'a', 'b', 'smth', 'my_enum'}
+        assert all_names.intersection(required) == required
