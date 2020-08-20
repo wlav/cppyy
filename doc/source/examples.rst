@@ -9,6 +9,7 @@ More complete examples that show packaging include these repos (in
 alphabetical order):
 
  * `cppyy-bbhash`_
+ * `dnpy`_
  * `PyEtaler`_
  * 'pyflatsurf`_
  * `gmpxxyy`_
@@ -21,6 +22,7 @@ alphabetical order):
 
 .. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash
+.. _dnpy: https://github.com/txjmb/dnpy
 .. _PyEtaler: https://github.com/etaler/PyEtaler
 .. _pyflatsurf: https://github.com/flatsurf/flatsurf
 .. _gmpxxyy: https://github.com/flatsurf/gmpxxyy
