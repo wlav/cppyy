@@ -11,7 +11,8 @@ alphabetical order):
  * `cppyy-bbhash`_
  * `dnpy`_
  * `PyEtaler`_
- * 'pyflatsurf`_
+ * `pyflatsurf`_
+ * `gco-cppyy`_
  * `gmpxxyy`_
  * `cppyy-knearestneighbors`_
  * `lyncs`_
@@ -25,6 +26,7 @@ alphabetical order):
 .. _dnpy: https://github.com/txjmb/dnpy
 .. _PyEtaler: https://github.com/etaler/PyEtaler
 .. _pyflatsurf: https://github.com/flatsurf/flatsurf
+.. _gco-cppyy: https://github.com/agoose77/gco-cppyy
 .. _gmpxxyy: https://github.com/flatsurf/gmpxxyy
 .. _cppyy-knearestneighbors: https://github.com/jclay/cppyy-knearestneighbors-example
 .. _lyncs: https://github.com/sbacchio/lyncs
