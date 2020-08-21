@@ -5,6 +5,7 @@ Example repos
 
 The detailed feature lists have examples that work using a header file, and
 there is the `tutorial`_ that shows mixing of C++ and Python interactively.
+The `cookie cutter`_ repo provides a good cmake based example.
 More complete examples that show packaging include these repos (in
 alphabetical order):
 
@@ -22,6 +23,7 @@ alphabetical order):
  * `python-vspline`_
 
 .. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
+.. _cookie cutter: https://github.com/camillescott/cookiecutter-cppyy-cmake
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash
 .. _dnpy: https://github.com/txjmb/dnpy
 .. _PyEtaler: https://github.com/etaler/PyEtaler

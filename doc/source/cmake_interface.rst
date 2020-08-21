@@ -238,11 +238,6 @@ Examples::
       H_DIRS ${_H_DIRS}
       H_FILES "dcrawinfocontainer.h;kdcraw.h;rawdecodingsettings.h;rawfiles.h")
 
-There is a fuller example of embedding the use of cppyy_add_bindings for a
-large set of bindings::
-
-  https://cgit.kde.org/pykde5.git/plain/KF5/CMakeLists.txt?h=include_qt_binding
-
 
 cppyy_find_pips
 ^^^^^^^^^^^^^^^
