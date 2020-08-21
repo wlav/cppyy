@@ -2,13 +2,7 @@ import codecs, glob, os, sys, re
 from setuptools import setup, find_packages, Extension
 from distutils import log
 
-from setuptools.dist import Distribution
 from setuptools.command.install import install as _install
-
-force_bdist = False
-if '--force-bdist' in sys.argv:
-    force_bdist = True
-    sys.argv.remove('--force-bdist')
 
 add_pkg = ['cppyy']
 try:
@@ -102,29 +96,6 @@ cmdclass = {
         'install': my_install }
 
 
-#
-# customized distribition to disable binaries
-#
-class MyDistribution(Distribution):
-    def run_commands(self):
-        # pip does not resolve dependencies before building binaries, so unless
-        # packages are installed one-by-one, on old install is used or the build
-        # will simply fail hard. The following is not completely quiet, but at
-        # least a lot less conspicuous.
-        if not is_manylinux() and not force_bdist:
-            disabled = set((
-                'bdist_wheel', 'bdist_egg', 'bdist_wininst', 'bdist_rpm'))
-            for cmd in self.commands:
-                if not cmd in disabled:
-                    self.run_command(cmd)
-                else:
-                    log.info('Command "%s" is disabled', cmd)
-                    cmd_obj = self.get_command_obj(cmd)
-                    cmd_obj.get_outputs = lambda: None
-        else:
-            return Distribution.run_commands(self)
-
-
 setup(
     name='cppyy',
     version=find_version('python', 'cppyy', '_version.py'),
@@ -170,7 +141,6 @@ setup(
     packages=find_packages('python', include=add_pkg),
 
     cmdclass=cmdclass,
-    distclass=MyDistribution,
 
     zip_safe=False,
 )
