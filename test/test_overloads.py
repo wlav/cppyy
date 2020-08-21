@@ -161,3 +161,42 @@ class TestOVERLOADS:
         assert m,slice(0, 0)       == 'non-const'
         assert m.slice_const(0)    ==     'const'
         assert m,slice_const(0, 0) ==     'const'
+
+    def test09_bool_int_overloads(self):
+        """Check bool/int overloaded calls"""
+
+        import cppyy
+
+        cpp = cppyy.gbl
+
+        cppyy.cppdef("namespace BoolInt1 { int  fff(int i)  { return i; } }");
+        cppyy.cppdef("namespace BoolInt1 { bool fff(bool i) { return i; } }")
+
+        assert type(cpp.BoolInt1.fff(0)) == int
+        assert type(cpp.BoolInt1.fff(1)) == int
+        assert type(cpp.BoolInt1.fff(2)) == int
+
+        assert type(cpp.BoolInt1.fff(True))  == bool
+        assert type(cpp.BoolInt1.fff(False)) == bool
+
+        cppyy.cppdef("namespace BoolInt2 { int  fff(int i)  { return i; } }");
+        cppyy.cppdef("namespace BoolInt2 { bool fff(bool i) { return i; } }")
+
+        assert type(cpp.BoolInt2.fff(True))  == bool
+        assert type(cpp.BoolInt2.fff(False)) == bool
+
+        assert type(cpp.BoolInt2.fff(0)) == int
+        assert type(cpp.BoolInt2.fff(1)) == int
+        assert type(cpp.BoolInt2.fff(2)) == int
+
+        cppyy.cppdef("namespace BoolInt3 { int  fff(int i)  { return i; } }");
+
+        assert type(cpp.BoolInt3.fff(True))  == int
+        assert type(cpp.BoolInt3.fff(False)) == int
+
+        cppyy.cppdef("namespace BoolInt4 { bool fff(bool i) { return i; } }")
+
+        assert type(cpp.BoolInt4.fff(0)) == bool
+        assert type(cpp.BoolInt4.fff(1)) == bool
+        with raises(ValueError):
+            cpp.BoolInt4.fff(2)
