@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 master: 1.8.1
 -------------
 
+* Setup build dependencies conforming PEP 517/518
 * Simplified flow of pointer types for callbacks and cross-derivation
 * Pointer-comparing objects performs auto-cast as needed
 * Add main dimension for ptr-ptr to builtin returns
