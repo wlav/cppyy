@@ -20,6 +20,7 @@ master: 1.8.1
 * Stricter handling of bool type in overload with int types
 * Fix uint64_t template instantiation regression
 * Do not filter out enum data for ``__dir__``
+* Further hiding of upstream code/dependencies
 * Extended documentation
 
 
