@@ -938,3 +938,28 @@ class TestREGRESSION:
 
         required = {'prod', 'a', 'b', 'smth', 'my_enum'}
         assert all_names.intersection(required) == required
+
+    def test32_explicit_template_in_namespace(self):
+        """Lookup of explicit template in namespace"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace libchemist {
+        namespace type {
+            template<typename T> class tensor {};
+        } // namespace type
+
+        template<typename element_type = double, typename tensor_type = type::tensor<element_type>>
+        class CanonicalMO {};
+
+        template class CanonicalMO<double, type::tensor<double>>;
+        } // namespace libchemist
+
+        namespace property_types {
+        namespace type {
+            template<typename T>
+            using canonical_mos = libchemist::CanonicalMO<T>;
+        } } // namespace type, property_types""")
+
+        assert cppyy.gbl.property_types.type.canonical_mos['double']
