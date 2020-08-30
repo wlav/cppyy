@@ -33,7 +33,7 @@ class TestSTDStreams:
         assert not (cppyy.gbl.std.cout is None)
 
     def test03_consistent_naming_if_char_traits(self):
-        """Check naming consistency if char_traits"""
+        """Naming consistency if char_traits"""
 
         import cppyy
 
@@ -47,3 +47,16 @@ class TestSTDStreams:
       # base class used to fail to match
         cppyy.gbl.stringstream_base.pass_through_base(s)
         assert s.str() == "TEST STRING"
+
+    def test04_naming_of_ostringstream(self):
+        """Naming consistency of ostringstream"""
+
+        import cppyy
+
+        cl0 = cppyy.gbl.CppyyLegacy.TClass.GetClass("std::ostringstream")
+        cl1 = cppyy.gbl.CppyyLegacy.TClass.GetClass("std::basic_ostringstream<char>")
+        cl2 = cppyy.gbl.CppyyLegacy.TClass.GetClass("std::basic_ostringstream<char, std::char_traits<char>, std::allocator<char> >")
+
+        assert cl0 == cl1
+        assert cl1 == cl2
+        assert cl2 == cl0
