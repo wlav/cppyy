@@ -31,3 +31,19 @@ class TestSTDStreams:
         import cppyy
 
         assert not (cppyy.gbl.std.cout is None)
+
+    def test03_consistent_naming_if_char_traits(self):
+        """Check naming consistency if char_traits"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace stringstream_base {
+        void pass_through_base(std::ostream& o) {
+            o << "TEST STRING";
+        } }""")
+
+        s = cppyy.gbl.std.ostringstream();
+      # base class used to fail to match
+        cppyy.gbl.stringstream_base.pass_through_base(s)
+        assert s.str() == "TEST STRING"
