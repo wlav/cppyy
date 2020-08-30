@@ -22,6 +22,7 @@ master: 1.8.1
 * Fix uint64_t template instantiation regression
 * Do not filter out enum data for ``__dir__``
 * Fix lookup of interpreter-only explicit instantiations
+* Fix inconsistent naming of std types with char_traits
 * Further hiding of upstream code/dependencies
 * Extended documentation
 
