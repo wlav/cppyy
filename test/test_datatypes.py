@@ -1437,7 +1437,7 @@ class TestDATATYPES:
         cppyy.cppdef("""\
         namespace StructPointer2D {
         typedef struct {
-            int x,y;
+            int x,y,z;  // 'z' so that sizeof(xy) != sizeof(void*)
         } xy;
 
         xy** g_matrix;
