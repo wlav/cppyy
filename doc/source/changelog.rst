@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.8.2
+-------------
+
+* Cover more partial template instantiation use cases
+
+
 2020-09-01: 1.8.1
 -----------------
 
