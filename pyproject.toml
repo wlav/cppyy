@@ -1,2 +1,6 @@
 [build-system]
-requires = ["CPyCppyy==1.11.2", "cppyy-backend==1.13.0", "cppyy-cling==6.21.1", "setuptools", "wheel"]
+requires = ["CPyCppyy==1.11.2; python_implementation != 'PyPy'",
+            "cppyy-backend==1.13.0; python_implementation != 'PyPy'",
+            "cppyy-cling==6.21.1; python_implementation != 'PyPy'",
+            "cppyy-cling<=6.18.2.3; python_implementation == 'PyPy'",
+            "setuptools", "wheel"]
