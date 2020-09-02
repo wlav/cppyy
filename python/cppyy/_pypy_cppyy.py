@@ -39,7 +39,10 @@ _backend._cpp_backend = c
 import sys
 _thismodule = sys.modules[__name__]
 for name in __all__:
-    setattr(_thismodule, name, getattr(_backend, name))
+    try:
+        setattr(_thismodule, name, getattr(_backend, name))
+    except AttributeError:
+        pass
 del name, sys
 nullptr = _backend.nullptr
 
