@@ -11,8 +11,6 @@ __all__ = [
     'addressof',
     'bind_object',
     'nullptr',
-    '_begin_capture_stderr',
-    '_end_capture_stderr'
     ]
 
 # first load the dependency libraries of the backend, then
