@@ -580,6 +580,68 @@ class TestTEMPLATES:
 
         assert cppyy.gbl.std.function['double(std::vector<double>)']
 
+    def test24_partial_templates(self):
+        """Deduction of types with partial templates"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        template <typename A, typename B>
+        B partial_template_foo1(B b) { return b; }
+
+        template <typename A, typename B>
+        B partial_template_foo2(B b) { return b; }
+
+        namespace partial_template {
+           template <typename A, typename B>
+           B foo1(B b) { return b; }
+
+           template <typename A, typename B>
+           B foo2(B b) { return b; }
+        }
+        """)
+
+        ns = cppyy.gbl.partial_template
+
+        assert cppyy.gbl.partial_template_foo1['double', 'int'](17) == 17
+        assert cppyy.gbl.partial_template_foo1['double'](17) == 17
+
+        assert cppyy.gbl.partial_template_foo1['double'](17) == 17
+        assert cppyy.gbl.partial_template_foo1['double', 'int'](17) == 17
+
+        assert ns.foo1['double', 'int'](17) == 17
+        assert ns.foo1['double'](17) == 17
+
+        assert ns.foo2['double'](17) == 17
+        assert ns.foo2['double', 'int'](17) == 17
+
+        cppyy.cppdef("""\
+        template <typename A, typename... Other, typename B>
+        B partial_template_bar1(B b) { return b; }
+
+        template <typename A, typename... Other, typename B>
+        B partial_template_bar2(B b) { return b; }
+
+        namespace partial_template {
+            template <typename A, typename... Other, typename B>
+            B bar1(B b) { return b; }
+
+            template <typename A, typename... Other, typename B>
+            B bar2(B b) { return b; }
+        }""")
+
+        assert cppyy.gbl.partial_template_bar1['double','int'](17) == 17
+        assert cppyy.gbl.partial_template_bar1['double'](17) == 17
+
+        assert cppyy.gbl.partial_template_bar2['double'](17) == 17
+        assert cppyy.gbl.partial_template_bar2['double','int'](17) == 17
+
+        assert ns.bar1['double','int'](17) == 17
+        assert ns.bar1['double'](17) == 17
+
+        assert ns.bar2['double'](17) == 17
+        assert ns.bar2['double','int'](17) == 17
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
