@@ -10,10 +10,10 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.8.1
--------------
+2020-09-01: 1.8.1
+-----------------
 
-* Setup build dependencies conforming PEP 517/518
+* Setup build dependencies with pyproject.toml
 * Simplified flow of pointer types for callbacks and cross-derivation
 * Pointer-comparing objects performs auto-cast as needed
 * Add main dimension for ptr-ptr to builtin returns
