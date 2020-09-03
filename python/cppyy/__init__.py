@@ -46,6 +46,7 @@ __all__ = [
     'add_include_path',       # add a path to search for headers
     'add_library_path',       # add a path to search for headers
     'add_autoload_map',       # explicitly include an autoload map
+    'set_debug',              # enable/disable debug output
     ]
 
 from ._version import __version__
@@ -280,6 +281,13 @@ def add_autoload_map(fname):
     if not os.path.isfile(fname):
         raise OSError("no such file: %s" % fname)
     gbl.gInterpreter.LoadLibraryMap(fname)
+
+def set_debug(enable=True):
+    """Enable/disable debug output."""
+    if enable:
+        gbl.CppyyLegacy.gDebug = 10
+    else:
+        gbl.CppyyLegacy.gDebug =  0
 
 def _get_name(tt):
     if type(tt) == str:

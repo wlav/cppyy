@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 master: 1.8.2
 -------------
 
+* Add ``cppyy.set_debug()`` to enable debug output for fixing template errors
 * Cover more partial template instantiation use cases
 
 

@@ -457,6 +457,20 @@ class TestFRAGILE:
         with raises(SyntaxError):
             cppyy.cppexec("doesnotexist");
 
+    def test22_set_debug(self):
+        """Setting of global gDebug variable"""
+
+        import cppyy
+
+        cppyy.set_debug()
+        assert cppyy.gbl.CppyyLegacy.gDebug == 10
+        cppyy.set_debug(False)
+        assert cppyy.gbl.CppyyLegacy.gDebug ==  0
+        cppyy.set_debug(True)
+        assert cppyy.gbl.CppyyLegacy.gDebug == 10
+        cppyy.set_debug(False)
+        assert cppyy.gbl.CppyyLegacy.gDebug ==  0
+
 
 class TestSIGNALS:
     def setup_class(cls):
