@@ -725,6 +725,29 @@ class TestTEMPLATED_TYPEDEFS:
         three = w.whatis(3)
         assert three == 3
 
+    def test05_type_deduction_and_extern(self):
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace FailedTypeDeducer {
+
+        template<class T>
+        class A {
+        public:
+            T result() { return T{5}; }
+        };
+
+        extern template class A<int>;
+        }""")
+
+        assert cppyy.gbl.FailedTypeDeducer.A[int]().result()      == 42
+        assert cppyy.gbl.FailedTypeDeducer.A['double']().result() == 5.
+
+      # FailedTypeDeducer::B is defined in the templates.h header
+        assert cppyy.gbl.FailedTypeDeducer.B['double']().result() == 5.
+        assert cppyy.gbl.FailedTypeDeducer.B[int]().result()      == 5
+
 
 class TestTEMPLATE_TYPE_REDUCTION:
     def setup_class(cls):

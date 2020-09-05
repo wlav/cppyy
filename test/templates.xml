@@ -37,4 +37,7 @@
   <class pattern="TypeReduction::*" />
   <function pattern="TypeReduction::*" />
 
+  <namespace name="FailedTypeDeducer" />
+  <class pattern="FailedTypeDeducer::*" />
+
 </lcgdict>

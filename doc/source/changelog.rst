@@ -15,6 +15,7 @@ master: 1.8.2
 
 * Add ``cppyy.set_debug()`` to enable debug output for fixing template errors
 * Cover more partial template instantiation use cases
+* Force template instantiation if necessary for type deduction (i.e. ``auto``)
 
 
 2020-09-01: 1.8.1

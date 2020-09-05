@@ -512,4 +512,19 @@ BinaryExpr<T> operator+(const Expr<T>& e1, const Expr<T>& e2) {
 
 } // namespace TypeReduction
 
+
+//===========================================================================
+// type deduction examples
+namespace FailedTypeDeducer {
+
+template<class T>
+class B {
+public:
+    auto result() { return 5.; }
+};
+
+extern template class B<int>;
+
+}
+
 #endif // !CPPYY_TEST_TEMPLATES_H
