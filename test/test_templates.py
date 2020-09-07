@@ -741,7 +741,8 @@ class TestTEMPLATED_TYPEDEFS:
         extern template class A<int>;
         }""")
 
-        assert cppyy.gbl.FailedTypeDeducer.A[int]().result()      == 42
+        if sys.platform != 'darwin':   # feature disabled
+            assert cppyy.gbl.FailedTypeDeducer.A[int]().result()  == 42
         assert cppyy.gbl.FailedTypeDeducer.A['double']().result() == 5.
 
       # FailedTypeDeducer::B is defined in the templates.h header
