@@ -149,13 +149,26 @@ del make_smartptr
 
 
 #--- interface to Cling ------------------------------------------------------
+class _stderr_capture(object):
+    def __init__(self):
+       self._capture = not gbl.CppyyLegacy.gDebug and True or False
+       self.err = ""
+
+    def __enter__(self):
+        if self._capture:
+           _begin_capture_stderr()
+        return self
+
+    def __exit__(self, tp, val, trace):
+        if self._capture:
+            self.err = _end_capture_stderr()
+
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
-    _begin_capture_stderr()
-    errcode = gbl.gInterpreter.Declare(src)
-    err = _end_capture_stderr()
+    with _stderr_capture() as err:
+        errcode = gbl.gInterpreter.Declare(src)
     if not errcode:
-        raise SyntaxError('Failed to parse the given C++ code%s' % err)
+        raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
     return True
 
 def cppexec(stmt):
@@ -165,47 +178,46 @@ def cppexec(stmt):
 
   # capture stderr, but note that ProcessLine could legitimately be writing to
   # std::cerr, in which case the captured output needs to be printed as normal
-    _begin_capture_stderr()
-    errcode = ctypes.c_int(0)
-    gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
-    err = _end_capture_stderr()
+    with _stderr_capture() as err:
+        errcode = ctypes.c_int(0)
+        gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
 
     if errcode.value:
-        raise SyntaxError('Failed to parse the given C++ code%s' % err)
-    elif err and err[1:] != '\n':
-        sys.stderr.write(err[1:]) 
+        raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
+    elif err.err and err.err[1:] != '\n':
+        sys.stderr.write(err.err[1:])
+
+    return True
 
 def load_library(name):
     """Explicitly load a shared library."""
-    _begin_capture_stderr()
-    gSystem = gbl.gSystem
-    if name[:3] != 'lib':
-        if not gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString(name), True) and\
-               gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString('lib'+name), True):
-            name = 'lib'+name
-    sc = gSystem.Load(name)
-    err = _end_capture_stderr()
+    with _stderr_capture() as err:
+        gSystem = gbl.gSystem
+        if name[:3] != 'lib':
+            if not gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString(name), True) and\
+                   gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString('lib'+name), True):
+                name = 'lib'+name
+        sc = gSystem.Load(name)
     if sc == -1:
-        raise RuntimeError('Unable to load library "%s"%s' % (name, err))
+        raise RuntimeError('Unable to load library "%s"%s' % (name, err.err))
+    return True
 
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
-    _begin_capture_stderr()
-    errcode = gbl.gInterpreter.Declare('#include "%s"' % header)
-    err = _end_capture_stderr()
+    with _stderr_capture() as err:
+        errcode = gbl.gInterpreter.Declare('#include "%s"' % header)
     if not errcode:
-        raise ImportError('Failed to load header file "%s"%s' % (header, err))
+        raise ImportError('Failed to load header file "%s"%s' % (header, err.err))
     return True
 
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
-    _begin_capture_stderr()
-    errcode = gbl.gInterpreter.Declare("""extern "C" {
+    with _stderr_capture() as err:
+        errcode = gbl.gInterpreter.Declare("""extern "C" {
 #include "%s"
 }""" % header)
-    err = _end_capture_stderr()
     if not errcode:
-        raise ImportError('Failed to load header file "%s"%s' % (header, err))
+        raise ImportError('Failed to load header file "%s"%s' % (header, err.err))
     return True
 
 def add_include_path(path):
