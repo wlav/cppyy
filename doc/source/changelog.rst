@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.8.2
--------------
+2020-09-08: 1.8.2
+-----------------
 
 * Add ``cppyy.set_debug()`` to enable debug output for fixing template errors
 * Cover more partial template instantiation use cases
