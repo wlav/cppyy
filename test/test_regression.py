@@ -954,12 +954,24 @@ class TestREGRESSION:
         class CanonicalMO {};
 
         template class CanonicalMO<double, type::tensor<double>>;
+
+        auto produce() {
+            return std::make_tuple(10., type::tensor<double>{});
+        }
+
         } // namespace libchemist
 
         namespace property_types {
         namespace type {
             template<typename T>
             using canonical_mos = libchemist::CanonicalMO<T>;
-        } } // namespace type, property_types""")
+        }
+
+        auto produce() {
+            return std::make_tuple(5., type::canonical_mos<double>{});
+        } } // namespace type, property_types
+        """)
 
         assert cppyy.gbl.property_types.type.canonical_mos['double']
+        assert cppyy.gbl.std.get[0](cppyy.gbl.libchemist.produce())     == 10.
+        assert cppyy.gbl.std.get[0](cppyy.gbl.property_types.produce()) ==  5.
