@@ -1385,6 +1385,31 @@ class TestSTLTUPLE:
         assert b == '2'
         assert c == 5.
 
+    def test04_tuple_lifeline(self):
+        """Tuple memory management"""
+
+        import cppyy, gc
+        std = cppyy.gbl.std
+
+        cppyy.cppdef("""\
+        namespace TupleLifeLine {
+        struct Simple {
+          Simple() : fInt(42) {}
+          Simple(const Simple&) = default;
+          Simple& operator=(const Simple&) = default;
+          ~Simple() { fInt = -1; }
+          int fInt;
+        }; }""")
+
+        Simple = cppyy.gbl.TupleLifeLine.Simple
+
+        s1, s2 = std.make_tuple(Simple(), Simple())
+
+        gc.collect()
+
+        assert s1.fInt == 42
+        assert s2.fInt == 42
+
 
 class TestSTLPAIR:
     def setup_class(cls):

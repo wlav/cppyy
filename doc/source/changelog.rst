@@ -10,6 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.8.2
+-------------
+
+* Fix for (extern) explicit template instantiations in namespaces
+* Throw objects from an std::tuple a life line
+
+
 2020-09-08: 1.8.2
 -----------------
 
