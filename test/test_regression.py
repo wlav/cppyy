@@ -969,9 +969,22 @@ class TestREGRESSION:
 
         auto produce() {
             return std::make_tuple(5., type::canonical_mos<double>{});
+        }
+
+        template<typename element_type = double, typename orbital_type = type::canonical_mos<element_type>>
+        class ReferenceWavefunction {};
+
+        template class ReferenceWavefunction<double>;
+
+        template<class T>
+        auto run_as() {
+            return std::make_tuple(20., T{});
         } } // namespace type, property_types
         """)
 
         assert cppyy.gbl.property_types.type.canonical_mos['double']
         assert cppyy.gbl.std.get[0](cppyy.gbl.libchemist.produce())     == 10.
         assert cppyy.gbl.std.get[0](cppyy.gbl.property_types.produce()) ==  5.
+
+        pt_type = cppyy.gbl.property_types.ReferenceWavefunction['double']
+        assert cppyy.gbl.std.get[0](cppyy.gbl.property_types.run_as[pt_type]()) ==  20.
