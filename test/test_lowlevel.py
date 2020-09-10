@@ -344,7 +344,9 @@ class TestLOWLEVEL:
         """Test passting of const char**&"""
 
         import cppyy, ctypes
+        import cppyy.ll
 
+      # IN parameter case
         cppyy.cppdef("""\
         namespace ConstCharStarStarRef {
         int initialize(int& argc, char**& argv) {
@@ -365,3 +367,30 @@ class TestLOWLEVEL:
         assert initialize(ctypes.c_int(len(pyargs)), py2c(pyargs)) == len(pyargs)
         assert cargs[0] == b'Hello'
         assert cargs[1] == b'World'
+
+      # OUT parameter case
+        cppyy.cppdef("""\
+        namespace ConstCharStarStarRef {
+        void fill(int& argc, char**& argv) {
+            argc = 2;
+            argv = new char*[argc];
+            argv[0] = new char[6]; strcpy(argv[0], "Hello");
+            argv[1] = new char[6]; strcpy(argv[1], "World");
+        } }""")
+
+        fill = cppyy.gbl.ConstCharStarStarRef.fill
+
+        argc = ctypes.c_int(0)
+        ptr = ctypes.c_void_p()
+
+        fill(argc, ptr)
+
+        assert argc.value == 2
+        argv = ctypes.cast(ptr, ctypes.POINTER(ctypes.c_char_p))
+        assert argv[0] == b"Hello"
+        assert argv[1] == b"World"
+
+        voidpp = ctypes.cast(ptr, ctypes.POINTER(ctypes.c_void_p))
+        for i in range(argc.value):
+            cppyy.ll.free(ctypes.cast(voidpp[i], ctypes.c_void_p))
+        cppyy.ll.free(ptr)
