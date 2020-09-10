@@ -642,6 +642,40 @@ class TestTEMPLATES:
         assert ns.bar2['double'](17) == 17
         assert ns.bar2['double','int'](17) == 17
 
+    def test25_variadic_constructor(self):
+        """Use of variadic template function as contructor"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace VadiadicConstructor {
+        class Atom {
+        public:
+            using mass_type = double;
+
+            Atom() {}
+
+            template<typename... Args>
+            explicit Atom(const mass_type& mass_in, Args&&... args) :
+              Atom(std::forward<Args>(args)...) {
+                constexpr bool is_mass =
+                  std::disjunction_v<std::is_same<std::decay_t<Args>, mass_type>...>;
+                static_assert(!is_mass, "Please only provide one mass");
+                mass() = mass_in;
+            }
+
+            mass_type& mass() noexcept {
+                return m_m;
+            }
+
+            mass_type m_m = 0.0;
+        }; }""")
+
+        ns = cppyy.gbl.VadiadicConstructor
+
+        a = ns.Atom(1567.0)
+        assert a.m_m == 1567.0
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
