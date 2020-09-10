@@ -340,3 +340,28 @@ class TestLOWLEVEL:
         with raises(TypeError):
             cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(pyargs, len(pyargs))
 
+    def test10_array_of_const_char_ref(self):
+        """Test passting of const char**&"""
+
+        import cppyy, ctypes
+
+        cppyy.cppdef("""\
+        namespace ConstCharStarStarRef {
+        int initialize(int& argc, char**& argv) {
+            argv[0][0] = 'H';
+            argv[1][0] = 'W';
+            return argc;
+        } }""")
+
+        initialize = cppyy.gbl.ConstCharStarStarRef.initialize
+
+        def py2c(pyargs):
+            cargsn = (ctypes.c_char_p * len(pyargs))(*pyargs)
+            return ctypes.POINTER(ctypes.c_char_p)(cargsn)
+
+        pyargs = [b'hello', b'world']
+        cargs = py2c(pyargs)
+
+        assert initialize(ctypes.c_int(len(pyargs)), py2c(pyargs)) == len(pyargs)
+        assert cargs[0] == b'Hello'
+        assert cargs[1] == b'World'
