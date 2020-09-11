@@ -10,9 +10,10 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.8.2
+master: 1.8.3
 -------------
 
+* Use actual underlying type for enums
 * Fix for (extern) explicit template instantiations in namespaces
 * Throw objects from an std::tuple a life line
 

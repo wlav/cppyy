@@ -185,7 +185,7 @@ def cppexec(stmt):
   # capture stderr, but note that ProcessLine could legitimately be writing to
   # std::cerr, in which case the captured output needs to be printed as normal
     with _stderr_capture() as err:
-        errcode = ctypes.c_int(0)
+        errcode = ctypes.c_uint(0)
         gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
 
     if errcode.value:
