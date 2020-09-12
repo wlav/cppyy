@@ -676,7 +676,49 @@ class TestDATATYPES:
         assert gbl.EnumSpace.AA == 1
         assert gbl.EnumSpace.BB == 2
 
-    def test11_string_passing(self):
+    def test11_typed_enums(self):
+        """Determine correct types of enums"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace TrueEnumTypes {
+        class Test {
+            enum nums { ZERO = 0, ONE = 1 };
+            enum dir : char { left = 'l', right = 'r' };
+            enum rank : long { FIRST = 1, SECOND };
+            enum vraioufaux : bool { faux = false, vrai = true };
+        }; }""")
+
+        sc = cppyy.gbl.TrueEnumTypes.Test
+
+        assert sc.nums.ZERO == 0
+        assert sc.nums.ONE  == 1
+        assert type(sc.nums.ZERO) == sc.nums
+        assert isinstance(sc.nums.ZERO, int)
+        assert 'int' in repr(sc.nums.ZERO)
+        assert str(sc.nums.ZERO) == '0'
+
+        assert sc.dir.left  == 'l'
+        assert sc.dir.right == 'r'
+        assert type(sc.dir.left) == sc.dir
+        assert isinstance(sc.dir.left, str)
+        assert 'char' in repr(sc.dir.left)
+        assert str(sc.dir.left) == "'l'"
+
+        assert sc.rank.FIRST  == 1
+        assert sc.rank.SECOND == 2
+        assert type(sc.rank.FIRST) == sc.rank
+        assert isinstance(sc.rank.FIRST, pylong)
+        assert 'long' in repr(sc.rank.FIRST)
+        assert str(sc.rank.FIRST) == '1' or str(sc.rank.FIRST) == '1L'
+
+        assert sc.vraioufaux.faux == False
+        assert sc.vraioufaux.vrai == True
+        assert type(sc.vraioufaux.faux) == bool  # no bool as base class
+        assert isinstance(sc.vraioufaux.faux, bool)
+
+    def test12_string_passing(self):
         """Test passing/returning of a const char*"""
 
         import cppyy
@@ -695,7 +737,7 @@ class TestDATATYPES:
         assert c.get_valid_string32(u'z\u00df\u6c34\U0001f34c') == u'z\u00df\u6c34\U0001f34c'
         assert c.get_invalid_string32() == u''
 
-    def test12_copy_constructor(self):
+    def test13_copy_constructor(self):
         """Test copy constructor"""
 
         import cppyy
@@ -711,7 +753,7 @@ class TestDATATYPES:
         for i in range(4):
             assert t1[i] == t3[i]
 
-    def test13_object_returns(self):
+    def test14_object_returns(self):
         """Test access to and return of PODs"""
 
         import cppyy
@@ -738,7 +780,7 @@ class TestDATATYPES:
         assert c.get_pod_ptrref().m_int == 666
         assert c.get_pod_ptrref().m_double == 3.14
 
-    def test14_object_arguments(self):
+    def test15_object_arguments(self):
         """Test setting and returning of a POD through arguments"""
 
         import cppyy
@@ -806,7 +848,7 @@ class TestDATATYPES:
         assert p.m_int == 888
         assert p.m_double == 3.14
 
-    def test15_nullptr_passing(self):
+    def test16_nullptr_passing(self):
         """Integer 0 ('NULL') and nullptr allowed to pass through instance*"""
 
         import cppyy
@@ -821,7 +863,7 @@ class TestDATATYPES:
             assert not c.m_ppod
             assert not c.get_pod_ptr()
 
-    def test16_respect_privacy(self):
+    def test17_respect_privacy(self):
         """Test that privacy settings are respected"""
 
         import cppyy
@@ -834,7 +876,7 @@ class TestDATATYPES:
 
         c.__destruct__()
 
-    def test17_object_and_pointer_comparisons(self):
+    def test18_object_and_pointer_comparisons(self):
         """Verify object and pointer comparisons"""
 
         import cppyy
@@ -871,7 +913,7 @@ class TestDATATYPES:
         assert l3 != l5
         assert l5 != l3
 
-    def test18_object_validity(self):
+    def test19_object_validity(self):
         """Test object validity checking"""
 
         from cppyy import gbl
@@ -885,7 +927,7 @@ class TestDATATYPES:
 
         assert not d2
 
-    def test19_buffer_reshaping(self):
+    def test20_buffer_reshaping(self):
         """Test usage of buffer sizing"""
 
         import cppyy
@@ -917,7 +959,7 @@ class TestDATATYPES:
             for i in range(self.N):
                 assert arr[i] == l[i]
 
-    def test20_voidp(self):
+    def test21_voidp(self):
         """Test usage of void* data"""
 
         import cppyy
@@ -965,7 +1007,7 @@ class TestDATATYPES:
         c.s_voidp = c2
         address_equality_test(c.s_voidp, c2)
 
-    def test21_byte_arrays(self):
+    def test22_byte_arrays(self):
         """Usage of unsigned char* as byte array and std::byte*"""
 
         import array, cppyy, ctypes
@@ -1000,7 +1042,7 @@ class TestDATATYPES:
         if self.has_byte:
             run(self, cppyy.gbl.sum_byte_data, buf, total)
 
-    def test22_function_pointers(self):
+    def test23_function_pointers(self):
         """Function pointer passing"""
 
         import cppyy
@@ -1051,7 +1093,7 @@ class TestDATATYPES:
         with raises(TypeError):
             cppyy.gbl.call_sum_of_int(3, 2)
 
-    def test23_callable_passing(self):
+    def test24_callable_passing(self):
         """Passing callables through function pointers"""
 
         import cppyy
@@ -1119,7 +1161,7 @@ class TestDATATYPES:
         c.set_callable(lambda x, y: x*y)
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test24_callable_through_function_passing(self):
+    def test25_callable_through_function_passing(self):
         """Passing callables through std::function"""
 
         import cppyy
@@ -1187,7 +1229,7 @@ class TestDATATYPES:
         c.set_callable(lambda x, y: x*y)
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test25_multi_dim_arrays_of_builtins(test):
+    def test26_multi_dim_arrays_of_builtins(test):
         """Multi-dim arrays of builtins"""
 
         import cppyy, ctypes
@@ -1221,7 +1263,7 @@ class TestDATATYPES:
                 p = (ctype * len(buf)).from_buffer(buf)
                 assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
 
-    def test26_anonymous_union(self):
+    def test27_anonymous_union(self):
         """Anonymous unions place there fields in the parent scope"""
 
         import cppyy
@@ -1313,7 +1355,7 @@ class TestDATATYPES:
         assert type(p.data_c[0]) == float
         assert p.intensity == 5.
 
-    def test27_pointer_to_array(self):
+    def test28_pointer_to_array(self):
         """Usability of pointer to array"""
 
         import cppyy
@@ -1344,7 +1386,7 @@ class TestDATATYPES:
             assert type(f) == AoS.Foo
         assert type(bar.fArr[0]) == AoS.Foo
 
-    def test28_object_pointers(self):
+    def test29_object_pointers(self):
         """Read/write access to objects through pointers"""
 
         import cppyy
@@ -1369,7 +1411,7 @@ class TestDATATYPES:
         assert c.s_strp               == "noot"
         assert sn                     == "noot"  # set through pointer
 
-    def test29_restrict(self):
+    def test30_restrict(self):
         """Strip __restrict keyword from use"""
 
         import cppyy
@@ -1378,7 +1420,7 @@ class TestDATATYPES:
 
         assert cppyy.gbl.restrict_call("aap") == "aap"
 
-    def test30_legacy_matrix(self):
+    def test31_legacy_matrix(self):
         """Handling of legacy matrix"""
 
         import cppyy
@@ -1429,7 +1471,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test31_legacy_matrix_of_structs(self):
+    def test32_legacy_matrix_of_structs(self):
         """Handling of legacy matrix of structs"""
 
         import cppyy
