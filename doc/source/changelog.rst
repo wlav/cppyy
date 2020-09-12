@@ -14,6 +14,7 @@ master: 1.8.3
 -------------
 
 * Use actual underlying type for enums
+* Enum values remain instances of their type
 * Fix for (extern) explicit template instantiations in namespaces
 * Throw objects from an std::tuple a life line
 

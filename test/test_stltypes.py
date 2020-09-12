@@ -1069,6 +1069,11 @@ class TestSTLMAP:
         assert m['1'] == 2
         assert m['2'] == 1
 
+    def test10_map_derived_objects(self):
+        """Enter derived objects through an initializer list"""
+
+        pass
+
 
 class TestSTLITERATOR:
     def setup_class(cls):
