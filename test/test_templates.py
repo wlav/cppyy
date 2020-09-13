@@ -676,6 +676,29 @@ class TestTEMPLATES:
         a = ns.Atom(1567.0)
         assert a.m_m == 1567.0
 
+    def test26_enum_in_constructor(self):
+        """Use of enums in template function as constructor"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace EnumConstructor {
+        struct ST {
+            enum TI { I32 };
+        };
+
+        struct FS {
+            enum R { EQ, NE, GT, GE, LT, LE };
+
+            template<typename T>
+            FS(const std::string&, const ST::TI, R, const T&e) {}
+        }; }""")
+
+        ns = cppyy.gbl.EnumConstructor
+
+        assert ns.FS('i', ns.ST.I32,    ns.FS.EQ,   10)
+        assert ns.FS('i', ns.ST.TI.I32, ns.FS.R.EQ, 10)
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
