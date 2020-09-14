@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 master: 1.8.3
 -------------
 
+* Add initializer constructors for PODs
 * Use actual underlying type for enums, where possible
 * Enum values remain instances of their type
 * Strictly follow C++ enum scoping rules

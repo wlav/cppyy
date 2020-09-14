@@ -1589,3 +1589,89 @@ class TestDATATYPES:
 
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
+
+    def tes34_plain_old_data(self):
+        """Initializer construction of PODs"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        struct SomePOD_A { };
+        struct SomePOD_B { int fInt; };
+        struct SomePOD_C { int fInt; double fDouble; };
+        struct SomePOD_D { std::array<double, 3> fArr; };
+        struct SomePOD_E { int* fPtrInt; };
+        struct SomePOD_F { std::array<double, 3>* fPtrArr; };
+
+        namespace LotsOfPODS {
+          struct SomePOD_A { };
+          struct SomePOD_B { int fInt; };
+          struct SomePOD_C { int fInt; double fDouble; };
+          struct SomePOD_D { std::array<double, 3> fArr; };
+          struct SomePOD_E { int* fPtrInt; };
+          struct SomePOD_F { std::array<double, 3>* fPtrArr; };
+        }""")
+
+        for ns in [cppyy.gbl, cppyy.gbl.LotsOfPODS]:
+          # no data member POD
+            assert ns.SomePOD_A()
+
+          # single data member POD
+            b0 = ns.SomePOD_B()
+            assert b0.__python_owns__
+            assert b0.fInt == 0
+            b1 = ns.SomePOD_B(42)
+            assert b1.__python_owns__
+            assert b1.fInt == 42
+            b2 = ns.SomePOD_B(fInt = 17)
+            assert b2.__python_owns__
+            assert b2.fInt == 17
+
+          # dual data member POD
+            c0 = ns.SomePOD_C()
+            assert c0.__python_owns__
+            assert c0.fInt     == 0
+            assert c0.fDouble  == 0.
+            c1a = ns.SomePOD_C(42)
+            assert c1a.__python_owns__
+            assert c1a.fInt    == 42
+            assert c1a.fDouble == 0.
+            c1b = ns.SomePOD_C(fInt = 17)
+            assert c1b.__python_owns__
+            assert c1b.fInt    == 17
+            assert c1b.fDouble == 0.
+            c1c = ns.SomePOD_C(fDouble = 5.)
+            assert c1c.__python_owns__
+            assert c1c.fInt    == 0
+            assert c1c.fDouble == 5.
+            c2a = ns.SomePOD_C(88, 10.)
+            assert c2a.__python_owns__
+            assert c2a.fInt    == 88
+            assert c2a.fDouble == 10.
+            c2b = ns.SomePOD_C(fDouble=5., fInt=77)
+            assert c2b.__python_owns__
+            assert c2b.fInt    == 77
+            assert c2b.fDouble ==5.
+
+          # object type data member POD
+            d0 = ns.SomePOD_D()
+            assert d0.__python_owns__
+            assert len(d0.fArr) == 3
+            assert d0.fArr[0] == 0.
+            d1 = ns.SomePOD_D((1., 2., 3.))
+            assert d1.__python_owns__
+            assert len(d1.fArr) == 3
+            assert list(d1.fArr) == [1., 2., 3]
+
+          # ptr type data member POD
+            e0 = ns.SomePOD_E()
+            assert e0.__python_owns__
+
+          # ptr to object type data member pOD
+            f0 = ns.SomePOD_F()
+            assert f0.__python_owns__
+            arr = cppyy.gbl.std.array['double', 3]((1., 2., 3.))
+            f1 = ns.SomePOD_F(arr)
+            assert f1.__python_owns__
+            assert len(f1.fPtrArr) == 3
+            assert list(f1.fPtrArr) == [1., 2., 3]
