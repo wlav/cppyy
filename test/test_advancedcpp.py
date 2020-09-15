@@ -775,14 +775,16 @@ class TestADVANCEDCPP:
                     (cppyy.gbl.Printable4,  "::operator<<(4)"),
                     (cppyy.gbl.Printable6,  "Printable6")]:
             assert str(tst[0]()) == tst[1]
-            assert '__lshiftc__' in tst[0].__dict__
-            assert tst[0].__lshiftc__
-            del tst[0].__lshiftc__
-            assert str(tst[0]()) == tst[1]
-            assert tst[0].__lshiftc__
-            s = cppyy.gbl.std.ostringstream()
-            tst[0].__lshiftc__(s, tst[0]())
-            assert s.str() == tst[1]
+            if '__lshiftc__' in tst[0].__dict__:
+              # only cached for global functions and in principle should
+              # not be needed anymore ...
+                assert tst[0].__lshiftc__
+                del tst[0].__lshiftc__
+                assert str(tst[0]()) == tst[1]
+                assert tst[0].__lshiftc__
+                s = cppyy.gbl.std.ostringstream()
+                tst[0].__lshiftc__(s, tst[0]())
+                assert s.str() == tst[1]
 
       # print through base class (used to fail with compilation error)
         assert str(cppyy.gbl.Printable5()) == "Ok."
