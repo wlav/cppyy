@@ -789,6 +789,25 @@ class TestADVANCEDCPP:
       # print through base class (used to fail with compilation error)
         assert str(cppyy.gbl.Printable5()) == "Ok."
 
+      # print through friend
+        cppyy.cppdef("""\
+        namespace PrintingNS {
+        class X {
+          friend std::ostream& operator<<(std::ostream& os, const X&) { return os << "X"; }
+        };
+
+        class Y {
+        };
+
+        std::ostream& operator<<(std::ostream& os, const Y&) { return os << "Y"; }
+        } """)
+
+        x = cppyy.gbl.PrintingNS.X()
+        assert str(x) == 'X'
+
+        y = cppyy.gbl.PrintingNS.Y()
+        assert str(y) == 'Y'
+
     def test26_using_directive(self):
         """Test using directive in namespaces"""
 
