@@ -1590,7 +1590,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def tes34_plain_old_data(self):
+    def test34_plain_old_data(self):
         """Initializer construction of PODs"""
 
         import cppyy
@@ -1675,3 +1675,23 @@ class TestDATATYPES:
             assert f1.__python_owns__
             assert len(f1.fPtrArr) == 3
             assert list(f1.fPtrArr) == [1., 2., 3]
+
+    def test35_aggregates(self):
+        """Initializer construction of aggregates"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace libchemist {
+        class Atom {
+        public:
+            using size_type = std::size_t;
+
+            struct AtomicNumber {
+                size_type a_n = 0;
+            };
+        }; }""")
+
+        Z = cppyy.gbl.libchemist.Atom.AtomicNumber(5)
+        assert Z.a_n == 5
+
