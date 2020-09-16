@@ -1072,7 +1072,39 @@ class TestSTLMAP:
     def test10_map_derived_objects(self):
         """Enter derived objects through an initializer list"""
 
-        pass
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace MapInitializer {
+        class Base {
+        public:
+            virtual ~Base() {}
+        };
+
+        class Derived : public Base { };
+        } """)
+
+        ns = cppyy.gbl.MapInitializer
+        std = cppyy.gbl.std
+
+      # dictionary style initializer; allow derived through assignment (this may slice
+      # but that is the choice of the program; in this case it's fine as both are the
+      # same size
+        m = std.map['std::string', ns.Base]({"aap": ns.Base(), "noot": ns.Base()})
+        assert len(m) == 2
+
+        m = std.map['std::string', ns.Base]({"aap": ns.Derived(), "noot": ns.Derived()})
+        assert len(m) == 2
+
+      # similar but now initialize through the initializer_list of pairs style
+        m = std.map['std::string', ns.Base]((("aap", ns.Base()),))
+        assert len(m) == 1
+
+        m = std.map['std::string', ns.Base]((("aap", ns.Base()), ("noot", ns.Base())))
+        assert len(m) == 2
+
+        m = std.map['std::string', ns.Base]((("aap", ns.Derived()), ("noot", ns.Derived())))
+        assert len(m) == 2
 
 
 class TestSTLITERATOR:
