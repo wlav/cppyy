@@ -808,11 +808,11 @@ class TestADVERTISED:
 
      # enum through void pointer (b/c underlying type unknown)
         vp = ctypes.c_void_p(0); cnt = ctypes.c_int(0)
-        cppyy.gbl.Advert03.build_enum_array2(vp, cnt)
+        cppyy.gbl.Advert03.build_enum_array2(vp, ctypes.pointer(cnt))
         assert cnt.value == 4
 
         vp = ctypes.c_void_p(0); cnt = ctypes.c_int(0)
-        cppyy.gbl.Advert03.build_enum_array1(vp, cnt)
+        cppyy.gbl.Advert03.build_enum_array1(vp, ctypes.pointer(cnt))
         assert cnt.value == 4
 
      # helper to convert the enum array pointer & size to something packaged

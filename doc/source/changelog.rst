@@ -16,6 +16,7 @@ master: 1.8.3
 * Add initializer constructors for PODs and aggregates
 * Use actual underlying type for enums, where possible
 * Enum values remain instances of their type
+* Expose enum underlying type name as ``__underlying`` and ``__ctype__``
 * Strictly follow C++ enum scoping rules
 * Same enum in transparent scope refers to same type
 * More detailed enum ``repr()`` printing, where possible
