@@ -827,7 +827,7 @@ class TestADVERTISED:
 
       # 2nd approach through low level cast
         vp = ctypes.pointer(ctypes.c_uint(0)); cnt = ctypes.c_int(0)
-        cppyy.gbl.Advert03.build_enum_array2(vp, cnt)
+        cppyy.gbl.Advert03.build_enum_array2(vp, ctypes.pointer(cnt))
         assert cnt.value == 4
 
         import cppyy.ll
