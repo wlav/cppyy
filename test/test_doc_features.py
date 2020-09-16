@@ -826,7 +826,7 @@ class TestADVERTISED:
         assert list(cppyy.gbl.Advert03.ptr2vec(vp.value, cnt.value)) == [-1, 42, -1, 42]
 
       # 2nd approach through low level cast
-        vp = ctypes.pointer(ctypes.c_uint(0)); cnt = ctypes.c_int(0)
+        vp = ctypes.pointer(cppyy.gbl.Advert03.SomeEnum2.__ctype__(0)); cnt = ctypes.c_int(0)
         cppyy.gbl.Advert03.build_enum_array2(vp, ctypes.pointer(cnt))
         assert cnt.value == 4
 
