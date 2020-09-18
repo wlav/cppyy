@@ -1098,3 +1098,46 @@ class TestCROSSINHERITANCE:
 
             with raises(TypeError):
                 PyDerived()
+
+    def test27_interfaces(self):
+        """Inherit from base with non-standard offset"""
+
+        import cppyy
+
+        cppyy.gbl.gInterpreter.Declare("""\
+        namespace NonStandardOffset {
+        struct Calc1 {
+          virtual int calc1() = 0;
+          virtual ~Calc1() = default;
+        };
+
+        struct Calc2 {
+          virtual int calc2() = 0;
+          virtual ~Calc2() = default;
+        };
+
+        struct Base : virtual public Calc1, virtual public Calc2 {
+          Base() {}
+        };
+
+        struct Derived : Base, virtual public Calc2 {
+          int calc1() override { return 1; }
+          int calc2() override { return 2; }
+        };
+
+        int callback1(Calc1* c1) { return c1->calc1(); }
+        int callback2(Calc2* c2) { return c2->calc2(); }
+        }""")
+
+        ns = cppyy.gbl.NonStandardOffset
+
+        class MyPyDerived(ns.Derived):
+            pass
+
+        obj = MyPyDerived()
+
+        assert obj.calc1()       == 1
+        assert ns.callback1(obj) == 1
+
+        assert obj.calc2()       == 2
+        assert ns.callback2(obj) == 2
