@@ -308,3 +308,39 @@ class TestOPERATORS:
 
         c = cppyy.gbl.CommaOperator(1)
         assert c.__comma__(2).__comma__(3).fInt == 6
+
+    def test14_nonref_call(self):
+        """Non-reference call not mapped to getitem"""
+
+        import cppyy
+        cppyy.cppdef("""\
+        namespace IndexingOperators {
+        struct Foo {
+            float operator[](float x) { return x; }
+        };
+
+        struct Bar : public Foo {
+            float operator()(float x) { return 5.f; }
+        };
+
+        struct Op1 {
+            float  operator()(float x) { return 5.f; }
+        };
+
+        struct Op2 {
+            float& operator()(float x) { return fFloat; }
+            float fFloat = 5.f;
+        }; }""")
+
+        ns = cppyy.gbl.IndexingOperators
+
+        f = ns.Foo()
+        assert f[42] == 42
+        b = ns.Bar()
+        assert b[42] == 42
+
+      # direct dict check as __getitem__ is inherited from the base class (used
+      # for array indexing of pointers-to-objet)
+        assert not '__getitem__' in ns.Op1.__dict__
+        assert     '__getitem__' in ns.Op2.__dict__
+
