@@ -1099,6 +1099,8 @@ class TestSTLMAP:
       # similar but now initialize through the initializer_list of pairs style
         m = std.map['std::string', ns.Base]((("aap", ns.Base()),))
         assert len(m) == 1
+        m = std.map['std::string', ns.Base]([("aap", ns.Base()),])   # list instead of tuple
+        assert len(m) == 1
 
         m = std.map['std::string', ns.Base]((("aap", ns.Base()), ("noot", ns.Base())))
         assert len(m) == 2
