@@ -96,7 +96,7 @@ py._set_backend(_backend)
 def _standard_pythonizations(pyclass, name):
   # pythonization of tuple; TODO: placed here for convenience, but a custom case
   # for tuples on each platform can be made much more performant ...
-    if name.find('std::tuple<', 0, 11) == 0:
+    if name.find('tuple<', 0, 6) == 0:
         import cppyy
         pyclass._tuple_len = cppyy.gbl.std.tuple_size(pyclass).value
         def tuple_len(self):
@@ -112,9 +112,10 @@ def _standard_pythonizations(pyclass, name):
                 return res
             raise IndexError(idx)
         pyclass.__getitem__ = tuple_getitem
+    return True
 
 if not ispypy:
-    py.add_pythonization(_standard_pythonizations)   # should live on std only
+    py.add_pythonization(_standard_pythonizations, "std")
 # TODO: PyPy still has the old-style pythonizations, which require the full
 # class name (not possible for std::tuple ...)
 

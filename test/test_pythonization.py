@@ -46,12 +46,13 @@ class TestClassPYTHONIZATION:
                 klass.test = 2
         cppyy.py.add_pythonization(pythonizor, 'pyzables')
 
+      # global pythonizors are still run even if namespaced ones available
         def pythonizor(klass, name):
             if name == 'pyzables::SomeDummy2':
                 klass.test = 3
         cppyy.py.add_pythonization(pythonizor)
 
-        assert cppyy.gbl.pyzables.SomeDummy2.test == 2
+        assert cppyy.gbl.pyzables.SomeDummy2.test == 3
 
         def root_pythonizor(klass, name):
             if name == 'CppyyLegacy::TString':
