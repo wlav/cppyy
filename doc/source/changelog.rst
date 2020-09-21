@@ -22,6 +22,8 @@ master: 1.8.3
 * More detailed enum ``repr()`` printing, where possible
 * Fix for (extern) explicit template instantiations in namespaces
 * Throw objects from an std::tuple a life line
+* Global pythonizors now always run on all classes
+* Simplified iteraton over STL-like containers defining ``begin()``/``end()``
 
 
 2020-09-08: 1.8.2

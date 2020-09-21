@@ -1047,7 +1047,46 @@ class TestSTLMAP:
                 count += 1
             assert count == 10
 
-    def test08_initialize_from_dict(self):
+    def test08_stllike_preinc(self):
+        """STL-like class with preinc by-ref returns"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace PreIncrement {
+        struct Token {
+            int value;
+        };
+
+        struct Iterator {
+            Token current;
+
+            bool operator!=(const Iterator& rhs) {
+                return rhs.current.value != current.value; }
+            const Token& operator*() { return current; }
+            Iterator& operator++() {
+                current.value++;
+                return *this;
+            }
+        };
+
+        struct Stream {
+            Iterator begin() { return Iterator(); }
+            Iterator end() { return Iterator{10}; }
+        }; }""")
+
+        ns = cppyy.gbl.PreIncrement
+
+        stream = ns.Stream()
+        assert [x.value for x in stream] == list(range(10))
+
+        stream = ns.Stream()
+        it = iter(stream)
+        assert next(it).value == 0
+        assert next(it).value == 1
+        assert next(it).value == 2
+
+    def test09_initialize_from_dict(self):
         """Test std::map initializion from Python dict"""
 
         import cppyy
@@ -1060,7 +1099,7 @@ class TestSTLMAP:
         with raises(TypeError):
             m = cppyy.gbl.std.map[int, str]({'1' : 1, '2' : 2})
 
-    def test09_map_cpp17_style(self):
+    def test10_map_cpp17_style(self):
         """C++17 style initialization of std::map"""
 
         import cppyy
@@ -1069,7 +1108,7 @@ class TestSTLMAP:
         assert m['1'] == 2
         assert m['2'] == 1
 
-    def test10_map_derived_objects(self):
+    def test11_map_derived_objects(self):
         """Enter derived objects through an initializer list"""
 
         import cppyy
