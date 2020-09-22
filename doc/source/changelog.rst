@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.8.3
--------------
+2020-09-21: 1.8.3
+-----------------
 
 * Add initializer constructors for PODs and aggregates
 * Use actual underlying type for enums, where possible
