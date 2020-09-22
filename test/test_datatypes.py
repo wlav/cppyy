@@ -1695,3 +1695,49 @@ class TestDATATYPES:
         Z = cppyy.gbl.libchemist.Atom.AtomicNumber(5)
         assert Z.a_n == 5
 
+    def test36_complex_numpy_arrays(self):
+        """Usage of complex numpy arrays"""
+
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            py.test.skip('numpy is not installed')
+
+        cppyy.cppdef("""\
+        namespace ComplexArrays {
+        typedef std::complex<float> fcomp;
+        fcomp fcompdot(const fcomp* arr1, const fcomp* arr2, const int N) {
+            fcomp res{0.f, 0.f};
+            for (int i=0; i<N; ++i)
+                res += arr1[i]*arr2[i];
+            return res;
+        }
+
+        typedef std::complex<double> dcomp;
+        dcomp dcompdot(const dcomp* arr1, const dcomp* arr2, const int N) {
+            dcomp res{0., 0.};
+            for (int i=0; i<N; ++i)
+                res += arr1[i]*arr2[i];
+            return res;
+        } }""")
+
+        def pycompdot(a, b, N):
+            c = 0.+0.j
+            for i in range(N):
+                c += a[i]*b[i]
+            return c
+
+        ns = cppyy.gbl.ComplexArrays
+
+        for ctype, func in [(np.complex64,  ns.fcompdot),
+                            (np.complex128, ns.dcompdot)]:
+
+            Acl = np.array([1.+2.j, 3.+4.j], dtype=ctype)
+            Bcl = np.array([5.+6.j, 7.+8.j], dtype=ctype)
+
+            pyCcl = pycompdot(Acl, Bcl, 2)
+
+            Ccl = func(Acl, Bcl, 2)
+            assert complex(Ccl) == pyCcl
