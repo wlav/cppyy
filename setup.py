@@ -19,7 +19,7 @@ try:
         if version[1] <= 0:
             requirements = ['cppyy-backend<1.1', 'cppyy-cling<=6.15']
     elif version[0] == 7:
-        if version[1] <= 3 and version[2] < 2:
+        if version[1] <= 3 and version[2] <= 2:
             requirements = ['cppyy-backend<=1.10', 'cppyy-cling<=6.18.2.3']
         else:
             requirements = ['cppyy-backend<=1.11', 'cppyy-cling<=6.20.4']
