@@ -1398,6 +1398,23 @@ class TestSTLSET:
         v = cppyy.gbl.std.set(l)
         assert list(l) == l
 
+    def test05_contains(self):
+        """Contains check should not iterate and compare"""
+
+        import cppyy
+
+        assert '__contains__' in cppyy.gbl.std.set[int].__dict__
+
+        S = cppyy.gbl.std.set[int](range(2**20))
+
+        assert 1337 in S
+        assert not (2**30 in S)
+
+      # not a true test, but this'll take a noticable amount of time (>1min) if
+      # there is a regression somehow
+        for i in range(100):
+            assert not (2**30 in S)
+
 
 class TestSTLTUPLE:
     def setup_class(cls):

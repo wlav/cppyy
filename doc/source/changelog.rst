@@ -9,6 +9,11 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
+master: 1.8.4
+-------------
+
+* Add pythonized ``__contains__`` to ``std::set``
+
 
 2020-09-21: 1.8.3
 -----------------
