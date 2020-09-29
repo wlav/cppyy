@@ -13,6 +13,7 @@ master: 1.8.4
 -------------
 
 * Add pythonized ``__contains__`` to ``std::set``
+* Fix constructor generation for aggregates with static data
 
 
 2020-09-21: 1.8.3

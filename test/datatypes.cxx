@@ -794,3 +794,8 @@ std::vector<std::string> ArrayOfCStrings::takes_array_of_cstrings(const char* ar
 
     return v;
 }
+
+
+//= aggregate testing ======================================================
+int AggregateTest::Aggregate1::sInt = 17;
+int AggregateTest::Aggregate2::sInt = 27;

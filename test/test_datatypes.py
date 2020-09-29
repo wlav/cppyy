@@ -1682,7 +1682,7 @@ class TestDATATYPES:
         import cppyy
 
         cppyy.cppdef("""\
-        namespace libchemist {
+        namespace AggregateTest {
         class Atom {
         public:
             using size_type = std::size_t;
@@ -1690,10 +1690,24 @@ class TestDATATYPES:
             struct AtomicNumber {
                 size_type a_n = 0;
             };
+
+            std::array<double, 3> coords;
         }; }""")
 
-        Z = cppyy.gbl.libchemist.Atom.AtomicNumber(5)
+        ns = cppyy.gbl.AggregateTest
+
+        Z = ns.Atom.AtomicNumber(5)
         assert Z.a_n == 5
+
+        a = ns.Aggregate1()
+        assert a.sInt == 17
+
+        a = ns.Aggregate2()
+        assert a.sInt == 27
+        assert a.fInt == 42
+
+        a = ns.Aggregate2(fInt=13)
+        assert a.fInt == 13
 
     def test36_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""

@@ -731,4 +731,19 @@ namespace ArrayOfCStrings {
     std::vector<std::string> takes_array_of_cstrings(const char* args[], int len);
 }
 
+
+//= aggregate testing ======================================================
+namespace AggregateTest {
+
+struct Aggregate1 {
+   static int sInt;
+};
+
+struct Aggregate2 {
+   static int sInt;
+   int fInt = 42;
+};
+
+}
+
 #endif // !CPPYY_TEST_DATATYPES_H

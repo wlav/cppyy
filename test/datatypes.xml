@@ -61,4 +61,7 @@
   <namespace name="ArrayOfCStrings" />
   <function pattern="ArrayOfCStrings::*" />
 
+  <namespace name="AggregateTest" />
+  <struct pattern="AggregateTest::*" />
+
 </lcgdict>
