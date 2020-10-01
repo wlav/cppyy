@@ -687,8 +687,8 @@ class TestSTLSTRING:
         assert s == c.get_string1()
 
         assert std.string('ab\0c')       == 'ab\0c'
-        assert repr(std.string('ab\0c')) == repr('ab\0c')
-        assert str(std.string('ab\0c'))  == 'ab\0c'
+        assert repr(std.string('ab\0c')) == repr(b'ab\0c')
+        assert str(std.string('ab\0c'))  == str('ab\0c')
 
     def test04_array_of_strings(self):
         """Access to global arrays of strings"""
@@ -753,7 +753,24 @@ class TestSTLSTRING:
         assert str(uas.get_string_cr(bval)) == 'ℕ'
         assert str(uas.get_string_cc(bval)) == 'ℕ'
 
-    def test06_stlstring_in_dictionaries(self):
+    def test06_stlstring_bytes_and_text(self):
+        """Mixing of bytes and str"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace PyBytesTest {
+        std::string string_field = "";
+        }""")
+
+        ns = cppyy.gbl.PyBytesTest
+        assert type(ns.string_field) == cppyy.gbl.std.string
+
+        ns.string_field = b'\xe9'
+        assert repr(ns.string_field) == repr(b'\xe9')
+        assert str(ns.string_field)  == str(b'\xe9')       # b/c fails to decode
+
+    def test07_stlstring_in_dictionaries(self):
         """Mixing str and std::string as dictionary keys"""
 
         import cppyy
@@ -764,7 +781,7 @@ class TestSTLSTRING:
         assert d[x] == 0
         assert d['x'] == 0
 
-    def test07_string_operators(self):
+    def test08_string_operators(self):
         """Mixing of C++ and Python types in global operators"""
 
         import cppyy
@@ -790,6 +807,20 @@ class TestSTLSTRING:
         s2 = ", World!"
         assert s1+s2 == "Hello, World!"
         assert s2+s1 == ", World!Hello"
+
+    def test09_string_as_str_bytes(self):
+        """Python-style methods of str/bytes on std::string"""
+
+        import cppyy
+
+      # method decode
+        s = cppyy.gbl.std.string(u'\xe9')
+        assert s.decode('utf-8')           == u'\xe9'
+        assert s.decode('utf-8', "strict") == u'\xe9'
+        assert s.decode(encoding='utf-8')  == u'\xe9'
+
+      # method replace
+        #replace(old, new, count=-1, /)
 
 
 class TestSTLLIST:
