@@ -820,7 +820,10 @@ class TestSTLSTRING:
         assert s.decode(encoding='utf-8')  == u'\xe9'
 
       # method replace
-        #replace(old, new, count=-1, /)
+        s = cppyy.gbl.std.string('aaabbbaaa')
+        assert s.replace('a', 'b')          == 'bbbbbbbbb'
+        assert s.replace('a', 'b', 2)       == 'bbabbbaaa'
+        assert s.replace('a', 'b', count=4) == 'bbbbbbbaa'
 
 
 class TestSTLLIST:
