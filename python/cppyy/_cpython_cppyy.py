@@ -1,9 +1,6 @@
 """ CPython-specific touch-ups
 """
 
-import warnings
-warnings.filterwarnings('ignore', message="PY_SSIZE_T_CLEAN will be required for '#' formats")
-
 from . import _stdcpp_fix
 from cppyy_backend import loader
 
