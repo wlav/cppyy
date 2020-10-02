@@ -12,6 +12,9 @@ PyPy support lags CPython support.
 master: 1.8.4
 -------------
 
+* ``std::string`` globals/data members no longer automatically converted to ``str``
+* New methods for std::string to allow ``str`` interchangability
+* Added a ``decode`` method to ``std::string``
 * Add pythonized ``__contains__`` to ``std::set``
 * Fix constructor generation for aggregates with static data
 
