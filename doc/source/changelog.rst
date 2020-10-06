@@ -17,6 +17,7 @@ master: 1.8.4
 * Added a ``decode`` method to ``std::string``
 * Add pythonized ``__contains__`` to ``std::set``
 * Fix constructor generation for aggregates with static data
+* Fix performance bug when using implicit conversions
 
 
 2020-09-21: 1.8.3
