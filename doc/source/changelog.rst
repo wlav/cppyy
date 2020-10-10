@@ -18,6 +18,8 @@ master: 1.8.4
 * Add pythonized ``__contains__`` to ``std::set``
 * Fix constructor generation for aggregates with static data
 * Fix performance bug when using implicit conversions
+* Fix memory overwrite when parsing during sorting of methods
+* PyPy pip install again falls back to setup.py install
 
 
 2020-09-21: 1.8.3
