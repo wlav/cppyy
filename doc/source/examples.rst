@@ -16,6 +16,7 @@ alphabetical order):
  * `gco-cppyy`_
  * `gmpxxyy`_
  * `cppyy-knearestneighbors`_
+ * `linear_algebra`_
  * `lyncs`_
  * `popsicle`_
  * `libsemigroups_cppyy`_
@@ -31,6 +32,7 @@ alphabetical order):
 .. _gco-cppyy: https://github.com/agoose77/gco-cppyy
 .. _gmpxxyy: https://github.com/flatsurf/gmpxxyy
 .. _cppyy-knearestneighbors: https://github.com/jclay/cppyy-knearestneighbors-example
+.. _linear_algebra: https://github.com/pressureless/linear_algebra
 .. _lyncs: https://github.com/sbacchio/lyncs
 .. _popsicle: https://github.com/kunitoki/popsicle
 .. _libsemigroups_cppyy: https://github.com/libsemigroups/libsemigroups_cppyy
