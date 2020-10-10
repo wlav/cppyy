@@ -2,5 +2,4 @@
 requires = ["CPyCppyy==1.11.5; python_implementation != 'PyPy'",
             "cppyy-backend==1.14.1; python_implementation != 'PyPy'",
             "cppyy-cling==6.21.4; python_implementation != 'PyPy'",
-            "cppyy-cling<=6.18.2.3; python_implementation == 'PyPy'",
             "setuptools", "wheel"]
