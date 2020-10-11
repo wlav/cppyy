@@ -9,8 +9,8 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
-master: 1.8.4
--------------
+2020-10-10: 1.8.4
+-----------------
 
 * ``std::string`` globals/data members no longer automatically converted to ``str``
 * New methods for std::string to allow ``str`` interchangability
