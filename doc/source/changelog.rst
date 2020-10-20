@@ -9,6 +9,13 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
+
+master: 1.9.0
+-------------
+
+* in-tree build resolving build/install order for PyPy with pyproject.toml
+
+
 2020-10-10: 1.8.4
 -----------------
 
