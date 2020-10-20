@@ -116,13 +116,11 @@ def _standard_pythonizations(pyclass, name):
   # pythoniztion of std::string; placed here because it's simpler to write the
   # custom "npos" object (to allow easy result checking of find/rfind) in Python
     elif pyclass.__cpp_name__ == "std::string":
-        class NPOS(int):
-            def __init__(self, npos):
-                self.__cpp_npos = npos
+        class NPOS(0x3000000 <= sys.hexversion and int or long):
             def __eq__(self, other):
-                return other == -1 or  other == self.__cpp_npos
+                return other == -1 or  int(self) == other
             def __ne__(self, other):
-                return other != -1 and other != self.__cpp_npos
+                return other != -1 and int(self) != other
         del pyclass.__class__.npos          # drop b/c is const data
         pyclass.npos = NPOS(pyclass.npos)
 
