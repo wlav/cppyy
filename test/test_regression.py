@@ -450,7 +450,7 @@ class TestREGRESSION:
         assert a == 'a'
         assert b == 'b'
 
-        assert type(a+b) == str
+        assert type(a+b) == cppyy.gbl.std.string
         assert a+b == 'ab'
 
     def test18_std_string_hash(self):

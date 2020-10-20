@@ -112,6 +112,20 @@ def _standard_pythonizations(pyclass, name):
                 return res
             raise IndexError(idx)
         pyclass.__getitem__ = tuple_getitem
+
+  # pythoniztion of std::string; placed here because it's simpler to write the
+  # custom "npos" object (to allow easy result checking of find/rfind) in Python
+    elif pyclass.__cpp_name__ == "std::string":
+        class NPOS(int):
+            def __init__(self, npos):
+                self.__cpp_npos = npos
+            def __eq__(self, other):
+                return other == -1 or  other == self.__cpp_npos
+            def __ne__(self, other):
+                return other != -1 and other != self.__cpp_npos
+        del pyclass.__class__.npos          # drop b/c is const data
+        pyclass.npos = NPOS(pyclass.npos)
+
     return True
 
 if not ispypy:
@@ -279,6 +293,8 @@ if not ispypy:
             warnings.warn("CPyCppyy API not found (tried: %s); set CPPYY_API_PATH envar to the 'CPyCppyy' API directory to fix" % apipath_extra)
         else:
             add_include_path(apipath_extra)
+
+    del apipath_extra
 
 if os.getenv('CONDA_PREFIX'):
   # MacOS, Linux

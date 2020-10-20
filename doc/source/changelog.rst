@@ -14,6 +14,7 @@ master: 1.9.0
 -------------
 
 * in-tree build resolving build/install order for PyPy with pyproject.toml
+* ``std::string`` not converterd to ``str`` on function returns
 
 
 2020-10-10: 1.8.4
