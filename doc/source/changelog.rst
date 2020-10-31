@@ -9,6 +9,13 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
+
+2020-10-31: 1.8.5
+-----------------
+
+* Fix leaks when using vector iterators on Py3/Linux
+
+
 2020-10-10: 1.8.4
 -----------------
 
