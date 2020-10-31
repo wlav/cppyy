@@ -1755,3 +1755,40 @@ class TestDATATYPES:
 
             Ccl = func(Acl, Bcl, 2)
             assert complex(Ccl) == pyCcl
+
+    def test37_ccharp_memory_handling(self):
+        """cppyy side handled memory of C strings"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace StructWithCChar {
+        typedef struct {
+            const char* name;
+            int val;
+        } BufInfo; }""")
+
+        ns = cppyy.gbl.StructWithCChar
+
+        a_str, b_str = 'abc', 'def'
+        a = ns.BufInfo(a_str, 4)
+        b = ns.BufInfo(b_str, 5)
+
+        assert a.name == 'abc'
+        assert a.val  == 4
+        assert b.name == 'def'
+        assert b.val  == 5
+
+        a = ns.BufInfo('abc', 4)
+        b = ns.BufInfo('def', 5)
+
+        assert a.name == 'abc'
+        assert a.val  == 4
+        assert b.name == 'def'
+        assert b.val  == 5
+
+        a.name = 'ghi'
+        b.name = 'jkl'
+
+        assert a.name == 'ghi'
+        assert b.name == 'jkl'
