@@ -1763,10 +1763,10 @@ class TestDATATYPES:
 
         cppyy.cppdef("""\
         namespace StructWithCChar {
-        typedef struct {
+        typedef struct BufInfo {
             const char* name;
             int val;
-        } BufInfo; }""")
+        }; }""")
 
         ns = cppyy.gbl.StructWithCChar
 
@@ -1792,3 +1792,15 @@ class TestDATATYPES:
 
         assert a.name == 'ghi'
         assert b.name == 'jkl'
+
+        a_str, b_str = 'mno', 'pqr'
+        a = ns.BufInfo(val=4)
+        b = ns.BufInfo(val=5)
+
+        a.name = a_str
+        b.name = b_str
+
+        assert a.name == 'mno'
+        assert a.val  == 4
+        assert b.name == 'pqr'
+        assert b.val  == 5
