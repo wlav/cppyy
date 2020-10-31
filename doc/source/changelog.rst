@@ -13,8 +13,9 @@ PyPy support lags CPython support.
 master: 1.9.0
 -------------
 
-* in-tree build resolving build/install order for PyPy with pyproject.toml
+* In-tree build resolving build/install order for PyPy with pyproject.toml
 * ``std::string`` not converterd to ``str`` on function returns
+* Cover more use cases where C string memory can be managed
 
 
 2020-10-10: 1.8.4
