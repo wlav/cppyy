@@ -16,6 +16,7 @@ master: 1.9.0
 * In-tree build resolving build/install order for PyPy with pyproject.toml
 * ``std::string`` not converterd to ``str`` on function returns
 * Cover more use cases where C string memory can be managed
+* Added pyinstaller hooks (https://stackoverflow.com/questions/64406727)
 
 
 2020-10-31: 1.8.5
