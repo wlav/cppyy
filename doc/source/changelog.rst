@@ -17,6 +17,7 @@ master: 1.9.0
 * ``std::string`` not converterd to ``str`` on function returns
 * Cover more use cases where C string memory can be managed
 * Added pyinstaller hooks (https://stackoverflow.com/questions/64406727)
+* Support for enums in pseudo-constructors of aggregates
 
 
 2020-10-31: 1.8.5

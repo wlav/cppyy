@@ -1709,6 +1709,25 @@ class TestDATATYPES:
         a = ns.Aggregate2(fInt=13)
         assert a.fInt == 13
 
+        cppyy.cppdef("""\
+        namespace AggregateTest {
+
+        typedef enum _TYPE { DATA=0, SHAPE } TYPE;
+
+        typedef struct _Buf {
+          int val;
+          const char *name;
+          TYPE buf_type;
+        } Buf; }""")
+
+        ns = cppyy.gbl.AggregateTest
+
+        b = ns.Buf(val=10, name="aap", buf_type=ns.SHAPE)
+
+        assert b.val      == 10
+        assert b.name     == "aap"
+        assert b.buf_type == ns.SHAPE
+
     def test36_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""
 
