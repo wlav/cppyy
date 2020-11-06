@@ -20,6 +20,12 @@ master: 1.9.0
 * Support for enums in pseudo-constructors of aggregates
 
 
+2020-11-06: 1.8.6
+-----------------
+
+* Fix preprocessor macro of CPyCppyy header for Windows/MSVC
+
+
 2020-10-31: 1.8.5
 -----------------
 
