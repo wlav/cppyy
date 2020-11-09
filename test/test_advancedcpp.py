@@ -700,6 +700,14 @@ class TestADVANCEDCPP:
         assert cppyy.gbl.g_abstract_ptr == o
         cppyy.gbl.g_abstract_ptr = cppyy.nullptr
 
+        cppyy.cppexec("std::vector<int>* gtestv1 = nullptr;")
+        pyv = cppyy.gbl.std.vector[int]()
+        cppyy.gbl.gtestv1 = pyv
+        cppyy.cppexec("auto* gtestv2 = gtestv1;")
+        pyv.push_back(42)
+        assert len(cppyy.gbl.gtestv1) == 1
+        assert len(cppyy.gbl.gtestv2) == 1
+
     def test22_exceptions(self):
         """Catching of C++ exceptions"""
 
