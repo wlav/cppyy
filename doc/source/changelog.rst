@@ -18,6 +18,7 @@ master: 1.9.0
 * Cover more use cases where C string memory can be managed
 * Added pyinstaller hooks (https://stackoverflow.com/questions/64406727)
 * Support for enums in pseudo-constructors of aggregates
+* Fixes for overloaded/split-access protected members in X-inheritance
 
 
 2020-11-06: 1.8.6

@@ -1141,3 +1141,69 @@ class TestCROSSINHERITANCE:
 
         assert obj.calc2()       == 2
         assert ns.callback2(obj) == 2
+
+    def test28_cross_deep(self):
+        """Deep inheritance hierarchy"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace CrossDeep {
+
+        class A {
+        public:
+            A(const std::string& /* name */) {}
+            virtual ~A() {}
+            virtual int fun1() const { return 0; }
+            virtual int fun2() const { return fun1(); }
+        }; }""")
+
+        A = cppyy.gbl.CrossDeep.A
+
+        class B(A):
+            def __init__ (self , name = 'b'):
+                super(B, self).__init__(name)
+
+            def fun1(self):
+                return  1
+
+        class C(B):
+            def fun1(self):
+                return -1
+
+        class D(B):
+            pass
+
+        for inst, val1 in [(A('a'), 0), (B('b'), 1), (C('c'), -1), (D('d'), 1)]:
+            assert inst.fun1() == val1
+            assert inst.fun2() == inst.fun1()
+
+    def test29_access_and_overload(self):
+        """Inheritance with access and overload complications"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace AccessAndOverload {
+        class Base {
+        public:
+            virtual ~Base() {}
+
+        protected:
+            virtual int  call1(int i) { return i; }
+            virtual int  call1(int i, int j) { return i+j; }
+
+            virtual void call2(int) { return; }
+            virtual void call2(int, int) { return; }
+
+            int call3(int i) { return i; }
+
+        private:
+            int call3(int i, int j) { return i+j; }
+        }; }""")
+
+        ns = cppyy.gbl.AccessAndOverload
+
+      # used to produce uncompilable code
+        class PyDerived(ns.Base):
+            pass
