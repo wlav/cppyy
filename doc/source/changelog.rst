@@ -16,6 +16,7 @@ master: 1.9.0
 * In-tree build resolving build/install order for PyPy with pyproject.toml
 * ``std::string`` not converterd to ``str`` on function returns
 * Cover more use cases where C string memory can be managed
+* Automatic memory management of converted python functions
 * Added pyinstaller hooks (https://stackoverflow.com/questions/64406727)
 * Support for enums in pseudo-constructors of aggregates
 * Fixes for overloaded/split-access protected members in X-inheritance

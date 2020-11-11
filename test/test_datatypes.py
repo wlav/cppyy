@@ -1152,7 +1152,7 @@ class TestDATATYPES:
     def test25_callable_passing(self):
         """Passing callables through function pointers"""
 
-        import cppyy
+        import cppyy, gc
 
         fdd = cppyy.gbl.call_double_double
         fii = cppyy.gbl.call_int_int
@@ -1215,12 +1215,16 @@ class TestDATATYPES:
         assert c(3, 3) == 9.
 
         c.set_callable(lambda x, y: x*y)
+        assert c(3, 3) == 9.           # life line protected
+
+        c.__dict__.clear()             # destroys life lines
+        gc.collect()
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
     def test26_callable_through_function_passing(self):
         """Passing callables through std::function"""
 
-        import cppyy
+        import cppyy, gc
 
         fdd = cppyy.gbl.call_double_double_sf
         fii = cppyy.gbl.call_int_int_sf
@@ -1283,9 +1287,50 @@ class TestDATATYPES:
         assert c(3, 3) == 9.
 
         c.set_callable(lambda x, y: x*y)
+        assert c(3, 3) == 9.           # life line protected
+
+        c.__dict__.clear()             # destroys life lines
+        gc.collect()
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test27_multi_dim_arrays_of_builtins(test):
+    def test27_std_function_life_lines(self):
+        """Life lines to std::function data members"""
+
+        import cppyy, gc
+
+        cppyy.cppdef("""\
+        namespace BoundMethod2StdFunction {
+        class Base {
+        public:
+            virtual ~Base() {}
+
+            std::function<std::string()> execute;
+            std::string do_execute() {
+                return execute();
+            }
+        }; } """)
+
+        ns = cppyy.gbl.BoundMethod2StdFunction
+
+        class Derived(ns.Base):
+            def __init__(self):
+                super().__init__()
+                self.execute = self.xyz
+
+            def xyz(self):
+                return "xyz"
+
+        d = Derived()
+        assert d.do_execute() == "xyz"
+        assert d.do_execute() == "xyz"
+
+        gc.collect()
+        assert d.do_execute() == "xyz"
+
+        d.execute = d.xyz
+        assert d.do_execute() == "xyz"
+
+    def test28_multi_dim_arrays_of_builtins(test):
         """Multi-dim arrays of builtins"""
 
         import cppyy, ctypes
@@ -1319,7 +1364,7 @@ class TestDATATYPES:
                 p = (ctype * len(buf)).from_buffer(buf)
                 assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
 
-    def test28_anonymous_union(self):
+    def test29_anonymous_union(self):
         """Anonymous unions place there fields in the parent scope"""
 
         import cppyy
@@ -1411,7 +1456,7 @@ class TestDATATYPES:
         assert type(p.data_c[0]) == float
         assert p.intensity == 5.
 
-    def test29_pointer_to_array(self):
+    def test30_pointer_to_array(self):
         """Usability of pointer to array"""
 
         import cppyy
@@ -1442,7 +1487,7 @@ class TestDATATYPES:
             assert type(f) == AoS.Foo
         assert type(bar.fArr[0]) == AoS.Foo
 
-    def test30_object_pointers(self):
+    def test31_object_pointers(self):
         """Read/write access to objects through pointers"""
 
         import cppyy
@@ -1467,7 +1512,7 @@ class TestDATATYPES:
         assert c.s_strp               == "noot"
         assert sn                     == "noot"  # set through pointer
 
-    def test31_restrict(self):
+    def test32_restrict(self):
         """Strip __restrict keyword from use"""
 
         import cppyy
@@ -1476,7 +1521,7 @@ class TestDATATYPES:
 
         assert cppyy.gbl.restrict_call("aap") == "aap"
 
-    def test32_legacy_matrix(self):
+    def test33_legacy_matrix(self):
         """Handling of legacy matrix"""
 
         import cppyy
@@ -1527,7 +1572,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test33_legacy_matrix_of_structs(self):
+    def test34_legacy_matrix_of_structs(self):
         """Handling of legacy matrix of structs"""
 
         import cppyy
@@ -1590,7 +1635,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test34_plain_old_data(self):
+    def test35_plain_old_data(self):
         """Initializer construction of PODs"""
 
         import cppyy
@@ -1676,7 +1721,7 @@ class TestDATATYPES:
             assert len(f1.fPtrArr) == 3
             assert list(f1.fPtrArr) == [1., 2., 3]
 
-    def test35_aggregates(self):
+    def test36_aggregates(self):
         """Initializer construction of aggregates"""
 
         import cppyy
@@ -1728,7 +1773,7 @@ class TestDATATYPES:
         assert b.name     == "aap"
         assert b.buf_type == ns.SHAPE
 
-    def test36_complex_numpy_arrays(self):
+    def test37_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""
 
         import cppyy
@@ -1775,7 +1820,7 @@ class TestDATATYPES:
             Ccl = func(Acl, Bcl, 2)
             assert complex(Ccl) == pyCcl
 
-    def test37_ccharp_memory_handling(self):
+    def test38_ccharp_memory_handling(self):
         """cppyy side handled memory of C strings"""
 
         import cppyy
