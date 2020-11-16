@@ -24,6 +24,7 @@ class TestOPERATORS:
         """Test overloading of math operators"""
 
         import cppyy
+
         number = cppyy.gbl.number
 
         assert (number(20) + number(10)) == number(30)
@@ -46,6 +47,7 @@ class TestOPERATORS:
         """Test overloading of unary math operators"""
 
         import cppyy
+
         number = cppyy.gbl.number
 
         n  = number(20)
@@ -62,6 +64,7 @@ class TestOPERATORS:
         """Test overloading of comparison operators"""
 
         import cppyy
+
         number = cppyy.gbl.number
 
         assert (number(20) >  number(10)) == True
@@ -75,6 +78,7 @@ class TestOPERATORS:
         """Test implementation of operator bool"""
 
         import cppyy
+
         number = cppyy.gbl.number
 
         n = number(20)
@@ -87,6 +91,7 @@ class TestOPERATORS:
         """Test converter operators of exact types"""
 
         import cppyy
+
         gbl = cppyy.gbl
 
         o = gbl.operator_char_star()
@@ -113,6 +118,7 @@ class TestOPERATORS:
         """Test converter operators of approximate types"""
 
         import cppyy, sys
+
         gbl = cppyy.gbl
 
         o = gbl.operator_short(); o.m_short = 256
@@ -313,6 +319,7 @@ class TestOPERATORS:
         """Non-reference, single-argument, call not mapped to getitem"""
 
         import cppyy
+
         cppyy.cppdef("""\
         namespace IndexingOperators {
         struct Foo {
