@@ -1,16 +1,11 @@
 import py, os, sys
 from pytest import raises
-
-try:
-    import __pypy__
-    is_pypy = True
-except ImportError:
-    is_pypy = False
+from .support import ispypy
 
 
 class TestAPI:
     def setup_class(cls):
-        if is_pypy:
+        if ispypy:
             py.test.skip('C++ API only available on CPython')
 
         import cppyy

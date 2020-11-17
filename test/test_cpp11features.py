@@ -1,12 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
-
-try:
-    import __pypy__
-    is_pypy = True
-except ImportError:
-    is_pypy = False
+from .support import setup_make, ispypy
 
 
 currpath = py.path.local(__file__).dirpath()
@@ -226,7 +220,7 @@ class TestCPP11FEATURES:
             i2 = T(i1)  # cctor
             assert T.s_move_counter == 0
 
-            if is_pypy or 0x3000000 <= sys.hexversion:
+            if ispypy or 0x3000000 <= sys.hexversion:
                 i3 = T(std.move(T()))            # can't check ref-count
             else:
                 i3 = T(T()) # should call move, not memoized cctor
@@ -242,7 +236,7 @@ class TestCPP11FEATURES:
             i4.__assign__(i2)
             assert T.s_move_counter == 3
 
-            if is_pypy or 0x3000000 <= sys.hexversion:
+            if ispypy or 0x3000000 <= sys.hexversion:
                 i4.__assign__(std.move(T()))     # can't check ref-count
             else:
                 i4.__assign__(T())

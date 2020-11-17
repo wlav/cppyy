@@ -786,9 +786,6 @@ class TestADVERTISED:
     def test03_use_of_ctypes_and_enum(self):
         """Use of (opaque) enum through ctypes.c_void_p"""
 
-        if ispypy:
-            py.test.skip('RPython error: NotImplementedError')
-
         import cppyy, ctypes
 
         cppyy.cppdef("""namespace Advert03 {

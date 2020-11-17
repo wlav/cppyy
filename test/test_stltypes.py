@@ -1180,6 +1180,9 @@ class TestSTLMAP:
     def test10_map_cpp17_style(self):
         """C++17 style initialization of std::map"""
 
+        if ispypy:
+            py.test.skip('emulated class crash')
+
         import cppyy
 
         m = cppyy.gbl.std.map({'1': 2, '2':1})
