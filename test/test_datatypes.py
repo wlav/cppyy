@@ -1314,7 +1314,7 @@ class TestDATATYPES:
 
         class Derived(ns.Base):
             def __init__(self):
-                super().__init__()
+                super(Derived, self).__init__()
                 self.execute = self.xyz
 
             def xyz(self):
