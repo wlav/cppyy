@@ -394,3 +394,18 @@ class TestLOWLEVEL:
         for i in range(argc.value):
             cppyy.ll.free(ctypes.cast(voidpp[i], ctypes.c_void_p))
         cppyy.ll.free(ptr)
+
+    def test11_null_array(self):
+        """Null low level view as empty list"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace NullArray {
+           double* gime_null() { return nullptr; }
+        }""")
+
+        ns = cppyy.gbl.NullArray
+
+        assert not ns.gime_null()
+        assert list(ns.gime_null()) == []

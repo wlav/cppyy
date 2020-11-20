@@ -20,6 +20,7 @@ master: 1.9.0
 * Added pyinstaller hooks (https://stackoverflow.com/questions/64406727)
 * Support for enums in pseudo-constructors of aggregates
 * Fixes for overloaded/split-access protected members in X-inheritance
+* Added tp_iter method to low level views
 
 
 2020-11-06: 1.8.6
