@@ -19,7 +19,8 @@ master: 1.9.0
 * Automatic memory management of converted python functions
 * Added pyinstaller hooks (https://stackoverflow.com/questions/64406727)
 * Support for enums in pseudo-constructors of aggregates
-* Fixes for overloaded/split-access protected members in X-inheritance
+* Fixes for overloaded/split-access protected members in cross-inheritance
+* Support for deep, mixed, hierarchies for multi-cross-inheritance
 * Added tp_iter method to low level views
 
 

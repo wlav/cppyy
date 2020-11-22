@@ -1178,7 +1178,75 @@ class TestCROSSINHERITANCE:
             assert inst.fun1() == val1
             assert inst.fun2() == inst.fun1()
 
-    def test29_access_and_overload(self):
+    def test28_cross_deep(self):
+        """Deep multi-inheritance hierarchy"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace CrossMultiDeep {
+
+        class A {
+        public:
+            virtual ~A() {}
+            virtual int calc_a() { return 17; }
+        };
+
+        int calc_a(A* a) { return a->calc_a(); }
+
+        class B {
+        public:
+            virtual ~B() {}
+            virtual int calc_b() { return 42; }
+        };
+
+        int calc_b(B* b) { return b->calc_b(); } }""")
+
+        ns = cppyy.gbl.CrossMultiDeep
+
+        class C(cppyy.multi(ns.A, ns.B)):
+            def calc_a(self):
+                return 18
+
+            def calc_b(self):
+                return 43
+
+        c = C()
+        assert ns.calc_a(c) == 18
+        assert ns.calc_b(c) == 43
+
+        class D(ns.B):
+            def calc_b(self):
+                return 44
+
+        d = D()
+        assert ns.calc_b(d) == 44
+
+        class E(cppyy.multi(ns.A, D)):
+            def calc_a(self):
+                return 19
+
+        e = E()
+        assert ns.calc_a(e) == 19
+        assert ns.calc_b(e) == 44
+
+        class F(ns.A):
+            def calc_a(self):
+                return 20
+
+        f = F()
+        assert ns.calc_a(f) == 20
+
+        class G(cppyy.multi(F, ns.B)):
+            def calc_b(self):
+                return 45
+
+        g = G()
+        assert ns.calc_a(g) == 20
+        assert ns.calc_b(g) == 45
+
+
+    def test30_access_and_overload(self):
         """Inheritance with access and overload complications"""
 
         import cppyy
