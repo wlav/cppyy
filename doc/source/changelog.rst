@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+2020-11-23: 1.9.1
+-----------------
+
+* Fix custom installer in pip sdist
+
+
 2020-11-22: 1.9.0
 -----------------
 

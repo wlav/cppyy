@@ -135,6 +135,9 @@ setup(
 
     keywords='C++ bindings data science calling language integration',
 
+    include_package_data=True,
+    package_data={'': ['installer/cppyy_monkey_patch.py']},
+
     package_dir={'': 'python'},
     packages=find_packages('python', include=add_pkg),
 
