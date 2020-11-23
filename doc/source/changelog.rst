@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.9.0
--------------
+2020-11-22: 1.9.0
+-----------------
 
 * In-tree build resolving build/install order for PyPy with pyproject.toml
 * ``std::string`` not converterd to ``str`` on function returns
