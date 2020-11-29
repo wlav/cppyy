@@ -118,7 +118,6 @@ class TestTEMPLATES:
         std = cppyy.gbl.std
 
         s = std.ostringstream('(', std.ios_base.ate)
-        s.seekp(1, s.cur)
         # Fails; wrong overload on PyPy, none on CPython
         #s << "("
         cppyy.gbl.SomeNS.tuplify(s, 1, 4., "aap")
