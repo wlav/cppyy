@@ -165,13 +165,12 @@ class TestTEMPLATES:
 
        #assert select_template_arg[0, Obj1, Obj2].argument == Obj1
         assert select_template_arg[1, Obj1, Obj2].argument == Obj2
-        # TODO: the following raises correctly, but breaks something internal to
-        # Cling (left-over error?), causing occasional trouble downstream
+        # TODO: the following only results in a Cling compilation error
         #raises(TypeError, select_template_arg.__getitem__, 2, Obj1, Obj2)
 
         # TODO, this doesn't work for builtin types as the 'argument'
         # typedef will not resolve to a class
-        #assert select_template_arg[1, int, float].argument == float
+       #assert select_template_arg[1, int, float].argument == float
 
     def test08_using_of_static_data(self):
         """Derived class using static data of base"""
@@ -199,9 +198,7 @@ class TestTEMPLATES:
             T m_value;
         };""")
 
-
-      # TODO: the ref_value property is inaccessible (offset == -1)
-      # assert cppyy.gbl.BaseClassWithStatic["size_t"].ref_value == 42
+        assert cppyy.gbl.BaseClassWithStatic["size_t"].ref_value == 42
 
         b1 = cppyy.gbl.DerivedClassUsingStatic["size_t"](  0)
         b2 = cppyy.gbl.DerivedClassUsingStatic["size_t"](100)
