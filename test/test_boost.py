@@ -12,23 +12,26 @@ if not (os.path.exists(os.path.join(os.path.sep, 'usr', 'include', 'boost')) or 
 class TestBOOSTANY:
     def setup_class(cls):
         import cppyy
+
         cppyy.include('boost/any.hpp')
 
     def test01_any_class(self):
         """Availability of boost::any"""
 
         import cppyy
+
         assert cppyy.gbl.boost.any
 
         from cppyy.gbl import std
         from cppyy.gbl.boost import any
 
-        assert std.list(any)
+        assert std.list[any]
 
     def test02_any_usage(self):
         """boost::any assignment and casting"""
 
         import cppyy
+
         assert cppyy.gbl.boost
 
         from cppyy.gbl import std, boost
@@ -67,6 +70,7 @@ class TestBOOSTANY:
 class TestBOOSTOPERATORS:
     def setup_class(cls):
         import cppyy
+
         cppyy.include('boost/operators.hpp')
 
     def test01_ordered(self):
@@ -88,6 +92,7 @@ class TestBOOSTOPERATORS:
 class TestBOOSTVARIANT:
     def setup_class(cls):
         import cppyy
+
         cppyy.include("boost/variant/variant.hpp")
         cppyy.include("boost/variant/get.hpp")
 
@@ -128,6 +133,7 @@ class TestBOOSTVARIANT:
 class TestBOOSTERASURE:
     def setup_class(cls):
         import cppyy
+
         cppyy.include("boost/type_erasure/any.hpp")
         cppyy.include("boost/type_erasure/member.hpp")
 

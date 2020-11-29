@@ -1,4 +1,4 @@
-import py, os, sys
+import py, os
 from pytest import raises
 from .support import setup_make, pylong
 
@@ -19,6 +19,7 @@ class TestTEMPLATES:
         """Template member functions lookup and calls"""
 
         import cppyy
+        import sys
 
         m = cppyy.gbl.MyTemplatedMethodClass()
 
@@ -116,7 +117,7 @@ class TestTEMPLATES:
         import cppyy
         std = cppyy.gbl.std
 
-        s = std.ostringstream('(')#TODO: fails on PyPy, std.ios_base.ate)
+        s = std.ostringstream('(', std.ios_base.ate)
         s.seekp(1, s.cur)
         # Fails; wrong overload on PyPy, none on CPython
         #s << "("
@@ -225,6 +226,7 @@ class TestTEMPLATES:
         """Test that base class methods are not considered when hidden"""
 
         import cppyy
+
         B = cppyy.gbl.TemplateHiding.Base
         D = cppyy.gbl.TemplateHiding.Derived
 
@@ -232,11 +234,11 @@ class TestTEMPLATES:
         assert D().callme()  == 2
         assert D().callme(2) == 2
 
-
     def test11_templated_ctor(self):
         """Test templated constructors"""
 
         import cppyy
+
         cppyy.cppdef("""
             template <typename T>
             class RTTest_SomeClassWithTCtor {
@@ -268,7 +270,7 @@ class TestTEMPLATES:
         assert round(RTTest2[int](1, 3.1).m_double - 4.1, 8) == 0.
         assert round(RTTest2[int]().m_double + 1., 8) == 0.
 
-    def test11_template_aliases(self):
+    def test12_template_aliases(self):
         """Access to templates made available with 'using'"""
 
         import cppyy
@@ -292,7 +294,7 @@ class TestTEMPLATES:
             assert cppyy.gbl.using_problem.make_vector[int , 3]().m_val == 3
             assert cppyy.gbl.using_problem.make_vector[int , 4]().m_val == 4
 
-    def test12_using_templated_method(self):
+    def test13_using_templated_method(self):
         """Access to base class templated methods through 'using'"""
 
         import cppyy
@@ -315,7 +317,9 @@ class TestTEMPLATES:
         assert type(d.get3()) == int
         assert d.get3() == 5
 
-    def test13_templated_return_type(self):
+    def test14_templated_return_type(self):
+        """Use of a templated return type"""
+
         import cppyy
 
         cppyy.cppdef("""
@@ -343,8 +347,8 @@ class TestTEMPLATES:
         assert rttest_make_tlist2(RTTest_SomeStruct1())
         assert rttest_make_tlist2(RTTest_SomeNamespace.RTTest_SomeStruct2())
 
-    def test14_rvalue_templates(self):
-        """Us3 of a template with r-values; should accept builtin types"""
+    def test15_rvalue_templates(self):
+        """Use of a template with r-values; should accept builtin types"""
 
         import cppyy
 
@@ -360,10 +364,11 @@ class TestTEMPLATES:
         assert is_valid(1.)
         assert not is_valid(0.)
 
-    def test15_variadic(self):
+    def test16_variadic(self):
         """Range of variadic templates"""
 
         import cppyy
+
         ns = cppyy.gbl.some_variadic
 
         def get_tn(ns):
@@ -412,7 +417,7 @@ class TestTEMPLATES:
         b.b_T['int'](1, 1., 'a')
         assert get_tn(ns).find("int(some_variadic::B::*)(int&&,double&&,std::") == 0
 
-    def test16_empty_body(self):
+    def test17_empty_body(self):
         """Use of templated function with empty body"""
 
         import cppyy
@@ -423,7 +428,7 @@ class TestTEMPLATES:
         assert f_T[int]() is None
         assert cppyy.gbl.T_WithEmptyBody.side_effect == "side effect"
 
-    def test17_greedy_overloads(self):
+    def test18_greedy_overloads(self):
         """void*/void** should not pre-empt template instantiations"""
 
         import cppyy
@@ -445,7 +450,7 @@ class TestTEMPLATES:
         assert g3.get_size(ns.SomeClass()) == cppyy.sizeof(ns.SomeClass)
         assert g3.get_size(cppyy.nullptr, True) == -1
 
-    def test18_templated_operator_add(self):
+    def test19_templated_operator_add(self):
         """Templated operator+ is ambiguous: either __pos__ or __add__"""
 
         import cppyy
@@ -475,7 +480,7 @@ class TestTEMPLATES:
 
         assert round(q.X() - 6.3, 8) == 0.
 
-    def test19_templated_ctor_with_defaults(self):
+    def test20_templated_ctor_with_defaults(self):
         """Templated constructor with defaults used to be ignored"""
 
         import cppyy
@@ -491,7 +496,7 @@ class TestTEMPLATES:
 
         assert cppyy.gbl.TemplatedCtor.C(0)
 
-    def test20_type_deduction_with_conversion(self):
+    def test21_type_deduction_with_conversion(self):
         """Template instantiation with [] -> std::vector conversion"""
 
         import cppyy
@@ -529,7 +534,7 @@ class TestTEMPLATES:
         assert l2v.test3[int]([d1])     == 1
         assert l2v.test3[int]([d1, d1]) == 2
 
-    def test21_type_deduction_of_proper_integer_size(self):
+    def test22_type_deduction_of_proper_integer_size(self):
         """Template type from integer arg should be big enough"""
 
         import cppyy
@@ -544,7 +549,7 @@ class TestTEMPLATES:
         for val in [2**64, -2**63-1]:
             raises(OverflowError, PassSomeInt, val)
 
-    def test22_overloaded_setitem(self):
+    def test23_overloaded_setitem(self):
         """Template with overloaded non-templated and templated setitem"""
 
         import cppyy
@@ -554,7 +559,7 @@ class TestTEMPLATES:
         v = MyVec["float"](2)
         v[0] = 1        # used to throw TypeError
 
-    def test23_stdfunction_templated_arguments(self):
+    def test24_stdfunction_templated_arguments(self):
         """Use of std::function with templated arguments"""
 
         import cppyy
@@ -580,7 +585,7 @@ class TestTEMPLATES:
 
         assert cppyy.gbl.std.function['double(std::vector<double>)']
 
-    def test24_partial_templates(self):
+    def test25_partial_templates(self):
         """Deduction of types with partial templates"""
 
         import cppyy
@@ -642,7 +647,7 @@ class TestTEMPLATES:
         assert ns.bar2['double'](17) == 17
         assert ns.bar2['double','int'](17) == 17
 
-    def test25_variadic_constructor(self):
+    def test26_variadic_constructor(self):
         """Use of variadic template function as contructor"""
 
         import cppyy
@@ -676,7 +681,7 @@ class TestTEMPLATES:
         a = ns.Atom(1567.0)
         assert a.m_m == 1567.0
 
-    def test26_enum_in_constructor(self):
+    def test27_enum_in_constructor(self):
         """Use of enums in template function as constructor"""
 
         import cppyy
@@ -710,6 +715,7 @@ class TestTEMPLATED_TYPEDEFS:
         """Test presence and validity of using typededs"""
 
         import cppyy
+
         tct = cppyy.gbl.TemplatedTypedefs.DerivedWithUsing
         dum = cppyy.gbl.TemplatedTypedefs.SomeDummy
 
@@ -732,6 +738,7 @@ class TestTEMPLATED_TYPEDEFS:
         """Test that mapped types can be used as builting"""
 
         import cppyy
+
         tct = cppyy.gbl.TemplatedTypedefs.DerivedWithUsing
         dum = cppyy.gbl.TemplatedTypedefs.SomeDummy
 
@@ -759,6 +766,7 @@ class TestTEMPLATED_TYPEDEFS:
         """Test that mapped types can be used as template arguments"""
 
         import cppyy
+
         tct = cppyy.gbl.TemplatedTypedefs.DerivedWithUsing
         dum = cppyy.gbl.TemplatedTypedefs.SomeDummy
 
@@ -770,6 +778,8 @@ class TestTEMPLATED_TYPEDEFS:
         assert tct['double', dum, 4] is not tct[in_type, dum, 4]
 
     def test04_type_deduction(self):
+        """Usage of type reducer"""
+
         import cppyy
 
         cppyy.cppdef("""
@@ -783,8 +793,10 @@ class TestTEMPLATED_TYPEDEFS:
         assert three == 3
 
     def test05_type_deduction_and_extern(self):
+        """Usage of type reducer with extern template"""
 
         import cppyy
+        import sys
 
         cppyy.cppdef("""\
         namespace FailedTypeDeducer {
