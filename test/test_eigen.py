@@ -133,7 +133,7 @@ class TestEIGEN:
 
         import cppyy
 
-        a = cppyy.gbl.Eigen.MatrixXf(2, 2) 
+        a = cppyy.gbl.Eigen.MatrixXf(2, 2)
         assert a.size() == 4
         b = cppyy.gbl.Eigen.MatrixXf(3, 3)
         assert b.size() == 9
