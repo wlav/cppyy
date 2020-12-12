@@ -609,6 +609,34 @@ class TestSTLVECTOR:
         v = cppyy.gbl.std.vector(l)
         assert list(l) == l
 
+    def test18_array_interface(self):
+        """Test usage of __array__ from numpy"""
+
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            py.test.skip('numpy is not installed')
+
+        a = cppyy.gbl.std.vector[int]((1, 2, 3))
+
+        b = np.array(a)
+        assert len(a) == len(b)
+        a[0] = 4
+        assert a[0] == 4
+        assert b[0] == 1
+
+        b = np.array(a, copy=False)
+        assert b[0] == 4
+        a[0] = 1
+        assert b[0] == 1
+
+        b = np.array(a, dtype=np.int32, copy=False)
+        assert b[0] == 1
+        a[0] = 5
+        assert b[0] == 5
+
 
 class TestSTLSTRING:
     def setup_class(cls):
