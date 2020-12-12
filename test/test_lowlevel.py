@@ -16,7 +16,14 @@ class TestLOWLEVEL:
         cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
         cls.N = cppyy.gbl.N
 
-    def test01_builtin_cpp_casts(self):
+    def test01_llv_type(self):
+        """Existence of LowLevelView type"""
+
+        import cppyy.types
+
+        assert cppyy.types.LowLevelView
+
+    def test02_builtin_cpp_casts(self):
         """C++ casting of builtin types"""
 
         from cppyy import ll
@@ -31,7 +38,7 @@ class TestLOWLEVEL:
         assert len(ll.reinterpret_cast['int*'](0)) == 0
         raises(ReferenceError, ll.reinterpret_cast['int*'](0).__getitem__, 0)
 
-    def test02_memory(self):
+    def test03_memory(self):
         """Memory allocation and free-ing"""
 
         import cppyy
@@ -59,7 +66,7 @@ class TestLOWLEVEL:
             assert mem[i] == i+1
         cppyy.ll.array_delete(mem)
 
-    def test03_python_casts(self):
+    def test04_python_casts(self):
         """Casts to common Python pointer encapsulations"""
 
         import cppyy, cppyy.ll
@@ -81,7 +88,7 @@ class TestLOWLEVEL:
         ptrptr = cppyy.ll.as_ctypes(s, byref=True)
         assert pycasts.get_deref(ptrptr) == actual
 
-    def test04_array_as_ref(self):
+    def test05_array_as_ref(self):
         """Use arrays for pass-by-ref"""
 
         import cppyy, sys
@@ -110,7 +117,7 @@ class TestLOWLEVEL:
         f = array('f', [0]);     ctd.set_float_r(f);  assert f[0] ==  5.
         f = array('d', [0]);     ctd.set_double_r(f); assert f[0] == -5.
 
-    def test05_ctypes_as_ref_and_ptr(self):
+    def test06_ctypes_as_ref_and_ptr(self):
         """Use ctypes for pass-by-ref/ptr"""
 
         # See:
@@ -246,7 +253,7 @@ class TestLOWLEVEL:
         assert f[0] ==   5; assert f[1] ==  10; assert f[2] ==  20
         cppyy.ll.array_delete(f)
 
-    def test06_ctypes_pointer_types(self):
+    def test07_ctypes_pointer_types(self):
         """Use ctypes for pass-by-ptr/ptr-ptr"""
 
         if ispypy:
@@ -279,7 +286,7 @@ class TestLOWLEVEL:
         val = ctd.set_void_ppm(ptr)
         assert ctd.freeit(ptr) == val
 
-    def test07_ctypes_type_correctness(self):
+    def test08_ctypes_type_correctness(self):
         """If types don't match with ctypes, expect exceptions"""
 
         import cppyy, ctypes
@@ -295,7 +302,7 @@ class TestLOWLEVEL:
             for meth in meth_types:
                 with raises(TypeError): getattr(ctd, 'set_'+meth+ext)(i)
 
-    def test08_numpy_bool_array(self):
+    def test09_numpy_bool_array(self):
         """Test passing of numpy bool array"""
 
         import cppyy
@@ -309,7 +316,7 @@ class TestLOWLEVEL:
         x = np.array([True], dtype=np.bool)
         assert cppyy.gbl.convert_bool(x)
 
-    def test09_array_of_const_char_star(self):
+    def test10_array_of_const_char_star(self):
         """Test passting of const char*[]"""
 
         import cppyy, ctypes
@@ -340,7 +347,7 @@ class TestLOWLEVEL:
         with raises(TypeError):
             cppyy.gbl.ArrayOfCStrings.takes_array_of_cstrings(pyargs, len(pyargs))
 
-    def test10_array_of_const_char_ref(self):
+    def test11_array_of_const_char_ref(self):
         """Test passting of const char**&"""
 
         import cppyy, ctypes
@@ -395,7 +402,7 @@ class TestLOWLEVEL:
             cppyy.ll.free(ctypes.cast(voidpp[i], ctypes.c_void_p))
         cppyy.ll.free(ptr)
 
-    def test11_null_array(self):
+    def test12_null_array(self):
         """Null low level view as empty list"""
 
         import cppyy
@@ -409,3 +416,38 @@ class TestLOWLEVEL:
 
         assert not ns.gime_null()
         assert list(ns.gime_null()) == []
+
+    def test13_array_interface(self):
+        """Test usage of __array__ from numpy"""
+
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            py.test.skip('numpy is not installed')
+
+        cppyy.cppdef("""\
+        namespace ArrayConversions {
+            int ivals[] = {1, 2, 3};
+        }""")
+
+        ns = cppyy.gbl.ArrayConversions
+
+        a = ns.ivals
+
+        b = np.array(a, copy=True)     # default behavior
+        assert len(a) == len(b)
+        a[0] = 4
+        assert a[0] == 4
+        assert b[0] == 1
+
+        b = np.array(a, copy=False)
+        assert b[0] == 4
+        a[0] = 1
+        assert b[0] == 1
+
+        b = np.array(a, dtype=np.int32, copy=False)
+        assert b[0] == 1
+        a[0] = 5
+        assert b[0] == 5
