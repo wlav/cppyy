@@ -66,6 +66,9 @@ class TestLOWLEVEL:
             assert mem[i] == i+1
         cppyy.ll.array_delete(mem)
 
+        mem = cppyy.ll.array_new[int](self.N, managed=True)
+        assert mem.__python_owns__ == True
+
     def test04_python_casts(self):
         """Casts to common Python pointer encapsulations"""
 

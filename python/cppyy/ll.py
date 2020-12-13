@@ -73,9 +73,10 @@ class ArraySizer(object):
     def __getitem__(self, t):
         self.array_type = t
         return self
-    def __call__(self, size):
+    def __call__(self, size, managed=False):
         res = self.func[self.array_type](size)
         res.reshape((size,))
+        if managed: res.__python_owns__ = True
         return res
 
 # import casting helpers
