@@ -79,6 +79,13 @@ class ArraySizer(object):
         if managed: res.__python_owns__ = True
         return res
 
+class CArraySizer(ArraySizer):
+    def __call__(self, size, managed=False):
+        res = ArraySizer.__call__(self, size, managed)
+        res.__cpp_array__ = False
+        return res
+
+
 # import casting helpers
 cast             = cppyy.gbl.__cppyy_internal.cppyy_cast
 static_cast      = cppyy.gbl.__cppyy_internal.cppyy_static_cast
@@ -86,7 +93,7 @@ reinterpret_cast = cppyy.gbl.__cppyy_internal.cppyy_reinterpret_cast
 dynamic_cast     = cppyy.gbl.__cppyy_internal.cppyy_dynamic_cast
 
 # import memory allocation/free-ing helpers
-malloc           = ArraySizer(cppyy.gbl.__cppyy_internal.cppyy_malloc)
+malloc           = CArraySizer(cppyy.gbl.__cppyy_internal.cppyy_malloc)
 free             = cppyy.gbl.free      # for symmetry
 array_new        = ArraySizer(cppyy.gbl.__cppyy_internal.cppyy_array_new)
 array_delete     = cppyy.gbl.__cppyy_internal.cppyy_array_delete

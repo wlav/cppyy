@@ -51,6 +51,7 @@ class TestLOWLEVEL:
       # typed styles
         mem = cppyy.ll.malloc[int](self.N)
         assert len(mem) == self.N
+        assert not mem.__cpp_array__
         for i in range(self.N):
             mem[i] = i+1
             assert type(mem[i]) == int
@@ -59,6 +60,7 @@ class TestLOWLEVEL:
 
       # C++ arrays
         mem = cppyy.ll.array_new[int](self.N)
+        assert mem.__cpp_array__
         assert len(mem) == self.N
         for i in range(self.N):
             mem[i] = i+1
@@ -67,7 +69,11 @@ class TestLOWLEVEL:
         cppyy.ll.array_delete(mem)
 
         mem = cppyy.ll.array_new[int](self.N, managed=True)
-        assert mem.__python_owns__ == True
+        assert     mem.__python_owns__
+        mem.__python_owns__ = False
+        assert not mem.__python_owns__
+        mem.__python_owns__ = True
+        assert     mem.__python_owns__
 
     def test04_python_casts(self):
         """Casts to common Python pointer encapsulations"""
