@@ -336,3 +336,13 @@ class TestOPERATORS:
         assert f[42] == 42
         b = ns.Bar()
         assert b[42] == 42
+
+    def test15_class_and_global_mix(self):
+        """Iterator methods have both class and global overloads"""
+
+        from cppyy.gbl import std
+
+        x = std.vector[int]([1,2,3])
+        assert (x.end() - 1).__deref__() == 3
+        assert std.max_element(x.begin(), x.end())-x.begin() == 2
+        assert (x.end() - 3).__deref__() == 1

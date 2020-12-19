@@ -15,6 +15,7 @@ master: 1.9.2
 
 * Added ``cppyy.types`` module for exposing cppyy builtin types
 * Improve numpy integration with custom ``__array__`` methods
+* Allow operator overload resolution mixing class and global methods
 
 
 2020-11-23: 1.9.1
