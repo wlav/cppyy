@@ -32,6 +32,13 @@ except AttributeError:
     pass
 _backend._cpp_backend = c
 
+def fixup_legacy():
+    version = sys.pypy_version_info
+    if version[0] < 7 or (version[0] == 7 and version[1] <= 3 and version[2] <= 3):
+        _backend.gbl.CppyyLegacy = _backend.gbl
+fixup_legacy()
+del fixup_legacy
+
 
 #- exports -------------------------------------------------------------------
 import sys
