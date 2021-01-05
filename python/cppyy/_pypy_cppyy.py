@@ -15,7 +15,12 @@ __all__ = [
 
 # first load the dependency libraries of the backend, then
 # pull in the built-in low-level cppyy
-c = loader.load_cpp_backend()
+try:
+    c = loader.load_cpp_backend()
+except RuntimeError:
+    import sysconfig
+    os.environ['CPPYY_BACKEND_LIBRARY'] = "libcppyy_backend"+sysconfig.get_config_var("SO")
+    c = loader.load_cpp_backend()
 os.environ['CPPYY_BACKEND_LIBRARY'] = c._name
 
 # some older versions can be fixed up through a compatibility
