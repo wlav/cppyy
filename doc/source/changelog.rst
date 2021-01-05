@@ -10,12 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.9.2
--------------
+2021-01-05: 1.9.2
+-----------------
 
 * Added ``cppyy.types`` module for exposing cppyy builtin types
 * Improve numpy integration with custom ``__array__`` methods
 * Allow operator overload resolution mixing class and global methods
+* Installation fixes for PyPy when using pip
 
 
 2020-11-23: 1.9.1
