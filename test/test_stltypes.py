@@ -637,6 +637,37 @@ class TestSTLVECTOR:
         a[0] = 5
         assert b[0] == 5
 
+    def test19_vector_point3d(self):
+        """Iteration over a vector of by-value objects"""
+
+        import cppyy
+
+        N = 10
+
+        cppyy.cppdef("""namespace vector_point3d {
+        class Point3D {
+            double x, y, z;
+
+        public:
+            Point3D(double x, double y, double z) : x(x), y(y), z(z) {}
+            double square() { return x*x+y*y+z*z; }
+        }; }""")
+
+        Point3D = cppyy.gbl.vector_point3d.Point3D
+        v = cppyy.gbl.std.vector[Point3D]()
+        for i in range(N):
+            v.emplace_back(i, i*2, i*3)
+
+        pysum = 0.
+        for x in range(N):
+            pysum += 14*x**2
+
+        cppsum = 0.
+        for p in v:
+            cppsum += p.square()
+
+        assert cppsum == pysum
+
 
 class TestSTLSTRING:
     def setup_class(cls):
