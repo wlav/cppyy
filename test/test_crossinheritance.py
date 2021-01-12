@@ -1161,7 +1161,7 @@ class TestCROSSINHERITANCE:
         A = cppyy.gbl.CrossDeep.A
 
         class B(A):
-            def __init__ (self , name = 'b'):
+            def __init__ (self, name = 'b'):
                 super(B, self).__init__(name)
 
             def fun1(self):
@@ -1178,7 +1178,7 @@ class TestCROSSINHERITANCE:
             assert inst.fun1() == val1
             assert inst.fun2() == inst.fun1()
 
-    def test28_cross_deep(self):
+    def test29_cross_deep_multi(self):
         """Deep multi-inheritance hierarchy"""
 
         import cppyy
