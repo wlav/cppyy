@@ -89,6 +89,12 @@ from . import _typemap
 _typemap.initialize(_backend)
 
 
+#- workaround (TODO: may not be needed with Clang9) --------------------------
+if 'win32' in sys.platform:
+    cppyy.cppdef("""template<>
+    std::basic_ostream<char, std::char_traits<char>>& __cdecl std::endl<char, std::char_traits<char>>(
+        std::basic_ostream<char, std::char_traits<char>>&);""")
+
 #- pythonization factories ---------------------------------------------------
 from . import _pythonization as py
 py._set_backend(_backend)

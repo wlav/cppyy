@@ -17,6 +17,7 @@ master: 1.9.3
 * Use PathCanonicalize when resolving paths on Windows
 * Add more ways of finding the backend library
 * Improve error reporting when failed to find the backend library
+* Workaround for mixing std::endl in JIT-ed and compiled code on Windows 32b
 
 
 2021-01-05: 1.9.2
