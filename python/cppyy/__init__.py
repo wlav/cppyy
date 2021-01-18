@@ -89,12 +89,6 @@ from . import _typemap
 _typemap.initialize(_backend)
 
 
-#- workaround (TODO: may not be needed with Clang9) --------------------------
-if 'win32' in sys.platform:
-    cppyy.cppdef("""template<>
-    std::basic_ostream<char, std::char_traits<char>>& __cdecl std::endl<char, std::char_traits<char>>(
-        std::basic_ostream<char, std::char_traits<char>>&);""")
-
 #- pythonization factories ---------------------------------------------------
 from . import _pythonization as py
 py._set_backend(_backend)
@@ -373,3 +367,10 @@ def multi(*bases):      # after six, see also _typemap.py
         def __new__(cls, name, this_bases, d):
             return nc_meta(name, bases, d)
     return type.__new__(faux_meta, 'faux_meta', (), {})
+
+
+#- workaround (TODO: may not be needed with Clang9) --------------------------
+if 'win32' in sys.platform:
+    cppdef("""template<>
+    std::basic_ostream<char, std::char_traits<char>>& __cdecl std::endl<char, std::char_traits<char>>(
+        std::basic_ostream<char, std::char_traits<char>>&);""")
