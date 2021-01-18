@@ -9,6 +9,7 @@ The `cookie cutter`_ repo provides a good cmake based example.
 More complete examples that show packaging include these repos (in
 alphabetical order):
 
+ * `bgfx-python`
  * `cppyy-bbhash`_
  * `dnpy`_
  * `PyEtaler`_
@@ -25,6 +26,7 @@ alphabetical order):
 
 .. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
 .. _cookie cutter: https://github.com/camillescott/cookiecutter-cppyy-cmake
+.. _bgfx-python: https://github.com/fbertola/bgfx-python
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash
 .. _dnpy: https://github.com/txjmb/dnpy
 .. _PyEtaler: https://github.com/etaler/PyEtaler
