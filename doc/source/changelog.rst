@@ -10,6 +10,15 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.9.3
+-------------
+
+* Ignore, for symbol lookups, libraries that can not be reloaded
+* Use PathCanonicalize when resolving paths on Windows
+* Add more ways of finding the backend library
+* Improve error reporting when failed to find the backend library
+
+
 2021-01-05: 1.9.2
 -----------------
 
