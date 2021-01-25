@@ -1342,12 +1342,12 @@ class TestCROSSINHERITANCE:
         assert ns.Component.get_count() == 0
 
       # introduce a Python derived class
+        ns.ComponentWithValue.__init__.__creates__ = False
         class PyComponentWithValue(ns.ComponentWithValue):
             def getValue(self):
                 return self.m_value + 12
 
       # wipe the python-side connection
-        PyComponentWithValue.__init__.__creates__ = False
         pycmp2a = PyComponentWithValue(27)
         assert not pycmp2a.__python_owns__
         pycmp2a.__python_owns__ = True
@@ -1376,3 +1376,24 @@ class TestCROSSINHERITANCE:
         del cmp2, act_cmp2
         gc.collect()
         assert ns.Component.get_count() == 0
+
+      # introduce a Python derived class with initialization
+        ns.ComponentWithValue.__init__.__creates__ = True
+        class PyComponentWithInit(ns.ComponentWithValue):
+            def __init__(self, cppvalue):
+                super(PyComponentWithInit, self).__init__(cppvalue)
+                self.m_pyvalue = 11
+
+            def getValue(self):
+                return self.m_value + self.m_pyvalue
+
+        cmp3 = cppyy.bind_object(PyComponentWithInit(77), PyComponentWithInit)
+        assert type(cmp3) == PyComponentWithInit
+        assert ns.Component.get_count() == 1
+
+        assert cmp3.getValue() == 77+11
+
+        del cmp3
+        gc.collect()
+        assert ns.Component.get_count() == 0
+
