@@ -1335,8 +1335,11 @@ class TestCROSSINHERITANCE:
         act_cmp1 = cppyy.bind_object(cmp1, ns.ComponentWithValue)
         assert not cmp1.__python_owns__          # b/c transferred
         assert act_cmp1.__python_owns__
-        act_cmp1.__python_owns__ = False
         assert act_cmp1.getValue() == 42
+
+        del act_cmp1, cmp1
+        gc.collect()
+        assert ns.Component.get_count() == 0
 
       # introduce a Python derived class
         class PyComponentWithValue(ns.ComponentWithValue):
@@ -1348,21 +1351,21 @@ class TestCROSSINHERITANCE:
         pycmp2a = PyComponentWithValue(27)
         assert not pycmp2a.__python_owns__
         pycmp2a.__python_owns__ = True
-        assert ns.Component.get_count() == 2
+        assert ns.Component.get_count() == 1
 
         pycmp2b = ns.cycle_component(pycmp2a)
-        assert ns.Component.get_count() == 2
+        assert ns.Component.get_count() == 1
         assert pycmp2b is pycmp2a
 
         del pycmp2b, pycmp2a
         gc.collect()
-        assert ns.Component.get_count() == 1
+        assert ns.Component.get_count() == 0
 
         cmp2 = cppyy.bind_object(cppyy.addressof(PyComponentWithValue(13)), ns.Component)
-        assert ns.Component.get_count() == 2
+        assert ns.Component.get_count() == 1
 
         cmp2 = ns.cycle_component(cmp2)     # causes auto down-cast
-        assert ns.Component.get_count() == 2
+        assert ns.Component.get_count() == 1
         assert type(cmp2) != PyComponentWithValue
 
       # rebind cmp2 to the python type
@@ -1371,8 +1374,5 @@ class TestCROSSINHERITANCE:
         assert act_cmp2.getValue() == 13+12
 
         del cmp2, act_cmp2
-        del cmp1, act_cmp1
-
         gc.collect()
-
-        #assert ns.Component.get_count() == 0
+        assert ns.Component.get_count() == 0
