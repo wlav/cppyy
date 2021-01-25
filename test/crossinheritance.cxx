@@ -77,6 +77,41 @@ int CrossInheritance::CountableBase::call() {
     return -1;
 }
 
+CrossInheritance::Component::Component() {
+    ++s_count;
+}
+
+CrossInheritance::Component::~Component() {
+    --s_count;
+}
+
+int CrossInheritance::Component::get_count() {
+    return s_count;
+}
+
+int CrossInheritance::Component::s_count = 0;
+
+namespace {
+
+class ComponentWithValue : public CrossInheritance::Component {
+public:
+    ComponentWithValue(int value) : m_value(value) {}
+    int getValue() { return m_value; }
+
+protected:
+    int m_value;
+};
+
+} // unnamed namespace
+
+CrossInheritance::Component* CrossInheritance::build_component(int value) {
+    return new ComponentWithValue(value);
+}
+
+CrossInheritance::Component* CrossInheritance::cycle_component(Component* c) {
+    return c;
+}
+
 // for protected member testing
 AccessProtected::MyBase::MyBase() : my_data(101) {
     /* empty */

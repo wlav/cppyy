@@ -349,6 +349,31 @@ class TestCROSSINHERITANCE:
         assert call_shared(v) == 13
         assert v.some_imp() == 13
 
+    def test12a_counter_test(self):
+        """Test countable base counting"""
+
+        import cppyy, gc
+
+        std = cppyy.gbl.std
+        CB  = cppyy.gbl.CrossInheritance.CountableBase
+
+        class PyCountable(CB):
+            def call(self):
+                try:
+                    return self.extra + 42
+                except AttributeError:
+                    return 42
+
+        start_count = CB.s_count
+
+      # test counter
+        pyc = PyCountable()
+        assert CB.s_count == 1 + start_count
+
+        del pyc
+        gc.collect()
+        assert CB.s_count == 0 + start_count
+
     def test12_python_shared_ptr_memory(self):
         """Usage of Python derived objects with std::shared_ptr"""
 
@@ -1275,3 +1300,79 @@ class TestCROSSINHERITANCE:
       # used to produce uncompilable code
         class PyDerived(ns.Base):
             pass
+
+    def test31_object_rebind(self):
+        """Usage of bind_object to cast with Python derived objects"""
+
+        import cppyy, gc
+
+        ns = cppyy.gbl.CrossInheritance
+        ns.build_component.__creates__ = True
+
+        assert ns.Component.get_count() == 0
+
+        cmp1 = ns.build_component(42)
+        assert cmp1.__python_owns__
+        assert type(cmp1) == ns.Component
+        with raises(AttributeError):
+            cmp1.getValue()
+
+        assert ns.Component.get_count() == 1
+
+      # introduce the actual component type; would have been a header,
+      # but this simply has to match what is in crossinheritance.cxx
+        cppyy.cppdef("""namespace CrossInheritance {
+        class ComponentWithValue : public Component {
+        public:
+            ComponentWithValue(int value) : m_value(value) {}
+            int getValue() { return m_value; }
+
+        protected:
+            int m_value;
+        }; }""")
+
+      # rebind cmp1 to its actual C++ class
+        act_cmp1 = cppyy.bind_object(cmp1, ns.ComponentWithValue)
+        assert not cmp1.__python_owns__          # b/c transferred
+        assert act_cmp1.__python_owns__
+        act_cmp1.__python_owns__ = False
+        assert act_cmp1.getValue() == 42
+
+      # introduce a Python derived class
+        class PyComponentWithValue(ns.ComponentWithValue):
+            def getValue(self):
+                return self.m_value + 12
+
+      # wipe the python-side connection
+        PyComponentWithValue.__init__.__creates__ = False
+        pycmp2a = PyComponentWithValue(27)
+        assert not pycmp2a.__python_owns__
+        pycmp2a.__python_owns__ = True
+        assert ns.Component.get_count() == 2
+
+        pycmp2b = ns.cycle_component(pycmp2a)
+        assert ns.Component.get_count() == 2
+        assert pycmp2b is pycmp2a
+
+        del pycmp2b, pycmp2a
+        gc.collect()
+        assert ns.Component.get_count() == 1
+
+        cmp2 = cppyy.bind_object(cppyy.addressof(PyComponentWithValue(13)), ns.Component)
+        assert ns.Component.get_count() == 2
+
+        cmp2 = ns.cycle_component(cmp2)     # causes auto down-cast
+        assert ns.Component.get_count() == 2
+        assert type(cmp2) != PyComponentWithValue
+
+      # rebind cmp2 to the python type
+        act_cmp2 = cppyy.bind_object(cmp2, PyComponentWithValue)
+        act_cmp2.__python_owns__ = True
+        assert act_cmp2.getValue() == 13+12
+
+        del cmp2, act_cmp2
+        del cmp1, act_cmp1
+
+        gc.collect()
+
+        #assert ns.Component.get_count() == 0

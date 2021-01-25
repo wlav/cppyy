@@ -95,6 +95,22 @@ public:
     static int s_count;
 };
 
+class Component {
+public:
+    Component();
+    Component(const Component&) = delete;
+    Component& operator=(const Component&) = delete;
+    virtual ~Component();
+
+    static int get_count();
+
+private:
+    static int s_count;
+};
+
+Component* build_component(int value);
+Component* cycle_component(Component* c);
+
 } // namespace CrossInheritance
 
 

@@ -18,6 +18,7 @@ master: 1.9.3
 * Add more ways of finding the backend library
 * Improve error reporting when failed to find the backend library
 * Workaround for mixing std::endl in JIT-ed and compiled code on Windows 32b
+* cppyy.bind_object can now re-cast types, incl. Python cross-derived ones
 
 
 2021-01-05: 1.9.2
