@@ -19,6 +19,7 @@ master: 1.9.3
 * Improve error reporting when failed to find the backend library
 * Workaround for mixing std::endl in JIT-ed and compiled code on Windows 32b
 * cppyy.bind_object can now re-cast types, incl. Python cross-derived ones
+* Python cross-derived objects send to (and owned by) C++ retain Python state
 
 
 2021-01-05: 1.9.2
