@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 
-#ifndef __MSC_VER
+#ifndef _WIN32
 #include <cxxabi.h>
 inline std::string demangle_it(const char* name, const char* errmsg) {
     int status;
