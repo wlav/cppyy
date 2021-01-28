@@ -9,7 +9,7 @@ The `cookie cutter`_ repo provides a good cmake based example.
 More complete examples that show packaging include these repos (in
 alphabetical order):
 
- * `bgfx-python`
+ * `bgfx-python`_
  * `cppyy-bbhash`_
  * `dnpy`_
  * `PyEtaler`_
