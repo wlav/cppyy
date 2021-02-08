@@ -21,6 +21,7 @@ master: 1.9.3
 * cppyy.bind_object can now re-cast types, incl. Python cross-derived ones
 * Python cross-derived objects send to (and owned by) C++ retain Python state
 * Fixed a subtle crash that arises when an invalid ``using`` is the last method
+* filter -fno-plt (coming from anaconda builds; not understood by Cling)
 
 
 2021-01-05: 1.9.2
