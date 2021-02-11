@@ -1425,3 +1425,77 @@ class TestCROSSINHERITANCE:
         del cmp5, act_cmp5
         gc.collect()
         assert ns.Component.get_count() == 0
+
+    def test32_by_value_arguments(self):
+        """Override base function taking by-value arguments"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace CrossCallWithValue {
+        struct Data {
+            int value;
+        };
+
+        struct CppBase {
+            virtual ~CppBase() {}
+
+            int func(Data d) {
+                return d.value + extra_func(d);
+            }
+
+            virtual int extra_func(Data d) = 0;
+        }; }""")
+
+        ns = cppyy.gbl.CrossCallWithValue
+
+        class PyDerived(ns.CppBase):
+            def extra_func(self, d):
+                return 42 + d.value
+
+        d = ns.Data(13)
+        p = PyDerived()
+
+        assert p.func(d) == 42 + 2 * d.value
+
+    def test33_direct_base_methods(self):
+        """Call base class methods directly"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace DirectCalls {
+        struct A {
+            virtual ~A() {}
+            virtual int func() {
+                return 1;
+            }
+        };
+
+        struct B : public A {
+            virtual int func() {
+                return 2;
+            }
+        }; }""")
+
+        ns = cppyy.gbl.DirectCalls
+
+        a = ns.A()
+        assert a.func()     == 1
+        assert ns.A.func(a) == 1
+
+        b = ns.B()
+        assert b.func()     == 2
+        assert ns.B.func(b) == 2
+        assert ns.A.func(b) == 1
+
+        with raises(TypeError):
+            ns.B.func(a)
+
+        class C(ns.A):
+            def func(self):
+                from_a = ns.A.func(self)
+                return from_a + 2
+
+        c = C()
+        assert c.func() == 3
