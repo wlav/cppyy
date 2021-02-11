@@ -13,13 +13,14 @@ PyPy support lags CPython support.
 master: 1.9.3
 -------------
 
+* Enable direct calls of base class' methods in Python cross-overrides
+* cppyy.bind_object can now re-cast types, incl. Python cross-derived ones
+* Python cross-derived objects send to (and owned by) C++ retain Python state
 * Ignore, for symbol lookups, libraries that can not be reloaded
 * Use PathCanonicalize when resolving paths on Windows
 * Add more ways of finding the backend library
 * Improve error reporting when failed to find the backend library
 * Workaround for mixing std::endl in JIT-ed and compiled code on Windows 32b
-* cppyy.bind_object can now re-cast types, incl. Python cross-derived ones
-* Python cross-derived objects send to (and owned by) C++ retain Python state
 * Fixed a subtle crash that arises when an invalid ``using`` is the last method
 * filter -fno-plt (coming from anaconda builds; not understood by Cling)
 
