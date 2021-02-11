@@ -78,7 +78,10 @@ class TestBOOSTOPERATORS:
 
         import cppyy
 
-        cppyy.include("gmpxx.h")
+        try:
+            cppyy.include("gmpxx.h")
+        except ImportError:
+            py.test.skip("gmpxx not installed")
         cppyy.cppdef("""
             namespace boost_test {
                class Derived : boost::ordered_field_operators<Derived>, boost::ordered_field_operators<Derived, mpq_class> {};
