@@ -1773,7 +1773,41 @@ class TestDATATYPES:
         assert b.name     == "aap"
         assert b.buf_type == ns.SHAPE
 
-    def test37_complex_numpy_arrays(self):
+    def test37_more_aggregates(self):
+        """More aggregate testings (used to fail/report errors)"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace AggregateTest {
+        enum E { A=1 };
+
+        struct R1 { E e; };
+        R1 make_R1() { return {A}; }
+
+        struct S {
+            S(int x): x(x) {}
+            S(const S&) = delete;
+            int x;
+        };
+
+        struct R2 {
+            std::optional<S> s = {};
+        };
+
+        R2 make_R2() {
+            return {1};
+        } }""")
+
+        ns = cppyy.gbl.AggregateTest
+
+        r1 = ns.make_R1()
+        assert r1.e == ns.E.A
+
+        r2 = ns.make_R2()
+        assert r2.s.x == 1
+
+    def test38_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""
 
         import cppyy
@@ -1820,7 +1854,7 @@ class TestDATATYPES:
             Ccl = func(Acl, Bcl, 2)
             assert complex(Ccl) == pyCcl
 
-    def test38_ccharp_memory_handling(self):
+    def test39_ccharp_memory_handling(self):
         """cppyy side handled memory of C strings"""
 
         import cppyy
