@@ -22,7 +22,8 @@ master: 1.9.3
 * Improve error reporting when failed to find the backend library
 * Workaround for mixing std::endl in JIT-ed and compiled code on Windows 32b
 * Fixed a subtle crash that arises when an invalid ``using`` is the last method
-* filter -fno-plt (coming from anaconda builds; not understood by Cling)
+* Filter -fno-plt (coming from anaconda builds; not understood by Cling)
+* Fixed memory leak in generic base ``__str__``
 
 
 2021-01-05: 1.9.2
