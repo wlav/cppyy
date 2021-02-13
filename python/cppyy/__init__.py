@@ -198,10 +198,7 @@ def cppexec(stmt):
   # capture stderr, but note that ProcessLine could legitimately be writing to
   # std::cerr, in which case the captured output needs to be printed as normal
     with _stderr_capture() as err:
-        if ispypy:      # TODO: temporary until type codes propagate; also del ispypy
-            errcode = ctypes.c_int(0)
-        else:
-            errcode = gbl.CppyyLegacy.TInterpreter.EErrorCode.__ctype__(0)
+        errcode = ctypes.c_int(0)
         gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
 
     if errcode.value:
@@ -310,7 +307,7 @@ if os.getenv('CONDA_PREFIX'):
 include_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, os.path.pardir, os.path.pardir, 'include'))
 if os.path.exists(include_path): add_include_path(include_path)
 
-del include_path, apipath
+del include_path, apipath, ispypy
 
 def add_autoload_map(fname):
     """Add the entries from a autoload (.rootmap) file to Cling."""
