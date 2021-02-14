@@ -15,7 +15,9 @@ class TestDATATYPES:
         import cppyy
         cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
         cls.N = cppyy.gbl.N
-        cls.has_byte = 201402 < cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;")
+        at_least_17 = 201402 < cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;")
+        cls.has_byte     = at_least_17
+        cls.has_optional = at_least_17
 
     def test01_instance_data_read_access(self):
         """Read access to instance public data and verify values"""
@@ -1789,23 +1791,26 @@ class TestDATATYPES:
             S(int x): x(x) {}
             S(const S&) = delete;
             int x;
-        };
-
-        struct R2 {
-            std::optional<S> s = {};
-        };
-
-        R2 make_R2() {
-            return {1};
-        } }""")
+        }; }""")
 
         ns = cppyy.gbl.AggregateTest
 
         r1 = ns.make_R1()
         assert r1.e == ns.E.A
 
-        r2 = ns.make_R2()
-        assert r2.s.x == 1
+        if self.has_optional:
+            cppyy.cppdef("""\
+            namespace AggregateTest {
+            struct R2 {
+                std::optional<S> s = {};
+            };
+
+            R2 make_R2() {
+                return {1};
+            } }""")
+
+            r2 = ns.make_R2()
+            assert r2.s.x == 1
 
     def test38_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""
