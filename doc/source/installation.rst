@@ -57,15 +57,7 @@ Wheels on PyPI
 
 Wheels for the backend (``cppyy-cling``) are available on PyPI for GNU/Linux,
 MacOS-X, and MS Windows (both 32b and 64b).
-
-The Linux wheels are built on manylinux, but with gcc 5.5, not the 4.8.2 that
-ships with manylinux1, since cppyy exposes C++ APIs and g++ introduced
-ABI incompatibilities starting with its 5 series forward.
-Using 4.8.2 would have meant that any software using cppyy would have to
-be (re)compiled for the older gcc ABI, which the odds don't favor.
-Note that building cppyy fully with 4.8.2 (and requiring the old ABI across
-the board) does work.
-
+The Linux wheels are built for manylinux2014, but with the dual ABI enabled.
 The wheels for MS Windows were build with MSVC Community Edition 2017.
 
 There are no wheels for the ``CPyCppyy`` and ``cppyy`` packages, to allow

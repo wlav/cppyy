@@ -79,15 +79,6 @@ The wheel of ``cppyy-cling`` is reused by pip for all versions of CPython and
 PyPy, thus the long compilation is needed only once for all different
 versions of Python on the same machine.
 
-Unless you build on the manylinux1 docker images, wheels for ``cppyy``,
-``CPyCppyy``, and ``cppyy-backend`` are disabled, because ``setuptools`` (as
-used by ``pip``) does not properly resolve dependencies for wheels.
-You will see a harmless "error" message to that effect fly by in the (verbose)
-output.
-You can force manual build of those wheels, as long as you make sure that you
-have the proper dependencies *installed*, using ``--force-bdist``, when
-building from the repository.
-
 Next up is ``cppyy-backend`` (cppyy-backend, subdirectory "clingwrapper"; omit
 the first step if you already cloned the repo for ``cppyy-cling``)::
 

@@ -10,9 +10,10 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.9.3
--------------
+2021-02-15: 1.9.3
+-----------------
 
+* Wheels for Linux now follow manylinux2014
 * Enable direct calls of base class' methods in Python cross-overrides
 * cppyy.bind_object can now re-cast types, incl. Python cross-derived ones
 * Python cross-derived objects send to (and owned by) C++ retain Python state
