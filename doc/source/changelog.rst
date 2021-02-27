@@ -10,6 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.9.4
+-------------
+
+* Fix for installing into a directory that has a space in the name
+* Fix empty collection printing through Cling on 64b Windows
+
+
 2021-02-15: 1.9.3
 -----------------
 
