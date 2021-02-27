@@ -200,6 +200,9 @@ You can then select the appropriate PCH with the ``CLING_STANDARD_PCH`` envar::
 
 Or disable it completely by setting that envar to "none".
 
+Note that withouth the PCH, the default C++ standard will be the one with
+which ``cppyy-cling`` was built.
+
 
 .. _`conda-forge`: https://anaconda.org/conda-forge/cppyy
 .. _`Anaconda`: https://www.anaconda.com/distribution/
