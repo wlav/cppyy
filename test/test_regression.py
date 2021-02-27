@@ -988,3 +988,12 @@ class TestREGRESSION:
 
         pt_type = cppyy.gbl.property_types.ReferenceWavefunction['double']
         assert cppyy.gbl.std.get[0](cppyy.gbl.property_types.run_as[pt_type]()) ==  20.
+
+    def test33_print_empty_collection(self):
+        """Print empty collection through Cling"""
+
+        import cppyy
+
+      # printing an empty collection used to have a missing symbol on 64b Windows
+        v = cppyy.gbl.std.vector[int]()
+        str(v)
