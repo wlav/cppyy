@@ -15,6 +15,7 @@ master: 1.9.4
 
 * Fix for installing into a directory that has a space in the name
 * Fix empty collection printing through Cling on 64b Windows
+* Fix accidental shadowing of derived class typedefs by same names in base
 * Removed functions/apis deprecated in py3.9
 
 

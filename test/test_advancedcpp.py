@@ -824,3 +824,45 @@ class TestADVANCEDCPP:
         assert cppyy.gbl.UserDirs.foo1() == cppyy.gbl.UsedSpace1.foo1()
         assert cppyy.gbl.UserDirs.bar()  == cppyy.gbl.UsedSpace2.bar()
         assert cppyy.gbl.UserDirs.foo2() == cppyy.gbl.UsedSpace1.inner.foo2()
+
+    def test27_shadowed_typedef(self):
+        """Test that typedefs are not shadowed"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace ShadowedTypedef {
+        struct A {
+           typedef std::shared_ptr<A> Ptr;
+           typedef int Val;
+        };
+
+        struct B : public A {
+           typedef std::shared_ptr<B> Ptr;
+           typedef double Val;
+        };
+
+        struct C : public A {
+           /* empty */
+        }; }""")
+
+        ns = cppyy.gbl.ShadowedTypedef
+
+        ns.A.Ptr      # pull A::Ptr first
+        ns.A.Val      # id. A::Val
+        ns.B.Ptr      # used to be A.Ptr through python-side dict lookup
+        ns.B.Val      # id. B::Val
+        ns.C.Ptr      # is A.Ptr
+        ns.C.Val      # is A.Val
+
+        assert ns.A.Ptr == ns.A.Ptr
+        assert ns.B.Ptr == ns.B.Ptr
+        assert ns.A.Ptr != ns.B.Ptr
+        assert ns.A.Ptr == ns.C.Ptr
+        assert ns.A.Val == ns.C.Val
+
+        # TODO: currently only classes are checked; typedefs of builtin types are
+        # mapped through the type mapper and as such can be anything
+        #assert ns.A.Val != ns.B.Val
+        #assert type(ns.A.Val(1)) == int
+        #assert type(ns.B.Val(1)) == float
