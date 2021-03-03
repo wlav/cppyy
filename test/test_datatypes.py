@@ -971,7 +971,64 @@ class TestDATATYPES:
         assert l3 != l5
         assert l5 != l3
 
-    def test20_object_validity(self):
+    def test20_object_comparisons_with_cpp__eq__(self):
+        """Comparisons with C++ providing __eq__/__ne__"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace MoreComparisons {
+        struct Comparable1 {
+            Comparable1(int i) : fInt(i) {}
+            int fInt;
+            static bool __eq__(const Comparable1& self, const Comparable1& other){
+                return self.fInt == other.fInt;
+            }
+            static bool __ne__(const Comparable1& self, const Comparable1& other){
+                return self.fInt != other.fInt;
+            }
+        };
+
+        struct Comparable2 {
+            Comparable2(int i) : fInt(i) {}
+            int fInt;
+            bool __eq__(const Comparable2& other){
+                return fInt == other.fInt;
+            }
+            bool __ne__(const Comparable2& other){
+                return fInt != other.fInt;
+            }
+        }; }""")
+
+        ns = cppyy.gbl.MoreComparisons
+
+        c1_1 = ns.Comparable1(42)
+        c1_2 = ns.Comparable1(42)
+        c1_3 = ns.Comparable1(43)
+
+        assert     ns.Comparable1.__dict__['__eq__'](c1_1, c1_2)
+        assert not ns.Comparable1.__dict__['__eq__'](c1_1, c1_3)
+        assert not ns.Comparable1.__dict__['__ne__'](c1_1, c1_2)
+        assert     ns.Comparable1.__dict__['__ne__'](c1_1, c1_3)
+
+        with raises(TypeError):
+            c1_1 == c1_2
+
+        with raises(TypeError):
+            c1_1 != c1_2
+
+        c2_1 = ns.Comparable2(27)
+        c2_2 = ns.Comparable2(27)
+        c2_3 = ns.Comparable2(28)
+
+        assert     c2_1 == c2_1
+        assert     c2_1 == c2_2
+        assert not c2_1 == c2_3
+        assert not c2_1 != c2_1
+        assert not c2_1 != c2_2
+        assert     c2_1 != c2_3
+
+    def test21_object_validity(self):
         """Test object validity checking"""
 
         from cppyy import gbl
@@ -985,7 +1042,7 @@ class TestDATATYPES:
 
         assert not d2
 
-    def test21_buffer_reshaping(self):
+    def test22_buffer_reshaping(self):
         """Test usage of buffer sizing"""
 
         import cppyy
@@ -1017,7 +1074,7 @@ class TestDATATYPES:
             for i in range(self.N):
                 assert arr[i] == l[i]
 
-    def test22_voidp(self):
+    def test23_voidp(self):
         """Test usage of void* data"""
 
         import cppyy
@@ -1065,7 +1122,7 @@ class TestDATATYPES:
         c.s_voidp = c2
         address_equality_test(c.s_voidp, c2)
 
-    def test23_byte_arrays(self):
+    def test24_byte_arrays(self):
         """Usage of unsigned char* as byte array and std::byte*"""
 
         import array, cppyy, ctypes
@@ -1100,7 +1157,7 @@ class TestDATATYPES:
         if self.has_byte:
             run(self, cppyy.gbl.sum_byte_data, buf, total)
 
-    def test24_function_pointers(self):
+    def test25_function_pointers(self):
         """Function pointer passing"""
 
         import cppyy
@@ -1151,7 +1208,7 @@ class TestDATATYPES:
         with raises(TypeError):
             cppyy.gbl.call_sum_of_int(3, 2)
 
-    def test25_callable_passing(self):
+    def test26_callable_passing(self):
         """Passing callables through function pointers"""
 
         import cppyy, gc
@@ -1223,7 +1280,7 @@ class TestDATATYPES:
         gc.collect()
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test26_callable_through_function_passing(self):
+    def test27_callable_through_function_passing(self):
         """Passing callables through std::function"""
 
         import cppyy, gc
@@ -1295,7 +1352,7 @@ class TestDATATYPES:
         gc.collect()
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test27_std_function_life_lines(self):
+    def test28_std_function_life_lines(self):
         """Life lines to std::function data members"""
 
         import cppyy, gc
@@ -1332,7 +1389,7 @@ class TestDATATYPES:
         d.execute = d.xyz
         assert d.do_execute() == "xyz"
 
-    def test28_multi_dim_arrays_of_builtins(test):
+    def test29_multi_dim_arrays_of_builtins(test):
         """Multi-dim arrays of builtins"""
 
         import cppyy, ctypes
@@ -1366,7 +1423,7 @@ class TestDATATYPES:
                 p = (ctype * len(buf)).from_buffer(buf)
                 assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
 
-    def test29_anonymous_union(self):
+    def test30_anonymous_union(self):
         """Anonymous unions place there fields in the parent scope"""
 
         import cppyy
@@ -1458,7 +1515,7 @@ class TestDATATYPES:
         assert type(p.data_c[0]) == float
         assert p.intensity == 5.
 
-    def test30_pointer_to_array(self):
+    def test31_pointer_to_array(self):
         """Usability of pointer to array"""
 
         import cppyy
@@ -1489,7 +1546,7 @@ class TestDATATYPES:
             assert type(f) == AoS.Foo
         assert type(bar.fArr[0]) == AoS.Foo
 
-    def test31_object_pointers(self):
+    def test32_object_pointers(self):
         """Read/write access to objects through pointers"""
 
         import cppyy
@@ -1514,7 +1571,7 @@ class TestDATATYPES:
         assert c.s_strp               == "noot"
         assert sn                     == "noot"  # set through pointer
 
-    def test32_restrict(self):
+    def test33_restrict(self):
         """Strip __restrict keyword from use"""
 
         import cppyy
@@ -1523,7 +1580,7 @@ class TestDATATYPES:
 
         assert cppyy.gbl.restrict_call("aap") == "aap"
 
-    def test33_legacy_matrix(self):
+    def test34_legacy_matrix(self):
         """Handling of legacy matrix"""
 
         import cppyy
@@ -1574,7 +1631,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test34_legacy_matrix_of_structs(self):
+    def test35_legacy_matrix_of_structs(self):
         """Handling of legacy matrix of structs"""
 
         import cppyy
@@ -1637,7 +1694,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test35_plain_old_data(self):
+    def test36_plain_old_data(self):
         """Initializer construction of PODs"""
 
         import cppyy
@@ -1723,7 +1780,7 @@ class TestDATATYPES:
             assert len(f1.fPtrArr) == 3
             assert list(f1.fPtrArr) == [1., 2., 3]
 
-    def test36_aggregates(self):
+    def test37_aggregates(self):
         """Initializer construction of aggregates"""
 
         import cppyy
@@ -1775,7 +1832,7 @@ class TestDATATYPES:
         assert b.name     == "aap"
         assert b.buf_type == ns.SHAPE
 
-    def test37_more_aggregates(self):
+    def test38_more_aggregates(self):
         """More aggregate testings (used to fail/report errors)"""
 
         import cppyy
@@ -1812,7 +1869,7 @@ class TestDATATYPES:
             r2 = ns.make_R2()
             assert r2.s.x == 1
 
-    def test38_complex_numpy_arrays(self):
+    def test39_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""
 
         import cppyy
@@ -1859,7 +1916,7 @@ class TestDATATYPES:
             Ccl = func(Acl, Bcl, 2)
             assert complex(Ccl) == pyCcl
 
-    def test39_ccharp_memory_handling(self):
+    def test40_ccharp_memory_handling(self):
         """cppyy side handled memory of C strings"""
 
         import cppyy
