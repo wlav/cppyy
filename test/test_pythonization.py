@@ -206,7 +206,7 @@ class TestClassPYTHONIZATION:
             cnt = pz.gime_naked_countable()
             gc.collect()
             assert Countable.sInstances == oldcount + 1
-        del cnt
+            del cnt
         gc.collect()
 
         assert Countable.sInstances == oldcount
