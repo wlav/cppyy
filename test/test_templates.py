@@ -581,7 +581,63 @@ class TestTEMPLATES:
 
         assert cppyy.gbl.std.function['double(std::vector<double>)']
 
-    def test25_partial_templates(self):
+    def test25_stdfunction_ref_and_ptr_args(self):
+        """Use of std::function with reference or pointer args"""
+
+      # used to fail b/c type trimming threw away end ')' together with '*' or '&'
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace LambdaAndTemplates {
+        template <typename T>
+        struct S {};
+
+        template <typename T>
+        bool f(const std::function<bool(const S<T>&)>& callback) {
+            return callback({});
+        }
+
+        template <typename T>
+        bool f_noref(const std::function<bool(const S<T>)>& callback) {
+            return callback({});
+        }
+
+        struct S0 {};
+
+        bool f_notemplate(const std::function<bool(const S0&)>& callback) {
+            return callback({});
+        } }""")
+
+        ns = cppyy.gbl.LambdaAndTemplates
+
+        assert ns.f_noref[int](lambda arg: True)
+        assert ns.f_notemplate(lambda arg: True)
+
+      # following used to fail argument conversion
+        assert ns.f[int](lambda arg: True)
+
+        cppyy.cppdef("""\
+        namespace FuncPtrArrays {
+        typedef struct {
+            double* a0, *a1, *a2, *a3;
+        } Arrays;
+
+        typedef struct {
+            void (*fnc) (Arrays* const, Arrays* const);
+        } Foo;
+
+        void bar(Arrays* const, Arrays* const) {
+            return;
+        } }""")
+
+        ns = cppyy.gbl.FuncPtrArrays
+
+        foo = ns.Foo()
+        foo.fnc = ns.bar
+        foo.fnc       # <- this access used to fail
+
+    def test26_partial_templates(self):
         """Deduction of types with partial templates"""
 
         import cppyy
@@ -643,7 +699,7 @@ class TestTEMPLATES:
         assert ns.bar2['double'](17) == 17
         assert ns.bar2['double','int'](17) == 17
 
-    def test26_variadic_constructor(self):
+    def test27_variadic_constructor(self):
         """Use of variadic template function as contructor"""
 
         import cppyy
@@ -677,7 +733,7 @@ class TestTEMPLATES:
         a = ns.Atom(1567.0)
         assert a.m_m == 1567.0
 
-    def test27_enum_in_constructor(self):
+    def test28_enum_in_constructor(self):
         """Use of enums in template function as constructor"""
 
         import cppyy

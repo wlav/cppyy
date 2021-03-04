@@ -17,6 +17,7 @@ master: 1.9.4
 * Fix empty collection printing through Cling on 64b Windows
 * Fix accidental shadowing of derived class typedefs by same names in base
 * Streamlined templated function lookups in namespaces
+* Fix edge cases when decomposing std::function template arguments
 * Removed functions/apis deprecated in py3.9
 
 
