@@ -235,17 +235,16 @@ class TestTEMPLATES:
 
         import cppyy
 
-        cppyy.cppdef("""
-            template <typename T>
-            class RTTest_SomeClassWithTCtor {
-            public:
-                template<typename R>
-                RTTest_SomeClassWithTCtor(int n, R val) : m_double(n+val) {}
-                double m_double;
-            };
+        cppyy.cppdef("""\
+        template <typename T>
+        class RTTest_SomeClassWithTCtor {
+        public:
+            template<typename R>
+            RTTest_SomeClassWithTCtor(int n, R val) : m_double(n+val) {}
+            double m_double;
+        };
 
-            namespace RTTest_SomeNamespace {
-
+        namespace RTTest_SomeNamespace {
             template <typename T>
             class RTTest_SomeClassWithTCtor {
             public:
@@ -254,9 +253,7 @@ class TestTEMPLATES:
                 RTTest_SomeClassWithTCtor(int n, R val) : m_double(n+val) {}
                 double m_double;
             };
-
-            }
-        """)
+        } """)
 
         from cppyy import gbl
 
@@ -318,22 +315,21 @@ class TestTEMPLATES:
 
         import cppyy
 
-        cppyy.cppdef("""
-            struct RTTest_SomeStruct1 {};
-            template<class ...T> struct RTTest_TemplatedList {};
-            template<class ...T> auto rttest_make_tlist(T ... args) {
-                return RTTest_TemplatedList<T...>{};
-            }
+        cppyy.cppdef("""\
+        struct RTTest_SomeStruct1 {};
+        template<class ...T> struct RTTest_TemplatedList {};
+        template<class ...T> auto rttest_make_tlist(T ... args) {
+            return RTTest_TemplatedList<T...>{};
+        }
 
-            namespace RTTest_SomeNamespace {
-               struct RTTest_SomeStruct2 {};
-               template<class ...T> struct RTTest_TemplatedList2 {};
-            }
+        namespace RTTest_SomeNamespace {
+            struct RTTest_SomeStruct2 {};
+            template<class ...T> struct RTTest_TemplatedList2 {};
+        }
 
-            template<class ...T> auto rttest_make_tlist2(T ... args) {
-                return RTTest_SomeNamespace::RTTest_TemplatedList2<T...>{};
-            }
-        """)
+        template<class ...T> auto rttest_make_tlist2(T ... args) {
+            return RTTest_SomeNamespace::RTTest_TemplatedList2<T...>{};
+        } """)
 
         from cppyy.gbl import rttest_make_tlist, rttest_make_tlist2, \
             RTTest_SomeNamespace, RTTest_SomeStruct1
@@ -452,7 +448,7 @@ class TestTEMPLATES:
         import cppyy
         import cppyy.gbl as gbl
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace OperatorAddTest {
         template <class V>
         class CustomVec {
@@ -466,8 +462,7 @@ class TestTEMPLATES:
                 u.fX = fX + v.fX;
                 return u;
             }
-        }; }
-        """)
+        }; }""")
 
         c = gbl.OperatorAddTest.CustomVec['double'](5.3)
         d = gbl.OperatorAddTest.CustomVec['int'](1)
@@ -481,14 +476,14 @@ class TestTEMPLATES:
 
         import cppyy
 
-        cppyy.cppdef(r"""
-        namespace TemplatedCtor { class C {
+        cppyy.cppdef("""\
+        namespace TemplatedCtor {
+        class C {
         public:
             template <typename Integer, typename std::enable_if_t<std::is_integral_v<Integer>, int> = 0>
             C(Integer) {}
             C(const std::string&) {}
-        }; }
-        """)
+        }; } """)
 
         assert cppyy.gbl.TemplatedCtor.C(0)
 
@@ -497,21 +492,21 @@ class TestTEMPLATES:
 
         import cppyy
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace l2v {
-           struct Base {};
-           struct Derived : Base {};
+        struct Base {};
+        struct Derived : Base {};
 
-           int test1(const std::vector<Base*>& v) { return (int)v.size(); }
+        int test1(const std::vector<Base*>& v) { return (int)v.size(); }
 
-           template <typename T>
-           int test2(const std::vector<Derived*>& v) { return (int)v.size(); }
+        template <typename T>
+        int test2(const std::vector<Derived*>& v) { return (int)v.size(); }
 
-           template <typename T>
-           int test2a(std::vector<Derived*> v) { return v.size(); }
+        template <typename T>
+        int test2a(std::vector<Derived*> v) { return v.size(); }
 
-           template <typename T>
-           int test3(const std::vector<Base*>& v) { return (int)v.size(); }
+        template <typename T>
+        int test3(const std::vector<Base*>& v) { return (int)v.size(); }
         }""")
 
         from cppyy.gbl import l2v
@@ -650,13 +645,12 @@ class TestTEMPLATES:
         B partial_template_foo2(B b) { return b; }
 
         namespace partial_template {
-           template <typename A, typename B>
-           B foo1(B b) { return b; }
+            template <typename A, typename B>
+            B foo1(B b) { return b; }
 
-           template <typename A, typename B>
-           B foo2(B b) { return b; }
-        }
-        """)
+            template <typename A, typename B>
+            B foo2(B b) { return b; }
+        } """)
 
         ns = cppyy.gbl.partial_template
 
@@ -852,7 +846,6 @@ class TestTEMPLATED_TYPEDEFS:
 
         cppyy.cppdef("""\
         namespace FailedTypeDeducer {
-
         template<class T>
         class A {
         public:
