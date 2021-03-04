@@ -583,7 +583,7 @@ class TestTEMPLATES:
 
         import cppyy
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace LambdaAndTemplates {
         template <typename T>
         struct S {};
@@ -608,6 +608,16 @@ class TestTEMPLATES:
 
         assert ns.f_noref[int](lambda arg: True)
         assert ns.f_notemplate(lambda arg: True)
+
+      # similar/same problem as above
+        cppyy.cppdef("""\
+        namespace LambdaAndTemplates {
+        template <typename T>
+        bool f_nofun(bool (*callback)(const S<T>&)) {
+            return callback({});
+        } }""")
+
+        assert ns.f_nofun[int](lambda arg: True)
 
       # following used to fail argument conversion
         assert ns.f[int](lambda arg: True)
