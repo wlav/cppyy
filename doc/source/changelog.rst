@@ -18,6 +18,7 @@ master: 1.9.4
 * Fix accidental shadowing of derived class typedefs by same names in base
 * Streamlined templated function lookups in namespaces
 * Fix edge cases when decomposing std::function template arguments
+* Enable multi-cross inheritance with non-C++ python bases
 * Removed functions/apis deprecated in py3.9
 
 

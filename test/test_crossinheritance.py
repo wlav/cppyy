@@ -1270,6 +1270,24 @@ class TestCROSSINHERITANCE:
         assert ns.calc_a(g) == 20
         assert ns.calc_b(g) == 45
 
+        class H(object):
+            def calc_a(self):
+                return 66
+
+        class I(cppyy.multi(ns.A, H)):
+            def calc_a(self):
+                return 77
+
+        i = I()
+        assert ns.calc_a(i) == 77
+
+        class J(cppyy.multi(H, ns.A)):
+            def calc_a(self):
+                return 88
+
+        j = J()
+        assert ns.calc_a(j) == 88
+
 
     def test30_access_and_overload(self):
         """Inheritance with access and overload complications"""
