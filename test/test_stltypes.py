@@ -356,6 +356,10 @@ class TestSTLVECTOR:
         assert v[7] == 8
         assert v[8] == 9
 
+        sz = len(v)
+        v += []
+        assert len(v) == sz
+
     def test06_vector_indexing(self):
         """Test python-style indexing to an std::vector<int>"""
 
@@ -406,20 +410,21 @@ class TestSTLVECTOR:
 
         import cppyy
 
-        # TODO: would like to use cppyy.gbl.VecTestEnum but that's an int
         assert cppyy.gbl.VecTestEnum
-        ve = cppyy.gbl.std.vector['VecTestEnum']()
-        ve.push_back(cppyy.gbl.EVal1);
-        assert ve[0] == 1
-        ve[0] = cppyy.gbl.EVal2
-        assert ve[0] == 3
+        for tp in ['VecTestEnum', cppyy.gbl.VecTestEnum]:
+            ve = cppyy.gbl.std.vector[tp]()
+            ve.push_back(cppyy.gbl.EVal1);
+            assert ve[0] == 1
+            ve[0] = cppyy.gbl.EVal2
+            assert ve[0] == 3
 
         assert cppyy.gbl.VecTestEnumNS.VecTestEnum
-        ve = cppyy.gbl.std.vector['VecTestEnumNS::VecTestEnum']()
-        ve.push_back(cppyy.gbl.VecTestEnumNS.EVal1);
-        assert ve[0] == 5
-        ve[0] = cppyy.gbl.VecTestEnumNS.EVal2
-        assert ve[0] == 42
+        for tp in ['VecTestEnumNS::VecTestEnum', cppyy.gbl.VecTestEnumNS.VecTestEnum]:
+            ve = cppyy.gbl.std.vector['VecTestEnumNS::VecTestEnum']()
+            ve.push_back(cppyy.gbl.VecTestEnumNS.EVal1);
+            assert ve[0] == 5
+            ve[0] = cppyy.gbl.VecTestEnumNS.EVal2
+            assert ve[0] == 42
 
     def test09_vector_of_string(self):
         """Adverse effect of implicit conversion on vector<string>"""
