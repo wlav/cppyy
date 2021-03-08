@@ -543,8 +543,10 @@ class TestADVANCEDCPP:
         assert isinstance(b.cycle(d), derived_class)
         assert isinstance(d.cycle(d), derived_class)
 
-        assert isinstance(b.clone(), base_class)      # TODO: clone() leaks
-        assert isinstance(d.clone(), derived_class)   # TODO: clone() leaks
+        base_class.clone.__creates__    = True
+        assert isinstance(b.clone(), base_class)
+        derived_class.clone.__creates__ = True
+        assert isinstance(d.clone(), derived_class)
 
         # special case when round-tripping through a void* ptr
         voidp = b.mask(d)
@@ -627,10 +629,9 @@ class TestADVANCEDCPP:
         assert len(a) == 1
         assert a[0].m_i == 42
 
-        # TODO:
-        # a[0] = gbl.ref_tester(33)
-        # assert len(a) == 1
-        # assert a[0].m_i == 33
+        a[0] = gbl.ref_tester(33)
+        assert len(a) == 1
+        assert a[0].m_i == 33
 
     def test18_math_converters(self):
         """Test operator int/long/double incl. typedef"""
@@ -684,8 +685,7 @@ class TestADVANCEDCPP:
         assert cppyy.gbl.my_global_string1 == "aap  noot  mies"
         assert cppyy.gbl.my_global_string2 == "zus jet teun"
         assert list(cppyy.gbl.my_global_string3) == ["aap", "noot", "mies"]
-        # TODO: currently fails b/c double** not understood as &double*
-        #assert cppyy.gbl.my_global_ptr[0] == 1234.
+        assert cppyy.gbl.my_global_ptr[0] == 1234.
 
         v = cppyy.gbl.my_global_int_holders
         assert len(v) == 5
