@@ -83,8 +83,13 @@ int global_some_foo(T) {
     return 42;
 }
 
+template <int T>
+int global_some_bar() {
+    return T;
+}
+
 template <typename T>
-int global_some_bar(T) {
+int global_some_bar_var(T) {
     return 13;
 }
 
@@ -149,6 +154,13 @@ template <int T>
 int some_bar() {
     return T;
 }
+
+struct SomeStruct {
+    template <int T>
+    static int some_bar() {
+        return T;
+    }
+};
 
 inline std::string tuplify(std::ostringstream& out) {
     out << "NULL)";

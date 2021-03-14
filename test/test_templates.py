@@ -79,18 +79,21 @@ class TestTEMPLATES:
         assert gsf(3)      == 42
         assert gsf(3.)     == 42
 
+        gsbv = cppyy.gbl.global_some_bar_var
+        assert gsbv(3)            == 13
+        assert gsbv['double'](3.) == 13
+
         gsb = cppyy.gbl.global_some_bar
+        assert gsb[1]
+        assert gsb[1]() == 1
 
-        assert gsb(3)            == 13
-        assert gsb['double'](3.) == 13
-
-        # TODO: the following only works in a namespace
         nsgsb = cppyy.gbl.SomeNS.some_bar
-
         assert nsgsb[3]
         assert nsgsb[3]() == 3
 
-        # TODO: add some static template method
+        nscsb = cppyy.gbl.SomeNS.SomeStruct.some_bar
+        assert nscsb[8]
+        assert nscsb[8]() == 8
 
         # test forced creation of subsequent overloads
         from cppyy.gbl.std import vector

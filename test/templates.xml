@@ -6,6 +6,7 @@
   <function name="global_get_size" />
   <function name="global_some_foo" />
   <function name="global_some_bar" />
+  <function name="global_some_bar_var" />
 
   <function name="isSomeInt" />
 
@@ -15,6 +16,7 @@
   <function name="SomeNS::some_foo" />
   <function name="SomeNS::some_bar" />
   <function name="SomeNS::tuplify" />
+  <struct name="SomeNS::SomeStruct" />
 
   <class name="TemplatedCallable" />
 
