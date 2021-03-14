@@ -133,6 +133,7 @@ struct select_template_arg {};
 template <typename T0, typename... T>
 struct select_template_arg<0, T0, T...> {
     typedef T0 type;
+    typedef type argument;
 };
 
 template <int N, typename T0, typename... T>

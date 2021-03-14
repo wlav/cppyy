@@ -166,22 +166,22 @@ class TestTEMPLATES:
         cppyy.gbl.AttrTesting      # load
         from cppyy.gbl.AttrTesting import select_template_arg, Obj1, Obj2
 
-       #assert select_template_arg[0, Obj1, Obj2].argument == Obj1
+        assert select_template_arg[0, Obj1, Obj2].argument == Obj1
         assert select_template_arg[1, Obj1, Obj2].argument == Obj2
-        # TODO: the following only results in a Cling compilation error
-        #raises(TypeError, select_template_arg.__getitem__, 2, Obj1, Obj2)
+        # TODO: the following crashes deep inside cling/clang ...
+        #raises(TypeError, getattr, select_template_arg[2, Obj1, Obj2], 'argument')
 
-        # TODO, this doesn't work for builtin types as the 'argument'
-        # typedef will not resolve to a class
-       #assert select_template_arg[1, int, float].argument == float
+        # This is a bit subtle: to be able to use typedefs in templates, builtin
+        # types are present as subclasses that carry __cpp_name__, hence the result
+        # is not 'int' or 'float', but such custom subtypes
+        assert issubclass(select_template_arg[0, int, float].argument, int)
+        assert issubclass(select_template_arg[1, int, float].argument, float)
 
     def test08_using_of_static_data(self):
         """Derived class using static data of base"""
 
         import cppyy
 
-      # TODO: the following should live in templates.h, but currently fails
-      # in TClass::GetListOfMethods()
         cppyy.cppdef("""
         template <typename T> struct BaseClassWithStatic {
             static T const ref_value;
