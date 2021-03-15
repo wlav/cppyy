@@ -19,6 +19,8 @@ master: 1.9.4
 * Streamlined templated function lookups in namespaces
 * Fix edge cases when decomposing std::function template arguments
 * Enable multi-cross inheritance with non-C++ python bases
+* Support Bound C++ functions as template argument
+* Python functions as template arguments from ``__annotations__`` or ``__cpp_name__``
 * Removed functions/apis deprecated in py3.9
 
 
