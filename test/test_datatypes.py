@@ -1964,3 +1964,46 @@ class TestDATATYPES:
         assert a.val  == 4
         assert b.name == 'pqr'
         assert b.val  == 5
+
+    def test41_buffer_memory_handling(self):
+        """cppyy side handled memory of LL buffers"""
+
+        import cppyy, gc
+        try:
+            import numpy as np
+        except ImportError:
+            py.test.skip('numpy is not installed')
+
+        cppyy.cppdef("""\
+        namespace StructWithBuf {
+        typedef struct BufInfo {
+            double* data1;
+            double* data2;
+            int size;
+        }; }""")
+
+        ns = cppyy.gbl.StructWithBuf
+
+        N = 10
+        buf1 = ns.BufInfo(
+            np.array(range(N), dtype=np.float64), 2.*np.array(range(N), dtype=np.float64), N)
+        gc.collect()
+
+        for i in range(buf1.size):
+            assert buf1.data1[i] == 1.*i
+            assert buf1.data2[i] == 2.*i
+
+        buf2 = ns.BufInfo()
+        buf2.data1 = 4.*np.array(range(N), dtype=np.float64)
+        buf2.data2 = 5.*np.array(range(N), dtype=np.float64)
+        buf2.size = N
+        gc.collect()
+
+        assert len(buf2.data1) == N
+        for i in range(buf2.size):
+            assert buf2.data1[i] == 4.*i
+            assert buf2.data2[i] == 5.*i
+
+        for i in range(buf1.size):
+            assert buf1.data1[i] == 1.*i
+            assert buf1.data2[i] == 2.*i
