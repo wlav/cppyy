@@ -268,7 +268,10 @@ if not ispypy:
         if os.path.basename(apipath_extra) == 'CPyCppyy':
             apipath_extra = os.path.dirname(apipath_extra)
     except KeyError:
-        apipath_extra = os.path.join(os.path.dirname(apipath), 'site', 'python'+sys.version[:3])
+        ldversion = sysconfig.get_config_var('LDVERSION')
+        if not ldversion: ldversion = sys.version[:3]
+
+        apipath_extra = os.path.join(os.path.dirname(apipath), 'site', 'python'+ldversion)
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
             import glob, libcppyy
             apipath_extra = os.path.dirname(libcppyy.__file__)
@@ -304,7 +307,7 @@ if os.getenv('CONDA_PREFIX'):
     if os.path.exists(include_path): add_include_path(include_path)
 
 # assuming that we are in PREFIX/lib/python/site-packages/cppyy, add PREFIX/include to the search path
-include_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, os.path.pardir, os.path.pardir, 'include'))
+include_path = os.path.abspath(os.path.join(os.path.dirname(__file__), *(4*[os.path.pardir]+['include'])))
 if os.path.exists(include_path): add_include_path(include_path)
 
 del include_path, apipath, ispypy
