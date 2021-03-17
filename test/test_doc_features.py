@@ -1026,3 +1026,30 @@ class TestADVERTISED:
         w.wait()
 
         assert c.count == 10
+
+
+    def test10_custom_str(self):
+        """Example of customized str"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace TopologicCore {
+
+        class Shell {
+        public:
+            virtual std::string GetTypeAsString() const {
+                return "hi there!";
+            }
+        }; }""")
+
+
+        def pythonize_topologic_printing(klass, name):
+            if 'GetTypeAsString' in klass.__dict__:
+                klass.__str__ = lambda self: str(self.GetTypeAsString())
+
+        cppyy.py.add_pythonization(pythonize_topologic_printing, 'TopologicCore')
+
+        s = cppyy.gbl.TopologicCore.Shell()
+
+        assert str(s) == "hi there!"
