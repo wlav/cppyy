@@ -274,17 +274,18 @@ if not ispypy:
         apipath_extra = os.path.join(os.path.dirname(apipath), 'site', 'python'+ldversion)
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
             import glob, libcppyy
-            apipath_extra = os.path.dirname(libcppyy.__file__)
-          # a "normal" structure finds the include directory 3 levels up,
-          # ie. from lib/pythonx.y/site-packages
+            ape = os.path.dirname(libcppyy.__file__)
+          # a "normal" structure finds the include directory up to 3 levels up,
+          # ie. dropping lib/pythonx.y[md]/site-packages
             for i in range(3):
-                if not os.path.exists(os.path.join(apipath_extra, 'include')):
-                    apipath_extra = os.path.dirname(apipath_extra)
+                if os.path.exists(os.path.join(ape, 'include')):
+                    break
+                ape = os.path.dirname(ape)
 
-            apipath_extra = os.path.join(apipath_extra, 'include')
+            ape = os.path.join(ape, 'include')
           # add back pythonx.y or site/pythonx.y if present
-            for p in glob.glob(os.path.join(apipath_extra, 'python'+sys.version[:3]+'*'))+\
-                     glob.glob(os.path.join(apipath_extra, '*', 'python'+sys.version[:3]+'*')):
+            for p in glob.glob(os.path.join(ape, 'python'+sys.version[:3]+'*'))+\
+                     glob.glob(os.path.join(ape, '*', 'python'+sys.version[:3]+'*')):
                 if os.path.exists(os.path.join(p, 'CPyCppyy')):
                     apipath_extra = p
                     break
