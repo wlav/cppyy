@@ -283,12 +283,15 @@ if not ispypy:
                 ape = os.path.dirname(ape)
 
             ape = os.path.join(ape, 'include')
-          # add back pythonx.y or site/pythonx.y if present
-            for p in glob.glob(os.path.join(ape, 'python'+sys.version[:3]+'*'))+\
-                     glob.glob(os.path.join(ape, '*', 'python'+sys.version[:3]+'*')):
-                if os.path.exists(os.path.join(p, 'CPyCppyy')):
-                    apipath_extra = p
-                    break
+            if os.path.exists(os.path.join(ape, 'CPyCppyy')):
+                apipath_extra = ape
+            else:
+              # add back pythonx.y or site/pythonx.y if present
+                for p in glob.glob(os.path.join(ape, 'python'+sys.version[:3]+'*'))+\
+                         glob.glob(os.path.join(ape, '*', 'python'+sys.version[:3]+'*')):
+                    if os.path.exists(os.path.join(p, 'CPyCppyy')):
+                        apipath_extra = p
+                        break
 
     if apipath_extra.lower() != 'none':
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
