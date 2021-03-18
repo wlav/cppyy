@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.9.4
--------------
+2021-03-17: 1.9.4
+-----------------
 
 * Fix for installing into a directory that has a space in the name
 * Fix empty collection printing through Cling on 64b Windows
@@ -22,6 +22,7 @@ master: 1.9.4
 * Support Bound C++ functions as template argument
 * Python functions as template arguments from ``__annotations__`` or ``__cpp_name__``
 * Removed functions/apis deprecated in py3.9
+* Improved support for older pip and different installation layouts
 
 
 2021-02-15: 1.9.3

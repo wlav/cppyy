@@ -2,7 +2,6 @@
 # which is not possible in the pyproject.toml file as there is currently no
 # marker for it (this may change, after which this file can be removed)
 
-from setuptools.build_meta import *
 try:
   # _BACKEND is the primary, __legacy__ the backwards compatible backend
     from setuptools.build_meta import _BACKEND
@@ -19,7 +18,7 @@ def get_requires_for_build_wheel(*args, **kwds):
     try:
         import __pypy__, sys
         version = sys.pypy_version_info
-        requirements = ['cppyy-cling==6.21.5']
+        requirements = ['cppyy-cling==6.21.6']
         if version[0] == 5:
             if version[1] <= 9:
                 requirements = ['cppyy-cling<6.12']
@@ -33,7 +32,7 @@ def get_requires_for_build_wheel(*args, **kwds):
                 requirements = ['cppyy-cling<=6.18.2.3']
     except ImportError:
         # CPython
-        requirements = ['cppyy-backend==1.14.2', 'cppyy-cling==6.21.5']
+        requirements = ['cppyy-backend==1.14.3', 'cppyy-cling==6.21.6']
 
     return requirements + _get_requires_for_build_wheel(*args, **kwds)
 
