@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, IS_WINDOWS
+from .support import setup_make, IS_WINDOWS, ispypy
 
 
 class TestREGRESSION:
@@ -46,6 +46,9 @@ class TestREGRESSION:
 
     def test02_dir(self):
         """For the same reasons as test01_kdcraw, this used to crash."""
+
+        if ispypy:
+            py.test.skip('hangs (??) in pypy')
 
         import cppyy, pydoc
 

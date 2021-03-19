@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong, IS_WINDOWS
+from .support import setup_make, pylong, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("advancedcppDict"))
@@ -620,6 +620,9 @@ class TestADVANCEDCPP:
 
     def test17_assign_to_return_byref(self):
         """Test assignment to an instance returned by reference"""
+
+        if ispypy:
+            py.test.skip('segfaults in pypy')
 
         from cppyy import gbl
 

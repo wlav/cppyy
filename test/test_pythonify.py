@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong
+from .support import setup_make, pylong, ispypy
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("example01Dict"))
@@ -311,6 +311,9 @@ class TestPYTHONIFY:
 
     def test14_bound_unbound_calls(self):
         """Test (un)bound method calls"""
+
+        if ispypy:
+            py.test.skip('segfaults in pypy')
 
         import cppyy
 
