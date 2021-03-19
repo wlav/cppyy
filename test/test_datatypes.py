@@ -1916,7 +1916,20 @@ class TestDATATYPES:
             Ccl = func(Acl, Bcl, 2)
             assert complex(Ccl) == pyCcl
 
-    def test40_ccharp_memory_handling(self):
+    def test40_mixed_complex_arithmetic(self):
+        """Mixin of Python and C++ std::complex in arithmetic"""
+
+        import cppyy
+
+        c = cppyy.gbl.std.complex['double'](1, 2)
+        p = 1+2j
+
+        assert c*c     == p*p
+        assert c*c*c   == p*p*p
+        assert c*(c*c) == p*(p*p)
+        assert (c*c)*c == (p*p)*p
+
+    def test41_ccharp_memory_handling(self):
         """cppyy side handled memory of C strings"""
 
         import cppyy
@@ -1965,7 +1978,7 @@ class TestDATATYPES:
         assert b.name == 'pqr'
         assert b.val  == 5
 
-    def test41_buffer_memory_handling(self):
+    def test42_buffer_memory_handling(self):
         """cppyy side handled memory of LL buffers"""
 
         import cppyy, gc

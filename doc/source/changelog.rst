@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 1.9.5
+-------------
+
+* Reverse operators for ``std::complex`` targeting Python's ``complex``
+
+
 2021-03-17: 1.9.4
 -----------------
 
