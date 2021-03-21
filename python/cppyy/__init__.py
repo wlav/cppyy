@@ -268,6 +268,26 @@ if not ispypy:
         if os.path.basename(apipath_extra) == 'CPyCppyy':
             apipath_extra = os.path.dirname(apipath_extra)
     except KeyError:
+        apipath_extra = None
+
+    if apipath_extra is None:
+        try:
+            import pkg_resources as pr
+
+            d = pr.get_distribution('CPyCppyy')
+            for line in d.get_metadata_lines('RECORD'):
+                if 'API.h' in line:
+                    part = line[0:line.find(',')]
+
+            ape = os.path.join(d.location, part)
+            if os.path.exists(ape):
+                apipath_extra = os.path.dirname(os.path.dirname(ape))
+
+            del part, d, pr
+        except Exception:
+            pass
+
+    if apipath_extra is None:
         ldversion = sysconfig.get_config_var('LDVERSION')
         if not ldversion: ldversion = sys.version[:3]
 
