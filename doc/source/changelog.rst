@@ -14,6 +14,7 @@ master: 1.9.5
 -------------
 
 * Reverse operators for ``std::complex`` targeting Python's ``complex``
+* Use pkg_resources of ``CPyCppyy``, if available, to find the API include path
 
 
 2021-03-17: 1.9.4
