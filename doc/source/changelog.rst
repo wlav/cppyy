@@ -10,12 +10,18 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.9.5
+master: 1.9.6
 -------------
 
 * Reverse operators for ``std::complex`` targeting Python's ``complex``
-* Use pkg_resources of ``CPyCppyy``, if available, to find the API include path
 * Version the precompiled header with the ``cppyy-cling`` package version
+
+
+2021-03-22: 1.9.5
+-----------------
+
+* Do not regulate direct smart pointers (many to one can lead to double deletion)
+* Use pkg_resources of ``CPyCppyy``, if available, to find the API include path
 
 
 2021-03-17: 1.9.4
