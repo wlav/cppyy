@@ -15,6 +15,7 @@ master: 1.9.6
 
 * Reverse operators for ``std::complex`` targeting Python's ``complex``
 * Version the precompiled header with the ``cppyy-cling`` package version
+* Cover more iterator protocol use cases
 
 
 2021-03-22: 1.9.5

@@ -838,6 +838,30 @@ class TestTEMPLATES:
         assert s.Schedule5(ns.Time(1.0), ann_adapt, ns.Node(25)).fId                == 25
         assert s.Schedule6['FPTA::Node&'](ns.Time(1.0), ann_adapt, ns.Node(88)).fId == 88
 
+    def test34_mix_and_match(self):
+        """Mix of (non-)templated across inheritance"""
+
+        import cppyy
+
+        cppyy.cppdef("""namespace MixNMatch {
+        class NonTemplated {
+        public:
+            double& operator[](int idx) { return fPayLoad; }
+
+        protected:
+            double fPayLoad = 0;
+        };
+
+        class Templated: public NonTemplated {
+        public:
+            double& operator[](int idx) { return fPayLoad; }
+            template <typename T> double& operator[](int idx) { return fPayLoad; }
+        }; }""")
+
+        ns = cppyy.gbl.MixNMatch
+
+        ns.Templated()       # used to crash
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):

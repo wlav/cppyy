@@ -1189,6 +1189,14 @@ class TestSTLMAP:
                 count += 1
             assert count == 10
 
+        for cls in [cppyy.gbl.stl_like_class8, cppyy.gbl.stl_like_class9]:
+            b = cls()
+            for i in [1, 2, 3]:
+                b.push_back(i)
+
+            assert len(b) == 3
+            assert sum(b) == 6
+
     def test08_stllike_preinc(self):
         """STL-like class with preinc by-ref returns"""
 
