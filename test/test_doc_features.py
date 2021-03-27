@@ -1027,7 +1027,6 @@ class TestADVERTISED:
 
         assert c.count == 10
 
-
     def test10_custom_str(self):
         """Example of customized str"""
 
@@ -1053,3 +1052,56 @@ class TestADVERTISED:
         s = cppyy.gbl.TopologicCore.Shell()
 
         assert str(s) == "hi there!"
+
+    def test11_llvm_blog(self):
+        """Test code posted in the LLVM blog posting"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""\
+        namespace LLVMBlog {
+        template<typename T> class Producer {
+        public:
+            Producer(const T& value) : m_value(value) {}
+            virtual ~Producer() {}
+
+            T produce_total() { return m_value + produce_imp(); }
+
+        protected:
+            virtual T produce_imp() = 0;
+
+        private:
+            T m_value;
+        };
+
+        class Consumer {
+        public:
+            template<typename T>
+            std::string consume(Producer<T>& p) {
+                std::ostringstream s;
+                s << "received: \"" << p.produce_total() << "\"";
+                return s.str();
+            }
+        }; } """)
+
+        ns = cppyy.gbl.LLVMBlog
+
+        def factory(base_v, *derived_v):
+            class _F(ns.Producer[type(base_v)]):
+                def __init__(self, base_v, *derived_v):
+                    if sys.hexversion < 0x3000000:
+                        super(type(self), self).__init__(base_v)
+                    else:
+                        super().__init__(base_v)
+                    self._values = derived_v
+
+                def produce_imp(self):
+                    return type(base_v)(sum(self._values))
+
+            return _F(base_v, *derived_v)
+
+        consumer = ns.Consumer()
+
+        assert consumer.consume(factory("hello ", 42))     == 'received: "hello 42"'
+        assert consumer.consume(factory(3., 0.14, 0.0015)) == 'received: "3.1415"'
+
