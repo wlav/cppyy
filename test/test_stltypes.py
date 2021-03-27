@@ -1035,6 +1035,20 @@ class TestSTLLIST:
         v = cppyy.gbl.std.list(l)
         assert list(l) == l
 
+    def test06_convert_list_of_strings(self):
+        """Convert list of strings from C++ to Python types"""
+
+        import cppyy
+
+        contents = ["aap", "noot", "mies"]
+
+        l = cppyy.gbl.std.list[str]()
+        l += contents
+
+      # the following used to fail on Windows (TODO: currently worked around in
+      # cppyy-backend/clingwrapper; need to see whether Clang9 solves the issue)
+        assert [str(x) for x in l] == contents
+
 
 class TestSTLMAP:
     def setup_class(cls):
