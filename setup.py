@@ -4,7 +4,7 @@ from distutils import log
 
 from setuptools.command.install import install as _install
 
-add_pkg = ['cppyy']
+add_pkg = ['cppyy', 'cppyy.__pyinstaller']
 try:
     import __pypy__, sys
     version = sys.pypy_version_info
