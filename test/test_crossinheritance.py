@@ -972,9 +972,9 @@ class TestCROSSINHERITANCE:
 
         cppyy.cppdef("""namespace const_byvalue_return {
         struct Const {
-          Const() = default;
-          explicit Const(const std::string& s) { m_value = s; }
-          std::string m_value;
+            Const() = default;
+            explicit Const(const std::string& s) { m_value = s; }
+            std::string m_value;
         };
 
         struct Abstract {
@@ -999,29 +999,54 @@ class TestCROSSINHERITANCE:
 
         import cppyy
 
-        cppyy.cppdef("""namespace non_copyable {
+        cppyy.cppdef("""\
+        namespace non_copyable {
         struct Copyable {
-          Copyable() = default;
-          virtual ~Copyable() {}
+            Copyable() = default;
+            virtual ~Copyable() {}
 
-          Copyable(const Copyable&) = default;
-          Copyable& operator=(const Copyable&) = default;
+            Copyable(const Copyable&) = default;
+            Copyable& operator=(const Copyable&) = default;
         };
 
         struct Movable {
-          Movable() = default;
-          virtual ~Movable() {}
+            Movable() = default;
+            virtual ~Movable() {}
 
-          Movable(const Movable&) = delete;
-          Movable& operator=(const Movable&) = delete;
-          Movable(Movable&&) = default;
-          Movable& operator=(Movable&&) = default;
+            Movable(const Movable&) = delete;
+            Movable& operator=(const Movable&) = delete;
+            Movable(Movable&&) = default;
+            Movable& operator=(Movable&&) = default;
+        };
+
+        class NoCopyNoMove {
+        public:
+            NoCopyNoMove() = delete;
+            NoCopyNoMove(const NoCopyNoMove&) = delete;
+            NoCopyNoMove(NoCopyNoMove&&) = delete;
+            NoCopyNoMove& operator=(const NoCopyNoMove&) = delete;
+            NoCopyNoMove& operator=(NoCopyNoMove&&) = delete;
+            virtual ~NoCopyNoMove() = default;
+
+            template<typename DerivedType>
+            explicit NoCopyNoMove(DerivedType* ptr) : fActual(ptr) {};
+
+            std::string callme() {
+                return fActual->callme_imp();
+            }
+
+        protected:
+            virtual std::string callme_imp() = 0;
+
+        private:
+            NoCopyNoMove* fActual;
         }; }""")
 
         ns = cppyy.gbl.non_copyable
 
         Copyable = ns.Copyable
         Movable  = ns.Movable
+        NoCopyNoMove = ns.NoCopyNoMove
 
         class DerivedCopyable(Copyable):
             pass
@@ -1033,6 +1058,15 @@ class TestCROSSINHERITANCE:
       # used to fail with compilation error
         class DerivedMulti(cppyy.multi(Movable, Copyable)):
             pass
+
+     # used to fail with compilation error
+        class DerivedNoCopyNoMove(NoCopyNoMove):
+            def __init__(self):
+                super(DerivedNoCopyNoMove, self).__init__(self)
+            def callme_imp(self):
+                return "Hello, World!"
+
+        assert DerivedNoCopyNoMove().callme == "Hello, World!"
 
     def test25_default_ctor_and_multiple_inheritance(self):
         """Regression test: default ctor did not get added"""
