@@ -1029,16 +1029,17 @@ class TestCROSSINHERITANCE:
             virtual ~NoCopyNoMove() = default;
 
             template<typename DerivedType>
-            explicit NoCopyNoMove(DerivedType* ptr) : fActual(ptr) {};
+            explicit NoCopyNoMove(DerivedType* ptr) : fActual(ptr) {}
 
             std::string callme() {
+                if (!fActual) return "failed!";
                 return fActual->callme_imp();
             }
 
-        protected:
+        private:
             virtual std::string callme_imp() = 0;
 
-        private:
+        protected:
             NoCopyNoMove* fActual;
         }; }""")
 
@@ -1063,10 +1064,15 @@ class TestCROSSINHERITANCE:
         class DerivedNoCopyNoMove(NoCopyNoMove):
             def __init__(self):
                 super(DerivedNoCopyNoMove, self).__init__(self)
+              # TODO: chicken-and-egg situation here, 'this' from 'self' is
+              # nullptr until the constructor has been called, so it can't
+              # be passed as an argument to the same constructor
+                self.fActual = self
+
             def callme_imp(self):
                 return "Hello, World!"
 
-        assert DerivedNoCopyNoMove().callme == "Hello, World!"
+        assert DerivedNoCopyNoMove().callme() == "Hello, World!"
 
     def test25_default_ctor_and_multiple_inheritance(self):
         """Regression test: default ctor did not get added"""

@@ -17,6 +17,7 @@ master: 1.9.6
 * Version the precompiled header with the ``cppyy-cling`` package version
 * Cover more iterator protocol use cases
 * Add missing cppyy/__pyinstaller pkg to sdist
+* Single-inheritance support for cross-inherited templated constructors
 
 
 2021-03-22: 1.9.5
