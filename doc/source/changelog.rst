@@ -18,6 +18,7 @@ master: 1.9.6
 * Cover more iterator protocol use cases
 * Add missing cppyy/__pyinstaller pkg to sdist
 * Single-inheritance support for cross-inherited templated constructors
+* Disallow ``float`` -> ``const long long&`` conversion
 
 
 2021-03-22: 1.9.5
