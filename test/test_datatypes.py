@@ -516,6 +516,22 @@ class TestDATATYPES:
         raises(TypeError, setattr, c.m_double,  'c')
         raises(TypeError, setattr, c.m_int,     -1.)
         raises(TypeError, setattr, c.m_int,      1.)
+        raises(TypeError, setattr, c.m_long,     3.14)
+        raises(TypeError, setattr, c.m_ulong,    3.14)
+        raises(TypeError, setattr, c.m_llong,    3.14)
+        raises(TypeError, setattr, c.m_ullong,   3.14)
+
+        raises(TypeError, c.set_int,             3.14)
+        raises(TypeError, c.set_long,            3.14)
+        raises(TypeError, c.set_ulong,           3.14)
+        raises(TypeError, c.set_llong,           3.14)
+        raises(TypeError, c.set_ullong,          3.14)
+
+        raises(TypeError, c.set_int_cr,          3.14)
+        raises(TypeError, c.set_long_cr,         3.14)
+        raises(TypeError, c.set_ulong_cr,        3.14)
+        raises(TypeError, c.set_llong_cr,        3.14)
+        raises(TypeError, c.set_ullong_cr,       3.14)
 
         c.__destruct__()
 
