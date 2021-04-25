@@ -19,6 +19,7 @@ master: 1.9.6
 * Add missing cppyy/__pyinstaller pkg to sdist
 * Single-inheritance support for cross-inherited templated constructors
 * Disallow ``float`` -> ``const long long&`` conversion
+* Capture python exception message string in PyException from callbacks
 
 
 2021-03-22: 1.9.5

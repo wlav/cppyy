@@ -979,6 +979,8 @@ class TestADVERTISED:
 
         import cppyy
 
+        cppyy.include("CPyCppyy/PyException.h")
+
         cppyy.cppdef("""namespace thread_test {
         #include <thread>
 
@@ -995,7 +997,12 @@ class TestADVERTISED:
                 t = std::thread([this] {
                     int counter = 0;
                     while (counter++ < 10)
-                        cons->process(counter);
+                        try {
+                            cons->process(counter);
+                        } catch (CPyCppyy::PyException& e) {
+                            err_msg = e.what();
+                            return;
+                        }
                 });
             }
 
@@ -1006,6 +1013,7 @@ class TestADVERTISED:
 
             std::thread t;
             consumer* cons = nullptr;
+            std::string err_msg;
         }; }""")
 
         ns = cppyy.gbl.thread_test
@@ -1026,6 +1034,20 @@ class TestADVERTISED:
         w.wait()
 
         assert c.count == 10
+
+        class C(consumer):
+            count = 0
+            def process(self, c):
+                raise RuntimeError("all wrong")
+
+        c = C()
+
+        w = worker(c)
+        w.start()
+        w.wait()
+
+        assert "RuntimeError" in w.err_msg
+        assert "all wrong"    in w.err_msg
 
     def test10_custom_str(self):
         """Example of customized str"""
