@@ -20,6 +20,7 @@ master: 1.9.6
 * Single-inheritance support for cross-inherited templated constructors
 * Disallow ``float`` -> ``const long long&`` conversion
 * Capture python exception message string in PyException from callbacks
+* Thread safety in enum lookups
 
 
 2021-03-22: 1.9.5
