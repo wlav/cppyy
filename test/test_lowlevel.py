@@ -322,7 +322,7 @@ class TestLOWLEVEL:
 
         cppyy.cppdef('int convert_bool(bool* x) {return *x;}')
 
-        x = np.array([True], dtype=np.bool)
+        x = np.array([True], dtype=bool)
         assert cppyy.gbl.convert_bool(x)
 
     def test10_array_of_const_char_star(self):
