@@ -974,82 +974,7 @@ class TestADVERTISED:
         assert n.p[2] == 0x3
         assert len(n.p) == 3
 
-    def test09_cpp_threading(self):
-        """Example with releasing the GIL"""
-
-        import cppyy
-
-        cppyy.include("CPyCppyy/PyException.h")
-
-        cppyy.cppdef("""namespace thread_test {
-        #include <thread>
-
-        struct consumer {
-            virtual ~consumer() {}
-            virtual void process(int) = 0;
-        };
-
-        struct worker {
-            worker(consumer* c) : cons(c) { }
-            ~worker() { wait(); }
-
-            void start() {
-                t = std::thread([this] {
-                    int counter = 0;
-                    while (counter++ < 10)
-                        try {
-                            cons->process(counter);
-                        } catch (CPyCppyy::PyException& e) {
-                            err_msg = e.what();
-                            return;
-                        }
-                });
-            }
-
-            void wait() {
-                if (t.joinable())
-                    t.join();
-            }
-
-            std::thread t;
-            consumer* cons = nullptr;
-            std::string err_msg;
-        }; }""")
-
-        ns = cppyy.gbl.thread_test
-        consumer = ns.consumer
-        worker = ns.worker
-        worker.wait.__release_gil__ = True
-
-        class C(consumer):
-            count = 0
-            def process(self, c):
-                self.count += 1
-
-        c = C()
-        assert c.count == 0
-
-        w = worker(c)
-        w.start()
-        w.wait()
-
-        assert c.count == 10
-
-        class C(consumer):
-            count = 0
-            def process(self, c):
-                raise RuntimeError("all wrong")
-
-        c = C()
-
-        w = worker(c)
-        w.start()
-        w.wait()
-
-        assert "RuntimeError" in w.err_msg
-        assert "all wrong"    in w.err_msg
-
-    def test10_custom_str(self):
+    def test09_custom_str(self):
         """Example of customized str"""
 
         import cppyy
@@ -1075,7 +1000,7 @@ class TestADVERTISED:
 
         assert str(s) == "hi there!"
 
-    def test11_llvm_blog(self):
+    def test10_llvm_blog(self):
         """Test code posted in the LLVM blog posting"""
 
         import cppyy
@@ -1126,34 +1051,3 @@ class TestADVERTISED:
 
         assert consumer.consume(factory("hello ", 42))     == 'received: "hello 42"'
         assert consumer.consume(factory(3., 0.14, 0.0015)) == 'received: "3.1415"'
-
-    def test12_timeout(self):
-        """Time-out with threads"""
-
-        import cppyy
-        import threading, time
-
-        cppyy.cppdef("""\
-        namespace test12_timeout {
-            bool _islive = false; volatile bool* islive = &_islive;
-            bool _stopit = false; volatile bool* stopit = &_stopit;
-        }""")
-
-        cppyy.gbl.gInterpreter.ProcessLine.__release_gil__ = True
-        cmd = r"""\
-           *test12_timeout::islive = true;
-           while (!*test12_timeout::stopit);
-        """
-
-        t = threading.Thread(target=cppyy.gbl.gInterpreter.ProcessLine, args=(cmd,))
-        t.start()
-
-      # have to give ProcessLine() time to actually start doing work
-        while not cppyy.gbl.test12_timeout.islive:
-            time.sleep(0.1)     # in seconds
-
-      # join the thread with a timeout after 0.1s
-        t.join(0.1)             # id.
-
-        if t.is_alive():        # was timed-out
-            cppyy.gbl.test12_timeout.stopit[0] = True

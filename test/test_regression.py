@@ -821,73 +821,7 @@ class TestREGRESSION:
         g.triggerChange()
         assert g.success
 
-    def test29_float2d_callback(self):
-        """Passing of 2-dim float arguments"""
-
-        import cppyy
-
-        cppyy.cppdef("""\
-        namespace FloatDim2 {
-        #include <thread>
-
-        struct Buffer {
-            Buffer() = default;
-
-            void setData(float** newData) {
-                data = newData;
-            }
-
-            void setSample(int newChannel, int newSample, float value) {
-                data[newChannel][newSample] = value;
-            }
-
-            float** data = nullptr;
-        };
-
-        struct Processor {
-            virtual ~Processor() = default;
-            virtual void process(float** data, int channels, int samples) = 0;
-        };
-
-        void callback(Processor& p) {
-            std::thread t([&p] {
-                int channels = 2;
-                int samples = 32;
-
-                float** data = new float*[channels];
-                for (int i = 0; i < channels; ++i)
-                    data[i] = new float[samples];
-
-                p.process(data, channels, samples);
-
-                for (int i = 0; i < channels; ++i)
-                    delete[] data[i];
-
-                delete[] data;
-            });
-
-            t.join();
-        } }""")
-
-        cppyy.gbl.FloatDim2.callback.__release_gil__ = True
-
-        class Processor(cppyy.gbl.FloatDim2.Processor):
-            buffer = cppyy.gbl.FloatDim2.Buffer()
-
-            def process(self, data, channels, samples):
-                self.buffer.setData(data)
-
-                try:
-                    for c in range(channels):
-                        for s in range(samples):
-                            self.buffer.setSample(c, s, 0.0) # < used to crash here
-                except Exception as e:
-                    print(e)
-
-        p = Processor()
-        cppyy.gbl.FloatDim2.callback(p)
-
-    def test30_uint64_t(self):
+    def test29_uint64_t(self):
         """Failure due to typo"""
 
         import cppyy
@@ -920,7 +854,7 @@ class TestREGRESSION:
         assert ns.TTest(True).fT == True
         assert type(ns.TTest(True).fT) == bool
 
-    def test31_enum_in_dir(self):
+    def test30_enum_in_dir(self):
         """Failed to pick up enum data"""
 
         import cppyy
@@ -942,7 +876,7 @@ class TestREGRESSION:
         required = {'prod', 'a', 'b', 'smth', 'my_enum'}
         assert all_names.intersection(required) == required
 
-    def test32_explicit_template_in_namespace(self):
+    def test31_explicit_template_in_namespace(self):
         """Lookup of explicit template in namespace"""
 
         import cppyy
@@ -992,7 +926,7 @@ class TestREGRESSION:
         pt_type = cppyy.gbl.property_types.ReferenceWavefunction['double']
         assert cppyy.gbl.std.get[0](cppyy.gbl.property_types.run_as[pt_type]()) ==  20.
 
-    def test33_print_empty_collection(self):
+    def test32_print_empty_collection(self):
         """Print empty collection through Cling"""
 
         import cppyy
