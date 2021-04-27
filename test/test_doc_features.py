@@ -979,6 +979,8 @@ class TestADVERTISED:
 
         import cppyy
 
+        cppyy.include("CPyCppyy/PyException.h")
+
         cppyy.cppdef("""namespace thread_test {
         #include <thread>
 
@@ -995,7 +997,12 @@ class TestADVERTISED:
                 t = std::thread([this] {
                     int counter = 0;
                     while (counter++ < 10)
-                        cons->process(counter);
+                        try {
+                            cons->process(counter);
+                        } catch (CPyCppyy::PyException& e) {
+                            err_msg = e.what();
+                            return;
+                        }
                 });
             }
 
@@ -1006,6 +1013,7 @@ class TestADVERTISED:
 
             std::thread t;
             consumer* cons = nullptr;
+            std::string err_msg;
         }; }""")
 
         ns = cppyy.gbl.thread_test
@@ -1026,6 +1034,20 @@ class TestADVERTISED:
         w.wait()
 
         assert c.count == 10
+
+        class C(consumer):
+            count = 0
+            def process(self, c):
+                raise RuntimeError("all wrong")
+
+        c = C()
+
+        w = worker(c)
+        w.start()
+        w.wait()
+
+        assert "RuntimeError" in w.err_msg
+        assert "all wrong"    in w.err_msg
 
     def test10_custom_str(self):
         """Example of customized str"""
@@ -1105,3 +1127,33 @@ class TestADVERTISED:
         assert consumer.consume(factory("hello ", 42))     == 'received: "hello 42"'
         assert consumer.consume(factory(3., 0.14, 0.0015)) == 'received: "3.1415"'
 
+    def test12_timeout(self):
+        """Time-out with threads"""
+
+        import cppyy
+        import threading, time
+
+        cppyy.cppdef("""\
+        namespace test12_timeout {
+            bool _islive = false; volatile bool* islive = &_islive;
+            bool _stopit = false; volatile bool* stopit = &_stopit;
+        }""")
+
+        cppyy.gbl.gInterpreter.ProcessLine.__release_gil__ = True
+        cmd = r"""\
+           *test12_timeout::islive = true;
+           while (!*test12_timeout::stopit);
+        """
+
+        t = threading.Thread(target=cppyy.gbl.gInterpreter.ProcessLine, args=(cmd,))
+        t.start()
+
+      # have to give ProcessLine() time to actually start doing work
+        while not cppyy.gbl.test12_timeout.islive:
+            time.sleep(0.1)     # in seconds
+
+      # join the thread with a timeout after 0.1s
+        t.join(0.1)             # id.
+
+        if t.is_alive():        # was timed-out
+            cppyy.gbl.test12_timeout.stopit[0] = True
