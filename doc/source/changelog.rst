@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 1.9.6
--------------
+2021-04-28: 1.9.6
+-----------------
 
 * Reverse operators for ``std::complex`` targeting Python's ``complex``
 * Version the precompiled header with the ``cppyy-cling`` package version
