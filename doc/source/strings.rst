@@ -54,4 +54,51 @@ To handle codecs other than UTF-8, the ``std::string`` pythonization adds a
 ``bytes``.
 If it is known that a specific C++ function always returns an ``std::string``
 representing unicode with a codec other than UTF-8, it can in turn be
-explicitly pythonized to do the converion with that codec.
+explicitly pythonized to do the conversion with that codec.
+
+
+`std::wstring`
+""""""""""""""
+
+C++'s "wide" string, ``std::wstring``, is based on ``wchar_t``, a character
+type that is not particularly portable as it can be 2 or 4 bytes in size,
+depending on the platform.
+cppyy supports ``std::wstring`` directly, using the ``wchar_t`` array
+conversions provided by Python's C-API.
+
+
+`const char*`
+"""""""""""""
+
+The C representation of text, ``const char*``, is problematic for two
+reasons: it does not express ownership; and its length is implicit, namely up
+to the first occurrence of ``'\0'``.
+The first can, up to an extent, be ameliorated: there are a range of cases
+where ownership can be inferred.
+In particular, if the C string is set from a Python ``str``, it is the latter
+that owns the memory and the bound proxy of the former that in turn owns the
+(unconverted) ``str`` instance.
+However, if the ``const char*``'s memory is allocated in C/C++, memory
+management is by necessity fully manual.
+Length, on the other hand, can only be known in the case of a fixed array.
+However even then, the more common case is to use the fixed array as a
+buffer, with the actual string still only extending up to the ``'\0'`` char,
+so that is assumed.
+(C++'s ``std::string`` suffers from none of these issues and should always be
+preferred when you have a choice.)
+
+
+`char*`
+"""""""
+
+The C representation of a character array, ``char*``, has all the problems of
+``const char*``, but in addition is often used as "data array of 8-bit int".
+
+
+`character types`
+"""""""""""""""""
+
+cppyy directly supports the following character types, both as single
+variables and in array form: ``char``, ``signed char``, ``unsigned char``,
+``wchar_t``, ``char16_t``, and ``char32_t``.
+
