@@ -25,7 +25,8 @@ CPython/cppyy performance has been vastly improved since.
 cppyy is based on `Cling`_, the C++ interpreter, to match Python's dynamism,
 interactivity, and run-time behavior.
 Consider this session, showing dynamic, interactive, mixing of C++ and Python
-features (more examples are in the `tutorial`_):
+features (there are more examples throughout the documentation and in the
+`tutorial`_):
 
 .. code-block:: python
 
@@ -145,6 +146,7 @@ development environments.
    :maxdepth: 1
 
    basic_types
+   strings
    classes
    functions
    type_conversions
