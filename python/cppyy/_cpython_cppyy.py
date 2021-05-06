@@ -40,7 +40,7 @@ if sys.hexversion < 0x3000000:
     def isfunction(object):
         if type(object) == _backend.CPPOverload and not object.im_class:
             return True
-        return inspect._old_isfunction( object )
+        return inspect._old_isfunction(object)
     inspect.isfunction = isfunction
 
     inspect._old_ismethod = inspect.ismethod
