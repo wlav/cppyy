@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 2.0.0
+-------------
+
+* Upgrade to latest Cling based on Clang/LLVM 9
+
+
 2021-04-28: 1.9.6
 -----------------
 
