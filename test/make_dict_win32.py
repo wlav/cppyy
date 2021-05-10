@@ -39,7 +39,7 @@ if os.path.exists(fn+'Dict.dll'):
         os.remove(fg)
 
 def _get_config_exec():
-        return [sys.executable, '-m', 'cppyy_backend._cling_config']
+    return [sys.executable, '-m', 'cppyy_backend._cling_config']
 
 def get_config(what):
     config_exec_args = _get_config_exec()
