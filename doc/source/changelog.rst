@@ -14,6 +14,7 @@ master: 2.0.0
 -------------
 
 * Upgrade to latest Cling based on Clang/LLVM 9
+* Make C++17 the default standard on Windows
 
 
 2021-04-28: 1.9.6
