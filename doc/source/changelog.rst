@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.0.0
--------------
+2021-05-14: 2.0.0
+-----------------
 
 * Upgrade to latest Cling based on Clang/LLVM 9
 * Make C++17 the default standard on Windows
