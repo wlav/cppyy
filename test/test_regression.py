@@ -934,3 +934,20 @@ class TestREGRESSION:
       # printing an empty collection used to have a missing symbol on 64b Windows
         v = cppyy.gbl.std.vector[int]()
         str(v)
+
+    def test33_filesytem(self):
+        """Static path object used to crash on destruction"""
+
+        import cppyy
+
+        if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") > 201402:
+            cppyy.cppdef("""\
+            #include <filesystem>
+            std::string stack_std_path() {
+                std::filesystem::path p = "/usr";
+                std::ostringstream os;
+                os << p;
+                return os.str();
+            }""")
+
+            assert cppyy.gbl.stack_std_path() == '"/usr"'

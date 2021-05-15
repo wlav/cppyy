@@ -304,6 +304,12 @@ public:
     using _Mybase::get3;
 };
 
+template <class T> class Foo { T x; };
+
+namespace Bar {
+    using ::using_problem::Foo;
+}
+
 } // namespace using_problem
 
 

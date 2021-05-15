@@ -271,6 +271,8 @@ class TestTEMPLATES:
 
         import cppyy
 
+        nsup = cppyy.gbl.using_problem
+
       # through dictionary
         davec = cppyy.gbl.DA_vector["float"]()
         davec += range(10)
@@ -284,11 +286,16 @@ class TestTEMPLATES:
 
       # with variadic template
         if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") > 201402:
-            assert cppyy.gbl.using_problem.matryoshka[int, 3].type
-            assert cppyy.gbl.using_problem.matryoshka[int, 3, 4].type
-            assert cppyy.gbl.using_problem.make_vector[int , 3]
-            assert cppyy.gbl.using_problem.make_vector[int , 3]().m_val == 3
-            assert cppyy.gbl.using_problem.make_vector[int , 4]().m_val == 4
+            assert nsup.matryoshka[int, 3].type
+            assert nsup.matryoshka[int, 3, 4].type
+            assert nsup.make_vector[int , 3]
+            assert nsup.make_vector[int , 3]().m_val == 3
+            assert nsup.make_vector[int , 4]().m_val == 4
+
+      # with inner types using
+        assert cppyy.gbl.gInterpreter.CheckClassTemplate("using_problem::Bar::Foo")
+        assert nsup.Foo
+        assert nsup.Bar.Foo       # used to fail
 
     def test13_using_templated_method(self):
         """Access to base class templated methods through 'using'"""
@@ -870,7 +877,7 @@ class TestTEMPLATED_TYPEDEFS:
         cls.templates = cppyy.load_reflection_info(cls.test_dct)
 
     def test01_using(self):
-        """Test presence and validity of using typededs"""
+        """Test presence and validity of using typedefs"""
 
         import cppyy
 

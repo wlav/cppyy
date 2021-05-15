@@ -414,7 +414,33 @@ class TestFRAGILE:
         assert not 'ESysConstants' in dd
         assert not 'kDoRed' in dd
 
-    def test20_failing_cppcode(self):
+    def test20_capture_output(self):
+        """Capture cerr into a string"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""\
+        namespace capture {
+        void say_hello() {
+           std::cerr << "Hello, World\n";
+        }
+
+        void rdbuf_wa(std::ostream& o, std::basic_stringbuf<char>* b) {
+           o.rdbuf(b);
+        } }""")
+
+        capture = cppyy.gbl.std.ostringstream()
+        oldbuf = cppyy.gbl.std.cerr.rdbuf()
+
+        try:
+            cppyy.gbl.capture.rdbuf_wa(cppyy.gbl.std.cerr, capture.rdbuf())
+            cppyy.gbl.capture.say_hello()
+        finally:
+            cppyy.gbl.std.cerr.rdbuf(oldbuf)
+
+        assert capture.str() == "Hello, World\n"
+
+    def test21_failing_cppcode(self):
         """Check error behavior of failing C++ code"""
 
         import cppyy, string, re
@@ -446,7 +472,7 @@ class TestFRAGILE:
         assert "expectedunqualified-id" in err
         assert "1aap=42;" in err
 
-    def test21_cppexec(self):
+    def test22_cppexec(self):
         """Interactive access to the Cling global scope"""
 
         import cppyy
@@ -457,7 +483,7 @@ class TestFRAGILE:
         with raises(SyntaxError):
             cppyy.cppexec("doesnotexist");
 
-    def test22_set_debug(self):
+    def test23_set_debug(self):
         """Setting of global gDebug variable"""
 
         import cppyy
