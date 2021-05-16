@@ -30,7 +30,7 @@ swig_%.py: %.h %.i
 	swig -python -c++ -builtin $*.i
 
 _swig_%.so: swig_%.py lib%.so
-	$(CXX) $(cppflags) -shared `python-config --includes` -std=c++11 -fPIC $*_wrap.cxx -o $@ -L. -l$*
+	$(CXX) $(cppflags) -shared -I$(shell python -c 'import distutils.sysconfig as ds; print(ds.get_config_var("INCLUDEPY"))') -std=c++11 -fPIC $*_wrap.cxx -o $@ -L. -l$*
 
 %Dict.so: %_rflx.cpp lib%.so
 	$(CXX) $(cppyy_cppflags) -shared -o $@ $*_rflx.cpp -L. -l$*
