@@ -417,6 +417,13 @@ class TestADVANCEDCPP:
         assert cppyy.addressof(ptr) == 0
         pp.set_address_ptr_ref(ptr)
         assert cppyy.addressof(ptr) == 0x1234
+
+      # alternate path through static method handling, which does NOT
+      # provide 'pp' as argument (and thus need no removing)
+        sf = pp.set_address_ptr_ref
+        sf(ptr)
+        assert cppyy.addressof(ptr) == 0x1234
+
         pp.set_address_ptr_ptr(ptr)
         assert cppyy.addressof(ptr) == 0x4321
 
