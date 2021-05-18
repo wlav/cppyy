@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 2.0.1
+-------------
+
+* Upgrade cmake fragments for Clang9
+
+
 2021-05-14: 2.0.0
 -----------------
 
