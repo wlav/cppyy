@@ -194,7 +194,7 @@ class TestCPP11FEATURES:
 
     def test06_nullptr(self):
         """Allow the programmer to pass NULL in certain cases"""
-      
+
         import cppyy
 
       # test existence
@@ -202,7 +202,7 @@ class TestCPP11FEATURES:
       # assert not hasattr(cppyy.gbl, 'nullptr')
 
       # usage is tested in datatypes.py:test15_nullptr_passing
- 
+
     def test07_move(self):
         """Move construction, assignment, and methods"""
 
