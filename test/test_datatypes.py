@@ -1027,11 +1027,17 @@ class TestDATATYPES:
         assert not ns.Comparable1.__dict__['__ne__'](c1_1, c1_2)
         assert     ns.Comparable1.__dict__['__ne__'](c1_1, c1_3)
 
-        with raises(TypeError):
-            c1_1 == c1_2
-
-        with raises(TypeError):
-            c1_1 != c1_2
+      # the following works as a side-effect of a workaround for vector calls and
+      # it is probably preferable to have it working, so leave the discrepancy for
+      # now: python's aggressive end-of-life schedule will catch up soon enough
+        if 0x3080000 <= sys.hexversion:
+            assert     c1_1 == c1_2
+            assert not c1_1 != c1_2
+        else:
+            with raises(TypeError):
+                c1_1 == c1_2
+            with raises(TypeError):
+                c1_1 != c1_2
 
         c2_1 = ns.Comparable2(27)
         c2_2 = ns.Comparable2(27)
