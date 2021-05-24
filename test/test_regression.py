@@ -128,23 +128,48 @@ class TestREGRESSION:
 
         import cppyy
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         template<typename T>
         class AllDefault {
         public:
-           AllDefault(int val) : m_t(val) {}
-           template<int aap=1, int noot=2>
-              int do_stuff() { return m_t+aap+noot; }
+            AllDefault(int val) : m_t(val) {}
+            template<int aap=1, int noot=2>
+               int do_stuff() { return m_t+aap+noot; }
 
         public:
-           T m_t;
+            T m_t;
         };""")
 
         a = cppyy.gbl.AllDefault[int](24)
         a.m_t = 21;
         assert a.do_stuff() == 24
 
-    def test06_class_refcounting(self):
+    def test06_default_float_or_unsigned_argument(self):
+        """Calling with default argument for float or unsigned, which not parse"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace Defaulters {
+            float take_float(float a=5.f, int b=2) { return a*b; }
+            double take_double(double a=5.f, int b=2) { return a*b; }
+            long take_long(long a=5l, int b=2) { return a*b; }
+            unsigned long take_ulong(unsigned long a=5ul, int b=2) { return a*b; }
+        }""")
+
+        ns = cppyy.gbl.Defaulters
+
+      # the following default argument used to fail to parse
+        assert ns.take_float()     == 10.
+        assert ns.take_float(b=2)  == 10.
+        assert ns.take_double()    == 10.
+        assert ns.take_double(b=2) == 10.
+        assert ns.take_long()      == 10
+        assert ns.take_long(b=2)   == 10
+        assert ns.take_ulong()     == 10
+        assert ns.take_ulong(b=2)  == 10
+
+    def test07_class_refcounting(self):
         """The memory regulator would leave an additional refcount on classes"""
 
         import cppyy, gc, sys
@@ -158,17 +183,17 @@ class TestREGRESSION:
 
         assert sys.getrefcount(x) == old_refcnt
 
-    def test07_typedef_identity(self):
+    def test08_typedef_identity(self):
         """Nested typedefs should retain identity"""
 
         import cppyy
 
-        cppyy.cppdef("""namespace PyABC {
-            struct S1 {};
-            struct S2 {
-                typedef std::vector<const PyABC::S1*> S1_coll;
-            };
-        }""")
+        cppyy.cppdef("""
+        namespace PyABC {
+        struct S1 {};
+        struct S2 {
+            typedef std::vector<const PyABC::S1*> S1_coll;
+        }; }""")
 
         from cppyy.gbl import PyABC
 
@@ -177,7 +202,7 @@ class TestREGRESSION:
         assert not 'vector<const PyABC::S1*>' in dir(PyABC.S2)
         assert PyABC.S2.S1_coll is cppyy.gbl.std.vector('const PyABC::S1*')
 
-    def test08_gil_not_released(self):
+    def test09_gil_not_released(self):
         """GIL was released by accident for by-value returns"""
 
         import cppyy
@@ -199,7 +224,7 @@ class TestREGRESSION:
         cppyy.cppdef(code)
         cppyy.gbl.some_foo_calling_python()
 
-    def test09_enum_in_global_space(self):
+    def test10_enum_in_global_space(self):
         """Enum declared in search.h did not appear in global space"""
 
         if IS_WINDOWS:
@@ -213,7 +238,7 @@ class TestREGRESSION:
         assert hasattr(cppyy.gbl, 'ENTER')
         assert hasattr(cppyy.gbl, 'FIND')
 
-    def test10_cobject_addressing(self):
+    def test11_cobject_addressing(self):
         """AsCObject (now as_cobject) had a deref too many"""
 
         import cppyy
@@ -227,7 +252,7 @@ class TestREGRESSION:
         assert a.m_int == 42
         assert cppyy.bind_object(co, 'CObjA').m_int == 42
 
-    def test11_exception_while_exception(self):
+    def test12_exception_while_exception(self):
         """Exception from SetDetailedException during exception handling used to crash"""
 
         import cppyy
@@ -242,7 +267,7 @@ class TestREGRESSION:
             except AttributeError:
                 pass
 
-    def test12_char_star_over_char(self):
+    def test13_char_star_over_char(self):
         """Map str to const char* over char"""
 
       # This is debatable, but although a single character string passes through char,
@@ -277,7 +302,7 @@ class TestREGRESSION:
         assert cppyy.gbl.csoc3.call('0')  == 'string'
         assert cppyy.gbl.csoc3.call('00') == 'string'
 
-    def test13_struct_direct_definition(self):
+    def test14_struct_direct_definition(self):
         """Struct defined directly in a scope miseed scope in renormalized name"""
 
         import cppyy
@@ -318,7 +343,7 @@ class TestREGRESSION:
         f = sds.Foo()
         assert f.bar.x == 5
 
-    def test14_vector_vs_initializer_list(self):
+    def test15_vector_vs_initializer_list(self):
         """Prefer vector in template and initializer_list in formal arguments"""
 
         import cppyy
@@ -350,7 +375,7 @@ class TestREGRESSION:
         sizeit = cppyy.gbl.vec_vs_init.sizeit
         assert sizeit(list(range(10))) == 10
 
-    def test15_iterable_enum(self):
+    def test16_iterable_enum(self):
         """Use template to iterate over an enum"""
       # from: https://stackoverflow.com/questions/52459530/pybind11-emulate-python-enum-behaviour
 
@@ -408,7 +433,7 @@ class TestREGRESSION:
             all_enums.append(ord(c))
         assert all_enums == list(range(1, 5))
 
-    def test16_operator_eq_pickup(self):
+    def test17_operator_eq_pickup(self):
         """Base class python-side operator== interered with derived one"""
 
         import cppyy
@@ -442,7 +467,7 @@ class TestREGRESSION:
 
         assert a != b             # derived class' C++ operator!= called
 
-    def test17_operator_plus_overloads(self):
+    def test18_operator_plus_overloads(self):
         """operator+(string, string) should return a string"""
 
         import cppyy
@@ -456,7 +481,7 @@ class TestREGRESSION:
         assert type(a+b) == cppyy.gbl.std.string
         assert a+b == 'ab'
 
-    def test18_std_string_hash(self):
+    def test19_std_string_hash(self):
         """Hashing of std::string"""
 
         import cppyy
@@ -472,7 +497,7 @@ class TestREGRESSION:
         for s in ['abc', 'text', '321', 'stuff', 'very long string']:
             d[s] = 1
 
-    def test19_signed_char_ref(self):
+    def test20_signed_char_ref(self):
         """Signed char executor was self-referencing"""
 
         import cppyy
@@ -490,7 +515,7 @@ class TestREGRESSION:
 
         assert obj.getter() == 'c'
 
-    def test20_temporaries_and_vector(self):
+    def test21_temporaries_and_vector(self):
         """Extend a life line to references into a vector if needed"""
 
         import cppyy
@@ -502,7 +527,7 @@ class TestREGRESSION:
         l = [e for e in cppyy.gbl.get_some_temporary_vector()]
         assert l == ['x', 'y', 'z']
 
-    def test21_initializer_list_and_temporary(self):
+    def test22_initializer_list_and_temporary(self):
         """Conversion rules when selecting intializer_list v.s. temporary"""
 
         import cppyy
@@ -550,7 +575,7 @@ class TestREGRESSION:
         r21.Bar([1,2])  # used to call Bar(Foo x) through implicit conversion
         assert r21.what_called == 'Bar(il<size=2>)'
 
-    def test22_copy_constructor(self):
+    def test23_copy_constructor(self):
         """Copy construct an object into an empty (NULL) proxy"""
 
         import cppyy, gc
@@ -622,7 +647,7 @@ class TestREGRESSION:
         r22.c = cppyy.nullptr
         assert r22.Countable.s_count == 0
 
-    def test23_C_style_enum(self):
+    def test24_C_style_enum(self):
         """Support C-style enum variable declarations"""
 
         import cppyy
@@ -647,7 +672,7 @@ class TestREGRESSION:
         CSE.your_enum = CSE.YourEnum.kFour
         assert CSE.your_enum == CSE.YourEnum.kFour
 
-    def test24_const_iterator(self):
+    def test25_const_iterator(self):
         """const_iterator failed to resolve the proper return type"""
 
         import cppyy
@@ -673,7 +698,7 @@ class TestREGRESSION:
             i += 1
         assert i
 
-    def test25_const_charptr_data(self):
+    def test26_const_charptr_data(self):
         """const char* is not const; const char* const is"""
 
         import cppyy
@@ -701,7 +726,7 @@ class TestREGRESSION:
         with raises(TypeError):
             io.BackendPlatformName = "aap"
 
-    def test26_exception_by_value(self):
+    def test27_exception_by_value(self):
         """Proper memory management of exception return by value"""
 
         import cppyy, gc
@@ -736,7 +761,7 @@ class TestREGRESSION:
         gc.collect()
         assert ns.count() == 0
 
-    def test27_exception_as_shared_ptr(self):
+    def test28_exception_as_shared_ptr(self):
         """shared_ptr of an exception object null-checking"""
 
         import cppyy
@@ -751,7 +776,7 @@ class TestREGRESSION:
         null = cppyy.gbl.exception_as_shared_ptr.get_shared_null()
         assert not null
 
-    def test28_callback_pointer_values(self):
+    def test29_callback_pointer_values(self):
         """Make sure pointer comparisons in callbacks work as expected"""
 
         import cppyy
@@ -821,7 +846,7 @@ class TestREGRESSION:
         g.triggerChange()
         assert g.success
 
-    def test29_uint64_t(self):
+    def test30_uint64_t(self):
         """Failure due to typo"""
 
         import cppyy
@@ -854,7 +879,7 @@ class TestREGRESSION:
         assert ns.TTest(True).fT == True
         assert type(ns.TTest(True).fT) == bool
 
-    def test30_enum_in_dir(self):
+    def test31_enum_in_dir(self):
         """Failed to pick up enum data"""
 
         import cppyy
@@ -876,7 +901,7 @@ class TestREGRESSION:
         required = {'prod', 'a', 'b', 'smth', 'my_enum'}
         assert all_names.intersection(required) == required
 
-    def test31_explicit_template_in_namespace(self):
+    def test32_explicit_template_in_namespace(self):
         """Lookup of explicit template in namespace"""
 
         import cppyy
@@ -926,7 +951,7 @@ class TestREGRESSION:
         pt_type = cppyy.gbl.property_types.ReferenceWavefunction['double']
         assert cppyy.gbl.std.get[0](cppyy.gbl.property_types.run_as[pt_type]()) ==  20.
 
-    def test32_print_empty_collection(self):
+    def test33_print_empty_collection(self):
         """Print empty collection through Cling"""
 
         import cppyy
@@ -935,7 +960,7 @@ class TestREGRESSION:
         v = cppyy.gbl.std.vector[int]()
         str(v)
 
-    def test33_filesytem(self):
+    def test34_filesytem(self):
         """Static path object used to crash on destruction"""
 
         import cppyy
