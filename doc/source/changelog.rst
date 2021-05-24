@@ -10,9 +10,10 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.0.1
+master: 2.1.0
 -------------
 
+* Support for vector calls with CPython 3.8 and newer
 * Upgrade cmake fragments for Clang9
 
 
