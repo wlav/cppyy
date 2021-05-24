@@ -28,15 +28,24 @@ class TestLEAKCHECK:
     def check_func(self, scope, func, *args, **kwds):
         """Leak-check 'func', given args and kwds"""
 
-      # warmup (once should suffice in all cases)
-        getattr(scope, func)(*args, **kwds)
+        import gc
 
-      # leak check
-        last = self.process.memory_info().rss
-
-        for i in range(100000):
+      # warmup function (TOOD: why doesn't once suffice?)
+        for i in range(8):
             getattr(scope, func)(*args, **kwds)
 
+      # define method to run for scoping (iteration can still allocate)
+        def runit():
+            for i in range(100000):
+                getattr(scope, func)(*args, **kwds)
+
+      # leak check
+        gc.collect()
+        last = self.process.memory_info().rss
+
+        runit()
+
+        gc.collect()
         assert last == self.process.memory_info().rss
 
     def test01_free_functions(self):
