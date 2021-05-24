@@ -170,6 +170,19 @@ class TestLEAKCHECK:
         self.check_func(ns, 'free_default', b=-99)
         self.check_func(ns, 'free_default', c=-99)
 
+        # TODO: no keyword arguments for static methods yet
+        #for m in [ns.MyClass04, ns.MyClass04()]:
+        #    self.check_func(m, 'static_default')
+        #    self.check_func(m, 'static_default', a=-99)
+        #    self.check_func(m, 'static_default', b=-99)
+        #    self.check_func(m, 'static_default', c=-99)
+
+        m = ns.MyClass04()
+        self.check_func(m, 'method_default')
+        self.check_func(m, 'method_default', a=-99)
+        self.check_func(m, 'method_default', b=-99)
+        self.check_func(m, 'method_default', c=-99)
+
     def test05_aggregates(self):
         """Leak test of aggregate creation"""
 
