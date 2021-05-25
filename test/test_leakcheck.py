@@ -11,7 +11,7 @@ def setup_module(mod):
 nopsutil = False
 try:
     import psutil
-except Exception:
+except ImportError:
     nopsutil = True
 
 
@@ -26,13 +26,16 @@ class TestLEAKCHECK:
         cls.process = psutil.Process(os.getpid())
 
     def runit(self, N, scope, func, *args, **kwds):
-        global ll
-        for i in range(N):
-             getattr(scope, func)(*args, **kwds)
+        i = 0
+        while i < N:
+            getattr(scope, func)(*args, **kwds)
+            i += 1
 
     def runit_template(self, N, scope, func, tmpl_args, *args, **kwds):
-        for i in range(N):
-             getattr(scope, func)[tmpl_args](*args, **kwds)
+        i = 0
+        while i < N:
+            getattr(scope, func)[tmpl_args](*args, **kwds)
+            i += 1
 
     def check_func(self, scope, func, *args, **kwds):
         """Leak-check 'func', given args and kwds"""
