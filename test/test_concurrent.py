@@ -38,7 +38,11 @@ class TestCONCURRENT:
         """Run with Python futures"""
 
         import cppyy
-        import concurrent.futures
+
+        try:
+            import concurrent.futures
+        except ImportError:
+            py.test.skip("module concurrent is not installed")
 
         total = 0.
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.data)) as executor:
