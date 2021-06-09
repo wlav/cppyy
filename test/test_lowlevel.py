@@ -460,3 +460,89 @@ class TestLOWLEVEL:
         assert b[0] == 1
         a[0] = 5
         assert b[0] == 5
+
+
+class TestMULTIDIMARRAYS:
+    def setup_class(cls):
+        cls.numeric_builtin_types = ['long']
+        #    'short', 'unsigned short', 'int', 'unsigned int', 'long', 'unsigned long',
+        #    'long long', 'unsigned long long', 'float', 'double'
+        #]
+
+    def test01_2D_arrays(self):
+        """Access and use of 2D data members"""
+
+        import cppyy, textwrap
+
+        try:
+            import io
+        except ImportError:
+            import StringIO as io
+
+        data = [('m_'+tp.replace(' ', '_'), tp) for tp in self.numeric_builtin_types]
+
+        code = io.StringIO()
+
+        code.write(pyunicode(textwrap.dedent("""\
+        namespace test01_2D_arrays {
+        template<typename T>
+        T** allocate_2d(size_t N, size_t M) {
+          T** arr = (T**)malloc(sizeof(void*)*N);
+          for (size_t i = 0; i < N; ++i)
+            arr[i] = (T*)malloc(sizeof(T)*M);
+          return arr;
+        }
+        void free_2d(void** arr, size_t N) {
+          for (size_t i = 0; i < N; ++i)
+            free(arr[i]);
+          free(arr);
+        }
+        struct DataHolder {
+        DataHolder() {
+        """)))
+
+        for m, tp in data:
+            code.write(pyunicode("  %s = allocate_2d<%s>(5, 7);\n" % (m, tp)))
+
+        code.write(pyunicode(
+            "  for (size_t i = 0; i < 5; ++i) {\n"
+            "    for (size_t j = 0; j < 7; ++j) {\n"))
+
+        for m, tp in data:
+            code.write(pyunicode("      %s[i][j] = 5*i+j;\n" % m))
+        code.write(pyunicode("    }\n  }\n}\n"))
+
+        code.write(pyunicode("~DataHolder() {\n"))
+        for m, tp in data:
+            code.write(pyunicode("  free_2d((void**)%s, 5);\n" % m))
+        code.write(pyunicode("}\n"))
+
+        for m, tp in data:
+            code.write(pyunicode("%s** %s;\n" % (tp, m)))
+
+        code.write(pyunicode("};\n}\n"))
+
+        defcode = code.getvalue()
+
+        cppyy.cppdef(defcode)
+
+        ns = cppyy.gbl.test01_2D_arrays
+
+        h = ns.DataHolder()
+        for m, tp in data:
+            getattr(h, m).reshape((5, 7))
+            assert getattr(h, m).shape == (5, 7)
+
+            arr = getattr(h, m)
+            elem_tp = getattr(cppyy.gbl, tp)
+            for i in range(5):
+                for j in range(7):
+                    assert arr[i][j] == elem_tp(5*i+j)
+
+            for i in range(5):
+                for j in range(7):
+                    arr[i][j] = elem_tp(4+5*i+j)
+
+            for i in range(5):
+                for j in range(7):
+                    assert arr[i][j] == elem_tp(4+5*i+j)

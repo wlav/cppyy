@@ -316,14 +316,16 @@ class TestDATATYPES:
 
             # typed passing
             ca = c.pass_array(b)
-            assert type(ca[0]) == type(b[0])
+            if t != 'l': assert type(ca[0]) == type(b[0])
+            else: assert type(ca[0]) == pylong   # 'l' returns PyInt for small values in p2
             assert len(b) == self.N
             for i in range(self.N):
                 assert ca[i] == b[i]
 
             # void* passing
             ca = eval('c.pass_void_array_%s(b)' % t)
-            assert type(ca[0]) == type(b[0])
+            if t != 'l': assert type(ca[0]) == type(b[0])
+            else: assert type(ca[0]) == pylong  # 'l' returns PyInt for small values in p2
             assert len(b) == self.N
             for i in range(self.N):
                 assert ca[i] == b[i]
@@ -1086,7 +1088,7 @@ class TestDATATYPES:
             arr.reshape((self.N,))
             assert len(arr) == self.N
 
-            raises(TypeError, arr.reshape, (1, 2))
+            raises(ValueError, arr.reshape, (1, 2))
             assert len(arr) == self.N
 
             raises(TypeError, arr.reshape, 2*self.N)
