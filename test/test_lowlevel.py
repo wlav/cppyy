@@ -11,8 +11,9 @@ def setup_module(mod):
 
 class TestLOWLEVEL:
     def setup_class(cls):
-        cls.test_dct = test_dct
         import cppyy
+
+        cls.test_dct = test_dct
         cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
         cls.N = cppyy.gbl.N
 
@@ -464,72 +465,26 @@ class TestLOWLEVEL:
 
 class TestMULTIDIMARRAYS:
     def setup_class(cls):
-        cls.numeric_builtin_types = ['long']
-        #    'short', 'unsigned short', 'int', 'unsigned int', 'long', 'unsigned long',
-        #    'long long', 'unsigned long long', 'float', 'double'
-        #]
+        import cppyy
+
+        cls.test_dct = test_dct
+        cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
+        cls.numeric_builtin_types = [
+            'short', 'unsigned short', 'int', 'unsigned int', 'long', 'unsigned long',
+            'long long', 'unsigned long long', 'float', 'double'
+        ]
 
     def test01_2D_arrays(self):
         """Access and use of 2D data members"""
 
-        import cppyy, textwrap
+        import cppyy
 
-        try:
-            import io
-        except ImportError:
-            import StringIO as io
-
-        data = [('m_'+tp.replace(' ', '_'), tp) for tp in self.numeric_builtin_types]
-
-        code = io.StringIO()
-
-        code.write(pyunicode(textwrap.dedent("""\
-        namespace test01_2D_arrays {
-        template<typename T>
-        T** allocate_2d(size_t N, size_t M) {
-          T** arr = (T**)malloc(sizeof(void*)*N);
-          for (size_t i = 0; i < N; ++i)
-            arr[i] = (T*)malloc(sizeof(T)*M);
-          return arr;
-        }
-        void free_2d(void** arr, size_t N) {
-          for (size_t i = 0; i < N; ++i)
-            free(arr[i]);
-          free(arr);
-        }
-        struct DataHolder {
-        DataHolder() {
-        """)))
-
-        for m, tp in data:
-            code.write(pyunicode("  %s = allocate_2d<%s>(5, 7);\n" % (m, tp)))
-
-        code.write(pyunicode(
-            "  for (size_t i = 0; i < 5; ++i) {\n"
-            "    for (size_t j = 0; j < 7; ++j) {\n"))
-
-        for m, tp in data:
-            code.write(pyunicode("      %s[i][j] = 5*i+j;\n" % m))
-        code.write(pyunicode("    }\n  }\n}\n"))
-
-        code.write(pyunicode("~DataHolder() {\n"))
-        for m, tp in data:
-            code.write(pyunicode("  free_2d((void**)%s, 5);\n" % m))
-        code.write(pyunicode("}\n"))
-
-        for m, tp in data:
-            code.write(pyunicode("%s** %s;\n" % (tp, m)))
-
-        code.write(pyunicode("};\n}\n"))
-
-        defcode = code.getvalue()
-
-        cppyy.cppdef(defcode)
-
-        ns = cppyy.gbl.test01_2D_arrays
-
+        ns = cppyy.gbl.MultiDimArrays
         h = ns.DataHolder()
-        for m, tp in data:
+
+        data1 = [('m_'+tp.replace(' ', '_'), tp) for tp in self.numeric_builtin_types]
+
+        for m, tp in data1:
             getattr(h, m).reshape((5, 7))
             assert getattr(h, m).shape == (5, 7)
 

@@ -744,6 +744,40 @@ struct Aggregate2 {
    int fInt = 42;
 };
 
-}
+} // namespace AggregateTest
+
+
+//= multi-dim arrays =======================================================
+namespace MultiDimArrays {
+
+struct DataHolder {
+    DataHolder();
+    ~DataHolder();
+
+    short**              m_short;
+    unsigned short**     m_unsigned_short;
+    int**                m_int;
+    unsigned int**       m_unsigned_int;
+    long**               m_long;
+    unsigned long**      m_unsigned_long;
+    long long**          m_long_long;
+    unsigned long long** m_unsigned_long_long;
+    float**              m_float;
+    double**             m_double;
+
+
+    short                m_short2[3][5];
+    unsigned short       m_unsigned_short2[3][5];
+    int                  m_int2[3][5];
+    unsigned int         m_unsigned_int2[3][5];
+    long                 m_long2[3][5];
+    unsigned long        m_unsigned_long2[3][5];
+    long long            m_long_long2[3][5];
+    unsigned long long   m_unsigned_long_long2[3][5];
+    float                m_float2[3][5];
+    double               m_double2[3][5];
+};
+
+} // namespace MultiDimArrays
 
 #endif // !CPPYY_TEST_DATATYPES_H

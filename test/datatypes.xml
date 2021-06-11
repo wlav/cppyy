@@ -64,4 +64,7 @@
   <namespace name="AggregateTest" />
   <struct pattern="AggregateTest::*" />
 
+  <namespace name="MultiDimArrays" />
+  <struct name="MultiDimArrays::DataHolder" />
+
 </lcgdict>
