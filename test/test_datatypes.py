@@ -97,6 +97,16 @@ class TestDATATYPES:
         assert round(c.get_icomplex_r().imag  - 141., 11) == 0
         assert complex(cppyy.gbl.std.complex['int'](1, 2)) == complex(1, 2)
 
+        # _Complex double type
+        assert type(c.get_ccomplex()) == complex
+        assert round(c.get_ccomplex().real    - 151., 11) == 0
+        assert round(c.get_ccomplex().imag    - 161., 11) == 0
+        assert repr(c.get_ccomplex()) == '(151+161j)'
+        assert round(c.get_ccomplex_cr().real - 151., 11) == 0
+        assert round(c.get_ccomplex_cr().imag - 161., 11) == 0
+        assert round(c.get_ccomplex_r().real  - 151., 11) == 0
+        assert round(c.get_ccomplex_r().imag  - 161., 11) == 0
+
         # complex overloads
         cppyy.cppdef("""
         namespace ComplexOverload {

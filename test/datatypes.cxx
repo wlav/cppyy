@@ -35,6 +35,7 @@ CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
     m_ldouble  = -88.l;
     m_complex  = {99., 101.};
     m_icomplex = {121, 141};
+    m_ccomplex = {151., 161.};
     m_enum     = kNothing;
     m_voidp    = (void*)0;
 
@@ -54,6 +55,7 @@ CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
     m_float_array2    = new float[N];
     m_double_array2   = new double[N];
     m_complex_array2  = new complex_t[N];
+    m_ccomplex_array2 = new ccomplex_t[N];
 
     for (int i = 0; i < N; ++i) {
         m_bool_array[i]      =  bool(i%2);
@@ -82,6 +84,7 @@ CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
         m_double_array[i]    = -15.*i;
         m_double_array2[i]   = -16.*i;
         m_complex_array2[i]  = {17.*i, 18.*i};
+        m_ccomplex_array2[i] = {19.*i, 20.*i};
     }
 
     m_owns_arrays = true;
@@ -114,6 +117,7 @@ void CppyyTestData::destroy_arrays() {
         delete[] m_float_array2;
         delete[] m_double_array2;
         delete[] m_complex_array2;
+        delete[] m_ccomplex_array2;
 
         m_owns_arrays = false;
     }
@@ -148,6 +152,7 @@ long double          CppyyTestData::get_ldouble()  { return m_ldouble; }
 long double          CppyyTestData::get_ldouble_def(long double ld) { return ld; }
 complex_t            CppyyTestData::get_complex()  { return m_complex; }
 icomplex_t           CppyyTestData::get_icomplex() { return m_icomplex; }
+ccomplex_t           CppyyTestData::get_ccomplex() { return m_ccomplex; }
 CppyyTestData::EWhat CppyyTestData::get_enum()     { return m_enum; }
 void*                CppyyTestData::get_voidp()    { return m_voidp; }
 
@@ -180,6 +185,8 @@ double*     CppyyTestData::get_double_array()    { return m_double_array; }
 double*     CppyyTestData::get_double_array2()   { return m_double_array2; }
 complex_t*  CppyyTestData::get_complex_array()   { return m_complex_array; }
 complex_t*  CppyyTestData::get_complex_array2()  { return m_complex_array2; }
+ccomplex_t* CppyyTestData::get_ccomplex_array()  { return m_ccomplex_array; }
+ccomplex_t* CppyyTestData::get_ccomplex_array2() { return m_ccomplex_array2; }
 
 CppyyTestPod   CppyyTestData::get_pod_val()     { return m_pod; }
 CppyyTestPod*  CppyyTestData::get_pod_val_ptr() { return &m_pod; }
@@ -216,6 +223,7 @@ const double&               CppyyTestData::get_double_cr()   { return m_double; 
 const long double&          CppyyTestData::get_ldouble_cr()  { return m_ldouble; }
 const complex_t&            CppyyTestData::get_complex_cr()  { return m_complex; }
 const icomplex_t&           CppyyTestData::get_icomplex_cr() { return m_icomplex; }
+const ccomplex_t&           CppyyTestData::get_ccomplex_cr() { return m_ccomplex; }
 const CppyyTestData::EWhat& CppyyTestData::get_enum_cr()     { return m_enum; }
 
 //- getters ref -------------------------------------------------------------
@@ -246,6 +254,7 @@ double&               CppyyTestData::get_double_r()   { return m_double; }
 long double&          CppyyTestData::get_ldouble_r()  { return m_ldouble; }
 complex_t&            CppyyTestData::get_complex_r()  { return m_complex; }
 icomplex_t&           CppyyTestData::get_icomplex_r() { return m_icomplex; }
+ccomplex_t&           CppyyTestData::get_ccomplex_r() { return m_ccomplex; }
 CppyyTestData::EWhat& CppyyTestData::get_enum_r()     { return m_enum; }
 
 //- setters -----------------------------------------------------------------
@@ -276,6 +285,7 @@ void CppyyTestData::set_double(double d)                   { m_double   = d; }
 void CppyyTestData::set_ldouble(long double ld)            { m_ldouble  = ld; }
 void CppyyTestData::set_complex(complex_t cd)              { m_complex  = cd; }
 void CppyyTestData::set_icomplex(icomplex_t ci)            { m_icomplex = ci; }
+void CppyyTestData::set_ccomplex(ccomplex_t cd)            { m_ccomplex = cd; }
 void CppyyTestData::set_enum(EWhat w)                      { m_enum     = w; }
 void CppyyTestData::set_voidp(void* p)                     { m_voidp    = p; }
 
@@ -319,6 +329,7 @@ void CppyyTestData::set_double_cr(const double& d)               { m_double   = 
 void CppyyTestData::set_ldouble_cr(const long double& ld)        { m_ldouble  = ld; }
 void CppyyTestData::set_complex_cr(const complex_t& cd)          { m_complex  = cd; }
 void CppyyTestData::set_icomplex_cr(const icomplex_t& ci)        { m_icomplex = ci; }
+void CppyyTestData::set_ccomplex_cr(const ccomplex_t& cd)        { m_ccomplex = cd; }
 void CppyyTestData::set_enum_cr(const EWhat& w)                  { m_enum     = w; }
 
 //- setters ref -------------------------------------------------------------
@@ -518,6 +529,7 @@ void CppyyTestData::set_double_rv(double&& d)               { m_double   = d; }
 void CppyyTestData::set_ldouble_rv(long double&& ld)        { m_ldouble  = ld; }
 void CppyyTestData::set_complex_rv(complex_t&& cd)          { m_complex  = cd; }
 void CppyyTestData::set_icomplex_rv(icomplex_t&& ci)        { m_icomplex = ci; }
+void CppyyTestData::set_ccomplex_rv(ccomplex_t&& cd)        { m_ccomplex = cd; }
 void CppyyTestData::set_enum_rv(EWhat&& w)                  { m_enum     = w; }
 
 //- passers -----------------------------------------------------------------
@@ -531,6 +543,7 @@ unsigned long*  CppyyTestData::pass_array(unsigned long* a)  { return a; }
 float*          CppyyTestData::pass_array(float* a)          { return a; }
 double*         CppyyTestData::pass_array(double* a)         { return a; }
 complex_t*      CppyyTestData::pass_array(complex_t* a)      { return a; }
+ccomplex_t*     CppyyTestData::pass_array(ccomplex_t* a)     { return a; }
 
 //- static data members -----------------------------------------------------
 bool                 CppyyTestData::s_bool     = false;
@@ -560,6 +573,7 @@ double               CppyyTestData::s_double   = -707.;
 long double          CppyyTestData::s_ldouble  = -808.l;
 complex_t            CppyyTestData::s_complex  = {909., -909.};
 icomplex_t           CppyyTestData::s_icomplex = {979, -979};
+ccomplex_t           CppyyTestData::s_ccomplex = {919., -919.};
 CppyyTestData::EWhat CppyyTestData::s_enum     = CppyyTestData::kNothing;
 void*                CppyyTestData::s_voidp    = (void*)0;
 std::string          CppyyTestData::s_strv     = "Hello";
@@ -621,6 +635,7 @@ double             g_double   = -688.;
 long double        g_ldouble  = -788.l;
 complex_t          g_complex  = {808., -808.};
 icomplex_t         g_icomplex = {909,  -909};
+ccomplex_t         g_ccomplex = {858., -858.};
 EFruit             g_enum     = kBanana;
 void*              g_voidp    = nullptr;
 

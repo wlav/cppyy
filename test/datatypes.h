@@ -81,6 +81,7 @@ private:
 //===========================================================================
 typedef std::complex<double> complex_t; // maps to Py_complex
 typedef std::complex<int> icomplex_t;   // no equivalent
+typedef _Complex double ccomplex_t; // C-style complex, maps to Py_complex
 
 class CppyyTestData {
 public:
@@ -122,6 +123,7 @@ public:
     long double          get_ldouble_def(long double ld = 1);
     complex_t            get_complex();
     icomplex_t           get_icomplex();
+    ccomplex_t           get_ccomplex();
     EWhat                get_enum();
     void*                get_voidp();
 
@@ -154,6 +156,8 @@ public:
     double*     get_double_array2();
     complex_t*  get_complex_array();
     complex_t*  get_complex_array2();
+    ccomplex_t* get_ccomplex_array();
+    ccomplex_t* get_ccomplex_array2();
 
     CppyyTestPod get_pod_val();                 // for m_pod
     CppyyTestPod* get_pod_val_ptr();
@@ -190,6 +194,7 @@ public:
     const long double&        get_ldouble_cr();
     const complex_t&          get_complex_cr();
     const icomplex_t&         get_icomplex_cr();
+    const ccomplex_t&         get_ccomplex_cr();
     const EWhat&              get_enum_cr();
 
 // getters ref
@@ -220,6 +225,7 @@ public:
     long double&        get_ldouble_r();
     complex_t&          get_complex_r();
     icomplex_t&         get_icomplex_r();
+    ccomplex_t&         get_ccomplex_r();
     EWhat&              get_enum_r();
 
 // setters
@@ -250,6 +256,7 @@ public:
     void set_ldouble(long double);
     void set_complex(complex_t);
     void set_icomplex(icomplex_t);
+    void set_ccomplex(ccomplex_t);
     void set_enum(EWhat);
     void set_voidp(void*);
 
@@ -292,6 +299,7 @@ public:
     void set_ldouble_cr(const long double&);
     void set_complex_cr(const complex_t&);
     void set_icomplex_cr(const icomplex_t&);
+    void set_ccomplex_cr(const ccomplex_t&);
     void set_enum_cr(const EWhat&);
 
 // setters ref
@@ -403,6 +411,7 @@ public:
     void set_ldouble_rv(long double&&);
     void set_complex_rv(complex_t&&);
     void set_icomplex_rv(icomplex_t&&);
+    void set_ccomplex_rv(ccomplex_t&&);
     void set_enum_rv(EWhat&&);
 
 // passers
@@ -416,6 +425,7 @@ public:
     float*          pass_array(float*);
     double*         pass_array(double*);
     complex_t*      pass_array(complex_t*);
+    ccomplex_t*     pass_array(ccomplex_t*);
 
     unsigned char*  pass_void_array_B(void* a) { return pass_array((unsigned char*)a); }
     short*          pass_void_array_h(void* a) { return pass_array((short*)a); }
@@ -427,6 +437,7 @@ public:
     float*          pass_void_array_f(void* a) { return pass_array((float*)a); }
     double*         pass_void_array_d(void* a) { return pass_array((double*)a); }
     complex_t*      pass_void_array_Z(void* a) { return pass_array((complex_t*)a); }
+    ccomplex_t*     pass_void_array_cZ(void* a) { return pass_array((ccomplex_t*)a); }
 
 // strings
     const char*     get_valid_string(const char* in);
@@ -468,6 +479,7 @@ public:
     long double          m_ldouble;
     complex_t            m_complex;
     icomplex_t           m_icomplex;
+    ccomplex_t           m_ccomplex;
     EWhat                m_enum;
     void*                m_voidp;
 
@@ -503,6 +515,8 @@ public:
     complex_t*  m_complex_array2;
     icomplex_t  m_icomplex_array[N];
     icomplex_t* m_icomplex_array2;
+    ccomplex_t  m_ccomplex_array[N];
+    ccomplex_t* m_ccomplex_array2;
 
 // object types
     CppyyTestPod m_pod;
@@ -536,6 +550,7 @@ public:
     static long double             s_ldouble;
     static complex_t               s_complex;
     static icomplex_t              s_icomplex;
+    static ccomplex_t              s_ccomplex;
     static EWhat                   s_enum;
     static void*                   s_voidp;
     static std::string             s_strv;
@@ -580,6 +595,7 @@ extern double             g_double;
 extern long double        g_ldouble;
 extern complex_t          g_complex;
 extern icomplex_t         g_icomplex;
+extern ccomplex_t         g_ccomplex;
 extern EFruit             g_enum;
 extern void*              g_voidp;
 
@@ -610,6 +626,7 @@ static const double             g_c_double  = -699.;
 static const long double        g_c_ldouble = -799.l;
 static const complex_t          g_c_complex = {1., 2.};
 static const icomplex_t         g_c_icomplex = {3, 4};
+static const ccomplex_t         g_c_ccomplex = {5., 6.};
 static const EFruit             g_c_enum    = kApple;
 static const void*              g_c_voidp   = nullptr;
 
