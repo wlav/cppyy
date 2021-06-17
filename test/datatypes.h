@@ -81,7 +81,11 @@ private:
 //===========================================================================
 typedef std::complex<double> complex_t; // maps to Py_complex
 typedef std::complex<int> icomplex_t;   // no equivalent
-typedef _Complex double ccomplex_t; // C-style complex, maps to Py_complex
+#ifndef _WIN32
+typedef _Complex double  ccomplex_t;    // C-style complex, maps to Py_complex
+#else
+typedef _C_double_complex ccomplex_t;   // id.
+#endif
 
 class CppyyTestData {
 public:
