@@ -17,6 +17,14 @@ class TestLOWLEVEL:
         cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
         cls.N = cppyy.gbl.N
 
+    def test00_import_all(self):
+        """Validity of `from cppyy.ll import *`"""
+
+        from cppyy import ll
+
+        for attr in ll.__all__:
+            assert hasattr(ll, attr)
+
     def test01_llv_type(self):
         """Existence of LowLevelView type"""
 

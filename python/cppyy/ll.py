@@ -20,8 +20,8 @@ __all__ = [
     'array_new',
     'array_delete',
     'signals_as_exception',
-    'set_signals_as_exception'
-    'FatalError'
+    'set_signals_as_exception',
+    'FatalError',
     'BusError',
     'SegmentationViolation',
     'IllegalInstruction',
