@@ -17,6 +17,7 @@ master: 2.1.0
 * Support for typed C++ literals as defaults when mixing with keywords
 * Enable reshaping of multi-dim LowLevelViews
 * Direct support for C's _Complex (_Complex_double/_float on Windows)
+* sizeof() forwards to ctypes.sizeof() for ctypes' types
 * Upgrade cmake fragments for Clang9
 
 
