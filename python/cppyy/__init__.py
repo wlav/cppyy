@@ -366,7 +366,7 @@ def sizeof(tt):
     try:
         return _sizes[tt]
     except KeyError:
-        if type(tt).__module__ == '_ctypes':
+        if type(tt).__module__[:7] == '_ctypes':
             sz = ctypes.sizeof(tt)
         else:
             sz = gbl.gInterpreter.ProcessLine("sizeof(%s);" % (_get_name(tt),))
