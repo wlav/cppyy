@@ -114,12 +114,12 @@ class TestAPI:
         typedef CPyCppyy::ConverterFactory_t cf_t;
         void register_a3() {
         #ifndef WIN32
-            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
-            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](Py_ssize_t*) { static APICheck3Converter c{}; return &c; });
+            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](CPyCppyy::dims_t) { static APICheck3Converter c{}; return &c; });
+            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](CPyCppyy::dims_t) { static APICheck3Converter c{}; return &c; });
         #else
         // Clang's JIT does not support relocation of the static variable on Windows
-            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](Py_ssize_t*) { return new APICheck3Converter{}; });
-            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](Py_ssize_t*) { return new APICheck3Converter{}; });
+            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](CPyCppyy::dims_t) { return new APICheck3Converter{}; });
+            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](CPyCppyy::dims_t) { return new APICheck3Converter{}; });
         #endif
         }
         void unregister_a3() {

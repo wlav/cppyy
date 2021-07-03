@@ -16,6 +16,7 @@ master: 2.1.0
 * Support for vector calls with CPython 3.8 and newer
 * Support for typed C++ literals as defaults when mixing with keywords
 * Enable reshaping of multi-dim LowLevelViews
+* Refactored multi-dim arrays and support for multi-dim assignment
 * Direct support for C's _Complex (_Complex_double/_float on Windows)
 * sizeof() forwards to ctypes.sizeof() for ctypes' types
 * Upgrade cmake fragments for Clang9

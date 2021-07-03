@@ -482,6 +482,9 @@ class TestMULTIDIMARRAYS:
             'long long', 'unsigned long long', 'float', 'double'
         ]
 
+    def _data_m(self, lbl):
+        return [('m_'+tp.replace(' ', '_')+lbl, tp) for tp in self.numeric_builtin_types]
+
     def test01_2D_arrays(self):
         """Access and use of 2D data members"""
 
@@ -490,8 +493,7 @@ class TestMULTIDIMARRAYS:
         ns = cppyy.gbl.MultiDimArrays
         h = ns.DataHolder()
 
-        data1 = [('m_'+tp.replace(' ', '_'), tp) for tp in self.numeric_builtin_types]
-
+        data1 = self._data_m('1')
         for m, tp in data1:
             getattr(h, m).reshape((5, 7))
             assert getattr(h, m).shape == (5, 7)
@@ -509,3 +511,25 @@ class TestMULTIDIMARRAYS:
             for i in range(5):
                 for j in range(7):
                     assert arr[i][j] == elem_tp(4+5*i+j)
+
+    def test02_assign_2D_arrays(self):
+        """Direct assignment of 2D arrays"""
+
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            py.test.skip('numpy is not installed')
+
+        ns = cppyy.gbl.MultiDimArrays
+        h = ns.DataHolder()
+
+        data1 = self._data_m('1')
+        for m, tp in data1:
+            getattr(h, m).reshape((5, 7))
+            assert getattr(h, m).shape == (5, 7)
+
+      # copy assignment
+        h.m_int3 = np.ones((3, 5), dtype=np.int32)
+        #print(h.m_int3[1][1])

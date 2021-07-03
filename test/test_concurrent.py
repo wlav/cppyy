@@ -144,7 +144,7 @@ class TestCONCURRENT:
         assert c.count == 10
 
         class C(consumer):
-            count = 0 
+            count = 0
             def process(self, c):
                 raise RuntimeError("all wrong")
 

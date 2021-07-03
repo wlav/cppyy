@@ -976,3 +976,30 @@ class TestREGRESSION:
             }""")
 
             assert cppyy.gbl.stack_std_path() == '"/usr"'
+
+    def test35_ctypes_sizeof(self):
+        """cppyy.sizeof forwards to ctypes.sizeof where necessary"""
+
+        import cppyy, ctypes
+
+        cppyy.cppdef("""\
+        namespace test35_ctypes_sizeof {
+            void func(uint32_t* param) {
+                *param = 42;
+            }
+        }""")
+
+        ns = cppyy.gbl.test35_ctypes_sizeof
+
+        holder = ctypes.c_uint32(17)
+        param = ctypes.pointer(holder)
+
+        ns.func(param)
+        assert holder.value == 42
+
+        holder = ctypes.c_uint32(17)
+        ns.func(holder)
+        assert holder.value == 42
+
+        assert cppyy.sizeof(param) == ctypes.sizeof(param)
+
