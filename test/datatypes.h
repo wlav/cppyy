@@ -775,38 +775,38 @@ struct DataHolder {
     DataHolder();
     ~DataHolder();
 
-    short**              m_short1;
-    unsigned short**     m_unsigned_short1;
-    int**                m_int1;
-    unsigned int**       m_unsigned_int1;
-    long**               m_long1;
-    unsigned long**      m_unsigned_long1;
-    long long**          m_long_long1;
-    unsigned long long** m_unsigned_long_long1;
-    float**              m_float1;
-    double**             m_double1;
+    short**              m_short2a;
+    unsigned short**     m_unsigned_short2a;
+    int**                m_int2a;
+    unsigned int**       m_unsigned_int2a;
+    long**               m_long2a;
+    unsigned long**      m_unsigned_long2a;
+    long long**          m_long_long2a;
+    unsigned long long** m_unsigned_long_long2a;
+    float**              m_float2a;
+    double**             m_double2a;
 
-    short**              m_short2;
-    unsigned short**     m_unsigned_short2;
-    int**                m_int2;
-    unsigned int**       m_unsigned_int2;
-    long**               m_long2;
-    unsigned long**      m_unsigned_long2;
-    long long**          m_long_long2;
-    unsigned long long** m_unsigned_long_long2;
-    float**              m_float2;
-    double**             m_double2;
+    short**              m_short2b;
+    unsigned short**     m_unsigned_short2b;
+    int**                m_int2b;
+    unsigned int**       m_unsigned_int2b;
+    long**               m_long2b;
+    unsigned long**      m_unsigned_long2b;
+    long long**          m_long_long2b;
+    unsigned long long** m_unsigned_long_long2b;
+    float**              m_float2b;
+    double**             m_double2b;
 
-    short                m_short3[3][5];
-    unsigned short       m_unsigned_short3[3][5];
-    int                  m_int3[3][5];
-    unsigned int         m_unsigned_int3[3][5];
-    long                 m_long3[3][5];
-    unsigned long        m_unsigned_long3[3][5];
-    long long            m_long_long3[3][5];
-    unsigned long long   m_unsigned_long_long3[3][5];
-    float                m_float3[3][5];
-    double               m_double3[3][5];
+    short                m_short2c[3][5];
+    unsigned short       m_unsigned_short2c[3][5];
+    int                  m_int2c[3][5];
+    unsigned int         m_unsigned_int2c[3][5];
+    long                 m_long2c[3][5];
+    unsigned long        m_unsigned_long2c[3][5];
+    long long            m_long_long2c[3][5];
+    unsigned long long   m_unsigned_long_long2c[3][5];
+    float                m_float2c[3][5];
+    double               m_double2c[3][5];
 };
 
 } // namespace MultiDimArrays

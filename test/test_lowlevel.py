@@ -493,8 +493,8 @@ class TestMULTIDIMARRAYS:
         ns = cppyy.gbl.MultiDimArrays
         h = ns.DataHolder()
 
-        data1 = self._data_m('1')
-        for m, tp in data1:
+        data2a = self._data_m('2a')
+        for m, tp in data2a:
             getattr(h, m).reshape((5, 7))
             assert getattr(h, m).shape == (5, 7)
 
@@ -525,11 +525,13 @@ class TestMULTIDIMARRAYS:
         ns = cppyy.gbl.MultiDimArrays
         h = ns.DataHolder()
 
-        data1 = self._data_m('1')
-        for m, tp in data1:
+        data2a = self._data_m('2a')
+        for m, tp in data2a:
             getattr(h, m).reshape((5, 7))
             assert getattr(h, m).shape == (5, 7)
 
       # copy assignment
-        h.m_int3 = np.ones((3, 5), dtype=np.int32)
-        #print(h.m_int3[1][1])
+        h.m_int2c = np.ones((3, 5), dtype=np.int32)
+        for i in range(3):
+            for j in range(5):
+                assert h.m_int2c[i][j] == 1

@@ -836,70 +836,70 @@ static inline void free_2d(void** arr, size_t N) {
 } // namespace MultiDimArrays
 
 MultiDimArrays::DataHolder::DataHolder() {
-    m_short1              = allocate_2d<short>(5, 7);
-    m_unsigned_short1     = allocate_2d<unsigned short>(5, 7);
-    m_int1                = allocate_2d<int>(5, 7);
-    m_unsigned_int1       = allocate_2d<unsigned int>(5, 7);
-    m_long1               = allocate_2d<long>(5, 7);
-    m_unsigned_long1      = allocate_2d<unsigned long>(5, 7);
-    m_long_long1          = allocate_2d<long long>(5, 7);
-    m_unsigned_long_long1 = allocate_2d<unsigned long long>(5, 7);
-    m_float1              = allocate_2d<float>(5, 7);
-    m_double1             = allocate_2d<double>(5, 7);
+    m_short2a                = allocate_2d<short>(5, 7);
+    m_unsigned_short2a       = allocate_2d<unsigned short>(5, 7);
+    m_int2a                  = allocate_2d<int>(5, 7);
+    m_unsigned_int2a         = allocate_2d<unsigned int>(5, 7);
+    m_long2a                 = allocate_2d<long>(5, 7);
+    m_unsigned_long2a        = allocate_2d<unsigned long>(5, 7);
+    m_long_long2a            = allocate_2d<long long>(5, 7);
+    m_unsigned_long_long2a   = allocate_2d<unsigned long long>(5, 7);
+    m_float2a                = allocate_2d<float>(5, 7);
+    m_double2a               = allocate_2d<double>(5, 7);
 
     for (size_t i = 0; i < 5; ++i) {
         for (size_t j = 0; j < 7; ++j) {
             size_t val = 5*i+j;
-            m_short1[i][j]              = (short)val;
-            m_unsigned_short1[i][j]     = (unsigned short)val;
-            m_int1[i][j]                = (int)val;
-            m_unsigned_int1[i][j]       = (unsigned int)val;
-            m_long1[i][j]               = (long)val;
-            m_unsigned_long1[i][j]      = (unsigned long)val;
-            m_long_long1[i][j]          = (long long)val;
-            m_unsigned_long_long1[i][j] = (unsigned long long)val;
-            m_float1[i][j]              = (float)val;
-            m_double1[i][j]             = (double)val;
+            m_short2a[i][j]                 = (short)val;
+            m_unsigned_short2a[i][j]        = (unsigned short)val;
+            m_int2a[i][j]                   = (int)val;
+            m_unsigned_int2a[i][j]          = (unsigned int)val;
+            m_long2a[i][j]                  = (long)val;
+            m_unsigned_long2a[i][j]         = (unsigned long)val;
+            m_long_long2a[i][j]             = (long long)val;
+            m_unsigned_long_long2a[i][j]    = (unsigned long long)val;
+            m_float2a[i][j]                 = (float)val;
+            m_double2a[i][j]                = (double)val;
         }
     }
 
-    m_short2              = nullptr;
-    m_unsigned_short2     = nullptr;
-    m_int2                = nullptr;
-    m_unsigned_int2       = nullptr;
-    m_long2               = nullptr;
-    m_unsigned_long2      = nullptr;
-    m_long_long2          = nullptr;
-    m_unsigned_long_long2 = nullptr;
-    m_float2              = nullptr;
-    m_double2             = nullptr;
+    m_short2b              =   nullptr;
+    m_unsigned_short2b       = nullptr;
+    m_int2b                  = nullptr;
+    m_unsigned_int2b         = nullptr;
+    m_long2b                 = nullptr;
+    m_unsigned_long2b        = nullptr;
+    m_long_long2b            = nullptr;
+    m_unsigned_long_long2b   = nullptr;
+    m_float2b                = nullptr;
+    m_double2b               = nullptr;
 
     for (size_t i = 0; i < 3; ++i) {
         for (size_t j = 0; j < 5; ++j) {
             size_t val = 3*i+j;
-            m_short3[i][j]              = (short)val;
-            m_unsigned_short3[i][j]     = (unsigned short)val;
-            m_int3[i][j]                = (int)val;
-            m_unsigned_int3[i][j]       = (unsigned int)val;
-            m_long3[i][j]               = (long)val;
-            m_unsigned_long3[i][j]      = (unsigned long)val;
-            m_long_long3[i][j]          = (long long)val;
-            m_unsigned_long_long3[i][j] = (unsigned long long)val;
-            m_float3[i][j]              = (float)val;
-            m_double3[i][j]             = (double)val;
+            m_short2c[i][j]                 = (short)val;
+            m_unsigned_short2c[i][j]        = (unsigned short)val;
+            m_int2c[i][j]                   = (int)val;
+            m_unsigned_int2c[i][j]          = (unsigned int)val;
+            m_long2c[i][j]                  = (long)val;
+            m_unsigned_long2c[i][j]         = (unsigned long)val;
+            m_long_long2c[i][j]             = (long long)val;
+            m_unsigned_long_long2c[i][j]    = (unsigned long long)val;
+            m_float2c[i][j]                 = (float)val;
+            m_double2c[i][j]                = (double)val;
         }
     }
 }
 
 MultiDimArrays::DataHolder::~DataHolder() {
-    free_2d((void**)m_short1, 5);
-    free_2d((void**)m_unsigned_short1, 5);
-    free_2d((void**)m_int1, 5);
-    free_2d((void**)m_unsigned_int1, 5);
-    free_2d((void**)m_long1, 5);
-    free_2d((void**)m_unsigned_long1, 5);
-    free_2d((void**)m_long_long1, 5);
-    free_2d((void**)m_unsigned_long_long1, 5);
-    free_2d((void**)m_float1, 5);
-    free_2d((void**)m_double1, 5);
+    free_2d((void**)m_short2a, 5);
+    free_2d((void**)m_unsigned_short2a, 5);
+    free_2d((void**)m_int2a, 5);
+    free_2d((void**)m_unsigned_int2a, 5);
+    free_2d((void**)m_long2a, 5);
+    free_2d((void**)m_unsigned_long2a, 5);
+    free_2d((void**)m_long_long2a, 5);
+    free_2d((void**)m_unsigned_long_long2a, 5);
+    free_2d((void**)m_float2a, 5);
+    free_2d((void**)m_double2a, 5);
 }
