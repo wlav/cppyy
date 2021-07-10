@@ -568,3 +568,7 @@ class TestMULTIDIMARRAYS:
             for i in range(N):
                 for j in range(M):
                     assert arr[i][j] == 7*i+j
+
+            assert arr[2][3] != 10
+            arr[2][3] = 10
+            assert arr[2][3] == 10
