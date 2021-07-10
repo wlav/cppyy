@@ -549,6 +549,7 @@ class TestMULTIDIMARRAYS:
             for i in range(3):
                 for j in range(5):
                     assert arr[i][j] == 1
+                    assert arr[i, j] == 1
 
       # size checking for copy assignment
         for itp, (m, tp) in enumerate(data2c):
@@ -568,6 +569,7 @@ class TestMULTIDIMARRAYS:
             for i in range(N):
                 for j in range(M):
                     assert arr[i][j] == 7*i+j
+                    assert arr[i, j] == 7*i+j
 
             assert arr[2][3] != 10
             arr[2][3] = 10
