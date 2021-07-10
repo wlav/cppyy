@@ -787,15 +787,25 @@ struct DataHolder {
     double**             m_double2a;
 
     short**              m_short2b;
+    short**              new_short2d(int N, int M);
     unsigned short**     m_unsigned_short2b;
+    unsigned short**     new_ushort2d(int N, int M);
     int**                m_int2b;
+    int**                new_int2d(int N, int M);
     unsigned int**       m_unsigned_int2b;
+    unsigned int**       new_uint2d(int N, int M);
     long**               m_long2b;
+    long**               new_long2d(int N, int M);
     unsigned long**      m_unsigned_long2b;
+    unsigned long**      new_ulong2d(int N, int M);
     long long**          m_long_long2b;
+    long long**          new_llong2d(int N, int M);
     unsigned long long** m_unsigned_long_long2b;
+    unsigned long long** new_ullong2d(int N, int M);
     float**              m_float2b;
+    float**              new_float2d(int N, int M);
     double**             m_double2b;
+    double**             new_double2d(int N, int M);
 
     short                m_short2c[3][5];
     unsigned short       m_unsigned_short2c[3][5];

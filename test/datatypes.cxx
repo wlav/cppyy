@@ -828,9 +828,11 @@ static inline T** allocate_2d(size_t N, size_t M) {
 }
 
 static inline void free_2d(void** arr, size_t N) {
-    for (size_t i = 0; i < N; ++i)
-        free(arr[i]);
-    free(arr);
+    if (arr) {
+        for (size_t i = 0; i < N; ++i)
+            free(arr[i]);
+        free(arr);
+    }
 }
 
 } // namespace MultiDimArrays
@@ -902,4 +904,38 @@ MultiDimArrays::DataHolder::~DataHolder() {
     free_2d((void**)m_unsigned_long_long2a, 5);
     free_2d((void**)m_float2a, 5);
     free_2d((void**)m_double2a, 5);
+
+    free_2d((void**)m_short2b, 5);
+    free_2d((void**)m_unsigned_short2b, 5);
+    free_2d((void**)m_int2b, 5);
+    free_2d((void**)m_unsigned_int2b, 5);
+    free_2d((void**)m_long2b, 5);
+    free_2d((void**)m_unsigned_long2b, 5);
+    free_2d((void**)m_long_long2b, 5);
+    free_2d((void**)m_unsigned_long_long2b, 5);
+    free_2d((void**)m_float2b, 5);
+    free_2d((void**)m_double2b, 5);
 }
+
+#define MULTIDIM_ARRAYS_NEW2D(type, name)                                   \
+type** MultiDimArrays::DataHolder::new_##name##2d(int N, int M) {           \
+    type** arr = allocate_2d<type>(N, M);                                   \
+    for (size_t i = 0; i < N; ++i) {                                        \
+        for (size_t j = 0; j < M; ++j) {                                    \
+            size_t val = 7*i+j;                                             \
+            arr [i][j] = (type)val;                                         \
+        }                                                                   \
+    }                                                                       \
+    return arr;                                                             \
+}
+
+MULTIDIM_ARRAYS_NEW2D(short, short)
+MULTIDIM_ARRAYS_NEW2D(unsigned short, ushort)
+MULTIDIM_ARRAYS_NEW2D(int, int)
+MULTIDIM_ARRAYS_NEW2D(unsigned int, uint)
+MULTIDIM_ARRAYS_NEW2D(long, long)
+MULTIDIM_ARRAYS_NEW2D(unsigned long, ulong)
+MULTIDIM_ARRAYS_NEW2D(long long, llong)
+MULTIDIM_ARRAYS_NEW2D(unsigned long long, ullong)
+MULTIDIM_ARRAYS_NEW2D(float, float)
+MULTIDIM_ARRAYS_NEW2D(double, double)

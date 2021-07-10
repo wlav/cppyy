@@ -481,6 +481,21 @@ class TestMULTIDIMARRAYS:
             'short', 'unsigned short', 'int', 'unsigned int', 'long', 'unsigned long',
             'long long', 'unsigned long long', 'float', 'double'
         ]
+        cls.nbt_short_names = [
+            'short', 'ushort', 'int', 'uint', 'long', 'ulong', 'llong', 'ullong', 'float', 'double'
+        ]
+        try:
+            import numpy as np
+            if IS_WINDOWS == 32:
+                np_long, np_ulong = np.int32, np.uint32
+            else:
+                np_long, np_ulong = np.int64, np.uint64
+            cls.numpy_builtin_types = [
+                np.short, np.ushort, np.int32, np.uint32, np_long, np_ulong,
+                np.longlong, np.ulonglong, np.float32, np.double
+            ]
+        except ImportError:
+            pass
 
     def _data_m(self, lbl):
         return [('m_'+tp.replace(' ', '_')+lbl, tp) for tp in self.numeric_builtin_types]
@@ -525,13 +540,31 @@ class TestMULTIDIMARRAYS:
         ns = cppyy.gbl.MultiDimArrays
         h = ns.DataHolder()
 
-        data2a = self._data_m('2a')
-        for m, tp in data2a:
-            getattr(h, m).reshape((5, 7))
-            assert getattr(h, m).shape == (5, 7)
-
       # copy assignment
-        h.m_int2c = np.ones((3, 5), dtype=np.int32)
-        for i in range(3):
-            for j in range(5):
-                assert h.m_int2c[i][j] == 1
+        data2c = self._data_m('2c')
+        for itp, (m, tp) in enumerate(data2c):
+            setattr(h, m, np.ones((3, 5), dtype=self.numpy_builtin_types[itp]))
+
+            arr = getattr(h, m)
+            for i in range(3):
+                for j in range(5):
+                    assert arr[i][j] == 1
+
+      # size checking for copy assignment
+        for itp, (m, tp) in enumerate(data2c):
+            with raises(ValueError):
+                setattr(h, m, np.ones((5, 5), dtype=self.numpy_builtin_types[itp]))
+
+            with raises(ValueError):
+                setattr(h, m, np.ones((3, 7), dtype=self.numpy_builtin_types[itp]))
+
+      # pointer assignment
+        N, M = 11, 7
+        data2b = self._data_m('2b')
+        for itp, (m, tp) in enumerate(data2b):
+            setattr(h, m, getattr(h, 'new_'+self.nbt_short_names[itp]+'2d')(N, M))
+
+            arr = getattr(h, m)
+            for i in range(N):
+                for j in range(M):
+                    assert arr[i][j] == 7*i+j
