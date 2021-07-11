@@ -21,6 +21,7 @@ master: 2.1.0
 * Direct support for C's _Complex (_Complex_double/_float on Windows)
 * sizeof() forwards to ctypes.sizeof() for ctypes' types
 * Upgrade cmake fragments for Clang9
+* Prevent clash with Julia's LLVM when loading cppyy into PyCall
 
 
 2021-05-14: 2.0.0
