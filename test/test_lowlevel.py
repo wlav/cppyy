@@ -511,13 +511,15 @@ class TestMULTIDIMARRAYS:
         data2a = self._data_m('2a')
         for m, tp in data2a:
             getattr(h, m).reshape((5, 7))
-            assert getattr(h, m).shape == (5, 7)
 
             arr = getattr(h, m)
+            assert arr.shape == (5, 7)
             elem_tp = getattr(cppyy.gbl, tp)
             for i in range(5):
                 for j in range(7):
-                    assert arr[i][j] == elem_tp(5*i+j)
+                    val = elem_tp(5*i+j)
+                    assert arr[i][j] == val
+                    assert arr[i, j] == val
 
             for i in range(5):
                 for j in range(7):
@@ -525,7 +527,20 @@ class TestMULTIDIMARRAYS:
 
             for i in range(5):
                 for j in range(7):
-                    assert arr[i][j] == elem_tp(4+5*i+j)
+                    val = elem_tp(4+5*i+j)
+                    assert arr[i][j] == val
+                    assert arr[i, j] == val
+
+        data2c = self._data_m('2c')
+        for m, tp in data2c:
+            arr = getattr(h, m)
+            assert arr.shape == (3, 5)
+            elem_tp = getattr(cppyy.gbl, tp)
+            for i in range(3):
+                for j in range(5):
+                    val = elem_tp(3*i+j)
+                    assert arr[i][j] == val
+                    assert arr[i, j] == val
 
     def test02_assign_2D_arrays(self):
         """Direct assignment of 2D arrays"""
@@ -546,10 +561,12 @@ class TestMULTIDIMARRAYS:
             setattr(h, m, np.ones((3, 5), dtype=self.numpy_builtin_types[itp]))
 
             arr = getattr(h, m)
+            assert arr.shape == (3, 5)
+            val = getattr(cppyy.gbl, tp)(1)
             for i in range(3):
                 for j in range(5):
-                    assert arr[i][j] == 1
-                    assert arr[i, j] == 1
+                    assert arr[i][j] == val
+                    assert arr[i, j] == val
 
       # size checking for copy assignment
         for itp, (m, tp) in enumerate(data2c):
@@ -566,11 +583,59 @@ class TestMULTIDIMARRAYS:
             setattr(h, m, getattr(h, 'new_'+self.nbt_short_names[itp]+'2d')(N, M))
 
             arr = getattr(h, m)
+            elem_tp = getattr(cppyy.gbl, tp)
             for i in range(N):
                 for j in range(M):
-                    assert arr[i][j] == 7*i+j
-                    assert arr[i, j] == 7*i+j
+                    val = elem_tp(7*i+j)
+                    assert arr[i][j] == val
+                    assert arr[i, j] == val
 
             assert arr[2][3] != 10
             arr[2][3] = 10
             assert arr[2][3] == 10
+
+    def test03_3D_arrays(self):
+        """Access and use of 3D data members"""
+
+        import cppyy
+
+        ns = cppyy.gbl.MultiDimArrays
+        h = ns.DataHolder()
+
+        data3a = self._data_m('3a')
+        for m, tp in data3a:
+            getattr(h, m).reshape((5, 7, 11))
+
+            arr = getattr(h, m)
+            assert arr.shape == (5, 7, 11)
+            elem_tp = getattr(cppyy.gbl, tp)
+            for i in range(5):
+                for j in range(7):
+                    for k in range(11):
+                        val = elem_tp(7*i+3*j+k)
+                        assert arr[i][j][k] == val
+                        assert arr[i, j, k] == val
+
+            for i in range(5):
+                for j in range(7):
+                    for k in range(11):
+                        arr[i][j][k] = elem_tp(4+7*i+3*j+k)
+
+            for i in range(5):
+                for j in range(7):
+                    for k in range(11):
+                        val = elem_tp(4+7*i+3*j+k)
+                        assert arr[i][j][k] == val
+                        assert arr[i, j, k] == val
+
+        data3c = self._data_m('3c')
+        for m, tp in data3c:
+            arr = getattr(h, m)
+            assert arr.shape == (3, 5, 7)
+            elem_tp = getattr(cppyy.gbl, tp)
+            for i in range(3):
+                for j in range(5):
+                    for k in range(7):
+                        val = elem_tp(3*i+2*j+k)
+                        assert arr[i][j][k] == val
+                        assert arr[i, j, k] == val

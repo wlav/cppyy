@@ -835,6 +835,28 @@ static inline void free_2d(void** arr, size_t N) {
     }
 }
 
+template<typename T>
+static inline T*** allocate_3d(size_t N, size_t M, size_t K) {
+    T*** arr = (T***)malloc(sizeof(void*)*N);
+    for (size_t i = 0; i < N; ++i) {
+        arr[i] = (T**)malloc(sizeof(void*)*M);
+        for (size_t j = 0; j < M; ++j)
+            arr[i][j] = (T*)malloc(sizeof(T)*K);
+    }
+    return arr;
+}
+
+static inline void free_3d(void*** arr, size_t N, size_t M) {
+    if (arr) {
+        for (size_t i = 0; i < N; ++i) {
+            for (size_t j = 0; j < M; ++j)
+                free(arr[i][j]);
+            free(arr[i]);
+        }
+        free(arr);
+    }
+}
+
 } // namespace MultiDimArrays
 
 MultiDimArrays::DataHolder::DataHolder() {
@@ -889,6 +911,49 @@ MultiDimArrays::DataHolder::DataHolder() {
             m_unsigned_long_long2c[i][j]    = (unsigned long long)val;
             m_float2c[i][j]                 = (float)val;
             m_double2c[i][j]                = (double)val;
+
+            for (size_t k = 0; k < 7; ++k) {
+                val = 3*i+2*j+k;
+                m_short3c[i][j][k]               = (short)val;
+                m_unsigned_short3c[i][j][k]      = (unsigned short)val;
+                m_int3c[i][j][k]                 = (int)val;
+                m_unsigned_int3c[i][j][k]        = (unsigned int)val;
+                m_long3c[i][j][k]                = (long)val;
+                m_unsigned_long3c[i][j][k]       = (unsigned long)val;
+                m_long_long3c[i][j][k]           = (long long)val;
+                m_unsigned_long_long3c[i][j][k]  = (unsigned long long)val;
+                m_float3c[i][j][k]               = (float)val;
+                m_double3c[i][j][k]              = (double)val;
+            }
+        }
+    }
+
+    m_short3a                = allocate_3d<short>(5, 7, 11);
+    m_unsigned_short3a       = allocate_3d<unsigned short>(5, 7, 11);
+    m_int3a                  = allocate_3d<int>(5, 7, 11);
+    m_unsigned_int3a         = allocate_3d<unsigned int>(5, 7, 11);
+    m_long3a                 = allocate_3d<long>(5, 7, 11);
+    m_unsigned_long3a        = allocate_3d<unsigned long>(5, 7, 11);
+    m_long_long3a            = allocate_3d<long long>(5, 7, 11);
+    m_unsigned_long_long3a   = allocate_3d<unsigned long long>(5, 7, 11);
+    m_float3a                = allocate_3d<float>(5, 7, 11);
+    m_double3a               = allocate_3d<double>(5, 7, 11);
+
+    for (size_t i = 0; i < 5; ++i) {
+        for (size_t j = 0; j < 7; ++j) {
+            for (size_t k = 0; k < 11; ++k) {
+                size_t val = 7*i+3*j+k;
+                m_short3a[i][j][k]               = (short)val;
+                m_unsigned_short3a[i][j][k]      = (unsigned short)val;
+                m_int3a[i][j][k]                 = (int)val;
+                m_unsigned_int3a[i][j][k]        = (unsigned int)val;
+                m_long3a[i][j][k]                = (long)val;
+                m_unsigned_long3a[i][j][k]       = (unsigned long)val;
+                m_long_long3a[i][j][k]           = (long long)val;
+                m_unsigned_long_long3a[i][j][k]  = (unsigned long long)val;
+                m_float3a[i][j][k]               = (float)val;
+                m_double3a[i][j][k]              = (double)val;
+            }
         }
     }
 }
@@ -915,6 +980,17 @@ MultiDimArrays::DataHolder::~DataHolder() {
     free_2d((void**)m_unsigned_long_long2b, 5);
     free_2d((void**)m_float2b, 5);
     free_2d((void**)m_double2b, 5);
+
+    free_3d((void***)m_short3a, 5, 7);
+    free_3d((void***)m_unsigned_short3a, 5, 7);
+    free_3d((void***)m_int3a, 5, 7);
+    free_3d((void***)m_unsigned_int3a, 5, 7);
+    free_3d((void***)m_long3a, 5, 7);
+    free_3d((void***)m_unsigned_long3a, 5, 7);
+    free_3d((void***)m_long_long3a, 5, 7);
+    free_3d((void***)m_unsigned_long_long3a, 5, 7);
+    free_3d((void***)m_float3a, 5, 7);
+    free_3d((void***)m_double3a, 5, 7);
 }
 
 #define MULTIDIM_ARRAYS_NEW2D(type, name)                                   \
