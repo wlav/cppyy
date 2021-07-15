@@ -110,8 +110,8 @@ class TestAPI:
 
         typedef CPyCppyy::ConverterFactory_t cf_t;
         void register_a3() {
-            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](CPyCppyy::dims_t) { static APICheck3Converter c{}; return &c; });
-            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](CPyCppyy::dims_t) { static APICheck3Converter c{}; return &c; });
+            CPyCppyy::RegisterConverter("APICheck3",  (cf_t)+[](CPyCppyy::cdims_t) { static APICheck3Converter c{}; return &c; });
+            CPyCppyy::RegisterConverter("APICheck3&", (cf_t)+[](CPyCppyy::cdims_t) { static APICheck3Converter c{}; return &c; });
         }
         void unregister_a3() {
             CPyCppyy::UnregisterConverter("APICheck3");
@@ -169,7 +169,7 @@ class TestAPI:
 
         typedef CPyCppyy::ExecutorFactory_t ef_t;
         void register_a4() {
-            CPyCppyy::RegisterExecutor("APICheck4*", (ef_t)+[](CPyCppyy::dims_t) { static APICheck4Executor c{}; return &c; });
+            CPyCppyy::RegisterExecutor("APICheck4*", (ef_t)+[](CPyCppyy::cdims_t) { static APICheck4Executor c{}; return &c; });
         }
         void unregister_a4() {
             CPyCppyy::UnregisterExecutor("APICheck4*");
