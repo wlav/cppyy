@@ -486,7 +486,7 @@ class TestMULTIDIMARRAYS:
         ]
         try:
             import numpy as np
-            if IS_WINDOWS == 32:
+            if IS_WINDOWS:
                 np_long, np_ulong = np.int32, np.uint32
             else:
                 np_long, np_ulong = np.int64, np.uint64
