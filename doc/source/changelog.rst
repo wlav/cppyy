@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.1.0
--------------
+2021-07-17: 2.1.0
+-----------------
 
 * Support for vector calls with CPython 3.8 and newer
 * Support for typed C++ literals as defaults when mixing with keywords
@@ -22,6 +22,7 @@ master: 2.1.0
 * sizeof() forwards to ctypes.sizeof() for ctypes' types
 * Upgrade cmake fragments for Clang9
 * Prevent clash with Julia's LLVM when loading cppyy into PyCall
+* Upgrade to latest Cling patch release
 
 
 2021-05-14: 2.0.0
