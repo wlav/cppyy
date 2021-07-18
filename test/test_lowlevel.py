@@ -470,6 +470,38 @@ class TestLOWLEVEL:
         a[0] = 5
         assert b[0] == 5
 
+    def test14_templated_arrays(self):
+        """Use of arrays in template types"""
+
+        import cppyy
+
+        assert cppyy.gbl.std.vector[int].value_type == 'int'
+        assert cppyy.gbl.std.vector[cppyy.gbl.std.vector[int]].value_type == 'std::vector<int>'
+        assert cppyy.gbl.std.vector['int[1]'].value_type == 'int[1]'
+
+    def test15_templated_arrays_gmpxx(self):
+        """Use of gmpxx array types in templates"""
+
+        import cppyy
+
+        try:
+            cppyy.include("gmpxx.h")
+            cppyy.load_library('gmpxx')
+        except ImportError:
+            py.test.skip("gmpxx not installed")
+
+        assert cppyy.gbl.std.vector[cppyy.gbl.mpz_class].value_type
+
+        cppyy.cppdef("""\
+        namespace test15_templated_arrays_gmpxx::vector {
+           template <typename T>
+           using value_type = typename T::value_type;
+        }""")
+
+
+        g = cppyy.gbl
+        assert g.test15_templated_arrays_gmpxx.vector.value_type[g.std.vector[g.mpz_class]]
+
 
 class TestMULTIDIMARRAYS:
     def setup_class(cls):
