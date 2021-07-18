@@ -11,7 +11,7 @@ through reuse, the relevant codes are contained across a number of
 repositories.
 
 * Frontend, cppyy: https://github.com/wlav/cppyy
-* CPython (v2/v3) intermediate: https://github.com/wlav/cpycppyy
+* CPython (v2/v3) intermediate: https://github.com/wlav/CPyCppyy
 * PyPy intermediate (module _cppyy): https://foss.heptapod.net/pypy
 * Backend, cppyy: https://github.com/wlav/cppyy-backend
 
