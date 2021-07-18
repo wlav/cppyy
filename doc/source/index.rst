@@ -115,7 +115,7 @@ cppyy minimizes dependencies to allow its use in distributed, heterogeneous,
 development environments.
 
 .. _Cling: https://github.com/vgvassilev/cling
-.. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
+.. _tutorial: https://github.com/wlav/cppyy/blob/master/doc/tutorial/CppyyTutorial.ipynb
 .. _`PyHPC paper`: http://wlav.web.cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf
 .. _`Boost`: http://www.boost.org/
 .. _`CPython`: http://python.org
@@ -187,4 +187,4 @@ Bugs and feedback
 Please report bugs or requests for improvement on the `issue tracker`_.
 
 
-.. _`issue tracker`: https://bitbucket.org/wlav/cppyy/issues
+.. _`issue tracker`: https://github.com/wlav/cppyy/issues

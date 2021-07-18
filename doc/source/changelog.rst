@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 2.2.0
+-------------
+
+* Migrated repos to github/wlav
+
+
 2021-07-17: 2.1.0
 -----------------
 

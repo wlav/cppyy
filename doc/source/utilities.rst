@@ -222,7 +222,7 @@ Once support for C++ modules is fully fleshed out, access to the header file
 will no longer be needed.
 
 .. _`rootcling manual`: https://root.cern.ch/root/html/guides/users-guide/AddingaClass.html#the-linkdef.h-file
-.. _`helper script`: https://bitbucket.org/wlav/cppyy/src/master/test/make_dict_win32.py
+.. _`helper script`: https://github.com/wlav/cppyy/blob/master/test/make_dict_win32.py
 
 
 Class loader

@@ -24,7 +24,7 @@ alphabetical order):
  * `SopraClient`_
  * `python-vspline`_
 
-.. _tutorial: https://bitbucket.org/wlav/cppyy/src/master/doc/tutorial/CppyyTutorial.ipynb?viewer=nbviewer&fileviewer=notebook-viewer%3Anbviewer
+.. _tutorial: https://github.com/wlav/cppyy/blob/master/doc/tutorial/CppyyTutorial.ipynb
 .. _cookie cutter: https://github.com/camillescott/cookiecutter-cppyy-cmake
 .. _bgfx-python: https://github.com/fbertola/bgfx-python
 .. _cppyy-bbhash: https://github.com/camillescott/cppyy-bbhash

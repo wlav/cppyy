@@ -10,10 +10,10 @@ Because of this layering and because it leverages several existing packages
 through reuse, the relevant codes are contained across a number of
 repositories.
 
-* Frontend, cppyy: https://bitbucket.org/wlav/cppyy
-* CPython (v2/v3) intermediate: https://bitbucket.org/wlav/cpycppyy
-* PyPy intermediate (module _cppyy): https://bitbucket.org/pypy/pypy/
-* Backend, cppyy: https://bitbucket.org/wlav/cppyy-backend
+* Frontend, cppyy: https://github.com/wlav/cppyy
+* CPython (v2/v3) intermediate: https://github.com/wlav/cpycppyy
+* PyPy intermediate (module _cppyy): https://foss.heptapod.net/pypy
+* Backend, cppyy: https://github.com/wlav/cppyy-backend
 
 The backend repo contains both the cppyy-cling (under "cling") and
 cppyy-backend (under "clingwrapper") packages.
@@ -57,7 +57,7 @@ Start with the ``cppyy-cling`` package (cppyy-backend repo, subdirectory
 "cling"), which requires source to be pulled in from upstream, and thus takes
 a few extra steps::
 
- $ git clone https://bitbucket.org/wlav/cppyy-backend.git
+ $ git clone https://github.com/wlav/cppyy-backend.git
  $ cd cppyy-backend/cling
  $ python setup.py egg_info
  $ python create_src_directory.py
@@ -82,20 +82,20 @@ versions of Python on the same machine.
 Next up is ``cppyy-backend`` (cppyy-backend, subdirectory "clingwrapper"; omit
 the first step if you already cloned the repo for ``cppyy-cling``)::
 
- $ git clone https://bitbucket.org/wlav/cppyy-backend.git
+ $ git clone https://github.com/wlav/cppyy-backend.git
  $ cd cppyy-backend/clingwrapper
  $ python -m pip install . --upgrade
 
 Upgrading ``CPyCppyy`` (if on CPython; it's not needed for PyPy) and ``cppyy``
 is very similar::
 
- $ git clone https://bitbucket.org/wlav/CPyCppyy.git
+ $ git clone https://github.com/wlav/CPyCppyy.git
  $ cd CPyCppyy
  $ python -m pip install . --upgrade
 
 Finally, the top-level package ``cppyy``::
 
- $ git clone https://bitbucket.org/wlav/cppyy.git
+ $ git clone https://github.com/wlav/cppyy.git
  $ cd cppyy
  $ python -m pip install . --upgrade
 
