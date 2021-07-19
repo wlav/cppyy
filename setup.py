@@ -51,6 +51,14 @@ def find_version(*file_paths):
 # customized commands
 #
 class my_install(_install):
+    def __init__(self, *args, **kwds):
+        super(_install, self).__init__(*args, **kwds)
+        try:
+            import cppyy_backend as cpb
+            self._pchname = 'allDict.cxx.pch.' + str(cpb.__version__)
+        except (ImportError, AttributeError):
+            self._pchname = None
+
     def run(self):
         # base install
         _install.run(self)
@@ -58,22 +66,24 @@ class my_install(_install):
         # force build of the .pch underneath the cppyy package if not available yet
         install_path = os.path.join(os.getcwd(), self.install_libbase, 'cppyy')
 
-        try:
-            import cppyy_backend as cpb
-            if not os.path.exists(os.path.join(cpb.__file__, 'etc', 'allDict.cxx.pch')):
-                log.info("installing pre-compiled header in %s", install_path)
-                cpb.loader.set_cling_compile_options(True)
-                cpb.loader.ensure_precompiled_header(install_path, 'allDict.cxx.pch')
-        except (ImportError, AttributeError):
-            # ImportError may occur with wrong pip requirements resolution (unlikely)
-            # AttributeError will occur with (older) PyPy as it relies on older backends
-            pass
+        if self._pchname:
+            try:
+                import cppyy_backend as cpb
+                if not os.path.exists(os.path.join(cpb.__file__, 'etc', self._pchname)):
+                    log.info("installing pre-compiled header in %s", install_path)
+                    cpb.loader.set_cling_compile_options(True)
+                    cpb.loader.ensure_precompiled_header(install_path, self._pchname)
+            except (ImportError, AttributeError):
+                # ImportError may occur with wrong pip requirements resolution (unlikely)
+                # AttributeError will occur with (older) PyPy as it relies on older backends
+                self._pchname = None
 
     def get_outputs(self):
         outputs = _install.get_outputs(self)
-        # pre-emptively add allDict.cxx.pch, which may or may not be created; need full
-        # path to make sure the final relative path is correct
-        outputs.append(os.path.join(os.getcwd(), self.install_libbase, 'cppyy', 'allDict.cxx.pch'))
+        if self._pchname:
+            # pre-emptively add allDict.cxx.pch, which may or may not be created; need full
+            # path to make sure the final relative path is correct
+            outputs.append(os.path.join(os.getcwd(), self.install_libbase, 'cppyy', self._pchname))
         return outputs
 
 

@@ -14,6 +14,7 @@ master: 2.2.0
 -------------
 
 * Migrated repos to github/wlav
+* Fix sometimes PCH uninstall issue
 
 
 2021-07-17: 2.1.0
