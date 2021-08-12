@@ -55,12 +55,12 @@ class TestClassPYTHONIZATION:
         assert cppyy.gbl.pyzables.SomeDummy2.test == 3
 
         def root_pythonizor(klass, name):
-            if name == 'CppyyLegacy::TString':
-                klass.__len__ = klass.Length
+            if name == 'CppyyLegacy::TObjString':
+                klass.__len__ = klass.Sizeof
 
         cppyy.py.add_pythonization(root_pythonizor)
 
-        assert len(cppyy.gbl.CppyyLegacy.TString("aap")) == 3
+        assert len(cppyy.gbl.CppyyLegacy.TObjString("aap")) == 4     # include '\0'
 
     def test01_size_mapping(self):
         """Use composites to map GetSize() onto buffer returns"""
