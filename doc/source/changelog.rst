@@ -14,6 +14,7 @@ master: 2.2.0
 -------------
 
 * Migrated repos to github/wlav
+* Properly resolve enum type of class enums
 * Fix sometimes PCH uninstall issue
 
 

@@ -901,7 +901,44 @@ class TestREGRESSION:
         required = {'prod', 'a', 'b', 'smth', 'my_enum'}
         assert all_names.intersection(required) == required
 
-    def test32_explicit_template_in_namespace(self):
+    def test32_typedef_class_enum(self):
+        """Use of class enum with typedef'd type"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace typedef_typed_enum {
+        enum class Foo1 : uint16_t       { BAZ = 1, BAR = 2 };
+        enum class Foo2 : unsigned short { BAZ = 3, BAR = 4 };
+        enum       Foo3                  { BAZ = 5, BAR = 6 };
+
+        template<typename ENUMTYPE>
+        struct Info {
+            ENUMTYPE x;
+            uint8_t y;
+        }; } """)
+
+        ns = cppyy.gbl.typedef_typed_enum
+
+        Info = ns.Info
+
+        for Foo in [ns.Foo1, ns.Foo2, ns.Foo3]:
+            o = Info[Foo]()
+            o.x = Foo.BAR
+            o.y = 0
+
+            assert o.x == Foo.BAR
+            assert o.y == 0
+
+            o.y = 1
+            assert o.x == Foo.BAR
+            assert o.y == 1
+
+            o.x = Foo.BAZ
+            assert o.x == Foo.BAZ
+            assert o.y == 1
+
+    def test33_explicit_template_in_namespace(self):
         """Lookup of explicit template in namespace"""
 
         import cppyy
@@ -951,7 +988,7 @@ class TestREGRESSION:
         pt_type = cppyy.gbl.property_types.ReferenceWavefunction['double']
         assert cppyy.gbl.std.get[0](cppyy.gbl.property_types.run_as[pt_type]()) ==  20.
 
-    def test33_print_empty_collection(self):
+    def test34_print_empty_collection(self):
         """Print empty collection through Cling"""
 
         import cppyy
@@ -960,7 +997,7 @@ class TestREGRESSION:
         v = cppyy.gbl.std.vector[int]()
         str(v)
 
-    def test34_filesytem(self):
+    def test35_filesytem(self):
         """Static path object used to crash on destruction"""
 
         import cppyy
@@ -977,7 +1014,7 @@ class TestREGRESSION:
 
             assert cppyy.gbl.stack_std_path() == '"/usr"'
 
-    def test35_ctypes_sizeof(self):
+    def test36_ctypes_sizeof(self):
         """cppyy.sizeof forwards to ctypes.sizeof where necessary"""
 
         import cppyy, ctypes
