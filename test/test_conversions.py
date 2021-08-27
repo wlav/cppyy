@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong, pyunicode
+from .support import setup_make
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("conversionsDict"))
