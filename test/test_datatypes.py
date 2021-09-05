@@ -1076,7 +1076,36 @@ class TestDATATYPES:
 
         assert not d2
 
-    def test22_buffer_reshaping(self):
+    def test22_buffer_shapes(self):
+        """Correctness of declared buffer shapes"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace ShapeTester {
+        enum Enum{One, Two, Three};
+
+        template<typename T>
+        struct Foo {
+          T a[5];
+          T aa[5][4];
+          T aaa[5][4][3];
+        }; }""")
+
+        ns = cppyy.gbl.ShapeTester
+
+        for dtype in ["int", "double", "long", "bool", "char", "void*", "ShapeTester::Enum"]:
+            foo = ns.Foo[dtype]()
+            if dtype != 'char':
+                assert foo.a.shape   == (5,)
+            else:
+              # TODO: verify the following is for historic reasons and should be modified
+              # once bug #344 (bitbucket) is fixed
+                assert len(foo.a) == 5
+            assert foo.aa.shape  == (5, 4)
+            assert foo.aaa.shape == (5, 4, 3)
+
+    def test23_buffer_reshaping(self):
         """Test usage of buffer sizing"""
 
         import cppyy
@@ -1108,7 +1137,7 @@ class TestDATATYPES:
             for i in range(self.N):
                 assert arr[i] == l[i]
 
-    def test23_voidp(self):
+    def test24_voidp(self):
         """Test usage of void* data"""
 
         import cppyy
@@ -1156,7 +1185,27 @@ class TestDATATYPES:
         c.s_voidp = c2
         address_equality_test(c.s_voidp, c2)
 
-    def test24_byte_arrays(self):
+        cppyy.cppdef("""\
+        namespace VoidP {
+        void* vvv[3][5][7];
+        struct Init {
+          Init() {
+            for (int i = 0; i < 3; ++i) {
+              for (int j = 0; j < 5; ++j) {
+                for (int k = 0; k < 7; ++k)
+                  vvv[i][j][k] = (void*)(i+j+k);
+              }
+            }
+          }
+        } _init; }""")
+
+        ns = cppyy.gbl.VoidP
+        for i in range(3):
+            for j in range(5):
+                for k in range(7):
+                    assert int(ns.vvv[i,j,k]) == i+j+k
+
+    def test25_byte_arrays(self):
         """Usage of unsigned char* as byte array and std::byte*"""
 
         import array, cppyy, ctypes
@@ -1191,7 +1240,7 @@ class TestDATATYPES:
         if self.has_byte:
             run(self, cppyy.gbl.sum_byte_data, buf, total)
 
-    def test25_function_pointers(self):
+    def test26_function_pointers(self):
         """Function pointer passing"""
 
         import cppyy
@@ -1242,7 +1291,7 @@ class TestDATATYPES:
         with raises(TypeError):
             cppyy.gbl.call_sum_of_int(3, 2)
 
-    def test26_callable_passing(self):
+    def test27_callable_passing(self):
         """Passing callables through function pointers"""
 
         import cppyy, gc
@@ -1314,7 +1363,7 @@ class TestDATATYPES:
         gc.collect()
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test27_callable_through_function_passing(self):
+    def test28_callable_through_function_passing(self):
         """Passing callables through std::function"""
 
         import cppyy, gc
@@ -1386,7 +1435,7 @@ class TestDATATYPES:
         gc.collect()
         raises(TypeError, c, 3, 3)     # lambda gone out of scope
 
-    def test28_std_function_life_lines(self):
+    def test29_std_function_life_lines(self):
         """Life lines to std::function data members"""
 
         import cppyy, gc
@@ -1423,7 +1472,7 @@ class TestDATATYPES:
         d.execute = d.xyz
         assert d.do_execute() == "xyz"
 
-    def test29_multi_dim_arrays_of_builtins(test):
+    def test30_multi_dim_arrays_of_builtins(test):
         """Multi-dim arrays of builtins"""
 
         import cppyy, ctypes
@@ -1457,7 +1506,7 @@ class TestDATATYPES:
                 p = (ctype * len(buf)).from_buffer(buf)
                 assert [p[j] for j in range(width*height)] == [2*j for j in range(width*height)]
 
-    def test30_anonymous_union(self):
+    def test31_anonymous_union(self):
         """Anonymous unions place there fields in the parent scope"""
 
         import cppyy
@@ -1549,7 +1598,7 @@ class TestDATATYPES:
         assert type(p.data_c[0]) == float
         assert p.intensity == 5.
 
-    def test31_pointer_to_array(self):
+    def test32_pointer_to_array(self):
         """Usability of pointer to array"""
 
         import cppyy
@@ -1580,7 +1629,7 @@ class TestDATATYPES:
             assert type(f) == AoS.Foo
         assert type(bar.fArr[0]) == AoS.Foo
 
-    def test32_object_pointers(self):
+    def test33_object_pointers(self):
         """Read/write access to objects through pointers"""
 
         import cppyy
@@ -1605,7 +1654,7 @@ class TestDATATYPES:
         assert c.s_strp               == "noot"
         assert sn                     == "noot"  # set through pointer
 
-    def test33_restrict(self):
+    def test34_restrict(self):
         """Strip __restrict keyword from use"""
 
         import cppyy
@@ -1614,7 +1663,7 @@ class TestDATATYPES:
 
         assert cppyy.gbl.restrict_call("aap") == "aap"
 
-    def test34_legacy_matrix(self):
+    def test35_legacy_matrix(self):
         """Handling of legacy matrix"""
 
         import cppyy
@@ -1665,7 +1714,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test35_legacy_matrix_of_structs(self):
+    def test36_legacy_matrix_of_structs(self):
         """Handling of legacy matrix of structs"""
 
         import cppyy
@@ -1728,7 +1777,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test36_plain_old_data(self):
+    def test37_plain_old_data(self):
         """Initializer construction of PODs"""
 
         import cppyy
@@ -1814,7 +1863,7 @@ class TestDATATYPES:
             assert len(f1.fPtrArr) == 3
             assert list(f1.fPtrArr) == [1., 2., 3]
 
-    def test37_aggregates(self):
+    def test38_aggregates(self):
         """Initializer construction of aggregates"""
 
         import cppyy
@@ -1866,7 +1915,7 @@ class TestDATATYPES:
         assert b.name     == "aap"
         assert b.buf_type == ns.SHAPE
 
-    def test38_more_aggregates(self):
+    def test39_more_aggregates(self):
         """More aggregate testings (used to fail/report errors)"""
 
         import cppyy
@@ -1903,7 +1952,7 @@ class TestDATATYPES:
             r2 = ns.make_R2()
             assert r2.s.x == 1
 
-    def test39_complex_numpy_arrays(self):
+    def test40_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""
 
         import cppyy
@@ -1950,7 +1999,7 @@ class TestDATATYPES:
             Ccl = func(Acl, Bcl, 2)
             assert complex(Ccl) == pyCcl
 
-    def test40_mixed_complex_arithmetic(self):
+    def test41_mixed_complex_arithmetic(self):
         """Mixin of Python and C++ std::complex in arithmetic"""
 
         import cppyy
@@ -1963,7 +2012,7 @@ class TestDATATYPES:
         assert c*(c*c) == p*(p*p)
         assert (c*c)*c == (p*p)*p
 
-    def test41_ccharp_memory_handling(self):
+    def test42_ccharp_memory_handling(self):
         """cppyy side handled memory of C strings"""
 
         import cppyy
@@ -2012,7 +2061,7 @@ class TestDATATYPES:
         assert b.name == 'pqr'
         assert b.val  == 5
 
-    def test42_buffer_memory_handling(self):
+    def test43_buffer_memory_handling(self):
         """cppyy side handled memory of LL buffers"""
 
         import cppyy, gc
