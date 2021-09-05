@@ -1051,3 +1051,218 @@ class TestADVERTISED:
 
         assert consumer.consume(factory("hello ", 42))     == 'received: "hello 42"'
         assert consumer.consume(factory(3., 0.14, 0.0015)) == 'received: "3.1415"'
+
+
+# The series of tests below mostly exists already in other places, but these
+# were used as examples for the CaaS' cppyy presentation and are preserved here.
+class TestTALKEXAMPLES:
+    def setup_class(cls):
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        struct MyClass {
+            MyClass(int i) : fData(i) {}
+            virtual ~MyClass() {}
+            virtual int add(int i) {
+                return fData + i;
+            }
+            int fData;
+        };}""")
+
+        cppyy.gbl.talk_examples
+
+    def test_template_instantiation(self):
+        """Run-time template instantiation example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        v = cppyy.gbl.std.vector[CC.MyClass]()
+
+        for i in range(10):
+            v.emplace_back(i)
+
+        assert len(v) == 10
+        assert [m.fData for m in v] == list(range(10))
+
+    def test_cross_inheritance(self):
+        """Cross-inheritance example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        int callb(MyClass* m, int i) {
+          return m->add(i);
+        }}""")
+
+        class PyMyClass(CC.MyClass):
+            def add(self, i):
+                return self.fData + 2*i
+
+        m = PyMyClass(1)
+        assert CC.callb(m, 2) == 5
+
+    def test_cross_and_templates(self):
+        """Template instantiation with cross-inheritance example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        class PyMyClass(CC.MyClass):
+            def __init__(self, data, extra):
+                super(PyMyClass, self).__init__(data)
+                self.extra = extra
+
+            def add(self, i):
+                return self.fData + self.extra + 2*i
+
+        v = cppyy.gbl.std.vector[PyMyClass]()
+        v.push_back(PyMyClass(4, 42))
+
+        assert v.back().add(17) == 4+42+2*17
+
+    def test_fallbacks(self):
+        """Template instantation switches based on value sizes"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        template<typename T>
+        T passT(T t) {
+            return t;
+        }}""")
+
+        assert CC.passT(1) == 1
+        assert 'int' in CC.passT.__doc__
+        assert CC.passT(2**64-1) == 2**64-1
+        assert 'unsigned long long' in CC.passT.__doc__
+
+    def test_callbacks(self):
+        """Function callback example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        typedef int (*P)(int);
+        int callPtr(P f, int i) {
+            return f(i);
+        }
+
+        typedef std::function<int(int)> F;
+        int callFun(const F& f, int i) {
+            return f(i);
+        }}""")
+
+        def f(val):
+            return 2*val
+
+        assert CC.callPtr(f, 2) == 4
+        assert CC.callFun(f, 3) == 6
+        assert CC.callPtr(lambda i: 5*i, 4) == 20
+        assert CC.callFun(lambda i: 6*i, 4) == 24
+
+    def test_templated_callback(self):
+        """Templated callback example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        template<typename R, typename... U, typename... A>
+        R callT(R (*f)(U...), A&&... args) {
+            return f(args...);
+        }}""")
+
+        if sys.hexversion < 0x3050000:
+            def ann_f1(arg):
+                return 3.1415*arg
+            ann_f1.__annotations__ = {'arg': 'int', 'return': 'double'}
+            def ann_f2(arg1, arg2) -> 'int':
+                return 3*arg1*arg2
+            ann_f2.__annotations__ = {'arg1': 'int', 'arg2' : 'int', 'return': 'int'}
+        else:
+            oldp = sys.path[:]
+            sys.path.append('.')
+            from doc_args_funcs import ann_f1, ann_f2
+            sys.path = oldp
+
+        assert round(CC.callT(ann_f1, 2)-2*3.1415, 5) == 0.
+
+        assert CC.callT(ann_f2, 6, 7) == 3*6*7
+        assert round(CC.callT(ann_f1, 2)-2*3.1415, 5) == 0.
+
+    def test_autocast_and_identiy(self):
+        """Auto-cast and identiy preservation example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        struct Base {
+            virtual ~Base() {}
+        };
+        struct Derived : public Base {};
+        Base* passB(Base* b) { return b; }
+        }""")
+
+        d = CC.Derived()
+        b = CC.passB(d)
+
+        assert type(b) == CC.Derived
+        assert d is b
+
+    def test_exceptions(self):
+        """Exceptions example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        class MyException : public std::exception {
+        public:
+           const char* what() const throw() {
+               return "C++ failed";
+           }
+        };
+        void throw_error() {
+            throw MyException{};
+        }}""")
+
+        with raises(CC.MyException):
+            CC.throw_error()
+
+    def test_unicode(self):
+        """Unicode non-UTF-8 example"""
+
+        import cppyy
+        import cppyy.gbl.talk_examples as CC
+
+        cppyy.cppdef("""\
+        namespace talk_examples {
+        template<class T>
+        std::string to_str(const T& chars) {
+            char buf[12]; int n = 0;
+            for (auto c : chars) buf[n++] = char(c);
+            return std::string(buf, n-1);
+        }
+        std::string utf8_chinese() {
+            auto chars = {0xe4, 0xb8, 0xad, 0xe6, 0x96, 0x87, 0};
+            return to_str(chars);
+        }
+        std::string gbk_chinese() {
+            auto chars = {0xd6, 0xd0, 0xce, 0xc4, 0};
+            return to_str(chars);
+        }}""")
+
+        assert CC.gbk_chinese() == '中文'.encode('gbk')
+        assert CC.utf8_chinese() == '中文'
