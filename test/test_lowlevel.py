@@ -671,3 +671,46 @@ class TestMULTIDIMARRAYS:
                         val = elem_tp(3*i+2*j+k)
                         assert arr[i][j][k] == val
                         assert arr[i, j, k] == val
+
+    def test04_malloc(self):
+        """Use of malloc to create multi-dim arrays"""
+
+        import cppyy
+        import cppyy.ll
+
+        cppyy.cppdef("""\
+        namespace MallocChecker {
+        template<typename T>
+        struct Foo {
+            T* bar;
+
+            Foo() {}
+            Foo(T* other) : bar(other) {}
+
+            bool eq(T* other) { return bar == other; }
+        };
+
+        template<typename T>
+        auto create(T* other) {
+            return Foo<T>(other);
+        } }""")
+
+        ns = cppyy.gbl.MallocChecker
+
+        for dtype in ["int", "int*", "int**",]:
+            bar = cppyy.ll.malloc[dtype](4)
+
+          # variable assignment
+            foo = ns.Foo[dtype]()
+            foo.bar = bar
+            assert foo.eq(bar)
+
+          # pointer passed to the constructor
+            foo2 = ns.Foo[dtype](bar)
+            assert foo2.eq(bar)
+
+          # pointer passed to a function
+            foo3 = ns.create[dtype](bar)
+            assert foo3.eq(bar)
+
+            cppyy.ll.free(bar)
