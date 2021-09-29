@@ -15,6 +15,8 @@ master: 2.2.0
 
 * Migrated repos to github/wlav
 * Properly resolve enum type of class enums
+* Get proper shape of ``void*`` and enum arrays
+* Fix access to (const) ref data members
 * Fix sometimes PCH uninstall issue
 
 

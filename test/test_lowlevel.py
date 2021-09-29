@@ -699,6 +699,7 @@ class TestMULTIDIMARRAYS:
 
         for dtype in ["int", "int*", "int**",]:
             bar = cppyy.ll.malloc[dtype](4)
+            assert len(bar) == 4
 
           # variable assignment
             foo = ns.Foo[dtype]()

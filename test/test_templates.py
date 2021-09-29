@@ -825,10 +825,15 @@ class TestTEMPLATES:
             def ann_adapt(node):
                 return ns.EventId(node.fData)
             ann_adapt.__annotations__ = {'node': 'FPTA::Node&', 'return': ns.EventId}
+            def ann_ref_mod(node):
+                ev_id = ns.EventId(node.fData)
+                node.fData = 81
+                return ev_id
+            ann_adapt.__annotations__ = {'node': 'FPTA::Node&', 'return': ns.EventId}
         else:
             oldp = sys.path[:]
             sys.path.append('.')
-            from templ_args_funcs import ann_adapt
+            from templ_args_funcs import ann_adapt, ann_ref_mod
             sys.path = oldp
 
         s = ns.Simulator()
@@ -845,7 +850,15 @@ class TestTEMPLATES:
         assert s.Schedule5(ns.Time(1.0), ann_adapt, ns.Node(25)).fId                == 25
         assert s.Schedule6['FPTA::Node&'](ns.Time(1.0), ann_adapt, ns.Node(88)).fId == 88
 
-    def test34_mix_and_match(self):
+        # verify that the node is correctly modified
+        tn = ns.Node(25)
+        assert s.Schedule5(ns.Time(1.0), ann_ref_mod, tn).fId                == 25
+        assert tn.fData == 81
+        tn = ns.Node(88)
+        assert s.Schedule6['FPTA::Node&'](ns.Time(1.0), ann_ref_mod, tn).fId == 88
+        assert tn.fData == 81
+
+    def test30_mix_and_match(self):
         """Mix of (non-)templated across inheritance"""
 
         import cppyy

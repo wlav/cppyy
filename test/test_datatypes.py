@@ -2103,3 +2103,27 @@ class TestDATATYPES:
         for i in range(buf1.size):
             assert buf1.data1[i] == 1.*i
             assert buf1.data2[i] == 2.*i
+
+    def test44_const_ref_data(self):
+        """Proper indirection for addressing const-ref data"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace ConstRefData {
+        struct A {
+            std::string name;
+        };
+
+        A gA{"Hello, World!"};
+
+        struct B {
+            B() : body1(gA), body2(gA) {}
+            A body1;
+            const A& body2;
+        }; }""")
+
+        ns = cppyy.gbl.ConstRefData
+
+        b = ns.B()
+        assert b.body1.name == b.body2.name
