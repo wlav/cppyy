@@ -1250,7 +1250,58 @@ class TestSTLMAP:
         assert next(it).value == 1
         assert next(it).value == 2
 
-    def test09_initialize_from_dict(self):
+    def test09_stllike_confusing_name(self):
+        """Having "iterator" in the container name used to fail"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace ConstainerOfIterators {
+        template<typename TI>
+        class iterator_range {
+        public:
+            iterator_range(TI b, TI e) : m_begin(b), m_end(e) {}
+
+            TI begin() const { return m_begin; }
+            TI end() const { return m_end; }
+
+        private:
+            TI m_begin;
+            TI m_end;
+        };
+
+        class iterator {
+        public:
+            iterator(const int* first) : current(first) {}
+
+            bool operator==(const iterator& other) const { return current == other.current; }
+            const int& operator*() { return *current; }
+            iterator& operator++() { ++current; return *this; }
+
+        private:
+            const int* current;
+        };
+
+        class A {
+        public:
+            A() : fArray{1, 2, 3, 4} {}
+
+            iterator_range<iterator> members() {
+                return iterator_range<iterator>(&fArray[0], &fArray[3]+1);
+            }
+
+        private:
+            std::array<int, 4> fArray;
+        }; }""")
+
+        ns = cppyy.gbl.ConstainerOfIterators
+
+        a = ns.A()
+        m = a.members()
+
+        assert [x for x in m] == [1, 2, 3, 4]
+
+    def test10_initialize_from_dict(self):
         """Test std::map initializion from Python dict"""
 
         import cppyy
@@ -1263,7 +1314,7 @@ class TestSTLMAP:
         with raises(TypeError):
             m = cppyy.gbl.std.map[int, str]({'1' : 1, '2' : 2})
 
-    def test10_map_cpp17_style(self):
+    def test11_map_cpp17_style(self):
         """C++17 style initialization of std::map"""
 
         if ispypy:
@@ -1275,7 +1326,7 @@ class TestSTLMAP:
         assert m['1'] == 2
         assert m['2'] == 1
 
-    def test11_map_derived_objects(self):
+    def test12_map_derived_objects(self):
         """Enter derived objects through an initializer list"""
 
         import cppyy
