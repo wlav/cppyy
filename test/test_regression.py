@@ -1040,3 +1040,27 @@ class TestREGRESSION:
 
         assert cppyy.sizeof(param) == ctypes.sizeof(param)
 
+    def test37_array_of_pointers_argument(self):
+        """Passing an array of pointers used to crash"""
+
+        import cppyy
+        import cppyy.ll
+
+        cppyy.cppdef("""\
+        namespace ArrayOfPointers {
+           void* test(int *arr[8], bool is_int=true) { return is_int ? (void*)arr : nullptr; }
+           void* test(uint8_t *arr[8], bool is_int=false) { return is_int ? nullptr : (void*)arr; }
+        }""")
+
+        ns = cppyy.gbl.ArrayOfPointers
+
+        N = 9
+
+        for t, b in (('int*', True), ('uint8_t*', False)):
+            arr = cppyy.ll.array_new[t](N, managed=True)
+            assert arr.shape[0] == N
+            assert len(arr) == N
+
+            res = ns.test(arr, b)
+
+            assert cppyy.addressof(res) == cppyy.addressof(arr)

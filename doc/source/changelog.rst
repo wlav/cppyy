@@ -18,6 +18,7 @@ master: 2.2.0
 * Get proper shape of ``void*`` and enum arrays
 * Fix access to (const) ref data members
 * Fix sometimes PCH uninstall issue
+* Fix argument passing of fixed arrays of pointers
 
 
 2021-07-17: 2.1.0
