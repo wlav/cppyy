@@ -82,10 +82,10 @@ class TestREGRESSION:
     def test03_pyfunc_doc(self):
         """Help on a generated pyfunc used to crash."""
 
-        import cppyy, distutils, pydoc, sys
-        import distutils.sysconfig as sc
+        import cppyy, pydoc, sys
+        import sysconfig as sc
 
-        cppyy.add_include_path(sc.get_python_inc())
+        cppyy.add_include_path(sc.get_config_var("INCLUDEPY"))
         if sys.hexversion < 0x3000000:
             cppyy.cppdef("#undef _POSIX_C_SOURCE")
             cppyy.cppdef("#undef _XOPEN_SOURCE")
