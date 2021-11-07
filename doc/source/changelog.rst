@@ -19,6 +19,7 @@ master: 2.2.0
 * Fix access to (const) ref data members
 * Fix sometimes PCH uninstall issue
 * Fix argument passing of fixed arrays of pointers
+* Include all gcc system paths (for asan)
 
 
 2021-07-17: 2.1.0
