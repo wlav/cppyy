@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong
+from .support import setup_make, pylong, IS_MAC_ARM
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("crossinheritanceDict"))
@@ -231,6 +231,9 @@ class TestCROSSINHERITANCE:
     def test08_error_handling(self):
         """Python errors should propagate through wrapper"""
 
+        if IS_MAC_ARM:
+            py.test.skip("JIT exceptions not supported on Mac ARM")
+
         import cppyy
         Base1 = cppyy.gbl.CrossInheritance.Base1
 
@@ -264,7 +267,9 @@ class TestCROSSINHERITANCE:
                 self.m_int*2       # missing return
 
         d = Derived(4)
-        assert raises(TypeError, Base1.call_get_value, d)
+
+        if not IS_MAC_ARM:
+            assert raises(TypeError, Base1.call_get_value, d)
 
     def test10_python_in_templates(self):
         """Usage of Python derived objects in std::vector"""

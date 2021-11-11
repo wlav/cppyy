@@ -20,6 +20,7 @@ master: 2.2.0
 * Fix sometimes PCH uninstall issue
 * Fix argument passing of fixed arrays of pointers
 * Include all gcc system paths (for asan)
+* Initial support for Apple M1
 
 
 2021-07-17: 2.1.0

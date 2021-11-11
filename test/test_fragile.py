@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, IS_WINDOWS, ispypy
+from .support import setup_make, ispypy, IS_WINDOWS, IS_MAC_ARM
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("fragileDict"))
@@ -480,8 +480,9 @@ class TestFRAGILE:
         cppyy.cppexec("int interactive_b = 4")
         assert cppyy.gbl.interactive_b == 4
 
-        with raises(SyntaxError):
-            cppyy.cppexec("doesnotexist");
+        if not IS_MAC_ARM:
+            with raises(SyntaxError):
+                cppyy.cppexec("doesnotexist");
 
     def test23_set_debug(self):
         """Setting of global gDebug variable"""
@@ -509,6 +510,9 @@ class TestSIGNALS:
 
         if ispypy:
             py.test.skip('signals not yet implemented')
+
+        if IS_MAC_ARM:
+            py.test.skip("JIT exceptions not supported on Mac ARM")
 
         import cppyy
         import cppyy.ll

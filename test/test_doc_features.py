@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, ispypy
+from .support import setup_make, ispypy, IS_MAC_ARM
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("doc_helperDict"))
@@ -452,6 +452,9 @@ namespace Namespace {
 
         if ispypy:
             py.test.skip('currently terminates')
+
+        if IS_MAC_ARM:
+            py.test.skip("JIT exceptions not supported on Mac ARM")
 
         import cppyy
 
@@ -1222,6 +1225,9 @@ class TestTALKEXAMPLES:
 
     def test_exceptions(self):
         """Exceptions example"""
+
+        if IS_MAC_ARM:
+            py.test.skip("JIT exceptions not supported on Mac ARM")
 
         import cppyy
         import cppyy.gbl.talk_examples as CC

@@ -1,5 +1,6 @@
 import py, os, sys
 from pytest import raises
+from .support import IS_MAC_ARM
 
 
 class TestCONCURRENT:
@@ -84,6 +85,9 @@ class TestCONCURRENT:
 
     def test04_cpp_threading(self):
         """Threads and Python exceptions"""
+
+        if IS_MAC_ARM:
+            py.test.skip("JIT exceptions not supported on Mac ARM")
 
         import cppyy
 
