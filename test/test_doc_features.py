@@ -1188,7 +1188,7 @@ class TestTALKEXAMPLES:
             def ann_f1(arg):
                 return 3.1415*arg
             ann_f1.__annotations__ = {'arg': 'int', 'return': 'double'}
-            def ann_f2(arg1, arg2) -> 'int':
+            def ann_f2(arg1, arg2):
                 return 3*arg1*arg2
             ann_f2.__annotations__ = {'arg1': 'int', 'arg2' : 'int', 'return': 'int'}
         else:
@@ -1270,5 +1270,8 @@ class TestTALKEXAMPLES:
             return to_str(chars);
         }}""")
 
-        assert CC.gbk_chinese() == '中文'.encode('gbk')
-        assert CC.utf8_chinese() == '中文'
+        assert CC.gbk_chinese() == u'\u4e2d\u6587'.encode('gbk')
+        if 0x3000000 <= sys.hexversion:
+            assert CC.utf8_chinese() == u'\u4e2d\u6587'
+        else:
+            assert CC.utf8_chinese() == b'\xe4\xb8\xad\xe6\x96\x87'
