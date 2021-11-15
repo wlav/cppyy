@@ -52,7 +52,12 @@ def find_version(*file_paths):
 #
 class my_install(_install):
     def __init__(self, *args, **kwds):
-        super(_install, self).__init__(*args, **kwds)
+        if 0x3000000 <= sys.hexversion:
+            super(_install, self).__init__(self, *args, **kwds)
+        else:
+          # b/c _install is a classobj, not type
+            _install.__init__(self, *args, **kwds)
+
         try:
             import cppyy_backend as cpb
             self._pchname = 'allDict.cxx.pch.' + str(cpb.__version__)
