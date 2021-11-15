@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.2.0
--------------
+2021-11-14: 2.2.0
+-----------------
 
 * Migrated repos to github/wlav
 * Properly resolve enum type of class enums

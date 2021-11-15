@@ -8,7 +8,7 @@ add_pkg = ['cppyy', 'cppyy.__pyinstaller']
 try:
     import __pypy__, sys
     version = sys.pypy_version_info
-    requirements = ['cppyy-backend==1.14.6', 'cppyy-cling==6.25.1']
+    requirements = ['cppyy-backend==1.14.7', 'cppyy-cling==6.25.2']
     if version[0] == 5:
         if version[1] <= 9:
             requirements = ['cppyy-backend<0.3', 'cppyy-cling<6.12']
@@ -23,7 +23,7 @@ try:
             requirements = ['cppyy-backend<=1.10', 'cppyy-cling<=6.18.2.3']
 except ImportError:
     # CPython
-    requirements = ['CPyCppyy==1.12.7', 'cppyy-backend==1.14.6', 'cppyy-cling==6.25.1']
+    requirements = ['CPyCppyy==1.12.8', 'cppyy-backend==1.14.7', 'cppyy-cling==6.25.2']
 
 setup_requirements = ['wheel']
 if 'build' in sys.argv or 'install' in sys.argv:
@@ -53,7 +53,7 @@ def find_version(*file_paths):
 class my_install(_install):
     def __init__(self, *args, **kwds):
         if 0x3000000 <= sys.hexversion:
-            super(_install, self).__init__(self, *args, **kwds)
+            super(_install, self).__init__(*args, **kwds)
         else:
           # b/c _install is a classobj, not type
             _install.__init__(self, *args, **kwds)
@@ -120,12 +120,13 @@ setup(
 
         'License :: OSI Approved :: BSD License',
 
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: C',
         'Programming Language :: C++',
 
