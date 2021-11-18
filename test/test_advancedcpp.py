@@ -876,3 +876,24 @@ class TestADVANCEDCPP:
         #assert ns.A.Val != ns.B.Val
         #assert type(ns.A.Val(1)) == int
         #assert type(ns.B.Val(1)) == float
+
+    def test28_extern_C_in_namespace(self):
+        """Access to extern "C" declared functions in namespaces"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace extern_c_in_ns {
+        extern "C" int some_func_xc(void) { return 21; }
+        int some_func() { return some_func_xc(); }
+
+        namespace deeper {
+           extern "C" int some_other_func_xc(void) { return 42; }
+        } }""")
+
+        ns = cppyy.gbl.extern_c_in_ns
+
+        assert ns.some_func()    == 21
+        assert ns.some_func_xc() == 21
+
+        assert ns.deeper.some_other_func_xc() == 42
