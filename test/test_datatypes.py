@@ -1519,7 +1519,8 @@ class TestDATATYPES:
 
         import cppyy
 
-        cppyy.cppdef("""namespace AnonUnion {
+        cppyy.cppdef("""\
+        namespace AnonUnion {
         struct Event1 {
             Event1() : num(1) { shrd.a = 5.; }
             int num;
@@ -1606,7 +1607,55 @@ class TestDATATYPES:
         assert type(p.data_c[0]) == float
         assert p.intensity == 5.
 
-    def test32_pointer_to_array(self):
+    def test32_anonymous_struct(self):
+        """Anonymous struct creates an unnamed type"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace AnonStruct {
+        class Foo1 {
+        public:
+            Foo1() { bar.x = 5; }
+            struct { int x; } bar;
+        };
+
+        class Foo2 {
+        public:
+            Foo2() { bar.x = 5; baz.x = 7; }
+            struct { int x; } bar;
+            struct { int x; } baz;
+        };
+
+        typedef struct {
+          struct {
+            struct {
+              struct {
+                struct {
+                  struct {
+                    const char* (*foo)(const char* s);
+                  } kmmdemo;
+                } justamouse;
+              } com;
+            } root;
+          } kotlin;
+        } libuntitled1_ExportedSymbols;
+
+        } """)
+
+        ns = cppyy.gbl.AnonStruct
+
+        foo = ns.Foo1()
+        assert foo.bar.x == 5
+        assert not hasattr(foo.bar, 'bar')
+
+        foo = ns.Foo2()
+        assert foo.bar.x == 5
+        assert foo.baz.x == 7
+
+        assert 'foo' in dir(ns.libuntitled1_ExportedSymbols().kotlin.root.com.justamouse.kmmdemo)
+
+    def test33_pointer_to_array(self):
         """Usability of pointer to array"""
 
         import cppyy
@@ -1637,7 +1686,7 @@ class TestDATATYPES:
             assert type(f) == AoS.Foo
         assert type(bar.fArr[0]) == AoS.Foo
 
-    def test33_object_pointers(self):
+    def test34_object_pointers(self):
         """Read/write access to objects through pointers"""
 
         import cppyy
@@ -1662,7 +1711,7 @@ class TestDATATYPES:
         assert c.s_strp               == "noot"
         assert sn                     == "noot"  # set through pointer
 
-    def test34_restrict(self):
+    def test35_restrict(self):
         """Strip __restrict keyword from use"""
 
         import cppyy
@@ -1671,12 +1720,12 @@ class TestDATATYPES:
 
         assert cppyy.gbl.restrict_call("aap") == "aap"
 
-    def test35_legacy_matrix(self):
+    def test36_legacy_matrix(self):
         """Handling of legacy matrix"""
 
         import cppyy
 
-        cppyy.cppdef("""
+        cppyy.cppdef("""\
         namespace Pointer2D {
         int** g_matrix;
 
@@ -1722,7 +1771,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test36_legacy_matrix_of_structs(self):
+    def test37_legacy_matrix_of_structs(self):
         """Handling of legacy matrix of structs"""
 
         import cppyy
@@ -1785,7 +1834,7 @@ class TestDATATYPES:
         m = ns.create_matrix(N, M)
         assert ns.destroy_matrix(ns.g_matrix, N, M)
 
-    def test37_plain_old_data(self):
+    def test38_plain_old_data(self):
         """Initializer construction of PODs"""
 
         import cppyy
@@ -1871,7 +1920,7 @@ class TestDATATYPES:
             assert len(f1.fPtrArr) == 3
             assert list(f1.fPtrArr) == [1., 2., 3]
 
-    def test38_aggregates(self):
+    def test39_aggregates(self):
         """Initializer construction of aggregates"""
 
         import cppyy
@@ -1923,7 +1972,7 @@ class TestDATATYPES:
         assert b.name     == "aap"
         assert b.buf_type == ns.SHAPE
 
-    def test39_more_aggregates(self):
+    def test40_more_aggregates(self):
         """More aggregate testings (used to fail/report errors)"""
 
         import cppyy
@@ -1960,7 +2009,7 @@ class TestDATATYPES:
             r2 = ns.make_R2()
             assert r2.s.x == 1
 
-    def test40_complex_numpy_arrays(self):
+    def test41_complex_numpy_arrays(self):
         """Usage of complex numpy arrays"""
 
         import cppyy
@@ -2007,7 +2056,7 @@ class TestDATATYPES:
             Ccl = func(Acl, Bcl, 2)
             assert complex(Ccl) == pyCcl
 
-    def test41_mixed_complex_arithmetic(self):
+    def test42_mixed_complex_arithmetic(self):
         """Mixin of Python and C++ std::complex in arithmetic"""
 
         import cppyy
@@ -2020,7 +2069,7 @@ class TestDATATYPES:
         assert c*(c*c) == p*(p*p)
         assert (c*c)*c == (p*p)*p
 
-    def test42_ccharp_memory_handling(self):
+    def test43_ccharp_memory_handling(self):
         """cppyy side handled memory of C strings"""
 
         import cppyy
@@ -2069,7 +2118,7 @@ class TestDATATYPES:
         assert b.name == 'pqr'
         assert b.val  == 5
 
-    def test43_buffer_memory_handling(self):
+    def test44_buffer_memory_handling(self):
         """cppyy side handled memory of LL buffers"""
 
         import cppyy, gc
@@ -2112,7 +2161,7 @@ class TestDATATYPES:
             assert buf1.data1[i] == 1.*i
             assert buf1.data2[i] == 2.*i
 
-    def test44_const_ref_data(self):
+    def test45_const_ref_data(self):
         """Proper indirection for addressing const-ref data"""
 
         import cppyy

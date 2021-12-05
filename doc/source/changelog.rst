@@ -13,6 +13,7 @@ master: 2.3.0
 -------------
 
 * Provide access to extern "C" declared functions in namespaces
+* Support for (multiple and nested) anonymous structs
 
 
 2021-11-14: 2.2.0
