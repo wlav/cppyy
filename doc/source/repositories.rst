@@ -86,18 +86,25 @@ the first step if you already cloned the repo for ``cppyy-cling``)::
  $ cd cppyy-backend/clingwrapper
  $ python -m pip install . --upgrade --no-use-pep517 --no-deps
 
+Note the use of ``--no-use-pep517``, which prevents ``pip`` from needlessly
+going out to pypi.org and creating a local "clean" build environment from the
+cached or remote wheels.
+Instead, by skipping PEP 517, the local installation will be used.
+This is imperative if there was a change in public headers or if the version
+of ``cppyy-cling`` was locally updated and is thus not available on PyPI.
+
 Upgrading ``CPyCppyy`` (if on CPython; it's not needed for PyPy) and ``cppyy``
 is very similar::
 
  $ git clone https://github.com/wlav/CPyCppyy.git
  $ cd CPyCppyy
- $ python -m pip install . --upgrade
+ $ python -m pip install . --upgrade --no-use-pep517 --no-deps
 
 Finally, the top-level package ``cppyy``::
 
  $ git clone https://github.com/wlav/cppyy.git
  $ cd cppyy
- $ python -m pip install . --upgrade
+ $ python -m pip install . --upgrade --no-use-pep517 --no-deps
 
 Please see the `pip documentation`_ for more options, such as developer mode.
 
