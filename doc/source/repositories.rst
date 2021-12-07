@@ -84,7 +84,7 @@ the first step if you already cloned the repo for ``cppyy-cling``)::
 
  $ git clone https://github.com/wlav/cppyy-backend.git
  $ cd cppyy-backend/clingwrapper
- $ python -m pip install . --upgrade
+ $ python -m pip install . --upgrade --no-use-pep517 --no-deps
 
 Upgrading ``CPyCppyy`` (if on CPython; it's not needed for PyPy) and ``cppyy``
 is very similar::
