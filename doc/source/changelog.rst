@@ -9,11 +9,14 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
+
 master: 2.3.0
 -------------
 
 * Provide access to extern "C" declared functions in namespaces
 * Support for (multiple and nested) anonymous structs
+* Pull forward upstream patch for PPC
+* Only apply system_dirs patch (for asan) on Linux
 
 
 2021-11-14: 2.2.0
