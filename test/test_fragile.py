@@ -498,6 +498,17 @@ class TestFRAGILE:
         cppyy.set_debug(False)
         assert cppyy.gbl.CppyyLegacy.gDebug ==  0
 
+    def test24_asan(self):
+        """Check availability of ASAN with gcc"""
+
+        import cppyy
+        import sys
+
+        if not 'linux' in sys.platform:
+            return
+
+        cppyy.include('sanitizer/asan_interface.h')
+
 
 class TestSIGNALS:
     def setup_class(cls):
