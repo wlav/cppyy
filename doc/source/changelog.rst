@@ -18,6 +18,7 @@ master: 2.3.0
 * Support for (multiple and nested) anonymous structs
 * Pull forward upstream patch for PPC
 * Only apply system_dirs patch (for asan) on Linux
+* Add unloaded classes to namespaces in dir()
 
 
 2021-11-14: 2.2.0

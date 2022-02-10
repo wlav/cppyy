@@ -225,8 +225,59 @@ class TestFRAGILE:
 
         # TODO: think this through ... probably want this, but interferes with
         # the (new) policy of lazy lookups
-        #assert 'fglobal' in members          # function
-        #assert 'gI'in members                # variable
+        #assert 'fglobal' in members         # function
+        assert 'gI'in members                # variable
+
+      # GetAllCppNames() behaves differently from python dir() but providing the full
+      # set, which is then filtered in dir(); check both
+        cppyy.cppdef("""\
+        #ifdef _MSC_VER
+        #define CPPYY_IMPORT extern __declspec(dllimport)
+        #else
+        #define CPPYY_IMPORT extern
+        #endif
+
+        namespace Cppyy {
+
+        typedef size_t TCppScope_t;
+
+        CPPYY_IMPORT TCppScope_t GetScope(const std::string& scope_name);
+        CPPYY_IMPORT void GetAllCppNames(TCppScope_t scope, std::set<std::string>& cppnames);
+
+        }""")
+
+        cppyy.cppdef("""\
+        namespace GG {
+        struct S {
+          int _a;
+          int _c;
+          S(int a, int c): _a{a}, _c{c} { }
+          S(): _a{0}, _c{0} { }
+          bool operator<(int i) { return i < (_a+_c); }
+        }; }""");
+
+
+        assert 'S' in dir(cppyy.gbl.GG)
+
+        handle = cppyy.gbl.Cppyy.GetScope("GG::S")
+        assert handle
+
+        cppnames = cppyy.gbl.std.set[str]()
+        cppyy.gbl.Cppyy.GetAllCppNames(handle, cppnames)
+
+        assert 'S' in cppnames
+        assert '_a' in cppnames
+        assert '_c' in cppnames
+
+        assert 'operator<' in cppnames
+
+        dirS = dir(cppyy.gbl.GG.S)
+
+        assert 'S' not in dirS # is __init__
+        assert '_a' in dirS
+        assert '_c' in dirS
+
+        assert 'operator<' not in dirS
 
     def test12_imports(self):
         """Test ability to import from namespace (or fail with ImportError)"""
