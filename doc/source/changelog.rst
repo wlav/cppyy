@@ -19,6 +19,7 @@ master: 2.3.0
 * Pull forward upstream patch for PPC
 * Only apply system_dirs patch (for asan) on Linux
 * Add unloaded classes to namespaces in dir()
+* Fix lookup of templates of function with template args
 
 
 2021-11-14: 2.2.0
