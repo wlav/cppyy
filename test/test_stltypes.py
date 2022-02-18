@@ -1513,6 +1513,43 @@ class TestSTLSTRING_VIEW:
         assert countit(v)    == 4
         assert countit_cr(v) == 4
 
+    def test02_string_view_from_unicode(self):
+        """Life-time management of converted unicode strings"""
+
+        import cppyy, gc
+
+        # view on (converted) unicode
+        text = cppyy.gbl.std.string_view('''\
+        The standard Lorem Ipsum passage, used since the 1500s
+
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+         quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+         consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+         cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+         non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."\
+        ''')
+
+        gc.collect()    # likely erases Python-side temporary
+
+        assert "Lorem ipsum dolor sit amet" in str(text)
+
+        # view on bytes
+        text = cppyy.gbl.std.string_view(b'''\
+        The standard Lorem Ipsum passage, used since the 1500s
+
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+         quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+         consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+         cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+         non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."\
+        ''')
+
+        gc.collect()    # id.
+
+        assert "Lorem ipsum dolor sit amet" in str(text)
+
 
 class TestSTLDEQUE:
     def setup_class(cls):

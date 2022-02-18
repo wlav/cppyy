@@ -14,6 +14,7 @@ master: 2.3.0
 -------------
 
 * CUDA support (up to version 10.2)
+* Allow `std::string_view<char>` initialization from Python `str` (copies)
 * Provide access to extern "C" declared functions in namespaces
 * Support for (multiple and nested) anonymous structs
 * Pull forward upstream patch for PPC
