@@ -2,6 +2,7 @@
 """
 
 import cppyy
+import warnings
 
 try:
     import __pypy__
@@ -75,8 +76,13 @@ class ArraySizer(object):
         return self
     def __call__(self, size, managed=False):
         res = self.func[self.array_type](size)
-        res.reshape((size,)+res.shape[1:])
-        if managed: res.__python_owns__ = True
+        try:
+            res.reshape((size,)+res.shape[1:])
+            if managed: res.__python_owns__ = True
+        except AttributeError:
+            res.__reshape__((size,))
+            if managed:
+                warnings.warn("managed low-level arrays of instances not supported")
         return res
 
 class CArraySizer(ArraySizer):

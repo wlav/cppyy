@@ -1104,3 +1104,59 @@ class TestREGRESSION:
                   'iii', 'ivi', 'vii', 'vvi',
                   'iiv', 'ivv', 'viv', 'vvv']:
             assert getattr(ns, t)
+
+    def test39_char16_arrays(self):
+        """Access to fixed-size char16 arrays as data members"""
+
+        import cppyy
+        import cppyy.ll
+        import warnings
+
+        cppyy.cppdef(r"""\
+        namespace Char16Fixed {
+        struct AxisInformation {
+            char16_t name[6];
+        };
+
+        void fillem(AxisInformation* a, int N) {
+            char16_t fill[] = {u'h', u'e', u'l', u'l', u'o', u'\0'};
+            for (int i = 0; i < N; ++i)
+                memcpy(a[i].name, fill, sizeof(fill));
+        }}""")
+
+        N = 10
+
+        ns = cppyy.gbl.Char16Fixed
+
+        ai = ns.AxisInformation()
+        for s in [u'hello', u'hellow']:
+            ai.name = s
+            len(ai.name) == 6
+            assert ai.name[:len(s)] == s
+
+        with warnings.catch_warnings(record=True) as w:
+            ai.name = u'hellowd'
+            assert 'too long' in str(w[-1].message)
+
+        # vector of objects
+        va = cppyy.gbl.std.vector[ns.AxisInformation](N)
+        ns.fillem(va.data(), N)
+        for ai in va:
+            assert len(ai.name) == 6
+            assert ai.name[:5] == u'hello'
+
+        # array of objects
+        aa = cppyy.gbl.std.array[ns.AxisInformation, N]()
+        ns.fillem(aa.data(), N)
+        for ai in aa:
+            assert len(ai.name) == 6
+            assert ai.name[:5] == u'hello'
+
+        # low-level array of objects
+        aa = cppyy.ll.array_new[ns.AxisInformation](N)
+        ns.fillem(aa, N)
+        for ai in aa:
+            assert len(ai.name) == 6
+            assert ai.name[:5] == u'hello'
+        cppyy.ll.array_delete(aa)
+
