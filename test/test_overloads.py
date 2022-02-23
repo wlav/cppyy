@@ -200,3 +200,32 @@ class TestOVERLOADS:
         assert type(cpp.BoolInt4.fff(1)) == bool
         with raises(ValueError):
             cpp.BoolInt4.fff(2)
+
+    def test10_overload_and_exceptions(self):
+        """Prioritize reporting C++ exceptions from callee"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace ExceptionTypeTest {
+
+        class ConfigFileNotFoundError : public std::exception {
+            std::string fMsg;
+        public:
+            ConfigFileNotFoundError(const std::string& msg) : fMsg(msg) {}
+            const char* what() const throw() { return fMsg.c_str(); }
+        };
+
+        class MyClass {
+        public:
+            MyClass(const std::string& configfilename) {
+                throw ConfigFileNotFoundError{configfilename};
+            }
+            MyClass(const MyClass& other) {}
+        }; }""")
+
+
+        ns = cppyy.gbl.ExceptionTypeTest
+
+        with raises(ns.ConfigFileNotFoundError):
+            ns.MyClass("some_file")
