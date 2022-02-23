@@ -216,16 +216,39 @@ class TestOVERLOADS:
             const char* what() const throw() { return fMsg.c_str(); }
         };
 
-        class MyClass {
+        class MyClass1 {
         public:
-            MyClass(const std::string& configfilename) {
+            MyClass1(const std::string& configfilename) {
                 throw ConfigFileNotFoundError{configfilename};
             }
-            MyClass(const MyClass& other) {}
-        }; }""")
+            MyClass1(const MyClass1& other) {}
+        };
 
+        class MyClass2 {
+        public:
+            MyClass2(const std::string& configfilename) {
+                throw ConfigFileNotFoundError{configfilename};
+            }
+            MyClass2(const char* configfilename) {
+                throw ConfigFileNotFoundError{configfilename};
+            }
+            MyClass2(const MyClass2& other) {}
+        };
+
+        class MyClass3 {
+        public:
+            MyClass3(int) {}
+            MyClass3(const MyClass3& other) {}
+        }; }""")
 
         ns = cppyy.gbl.ExceptionTypeTest
 
         with raises(ns.ConfigFileNotFoundError):
-            ns.MyClass("some_file")
+            ns.MyClass1("some_file")
+
+        with raises(TypeError):
+            ns.MyClass2("some_file")
+
+        with raises(TypeError):
+            ns.MyClass3("some_file")
+
