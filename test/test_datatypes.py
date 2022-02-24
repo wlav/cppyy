@@ -2184,3 +2184,68 @@ class TestDATATYPES:
 
         b = ns.B()
         assert b.body1.name == b.body2.name
+
+    def test46_ltlt_in_template_name(self):
+        """Verify lookup of template names with << in the name"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace TestSomeLut {
+        template<class T, uint8_t X, uint8_t Y>
+        struct Lut {
+            Lut() { }
+            constexpr size_t size() const noexcept { return (1<<X)+1; }
+
+            std::array<T, 3>          data1;
+            std::array<T, X>          data2;
+            std::array<T, 2*X>        data3;
+            std::array<T, 16385>      data4;
+            std::array<T, (1UL<<(std::size_t)3)+1UL> data5;
+            std::array<T, ((1<<3)+1)> data6;
+            std::array<T, ((1<<X)+1)> data7;
+            static int constexpr array_size = X<<2;
+            std::array<T, array_size> data8;
+        };
+
+        template<class T, uint8_t X, uint8_t Y, uint32_t asize=((1<<X)+1)>
+        struct Lut2 {
+            Lut2() { }
+            constexpr size_t size() const noexcept { return (1<<X)+1; }
+
+            std::array<T, asize>      data;
+        }; }
+
+        std::array<int, (1UL<<(std::size_t)3)+1UL> gLutData5;
+        std::array<int, ((1<<3)+1)>                gLutData6;
+        static int constexpr array_size = 14<<2;
+        std::array<int, array_size>                gLutData8;
+        """)
+
+        ns = cppyy.gbl.TestSomeLut
+
+        X, Y = 14, 15
+        lut = ns.Lut[int, X, Y]()
+
+        assert lut
+        assert lut.size() == (1<<X)+1
+
+        assert len(lut.data1) == 3
+        assert len(lut.data2) == X
+        assert len(lut.data3) == 2*X
+        assert len(lut.data4) == 16385
+        assert len(lut.data5) == (1<<3)+1
+        assert len(lut.data6) == (1<<3)+1
+        assert len(lut.data7) == (1<<X)+1
+        assert len(lut.data8) == X<<2
+
+        lut2 = ns.Lut2[int, X, Y]()
+
+        assert lut2
+        assert lut2.size() == (1<<X)+1
+
+        assert len(lut2.data) == lut2.size()
+
+        assert len(cppyy.gbl.gLutData5) == (1<<3)+1
+        assert len(cppyy.gbl.gLutData6) == (1<<3)+1
+        assert len(cppyy.gbl.gLutData8) == 14<<2

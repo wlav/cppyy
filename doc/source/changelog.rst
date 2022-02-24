@@ -21,6 +21,7 @@ master: 2.3.0
 * Only apply system_dirs patch (for asan) on Linux
 * Add unloaded classes to namespaces in dir()
 * Fix lookup of templates of function with template args
+* Fix lookup of templates types with << in name
 * Fix regression for accessing `char16_t` data member arrays
 * Add custom `__reshape__` method to CPPInstance to allow array cast
 * Prioritize callee exceptions over bindings exceptions
