@@ -25,6 +25,7 @@ master: 2.3.0
 * Fix regression for accessing `char16_t` data member arrays
 * Add custom `__reshape__` method to CPPInstance to allow array cast
 * Prioritize callee exceptions over bindings exceptions
+* Prevent infinite recursion when instantiating class with no constructors
 
 
 2021-11-14: 2.2.0

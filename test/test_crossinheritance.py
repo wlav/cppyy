@@ -1562,3 +1562,46 @@ class TestCROSSINHERITANCE:
 
         c = C()
         assert c.func() == 3
+
+    def test34_no_ctors_in_base(self):
+        """Base classes with no constructors"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace BlockedCtors {
+        class Z {
+        public:
+            virtual ~Z() {}
+        };
+
+        class X : Z {
+            X();
+            X(const X&&) = delete;
+        };
+
+        class Y: Z {
+        protected:
+            Y() {}
+            Y(const Y&&) = delete;
+        }; }""")
+
+        ns = cppyy.gbl.BlockedCtors
+
+        with raises(TypeError):
+            ns.X()
+
+        with raises(TypeError):
+            ns.Y()
+
+        class PyY1(ns.Y):
+            pass
+
+        with raises(TypeError):
+            PyY1()
+
+        class PyY2(ns.Y):
+            def __init__(self):
+                super(ns.Y, self).__init__()
+
+        assert PyY2()
