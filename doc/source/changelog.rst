@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.3.0
--------------
+2022-03-08: 2.3.0
+-----------------
 
 * CUDA support (up to version 10.2)
 * Allow `std::string_view<char>` initialization from Python `str` (copies)
