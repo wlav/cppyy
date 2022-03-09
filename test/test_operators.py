@@ -346,3 +346,39 @@ class TestOPERATORS:
         assert (x.end() - 1).__deref__() == 3
         assert std.max_element(x.begin(), x.end())-x.begin() == 2
         assert (x.end() - 3).__deref__() == 1
+
+    def test16_global_ordered_operators(self):
+        """Globally defined ordered oeprators"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace FriendOperator {
+
+        struct ALt { ALt(int d) : data(d) {} int data; };
+        bool operator< (const ALt& a1, const ALt& a2) { return a1.data <  a2.data; }
+
+        struct ALe { ALe(int d) : data(d) {} int data; };
+        bool operator<=(const ALe& a1, const ALe& a2) { return a1.data <= a2.data; }
+
+        struct AGt { AGt(int d) : data(d) {} int data; };
+        bool operator> (const AGt& a1, const AGt& a2) { return a1.data >  a2.data; }
+
+        struct AGe { AGe(int d) : data(d) {} int data; };
+        bool operator>=(const AGe& a1, const AGe& a2) { return a1.data >= a2.data; }
+
+        }""")
+
+        ns = cppyy.gbl.FriendOperator
+
+        assert     ns.ALt(4) <  ns.ALt(5)
+        assert not ns.ALt(5) <  ns.ALt(4)
+
+        assert     ns.ALe(4) <= ns.ALe(5)
+        assert not ns.ALe(5) <= ns.ALe(4)
+
+        assert     ns.AGt(5) >  ns.AGt(4)
+        assert not ns.AGt(4) >  ns.AGt(5)
+
+        assert     ns.AGe(5) >= ns.AGe(4)
+        assert not ns.AGe(4) >= ns.AGe(5)
