@@ -246,6 +246,37 @@ Having the two correctly interact therefore deserves it's own
 :doc:`chapter <strings>`.
 
 
+`std::tuple`
+------------
+
+C++ ``tuple`` is supported but it should be noted that its use, and in
+particular instantiating (heavily overloaded) ``get<>`` functions for member
+access is inefficient.
+They are really only meant for use when you have to pass a ``tuple`` to C++
+code; and if returned from a C++ function, it is easier to simply unpack them.
+In all other cases, prefer Python's builtin ``tuple``.
+Example usage:
+
+  .. code-block:: python
+
+    >>> from cppyy.gbl.std import make_tuple, get
+    >>> t = make_tuple(1, '2', 5.)
+    >>> print(t)
+    <cppyy.gbl.std.tuple<int,std::string,double> object at 0x12033ee70>
+    >>> len(t)
+    3
+    >>> get[0](t)            # access with templated std::get<>
+    1
+    >>> get[1](t)
+    b'2'
+    >>> get[2](t)
+    5.0
+    >>> a, b, c = t          # unpack through iteration
+    >>> print(a, b, c)
+    1 2 5.0
+    >>>
+
+
 .. rubric:: Footnotes
 
 .. [#f1] The meaning of "temporary" differs between Python and C++: in a statement such as ``func(std.vector[int]((1, 2, 3)))``, there is no temporary as far as Python is concerned, even as there clearly is in the case of a similar statement in C++. Thus that call will succeed even if ``func`` takes a non-const reference.
