@@ -57,6 +57,17 @@ representing unicode with a codec other than UTF-8, it can in turn be
 explicitly pythonized to do the conversion with that codec.
 
 
+`std::string_view`
+""""""""""""""""""
+
+It is possible to construct a (char-based) ``std::string_view`` from a Python
+``str``, but it requires the unicode object to be encoded and by default,
+UTF-8 is chosen.
+This will give the expected result if all characters in the ``str`` are from
+the ASCII set, but otherwise it is recommend to encode on the Python side and
+pass the resulting ``bytes`` object instead.
+
+
 `std::wstring`
 """"""""""""""
 
