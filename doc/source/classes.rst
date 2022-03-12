@@ -273,6 +273,44 @@ behave as expected:
 
  .. _sec-operators-label:
 
+
+`Structs/Unions`
+----------------
+
+Structs and unions are both supported, named or anonymous.
+If the latter, the field are accessible through the parent scope by their
+declared name.
+For example:
+
+  .. code-block:: python
+
+    >>> cppyy.cppdef("""\
+    ... struct PointXYZ {
+    ...   PointXYZI() : intensity(5.) {}
+    ...   double x, y, z;
+    ...   union {
+    ...     int offset1;
+    ...     struct {
+    ...       int offset2;
+    ...       float intensity;
+    ...     };
+    ...     float data_c[4];
+    ...   };
+    ... };""")
+    True
+    >>> p = cppyy.gbl.PointXYZI()
+    >>> type(p.x)
+    <class 'float'>
+    >>> p.intensity
+    5.0
+    >>> type(p.data_c[1])
+    <class 'float'>
+    >>> p.data_c[1] = 3.0
+    >>> p.intensity
+    3.0
+    >>>
+
+
 `Operators`
 -----------
 
