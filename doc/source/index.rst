@@ -19,7 +19,7 @@ template instantiation, automatic object downcasting, exception mapping, and
 interactive exploration of C++ libraries.
 cppyy delivers this without any language extensions, intermediate languages,
 or the need for boiler-plate hand-written code.
-For design and performance, see this `PyHPC paper`_, albeit that the
+For design and performance, see this `PyHPC'16 paper`_, albeit that the
 CPython/cppyy performance has been vastly improved since.
 
 cppyy is based on `Cling`_, the C++ interpreter, to match Python's dynamism,
@@ -116,7 +116,7 @@ development environments.
 
 .. _Cling: https://github.com/vgvassilev/cling
 .. _tutorial: https://github.com/wlav/cppyy/blob/master/doc/tutorial/CppyyTutorial.ipynb
-.. _`PyHPC paper`: http://wlav.web.cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf
+.. _`PyHPC'16 paper`: http://wlav.web.cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf
 .. _`Boost`: http://www.boost.org/
 .. _`CPython`: http://python.org
 .. _`PyPy`: http://pypy.org
