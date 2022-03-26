@@ -882,6 +882,212 @@ class TestTEMPLATES:
 
         ns.Templated()       # used to crash
 
+    def test31_ltlt_in_template_name(self):
+        """Verify lookup of template names with << in the name"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace TestSomeLut {
+        template<class T, uint8_t X, uint8_t Y>
+        struct Lut {
+            Lut() { }
+            constexpr size_t size() const noexcept { return (1<<X)+1; }
+
+            std::array<T, 3>          data1;
+            std::array<T, X>          data2;
+            std::array<T, 2*X>        data3;
+            std::array<T, 16385>      data4;
+            std::array<T, (1UL<<(std::size_t)3)+1UL> data5;
+            std::array<T, ((1<<3)+1)> data6;
+            std::array<T, ((1<<X)+1)> data7;
+            static int constexpr array_size = X<<2;
+            std::array<T, array_size> data8;
+        };
+
+        template<class T, uint8_t X, uint8_t Y, uint32_t asize=((1<<X)+1)>
+        struct Lut2 {
+            Lut2() { }
+            constexpr size_t size() const noexcept { return (1<<X)+1; }
+
+            std::array<T, asize>      data;
+        }; }
+
+        std::array<int, (1UL<<(std::size_t)3)+1UL> gLutData5;
+        std::array<int, ((1<<3)+1)>                gLutData6;
+        static int constexpr array_size = 14<<2;
+        std::array<int, array_size>                gLutData8;
+        """)
+
+        ns = cppyy.gbl.TestSomeLut
+
+        X, Y = 14, 15
+        lut = ns.Lut[int, X, Y]()
+
+        assert lut
+        assert lut.size() == (1<<X)+1
+
+        assert len(lut.data1) == 3
+        assert len(lut.data2) == X
+        assert len(lut.data3) == 2*X
+        assert len(lut.data4) == 16385
+        assert len(lut.data5) == (1<<3)+1
+        assert len(lut.data6) == (1<<3)+1
+        assert len(lut.data7) == (1<<X)+1
+        assert len(lut.data8) == X<<2
+
+        lut2 = ns.Lut2[int, X, Y]()
+
+        assert lut2
+        assert lut2.size() == (1<<X)+1
+
+        assert len(lut2.data) == lut2.size()
+
+        assert len(cppyy.gbl.gLutData5) == (1<<3)+1
+        assert len(cppyy.gbl.gLutData6) == (1<<3)+1
+        assert len(cppyy.gbl.gLutData8) == 14<<2
+
+    def test32_template_of_function_with_templated_args(self):
+        """Lookup of templates of function with templated args used to fail"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace parenthesis {
+        template<class T>
+        class F;
+
+        template<class T>
+        class V;
+
+        using i = F<void (int)>;
+        using v = F<void (V<int>)>;
+
+        using ii = F<void (int,int)>;
+        using iv = F<void (int,V<int>)>;
+        using vi = F<void (V<int>,int)>;
+        using vv = F<void (V<int>,V<int>)>;
+
+        using iii = F<void (int,int,int)>;
+        using ivi = F<void (int,V<int>,int)>;
+        using vii = F<void (V<int>,int,int)>;
+        using vvi = F<void (V<int>,V<int>,int)>;
+
+        using iiv = F<void (int,int,V<int>)>;
+        using ivv = F<void (int,V<int>,V<int>)>;
+        using viv = F<void (V<int>,int,V<int>)>;
+        using vvv = F<void (V<int>,V<int>,V<int>)>;
+        }""")
+
+        ns = cppyy.gbl.parenthesis
+
+        for t in ['i','v',
+                  'ii', 'iv', 'vi', 'vv',
+                  'iii', 'ivi', 'vii', 'vvi',
+                  'iiv', 'ivv', 'viv', 'vvv']:
+            assert getattr(ns, t)
+
+      # second, more elaborate set
+
+        cppyy.cppdef("""\
+        #include <vector>
+        #include <functional>
+
+        class TNaI;
+
+        template<class R>
+        class TNaF;
+
+        template<class>
+        class TNaFn;
+
+        template<class R, class... Args>
+        class TNaFn<R(Args...)>;
+
+        template<class T>
+        class TNaV;
+
+        template<class T>
+        class TNaA;
+
+        template<class T, class TNaA=TNaA<T>>
+        class TNaVA;
+
+        template<class T, class U=void>
+        class TNaVU;
+
+        namespace TNaN2 {
+            class TNaI;
+        }
+
+        namespace TNaN {
+            class TNaI;
+
+            template<class R>
+            class TNaF;
+
+            template<class>
+            class TNaFn;
+
+            template<class R, class... Args>
+            class TNaFn<R(Args...)>;
+
+            template<class T>
+            class TNaV;
+
+            template<class T>
+            class TNaA;
+
+            template<class T, class TNaA=TNaA<T>>
+            class TNaVA;
+
+            template<class T, class U=void>
+            class TNaVU;
+        }""")
+
+        cpp = """\
+        namespace TNaRun_{n} {{
+            template<class T>
+            using f = {f};
+
+            template<class T>
+            using v = {v};
+
+            using fi = f<void ({i})>;
+            using fv = f<void (v<{i}>)>;
+
+            using fii = f<void ({i},{i})>;
+            using fiv = f<void ({i},v<{i}>)>;
+            using fvi = f<void (v<{i}>,{i})>;
+            using fvv = f<void (v<{i}>,v<{i}>)>;
+
+            using fiii = f<void ({i},{i},{i})>;
+            using fivi = f<void ({i},v<{i}>,{i})>;
+            using fvii = f<void (v<{i}>,{i},{i})>;
+            using fvvi = f<void (v<{i}>,v<{i}>,{i})>;
+
+            using fiiv = f<void ({i},{i},v<{i}>)>;
+            using fivv = f<void ({i},v<{i}>,v<{i}>)>;
+            using fviv = f<void (v<{i}>,{i},v<{i}>)>;
+            using fvvv = f<void (v<{i}>,v<{i}>,v<{i}>)>;
+        }}"""
+
+        n = 0
+        results = {}
+        types = ['fi', 'fv',
+                 'fii', 'fiv', 'fvi', 'fvv',
+                 'fiii', 'fivi', 'fvii', 'fvvi',
+                 'fiiv', 'fivv', 'fviv', 'fvvv']
+
+        for v in ['TNaV<T>', 'TNaN::TNaV<T>', 'TNaVA<T>', 'TNaN::TNaVA<T>', 'TNaVU<T>', 'TNaN::TNaVU<T>', 'std::vector<T>']:
+            for f in ['TNaF<T>', 'TNaFn<T>', 'TNaN::TNaF<T>', 'TNaN::TNaFn<T>', 'std::function<T>']:
+                for i in ['TNaI', 'TNaN::TNaI', 'TNaN2::TNaI', 'int']:
+                    n += 1
+                    cppyy.cppdef(cpp.format(v=v, f=f, i=i, n=n))
+                    for t in types:
+                        run_n = getattr(cppyy.gbl, f'TNaRun_{n}')
+                        getattr(run_n, t)
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):

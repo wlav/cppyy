@@ -14,6 +14,7 @@ master: 2.4.0
 -------------
 
 * Support for globally overloaded ordering operators
+* Fix lookup of templates of function with template args
 
 
 2022-03-08: 2.3.0

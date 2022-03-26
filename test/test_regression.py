@@ -1065,47 +1065,7 @@ class TestREGRESSION:
 
             assert cppyy.addressof(res) == cppyy.addressof(arr)
 
-    def test38_template_of_function_with_templated_args(self):
-        """Lookup of templates of function with templated args used to fail"""
-
-        import cppyy
-
-        cppyy.cppdef("""\
-        namespace parenthesis {
-        template<class T>
-        class F;
-
-        template<class T>
-        class V;
-
-        using i = F<void (int)>;
-        using v = F<void (V<int>)>;
-
-        using ii = F<void (int,int)>;
-        using iv = F<void (int,V<int>)>;
-        using vi = F<void (V<int>,int)>;
-        using vv = F<void (V<int>,V<int>)>;
-
-        using iii = F<void (int,int,int)>;
-        using ivi = F<void (int,V<int>,int)>;
-        using vii = F<void (V<int>,int,int)>;
-        using vvi = F<void (V<int>,V<int>,int)>;
-
-        using iiv = F<void (int,int,V<int>)>;
-        using ivv = F<void (int,V<int>,V<int>)>;
-        using viv = F<void (V<int>,int,V<int>)>;
-        using vvv = F<void (V<int>,V<int>,V<int>)>;
-        }""")
-
-        ns = cppyy.gbl.parenthesis
-
-        for t in ['i','v',
-                  'ii', 'iv', 'vi', 'vv',
-                  'iii', 'ivi', 'vii', 'vvi',
-                  'iiv', 'ivv', 'viv', 'vvv']:
-            assert getattr(ns, t)
-
-    def test39_char16_arrays(self):
+    def test38_char16_arrays(self):
         """Access to fixed-size char16 arrays as data members"""
 
         import cppyy
