@@ -934,6 +934,42 @@ class TestSTLSTRING:
         assert s.rfind('c')  < 0
         assert s.rfind('c') == s.npos
 
+    def test10_string_in_repr_and_str_bytes(self):
+        """Special cases for __str__/__repr__"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""\
+        namespace ReprAndStr {
+
+        struct Test1 {
+            const char* __repr__() const { return "Test1"; }
+            const char* __str__()  const { return "Test1"; }
+        };
+
+        struct Test2 {
+            std::string __repr__() const { return "Test2"; }
+            std::string __str__()  const { return "Test2"; }
+        };
+
+        struct Test3 {
+            std::wstring __repr__() const { return L"Test3"; }
+            std::wstring __str__()  const { return L"Test3"; }
+        };
+        }""")
+
+        ns = cppyy.gbl.ReprAndStr
+
+        assert str (ns.Test1()) == "Test1"
+        assert repr(ns.Test1()) == "Test1"
+
+        assert str (ns.Test2()) == "Test2"
+        assert repr(ns.Test2()) == "Test2"
+
+        assert str (ns.Test3()) == "Test3"
+        assert repr(ns.Test3()) == "Test3"
+
+
 class TestSTLLIST:
     def setup_class(cls):
         cls.test_dct = test_dct
