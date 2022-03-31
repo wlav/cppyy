@@ -216,3 +216,10 @@ class TestLEAKCHECK:
 
         self.check_func(ns, 'SomeBuf')
         self.check_func(ns, 'SomeBuf', val=10, name="aap", buf_type=ns.SHAPE)
+
+    def test06_dir(self):
+        """Global function uploads used to cause more function generation"""
+
+        import cppyy
+
+        self.check_func(cppyy.gbl, '__dir__', cppyy.gbl)
