@@ -2192,19 +2192,50 @@ class TestDATATYPES:
 
         cppyy.cppdef(r"""\
         namespace SmallEnums {
-            enum class TestEnum { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
-            enum class TestInt8Enum : int8_t { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
-            enum class TestInt16Enum : int16_t { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
-            enum class TestCharEnum : char { E0 = '0', E1 = '1' };
+            enum class Enum { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
+
+            enum class Int8Enum : int8_t { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
+            enum class Int16Enum : int16_t { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
+
+            enum class UInt8Enum : uint8_t { E0 = 0, E1 = 1, EMAX = 255 };
+            enum class UInt16Enum : uint16_t { E0 = 0, E1 = 1, EMAX = 65535 };
+
+            enum class CharEnum : char { E0 = '0', E1 = '1' };
+            enum class SCharEnum : signed char { E0 = '0', E1 = '1' };
+            enum class UCharEnum : unsigned char { E0 = '0', E1 = '1' };
         }""")
 
         ns = cppyy.gbl.SmallEnums
 
-        for eclsname in ('TestEnum', 'TestInt8Enum', 'TestInt16Enum'):
+        for eclsname in ('Enum', 'Int8Enum', 'Int16Enum'):
             ecls = getattr(ns, eclsname)
             for ename, val in (('E0', 0), ('E1', 1), ('EN1', -1), ('EN2', -2)):
                 assert getattr(ecls, ename) == val
 
-        assert ns.TestCharEnum.E0  == '0'
-        assert ns.TestCharEnum.E1  == '1'
+        for eclsname in ('UInt8Enum', 'UInt16Enum'):
+            ecls = getattr(ns, eclsname)
+            for ename, val in (('E0', 0), ('E1', 1)):
+                assert getattr(ecls, ename) == val
+
+        assert ns.UInt8Enum.EMAX  ==   255
+        assert ns.UInt16Enum.EMAX == 65535
+
+        for eclsname in ('CharEnum', 'SCharEnum'):
+            ecls = getattr(ns, eclsname)
+            for ename, val in (('E0', '0'), ('E1', '1')):
+                assert getattr(ecls, ename) == val
+
+        # TODO: this is b/c unsigned char is considered a "byte" type by default;
+        # it's meaning should probably be configurable?
+        assert ns.UCharEnum.E0 == ord('0')
+        assert ns.UCharEnum.E1 == ord('1')
+
+        cppyy.cppdef(r"""\
+        namespace SmallEnums {
+            Int8Enum  func_int8()  { return Int8Enum::EN1; }
+            UInt8Enum func_uint8() { return UInt8Enum::EMAX; }
+        }""")
+
+        assert ns.func_int8()  == -1
+        assert ns.func_uint8() == 255
 
