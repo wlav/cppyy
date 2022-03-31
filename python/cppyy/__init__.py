@@ -92,7 +92,13 @@ except: pass
 
 #- external typemap ----------------------------------------------------------
 from . import _typemap
-_typemap.initialize(_backend)
+_typemap.initialize(_backend)               # also creates (u)int8_t mapper
+
+try:
+    gbl.std.int8_t  = gbl.int8_t            # ensures same _integer_ type
+    gbl.std.uint8_t = gbl.uint8_t
+except (AttributeError, TypeError):
+    pass
 
 
 #- pythonization factories ---------------------------------------------------
