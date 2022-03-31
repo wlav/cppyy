@@ -2184,3 +2184,27 @@ class TestDATATYPES:
 
         b = ns.B()
         assert b.body1.name == b.body2.name
+
+    def test46_small_int_enums(self):
+        """Proper typing of small int enums"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""\
+        namespace SmallEnums {
+            enum class TestEnum { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
+            enum class TestInt8Enum : int8_t { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
+            enum class TestInt16Enum : int16_t { E0 = 0, E1 = 1, EN1 = -1, EN2 = -2 };
+            enum class TestCharEnum : char { E0 = '0', E1 = '1' };
+        }""")
+
+        ns = cppyy.gbl.SmallEnums
+
+        for eclsname in ('TestEnum', 'TestInt8Enum', 'TestInt16Enum'):
+            ecls = getattr(ns, eclsname)
+            for ename, val in (('E0', 0), ('E1', 1), ('EN1', -1), ('EN2', -2)):
+                assert getattr(ecls, ename) == val
+
+        assert ns.TestCharEnum.E0  == '0'
+        assert ns.TestCharEnum.E1  == '1'
+
