@@ -1119,7 +1119,7 @@ class TestTEMPLATED_TYPEDEFS:
         assert in_type_tt.__cpp_name__ == 'TemplatedTypedefs::DerivedWithUsing<int,TemplatedTypedefs::SomeDummy,4>::in_type_tt'
 
     def test02_mapped_type_as_internal(self):
-        """Test that mapped types can be used as builting"""
+        """Test that mapped types can be used as builtin"""
 
         import cppyy
 
