@@ -19,6 +19,11 @@ master: 2.4.0
 * Correct typing of int8_t/uint8_t enums
 
 
+2022-04-03: 2.3.1
+-----------------
+* Use portable type Py_ssize_t instead of ssize_t
+
+
 2022-03-08: 2.3.0
 -----------------
 
