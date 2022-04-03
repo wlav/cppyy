@@ -10,6 +10,11 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+2022-04-03: 2.3.1
+-----------------
+* Use portable type Py_ssize_t instead of ssize_t
+
+
 2022-03-08: 2.3.0
 -----------------
 
