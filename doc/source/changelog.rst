@@ -17,6 +17,7 @@ master: 2.4.0
 * Special cases for __repr__/__str__ returning C++ stringy types
 * Fix lookup of templates of function with template args
 * Correct typing of int8_t/uint8_t enums
+* Basic support for hidden enums
 
 
 2022-04-03: 2.3.1

@@ -2239,3 +2239,38 @@ class TestDATATYPES:
         assert ns.func_int8()  == -1
         assert ns.func_uint8() == 255
 
+    def test47_hidden_name_enum(self):
+        """Usage of hidden name enum"""
+
+        import cppyy
+        cppyy.cppdef(r"""
+        namespace EnumFunctionSameName {
+            enum foo { FOO = 42 };
+            void foo() {}
+            unsigned int bar(enum foo f) { return (unsigned int)f; }
+            struct Bar { Bar(enum foo f) : fFoo(f) {} enum foo fFoo; };
+        }""")
+
+        ns = cppyy.gbl.EnumFunctionSameName
+
+        assert ns.bar(ns.FOO) == 42
+        assert ns.Bar(ns.FOO)
+        assert ns.Bar(ns.FOO).fFoo == 42
+
+        # TODO:
+        cppyy.cppdef(r"""
+        namespace EnumFunctionSameName {
+            template<enum foo>
+            struct BarT {};
+        }""")
+        #ns.BarT[ns.FOO]()
+
+        # TODO:
+        cppyy.cppdef(r"""
+        namespace EnumFunctionSameName {
+            enum class Foo : int8_t { FOO };
+            void Foo() {}
+            void bar(enum Foo) {}
+        }""")
+        #ns.bar(ns.Foo.FOO)
+
