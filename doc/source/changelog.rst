@@ -13,6 +13,7 @@ PyPy support lags CPython support.
 master: 2.4.0
 -------------
 
+* Support for free (templated) functions in Numba
 * Support for globally overloaded ordering operators
 * Special cases for __repr__/__str__ returning C++ stringy types
 * Fix lookup of templates of function with template args
