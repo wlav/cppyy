@@ -71,7 +71,7 @@ Global Interpreter Lock (GIL) release.
   whether C++ signals (such as SIGABRT) should be converted into Python
   exceptions.
 
-* ``__cppname__``: a string that every C++ bound class carries and contains
+* ``__cpp_name__``: a string that every C++ bound class carries and contains
   the actual C++ name (as opposed to ``__name__`` which has the Python name).
   This can be useful for template instantiations, documentation, etc.
 
