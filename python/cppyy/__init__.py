@@ -86,7 +86,7 @@ sys.modules['cppyy.gbl.std'] = gbl.std
 
 
 #- enable auto-loading -------------------------------------------------------
-try:    gbl.gInterpreter.EnableAutoLoading()
+try:    gbl.cling.runtime.gCling.EnableAutoLoading()
 except: pass
 
 
@@ -197,7 +197,7 @@ class _stderr_capture(object):
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
     with _stderr_capture() as err:
-        errcode = gbl.gInterpreter.Declare(src)
+        errcode = gbl.cling.runtime.gCling.declare(src)
     if not errcode or err.err:
         if 'warning' in err.err.lower() and not 'error' in err.err.lower():
             warnings.warn(err.err, SyntaxWarning)
@@ -215,7 +215,7 @@ def cppexec(stmt):
     with _stderr_capture() as err:
         errcode = ctypes.c_int(0)
         try:
-            gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
+            gbl.cling.runtime.gCling.ProcessLine(stmt, ctypes.pointer(errcode))
         except Exception as e:
             sys.stderr.write("%s\n\n" % str(e))
             if not errcode.value: errcode.value = 1
@@ -243,7 +243,7 @@ def load_library(name):
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
     with _stderr_capture() as err:
-        errcode = gbl.gInterpreter.Declare('#include "%s"' % header)
+        errcode = gbl.cling.runtime.gCling.declare('#include "%s"' % header)
     if not errcode:
         raise ImportError('Failed to load header file "%s"%s' % (header, err.err))
     return True
@@ -251,7 +251,7 @@ def include(header):
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
     with _stderr_capture() as err:
-        errcode = gbl.gInterpreter.Declare("""extern "C" {
+        errcode = gbl.cling.runtime.gCling.declare("""extern "C" {
 #include "%s"
 }""" % header)
     if not errcode:
@@ -262,7 +262,7 @@ def add_include_path(path):
     """Add a path to the include paths available to Cling."""
     if not os.path.isdir(path):
         raise OSError('No such directory: %s' % path)
-    gbl.gInterpreter.AddIncludePath(path)
+    gbl.cling.runtime.gCling.AddIncludePath(path)
 
 def add_library_path(path):
     """Add a path to the library search paths available to Cling."""
@@ -359,7 +359,7 @@ def add_autoload_map(fname):
     """Add the entries from a autoload (.rootmap) file to Cling."""
     if not os.path.isfile(fname):
         raise OSError("no such file: %s" % fname)
-    gbl.gInterpreter.LoadLibraryMap(fname)
+    gbl.cling.runtime.gCling.LoadLibraryMap(fname)
 
 def set_debug(enable=True):
     """Enable/disable debug output."""
@@ -388,7 +388,7 @@ def sizeof(tt):
         try:
             sz = ctypes.sizeof(tt)
         except TypeError:
-            sz = gbl.gInterpreter.ProcessLine("sizeof(%s);" % (_get_name(tt),))
+            sz = gbl.cling.runtime.gCling.ProcessLine("sizeof(%s);" % (_get_name(tt),))
         _sizes[tt] = sz
         return sz
 
@@ -401,7 +401,7 @@ def typeid(tt):
         return _typeids[tt]
     except KeyError:
         tidname = 'typeid_'+str(len(_typeids))
-        gbl.gInterpreter.ProcessLine(
+        gbl.cling.runtime.gCling.ProcessLine(
             "namespace _cppyy_internal { auto* %s = &typeid(%s); }" %\
             (tidname, _get_name(tt),))
         tid = getattr(gbl._cppyy_internal, tidname)
