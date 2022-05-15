@@ -19,6 +19,7 @@ master: 2.4.0
 * Fix lookup of templates of function with template args
 * Correct typing of int8_t/uint8_t enums
 * Basic support for hidden enums
+* Fix reuse of CPPOverload proxies in vector calls from different threads
 
 
 2022-04-03: 2.3.1

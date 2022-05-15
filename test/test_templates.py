@@ -1085,7 +1085,7 @@ class TestTEMPLATES:
                     n += 1
                     cppyy.cppdef(cpp.format(v=v, f=f, i=i, n=n))
                     for t in types:
-                        run_n = getattr(cppyy.gbl, f'TNaRun_{n}')
+                        run_n = getattr(cppyy.gbl, 'TNaRun_%d' % n)
                         getattr(run_n, t)
 
 

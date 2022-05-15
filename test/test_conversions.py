@@ -47,6 +47,7 @@ class TestCONVERSIONS:
 
         assert CC.s_count == 0
         c = CC()
+        assert c.__python_owns__
         assert CC.s_count == 1
         del c; gc.collect()
         assert CC.s_count == 0

@@ -83,7 +83,7 @@ class TestCONCURRENT:
         if t.is_alive():        # was timed-out
             cppyy.gbl.test12_timeout.stopit[0] = True
 
-    def test04_cpp_threading(self):
+    def test04_cpp_threading_with_exceptions(self):
         """Threads and Python exceptions"""
 
         if IS_MAC_ARM:
@@ -226,3 +226,73 @@ class TestCONCURRENT:
 
         p = Processor()
         cppyy.gbl.FloatDim2.callback(p)
+
+    def test06_overload_reuse_in_threads(self):
+        """Threads reuse overload objects; check for clashes"""
+
+        import cppyy
+        import threading
+
+        cppyy.cppdef("""\
+        namespace CPPOverloadReuse {
+        class Simulation1 {
+        public:
+            virtual void set_something(std::map<std::string, std::string>, std::string) {}
+        }; }""")
+
+        def test():
+            o = {"a": "b"}        # causes a temporary to be created
+            simulation = cppyy.gbl.CPPOverloadReuse.Simulation1()
+            simulation.set_something(o, ".")
+
+        threads = [threading.Thread(target=test) for i in range(0, 100)]
+
+        for t in threads:
+            t.start()
+
+        for t in threads:
+            t.join()
+
+    def test07_overload_reuse_in_threads_wo_gil(self):
+        """Threads reuse overload objects; check for clashes if no GIL"""
+
+        import cppyy
+        import threading
+
+        cppyy.cppdef("""\
+        namespace CPPOverloadReuse {
+        class Simulation2 {
+            int fCount;
+        public:
+            Simulation2(int count) : fCount(count) {}
+            virtual int do_something() { return fCount; }
+        }; }""")
+
+        cppyy.gbl.CPPOverloadReuse.Simulation2.do_something.__release_gil__ = True
+
+        class State(object):
+            lock = threading.Lock()
+            c1, c2, c3 = 0, 0, 0
+
+        def test(i, state=State):
+            #global c1, c2, c3, lock
+
+            simulation = cppyy.gbl.CPPOverloadReuse.Simulation2(i)
+            res = simulation.do_something()
+
+            with state.lock:
+                state.c3 += state.c1
+                state.c2 += res
+                state.c1 += 1
+
+        threads = [threading.Thread(target=test, args=[i]) for i in range(0, 1000)]
+
+        for t in threads:
+            t.start()
+
+        for t in threads:
+            t.join()
+
+        assert State.c1 == 1000
+        assert State.c2 == State.c3
+
