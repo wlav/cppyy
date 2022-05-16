@@ -104,7 +104,7 @@ Finally, the top-level package ``cppyy``::
 
  $ git clone https://github.com/wlav/cppyy.git
  $ cd cppyy
- $ python -m pip install . --upgrade --no-use-pep517 --no-deps
+ $ python -m pip install . --upgrade --no-deps
 
 Please see the `pip documentation`_ for more options, such as developer mode.
 
