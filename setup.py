@@ -5,25 +5,26 @@ from distutils import log
 from setuptools.command.install import install as _install
 
 add_pkg = ['cppyy', 'cppyy.__pyinstaller']
-try:
-    import __pypy__, sys
-    version = sys.pypy_version_info
-    requirements = ['cppyy-backend==1.14.11', 'cppyy-cling==6.28.0']
-    if version[0] == 5:
-        if version[1] <= 9:
-            requirements = ['cppyy-backend<0.3', 'cppyy-cling<6.12']
-            add_pkg += ['cppyy_compat']
-        elif version[1] <= 10:
-            requirements = ['cppyy-backend<0.4', 'cppyy-cling<=6.15']
-    elif version[0] == 6:
-        if version[1] <= 0:
-            requirements = ['cppyy-backend<1.1', 'cppyy-cling<=6.15']
-    elif version[0] == 7:
-        if version[1] <= 3 and version[2] <= 3:
-            requirements = ['cppyy-backend<=1.10', 'cppyy-cling<=6.18.2.3']
-except ImportError:
-    # CPython
-    requirements = ['CPyCppyy==1.12.13', 'cppyy-backend==1.14.11', 'cppyy-cling==6.28.0']
+requirements = []
+#try:
+#    import __pypy__, sys
+#    version = sys.pypy_version_info
+#    requirements = ['cppyy-backend==1.14.11', 'cppyy-cling==6.28.0']
+#    if version[0] == 5:
+#        if version[1] <= 9:
+#            requirements = ['cppyy-backend<0.3', 'cppyy-cling<6.12']
+#            add_pkg += ['cppyy_compat']
+#        elif version[1] <= 10:
+#            requirements = ['cppyy-backend<0.4', 'cppyy-cling<=6.15']
+#    elif version[0] == 6:
+#        if version[1] <= 0:
+#            requirements = ['cppyy-backend<1.1', 'cppyy-cling<=6.15']
+#    elif version[0] == 7:
+#        if version[1] <= 3 and version[2] <= 3:
+#            requirements = ['cppyy-backend<=1.10', 'cppyy-cling<=6.18.2.3']
+#except ImportError:
+#    # CPython
+#    requirements = ['CPyCppyy==1.12.13', 'cppyy-backend==1.14.11', 'cppyy-cling==6.28.0']
 
 setup_requirements = ['wheel']
 if 'build' in sys.argv or 'install' in sys.argv:
