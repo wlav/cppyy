@@ -14,6 +14,8 @@ master: 2.4.0
 -------------
 
 * Support for free (templated) functions in Numba
+* Basic support for unboxing C++ public data members in Numba
+* Added conventional __cpp_reflex__ method for inspection in Numba
 * Support for globally overloaded ordering operators
 * Special cases for __repr__/__str__ returning C++ stringy types
 * Fix lookup of templates of function with template args

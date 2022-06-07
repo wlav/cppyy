@@ -10,6 +10,59 @@ except ImportError:
     has_numba = False
 
 
+class TestREFLEX:
+    def setup_class(cls):
+        import cppyy
+        import cppyy.reflex
+
+    def test01_method_reflection(self):
+        """Test method reflection tooling"""
+
+        import cppyy
+        import cppyy.reflex as r
+
+        cppyy.cppdef("""\
+        namespace ReflexTest {
+        int free1() { return 42; }
+        double free2() { return 42.; }
+
+        class MyData_m1 {};
+        }""")
+
+        ns = cppyy.gbl.ReflexTest
+
+        assert ns.free1.__cpp_reflex__(r.RETURN_TYPE) == 'int'
+        assert ns.free2.__cpp_reflex__(r.RETURN_TYPE) == 'double'
+
+        assert ns.MyData_m1.__init__.__cpp_reflex__(r.RETURN_TYPE)              == ns.MyData_m1
+        assert ns.MyData_m1.__init__.__cpp_reflex__(r.RETURN_TYPE, r.OPTIMAL)   == ns.MyData_m1
+        assert ns.MyData_m1.__init__.__cpp_reflex__(r.RETURN_TYPE, r.AS_TYPE)   == ns.MyData_m1
+        assert ns.MyData_m1.__init__.__cpp_reflex__(r.RETURN_TYPE, r.AS_STRING) == 'ReflexTest::MyData_m1'
+
+    def test02_datamember_reflection(self):
+        """Test data member reflection tooling"""
+
+        import cppyy
+        import cppyy.reflex as r
+
+        cppyy.cppdef("""\
+        namespace ReflexTest {
+        class MyData_d1 {
+        public:
+           int    m_int;
+           double m_double;
+        }; }""")
+
+        ns = cppyy.gbl.ReflexTest
+
+        assert ns.MyData_d1.__dict__['m_int'].__cpp_reflex__(r.TYPE)    == 'int'
+        assert ns.MyData_d1.__dict__['m_double'].__cpp_reflex__(r.TYPE) == 'double'
+
+        d = ns.MyData_d1(); daddr = cppyy.addressof(d)
+        assert ns.MyData_d1.__dict__['m_int'].__cpp_reflex__(r.OFFSET)    == 0
+        assert ns.MyData_d1.__dict__['m_double'].__cpp_reflex__(r.OFFSET) == cppyy.addressof(d, 'm_double') - daddr
+
+
 @mark.skipif(has_numba == False, reason="numba not found")
 class TestNUMBA:
     def setup_class(cls):
@@ -30,7 +83,7 @@ class TestNUMBA:
         return fast_time < slow_time
 
     def test01_compiled_free_func(self):
-        """Test Numba-JITing of a compiled free function"""
+        """Numba-JITing of a compiled free function"""
 
         import cppyy
         import numpy as np
@@ -54,7 +107,7 @@ class TestNUMBA:
         assert self.compare(go_slow, go_fast, 300000, x)
 
     def test02_JITed_template_free_func(self):
-        """Test Numba-JITing of Cling-JITed templated free function"""
+        """Numba-JITing of Cling-JITed templated free function"""
 
         import cppyy
         import numpy as np
@@ -86,3 +139,35 @@ class TestNUMBA:
 
         assert (go_fast(x) == go_slow(x)).all()
         assert self.compare(go_slow, go_fast, 100000, x)
+
+    def test03_proxy_argument(self):
+        """Numba-JITing of a free function taking a proxy argument"""
+
+        import cppyy
+        import numpy as np
+
+        cppyy.cppdef(r"""\
+        struct MyNumbaData {
+            MyNumbaData(int64_t i) : fField(i) {}
+            int64_t fField;
+        };""")
+
+        def go_slow(a, d):
+            trace = 0.0
+            for i in range(a.shape[0]):
+                trace += d.fField
+            return a + trace
+
+        @numba.jit(nopython=True)
+        def go_fast(a, d):
+            trace = 0.0
+            for i in range(a.shape[0]):
+                trace += d.fField
+            return a + trace
+
+        x = np.arange(100, dtype=np.float64).reshape(10, 10)
+        d = cppyy.gbl.MyNumbaData(42)
+
+        assert((go_fast(x, d) == go_slow(x, d)).all())
+        # TODO: currently, unboxing is too much of slow-down :(
+        #assert self.compare(go_slow, go_fast, 100000, x, d)
