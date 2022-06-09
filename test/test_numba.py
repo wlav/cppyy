@@ -165,12 +165,12 @@ class TestNUMBA:
                 trace += d.fField
             return a + trace
 
-        x = np.arange(100, dtype=np.float64).reshape(10, 10)
+      # note: need a sizable array to outperform given the unboxing overhead
+        x = np.arange(10000, dtype=np.float64).reshape(100, 100)
         d = cppyy.gbl.MyNumbaData1(42)
 
         assert((go_fast(x, d) == go_slow(x, d)).all())
-        # TODO: currently, unboxing is too much of slow-down :(
-        #assert self.compare(go_slow, go_fast, 100000, x, d)
+        #assert self.compare(go_slow, go_fast, 10000, x, d)
 
     def test04_proxy_argument_for_method(self):
         """Numba-JITing of a free function taking a proxy argument for method access"""
@@ -198,10 +198,10 @@ class TestNUMBA:
                 trace += d.get_field()
             return a + trace
 
-        x = np.arange(100, dtype=np.float64).reshape(10, 10)
+      # note: need a sizable array to outperform given the unboxing overhead
+        x = np.arange(10000, dtype=np.float64).reshape(100, 100)
         d = cppyy.gbl.MyNumbaData2(42)
 
         assert((go_fast(x, d) == go_slow(x, d)).all())
-        # TODO: currently, unboxing is too much of slow-down :(
-        #assert self.compare(go_slow, go_fast, 100000, x, d)
+        assert self.compare(go_slow, go_fast, 10000, x, d)
 
