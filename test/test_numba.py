@@ -140,15 +140,15 @@ class TestNUMBA:
         assert (go_fast(x) == go_slow(x)).all()
         assert self.compare(go_slow, go_fast, 100000, x)
 
-    def test03_proxy_argument(self):
-        """Numba-JITing of a free function taking a proxy argument"""
+    def test03_proxy_argument_for_field(self):
+        """Numba-JITing of a free function taking a proxy argument for field access"""
 
         import cppyy
         import numpy as np
 
         cppyy.cppdef(r"""\
-        struct MyNumbaData {
-            MyNumbaData(int64_t i) : fField(i) {}
+        struct MyNumbaData1 {
+            MyNumbaData1(int64_t i) : fField(i) {}
             int64_t fField;
         };""")
 
@@ -166,8 +166,42 @@ class TestNUMBA:
             return a + trace
 
         x = np.arange(100, dtype=np.float64).reshape(10, 10)
-        d = cppyy.gbl.MyNumbaData(42)
+        d = cppyy.gbl.MyNumbaData1(42)
 
         assert((go_fast(x, d) == go_slow(x, d)).all())
         # TODO: currently, unboxing is too much of slow-down :(
         #assert self.compare(go_slow, go_fast, 100000, x, d)
+
+    def test04_proxy_argument_for_method(self):
+        """Numba-JITing of a free function taking a proxy argument for method access"""
+
+        import cppyy
+        import numpy as np
+
+        cppyy.cppdef(r"""\
+        struct MyNumbaData2 {
+            MyNumbaData2(int64_t i) : fField(i) {}
+            int64_t get_field() { return fField; }
+            int64_t fField;
+        };""")
+
+        def go_slow(a, d):
+            trace = 0.0
+            for i in range(a.shape[0]):
+                trace += d.get_field()
+            return a + trace
+
+        @numba.jit(nopython=True)
+        def go_fast(a, d):
+            trace = 0.0
+            for i in range(a.shape[0]):
+                trace += d.get_field()
+            return a + trace
+
+        x = np.arange(100, dtype=np.float64).reshape(10, 10)
+        d = cppyy.gbl.MyNumbaData2(42)
+
+        assert((go_fast(x, d) == go_slow(x, d)).all())
+        # TODO: currently, unboxing is too much of slow-down :(
+        #assert self.compare(go_slow, go_fast, 100000, x, d)
+
