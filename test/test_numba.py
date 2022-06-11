@@ -118,7 +118,6 @@ class TestNUMBA:
             return T(t+42);
         }""")
 
-
         def add42(t):
             return type(t)(t+42)
 
