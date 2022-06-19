@@ -1293,6 +1293,16 @@ class TestDATATYPES:
             with raises(TypeError):
                 cppyy.gbl.call_sum_of_int(3, 2)
 
+        cppyy.cppdef(r"""\
+        namespace FuncPtrReturn {
+            typedef std::string (*func_t)(void);
+            std::string hello() { return "Hello, World!"; }
+            func_t foo() { return hello; }
+        }""")
+
+        ns = cppyy.gbl.FuncPtrReturn
+        assert ns.foo()() == "Hello, World!"
+
     def test27_callable_passing(self):
         """Passing callables through function pointers"""
 
