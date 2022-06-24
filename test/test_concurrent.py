@@ -87,7 +87,7 @@ class TestCONCURRENT:
         """Threads and Python exceptions"""
 
         if IS_MAC_ARM:
-            py.test.skip("JIT exceptions not supported on Mac ARM")
+            py.test.skip("JIT exceptions can not be caught in JITed code on Mac ARM")
 
         import cppyy
 
@@ -255,6 +255,10 @@ class TestCONCURRENT:
 
     def test07_overload_reuse_in_threads_wo_gil(self):
         """Threads reuse overload objects; check for clashes if no GIL"""
+
+        if IS_MAC_ARM:
+          # the culprit here is occasional std::system_error if a thread can not be joined
+            py.test.skip("JIT exceptions can not be caught in JITed code on Mac ARM")
 
         import cppyy
         import threading
