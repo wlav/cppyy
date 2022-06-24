@@ -25,6 +25,7 @@ master: 2.4.0
 * Support function pointer returns and optimize function point variables
 * Fix reuse of CPPOverload proxies in vector calls from different threads
 * Use -march=native instead of checking the cpu for avx
+* Workaround for handling exceptions from JITed code on ARM
 
 
 2022-04-03: 2.3.1
