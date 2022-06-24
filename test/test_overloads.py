@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, IS_MAC_ARM
+from .support import setup_make
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("overloadsDict"))
@@ -203,9 +203,6 @@ class TestOVERLOADS:
 
     def test10_overload_and_exceptions(self):
         """Prioritize reporting C++ exceptions from callee"""
-
-        if IS_MAC_ARM:
-            py.test.skip("JIT exceptions not supported on Mac ARM")
 
         import cppyy
 

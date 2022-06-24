@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make, pylong, pyunicode, IS_MAC_ARM
+from .support import setup_make, pylong, pyunicode
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("datatypesDict"))
@@ -1253,8 +1253,7 @@ class TestDATATYPES:
         assert 5 == fi1(2, 3)
         assert 5. == fd(5., 0.)
 
-        if not IS_MAC_ARM:
-            raises(TypeError, fdd, fi1, 2, 3)
+        raises(TypeError, fdd, fi1, 2, 3)
 
         assert  5. == fdd(fd, 5., 0.)
         assert -1. == fdd(cppyy.nullptr, 5., 0.)
@@ -1289,9 +1288,8 @@ class TestDATATYPES:
         def sum_in_python(i1, i2, i3):
             return i1+i2+i3
         cppyy.gbl.sum_of_int_ptr = sum_in_python
-        if not IS_MAC_ARM:
-            with raises(TypeError):
-                cppyy.gbl.call_sum_of_int(3, 2)
+        with raises(TypeError):
+            cppyy.gbl.call_sum_of_int(3, 2)
 
         cppyy.cppdef(r"""\
         namespace FuncPtrReturn {
@@ -1356,14 +1354,12 @@ class TestDATATYPES:
         assert fdd(math.atan2, 0, 3.) == 0.
 
         # error testing
-        if not IS_MAC_ARM:
-            raises(TypeError, fii, None, 2, 3)
+        raises(TypeError, fii, None, 2, 3)
 
         def pyf(arg0, arg1):
             return arg0/arg1
 
-        if not IS_MAC_ARM:
-            raises(ZeroDivisionError, fii, pyf, 1, 0)
+        raises(ZeroDivisionError, fii, pyf, 1, 0)
 
         def pyd(arg0, arg1):
             return arg0*arg1
@@ -1375,8 +1371,7 @@ class TestDATATYPES:
 
         c.__dict__.clear()             # destroys life lines
         gc.collect()
-        if not IS_MAC_ARM:
-            raises(TypeError, c, 3, 3) # lambda gone out of scope
+        raises(TypeError, c, 3, 3) # lambda gone out of scope
 
     def test28_callable_through_function_passing(self):
         """Passing callables through std::function"""
@@ -1431,14 +1426,12 @@ class TestDATATYPES:
         assert fdd(math.atan2, 0, 3.) == 0.
 
         # error testing
-        if not IS_MAC_ARM:
-            raises(TypeError, fii, None, 2, 3)
+        raises(TypeError, fii, None, 2, 3)
 
         def pyf(arg0, arg1):
             return arg0/arg1
 
-        if not IS_MAC_ARM:
-            raises(ZeroDivisionError, fii, pyf, 1, 0)
+        raises(ZeroDivisionError, fii, pyf, 1, 0)
 
         def pyd(arg0, arg1):
             return arg0*arg1
@@ -1450,8 +1443,7 @@ class TestDATATYPES:
 
         c.__dict__.clear()             # destroys life lines
         gc.collect()
-        if not IS_MAC_ARM:
-            raises(TypeError, c, 3, 3) # lambda gone out of scope
+        raises(TypeError, c, 3, 3) # lambda gone out of scope
 
     def test29_std_function_life_lines(self):
         """Life lines to std::function data members"""

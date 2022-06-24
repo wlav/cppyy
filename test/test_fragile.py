@@ -531,9 +531,8 @@ class TestFRAGILE:
         cppyy.cppexec("int interactive_b = 4")
         assert cppyy.gbl.interactive_b == 4
 
-        if not IS_MAC_ARM:
-            with raises(SyntaxError):
-                cppyy.cppexec("doesnotexist");
+        with raises(SyntaxError):
+            cppyy.cppexec("doesnotexist");
 
     def test23_set_debug(self):
         """Setting of global gDebug variable"""
@@ -574,7 +573,7 @@ class TestSIGNALS:
             py.test.skip('signals not yet implemented')
 
         if IS_MAC_ARM:
-            py.test.skip("JIT exceptions not supported on Mac ARM")
+            py.test.skip("JIT exceptions from signals not supported on Mac ARM")
 
         import cppyy
         import cppyy.ll

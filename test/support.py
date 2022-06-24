@@ -1,5 +1,5 @@
 from __future__ import print_function
-import py, sys, subprocess
+import os, py, sys, subprocess
 
 currpath = py.path.local(__file__).dirpath()
 
@@ -38,6 +38,7 @@ if 'darwin' in sys.platform:
     import platform
     if 'arm64' in platform.machine():
         IS_MAC_ARM = 64
+        os.environ["CPPYY_UNCAUGHT_QUIET"] = "1"
 
 try:
     import __pypy__
