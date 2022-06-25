@@ -220,6 +220,9 @@ class TestLEAKCHECK:
     def test06_dir(self):
         """Global function uploads used to cause more function generation"""
 
+        if sys.hexversion < 0x03000000:
+            py.test.skip("too slow on py2 and won't be fixed as py2 has reached eol")
+
         import cppyy
 
         self.check_func(cppyy.gbl, '__dir__', cppyy.gbl)

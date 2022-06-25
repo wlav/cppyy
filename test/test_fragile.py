@@ -432,6 +432,10 @@ class TestFRAGILE:
         """Test the usage of 'from cppyy.interactive import *'"""
 
         import sys
+
+        if 0x030b0000 <= sys.hexversion:
+            py.test.skip('"from cppyy.interactive import *" is no longer supported')
+
         oldsp = sys.path[:]
         sys.path.append('.')
         try:
