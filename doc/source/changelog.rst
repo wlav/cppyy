@@ -26,6 +26,7 @@ master: 2.4.0
 * Fix reuse of CPPOverload proxies in vector calls from different threads
 * Use -march=native instead of checking the cpu for avx
 * Workaround for handling exceptions from JITed code on ARM
+* Drop ``from cppyy.interactive import *`` from CPython 3.11
 
 
 2022-04-03: 2.3.1

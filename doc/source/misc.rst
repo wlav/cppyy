@@ -107,6 +107,10 @@ below can not be instantiated using a Python string, but the
 `Reduced typing`
 ----------------
 
+Note: ``from cppyy.interactive import *`` is no longer supported for CPython
+3.11 and later because the ``dict`` object features it relies on have been
+removed.
+
 Typing ``cppyy.gbl`` all the time gets old rather quickly, but the dynamic
 nature of ``cppyy`` makes something like ``from cppyy.gbl import *``
 impossible.
