@@ -211,7 +211,11 @@ def cppexec(stmt):
   # std::cerr, in which case the captured output needs to be printed as normal
     with _stderr_capture() as err:
         errcode = ctypes.c_int(0)
-        gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
+        try:
+            gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
+        except Exception as e:
+            sys.stderr.write("%s\n\n" % str(e))
+            if not errcode.value: errcode.value = 1
 
     if errcode.value:
         raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
