@@ -205,3 +205,32 @@ class TestNUMBA:
         assert((go_fast(x, d) == go_slow(x, d)).all())
         assert self.compare(go_slow, go_fast, 10000, x, d)
 
+    def test05_datatype_mapping(self):
+        """Numba-JITing of various data types"""
+
+        import cppyy
+
+        @numba.jit(nopython=True)
+        def access_field(d):
+            return d.fField
+
+        code = """\
+        namespace NumbaDTT {
+        struct M%d { M%d(%s f) : fField(f) {};
+             %s buf, fField;
+        }; }"""
+
+        cppyy.cppdef("namespace NumbaDTT { }")
+        ns = cppyy.gbl.NumbaDTT
+
+        types = (
+            'int', 'int32_t', 'int64_t',
+            'float', 'double',
+        )
+
+        nl = cppyy.gbl.std.numeric_limits
+        for i, ntype in enumerate(types):
+            cppyy.cppdef(code % (i, i, ntype, ntype))
+            for m in ('min', 'max'):
+                val = getattr(nl[ntype], m)()
+                assert access_field(getattr(ns, 'M%d'%i)(val)) == val
