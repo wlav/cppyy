@@ -1120,3 +1120,70 @@ class TestREGRESSION:
             assert ai.name[:5] == u'hello'
         cppyy.ll.array_delete(aa)
 
+    def test39_vector_of_pointers_conversion(self):
+        """vector<T*>'s const T*& used to be T**, now T*"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""\
+        namespace VectorOfPointers {
+        struct Base1 { std::string name; explicit Base1(const std::string& name) : name(name) { }};
+        struct Derived1 : Base1 { explicit Derived1(const std::string& name) : Base1(name) { } };
+        struct Owner {
+            Derived1 d1 { "d1" };
+            Derived1 d2 { "d2" };
+            std::vector<const Base1*> GetVector() { return { &d1, &d2 }; }
+        }; }""")
+
+        cppyy.gbl.VectorOfPointers
+        from cppyy.gbl.VectorOfPointers import Base1, Derived1, Owner
+
+        o = Owner()
+
+        assert len(o.GetVector()) == 2
+        assert type(o.GetVector()[0]) == Base1
+        assert type(o.GetVector()[1]) == Base1
+        assert o.GetVector()[0].name == "d1"
+        assert o.GetVector()[1].name == "d2"
+
+        v = o.GetVector()
+        assert len(list(v)) == 2
+        assert list(v)[0].name == "d1"
+        assert list(v)[1].name == "d2"
+
+        assert len(list(o.GetVector())) == 2
+        assert list(o.GetVector())[0].name == "d1"
+        assert list(o.GetVector())[1].name == "d2"
+
+        l = list(v)
+        v.__destruct__()
+        assert l[0].name == "d1"
+        assert l[1].name == "d2"
+
+        cppyy.cppdef(r"""\
+        namespace VectorOfPointers {
+        struct Base2 { };
+        struct Derived2 : Base2 { };
+        struct Base3 { virtual ~Base3() noexcept = default; };
+        struct Derived3 : Base3 { };
+
+        Derived2 d2;
+        Derived3 d3;
+        std::vector<const Base2*> vec2 { &d2 };
+        std::vector<const Base3*> vec3 { &d3 };
+        }""")
+
+        from cppyy.gbl import std
+        from cppyy.gbl.VectorOfPointers import Base2, Derived2, Base3, Derived3, vec2, vec3
+
+        assert len(vec2)     == 1
+        assert type(vec2[0]) == Base2
+        assert len(list(vec2))     == 1
+        assert type(list(vec2)[0]) == Base2
+        assert len([d for d in vec2 if isinstance(d, Derived2)]) == 0
+
+        assert len(vec3)     == 1
+        assert type(vec3[0]) == Derived3
+        assert len(list(vec3))     == 1
+        assert type(list(vec2)[0]) == Base2
+        assert len([d for d in vec3 if isinstance(d, Derived3)]) == 1

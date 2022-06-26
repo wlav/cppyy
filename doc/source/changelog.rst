@@ -16,17 +16,18 @@ master: 2.4.0
 * Support for free (templated) functions in Numba
 * Basic support for unboxing C++ public data members in Numba
 * Basic support for calling methods of C++ structs in Numba
-* Added conventional __cpp_reflex__ method for inspection in Numba
+* Added conventional `__cpp_reflex__` method for inspection in Numba
 * Support for globally overloaded ordering operators
-* Special cases for __repr__/__str__ returning C++ stringy types
+* Special cases for `__repr__`/`__str__` returning C++ stringy types
 * Fix lookup of templates of function with template args
 * Correct typing of int8_t/uint8_t enums
 * Basic support for hidden enums
 * Support function pointer returns and optimize function point variables
 * Fix reuse of CPPOverload proxies in vector calls from different threads
-* Use -march=native instead of checking the cpu for avx
+* Use `-march=native` instead of checking the cpu for avx
 * Workaround for handling exceptions from JITed code on ARM
 * Drop ``from cppyy.interactive import *`` from CPython 3.11
+* Fix regression in converting `std::vector<T*` to `list`
 
 
 2022-04-03: 2.3.1
