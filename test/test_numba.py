@@ -15,8 +15,19 @@ class TestREFLEX:
         import cppyy
         import cppyy.reflex
 
-    def test01_method_reflection(self):
-        """Test method reflection tooling"""
+    def test01_instance_box_unbox(self):
+        """Access to box/unbox methods"""
+
+        import cppyy
+
+        assert cppyy.addressof('Instance_AsVoidPtr')
+        assert cppyy.addressof('Instance_FromVoidPtr')
+
+        with raises(TypeError):
+            cppyy.addressof('doesnotexist')
+
+    def test02_method_reflection(self):
+        """Method reflection tooling"""
 
         import cppyy
         import cppyy.reflex as r
@@ -39,8 +50,8 @@ class TestREFLEX:
         assert ns.MyData_m1.__init__.__cpp_reflex__(r.RETURN_TYPE, r.AS_TYPE)   == ns.MyData_m1
         assert ns.MyData_m1.__init__.__cpp_reflex__(r.RETURN_TYPE, r.AS_STRING) == 'ReflexTest::MyData_m1'
 
-    def test02_datamember_reflection(self):
-        """Test data member reflection tooling"""
+    def test03_datamember_reflection(self):
+        """Data member reflection tooling"""
 
         import cppyy
         import cppyy.reflex as r
