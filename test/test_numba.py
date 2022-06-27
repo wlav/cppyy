@@ -224,7 +224,10 @@ class TestNUMBA:
         ns = cppyy.gbl.NumbaDTT
 
         types = (
-            'int', 'int32_t', 'int64_t',
+            # 'int8_t', 'uint8_t',     # TODO b/c check using return type fails
+            'short', 'unsigned short', 'int', 'unsigned int',
+            'int32_t', 'uint32_t', 'int64_t', 'uint64_t',
+            'long', 'unsigned long', 'long long', 'unsigned long long',
             'float', 'double',
         )
 
