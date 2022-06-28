@@ -28,6 +28,7 @@ master: 2.4.0
 * Workaround for handling exceptions from JITed code on ARM
 * Drop ``from cppyy.interactive import *`` from CPython 3.11
 * Fix regression in converting `std::vector<T*` to `list`
+* Update to the latest patch version of Cling (from 6.26.04)
 
 
 2022-04-03: 2.3.1
