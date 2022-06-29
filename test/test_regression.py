@@ -1000,6 +1000,9 @@ class TestREGRESSION:
     def test35_filesytem(self):
         """Static path object used to crash on destruction"""
 
+        if IS_WINDOWS:
+            py.test.skip('fails due to missing _std_fs_convert_narrow_to_wide symbol')
+
         import cppyy
 
         if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") > 201402:
@@ -1020,13 +1023,13 @@ class TestREGRESSION:
         import cppyy, ctypes
 
         cppyy.cppdef("""\
-        namespace test35_ctypes_sizeof {
+        namespace test36_ctypes_sizeof {
             void func(uint32_t* param) {
                 *param = 42;
             }
         }""")
 
-        ns = cppyy.gbl.test35_ctypes_sizeof
+        ns = cppyy.gbl.test36_ctypes_sizeof
 
         holder = ctypes.c_uint32(17)
         param = ctypes.pointer(holder)

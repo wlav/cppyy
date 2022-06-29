@@ -1,6 +1,6 @@
 import py, os, sys
 from pytest import raises
-from .support import setup_make
+from .support import setup_make, ispypy, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("overloadsDict"))
@@ -203,6 +203,9 @@ class TestOVERLOADS:
 
     def test10_overload_and_exceptions(self):
         """Prioritize reporting C++ exceptions from callee"""
+
+        if ispypy or IS_WINDOWS:
+            py.test.skip('throwing exceptions from the JIT terminates the process')
 
         import cppyy
 

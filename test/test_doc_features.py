@@ -451,7 +451,7 @@ namespace Namespace {
         """Exception throwing and catching"""
 
         if ispypy:
-            py.test.skip('currently terminates')
+            py.test.skip('throwing exceptions terminates the process')
 
         import cppyy
 
@@ -474,7 +474,7 @@ namespace Namespace {
             try:
                 cppyy.gbl.DocHelper.throw_an_error(0)
             except exc_type as e:
-                 caught = True
+                caught = True
             assert caught == True
         assert caught == True
 
@@ -1222,6 +1222,9 @@ class TestTALKEXAMPLES:
 
     def test_exceptions(self):
         """Exceptions example"""
+
+        if ispypy or IS_WINDOWS:
+             py.test.skip('throwing exceptions from the JIT terminates the process')
 
         import cppyy
         import cppyy.gbl.talk_examples as CC
