@@ -153,6 +153,7 @@ development environments.
    stl
    exceptions
    python
+   numba
    lowlevel
    misc
    debugging

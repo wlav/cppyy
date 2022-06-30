@@ -11,8 +11,9 @@ clang5, or MSVC'17.
 
 .. note::
 
-    On Windows, a command prompt or Python process needs to be opend with
-    the MSVC environment setup for the compiler to be accessible.
+    On Windows, a command prompt from which to run Python (or Python run
+    directly) needs to be opened from within an environment with MSVC setup,
+    otherwise the compiler will not be accessible.
 
 When installing from source, the only requirement is full support for C++11
 (e.g. minimum gcc 4.8.1 on GNU/Linux), but older compilers than the ones
