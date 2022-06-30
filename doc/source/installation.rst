@@ -8,6 +8,12 @@ When installing through `conda-forge`_, ``conda`` will install the compiler
 for you, to match the other conda-forge packages.
 When using ``pip`` and the wheels from `PyPI`_, you minimally need gcc5,
 clang5, or MSVC'17.
+
+.. note::
+
+    On Windows, a command prompt or Python process needs to be opend with
+    the MSVC environment setup for the compiler to be accessible.
+
 When installing from source, the only requirement is full support for C++11
 (e.g. minimum gcc 4.8.1 on GNU/Linux), but older compilers than the ones
 listed for the wheels have not been tested.
