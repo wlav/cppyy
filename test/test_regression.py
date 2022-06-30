@@ -1001,6 +1001,7 @@ class TestREGRESSION:
         """Static path object used to crash on destruction"""
 
         if IS_WINDOWS:
+            # TODO: this is b/c of the mangling: it's looking for '_std', but name is '__'
             py.test.skip('fails due to missing _std_fs_convert_narrow_to_wide symbol')
 
         import cppyy
