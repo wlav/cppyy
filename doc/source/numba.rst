@@ -19,7 +19,7 @@ and lowering by exposing type details through C++ reflection at runtime.
 
 JIT-compiling traces of mixed Python/bound C++ code reduces (or even removes)
 the overhead of boxing/unboxing native data into their Python proxies and vice
-veras.
+versa.
 It can also remove temporaries, especially for template expressions.
 Thus, there can be a significant speedup for mixed code, beyond the compilation
 of Python code itself.
@@ -44,8 +44,8 @@ you can load the extensions explicitly::
 After that, Numba is able to trace ``cppyy`` bound code.
 Note that the ``numba_ext`` module will register only the proxy base classes,
 to keep overheads to a minimum.
-The pre-registerd base classes will, lazily and automatically, register
-further type information for the concrete classess and overloads on actual
+The pre-registered base classes will, lazily and automatically, register
+further type information for the concrete classes and overloads on actual
 use in Numba traces, not from other uses.
 
 
@@ -93,7 +93,93 @@ Instances of C++ classes can be passed into Numba traces.
 They can be returned from functions called _within_ the trace, but can not yet
 be returned _from_ the trace.
 Their public data is accessible (read-only) if of builtin type and their public
-methods can be called.
-Overload selection among methods works.
+methods can be called, for which overload selection works.
+Example:
 
-.. _Numbal: https://numba.pydata.org/
+  .. code-block:: python
+
+    >>> import cppyy
+    >>> import numba
+    >>> import numpy as np
+    >>> 
+    >>> cppyy.cppdef("""\
+    ... class MyData {
+    ... public:
+    ...     MyData(int i, int j) : fField1(i), fField2(j) {}
+    ...
+    ... public:
+    ...     int get_field1() { return fField1; }
+    ...     int get_field2() { return fField2; }
+    ...
+    ...     MyData copy() { return *this; }
+    ...
+    ... public:
+    ...     int fField1;
+    ...     int fField2;
+    ... };""")
+    True
+    >>> @numba.jit(nopython=True)
+    >>> def tsdf(a, d):
+    ...     total = type(a[0])(0)
+    ...     for i in range(len(a)):
+    ...         total += a[i] + d.fField1 + d.fField2
+    ...     return total
+    ...
+    >>> d = cppyy.gbl.MyData(5, 6)
+    >>> a = np.array(range(10), dtype=np.int32)
+    >>> print(tsdf(a, d))
+    155
+    >>> # example of method calls
+    >>> @numba.jit(nopython=True)
+    >>> def tsdm(a, d):
+    ...     total = type(a[0])(0)
+    ...     for i in range(len(a)):
+    ...         total += a[i] +  d.get_field1() + d.get_field2()
+    ...     return total
+    ...
+    >>> print(tsdm(a, d))
+    155
+    >>> # example of object return by-value
+    >>> @numba.jit(nopython=True)
+    >>> def tsdcm(a, d):
+    ...     total = type(a[0])(0)
+    ...     for i in range(len(a)):
+    ...         total += a[i] + d.copy().fField1 + d.get_field2()
+    ...     return total
+    ...
+    >>> print(tsdcm(a, d))
+    155
+    >>>
+
+
+`Performance`
+-------------
+
+The main overhead of JITing Numba traces is in Numba itself; optimization of
+the IR and assembly by the backend plays a much smaller role.
+The use of bound C++ does not change that, since its introspection by and
+large relies on the same mechanisms as that of Python code.
+For example, it takes the same amount of wall clock time to JIT a trace using
+Numba's included math functions (from module ``math`` or ``numpy``) as one
+using C++ bound ones whether from the standard library or templated versions
+from e.g. Eigen.
+Use of very complex template expressions may change this balance, but in
+principle, wherever it makes sense in the first place to use Numba JITing, it
+is also fine, performance-wise, to use ``cppyy`` bound C++ inside the trace.
+
+A second important overhead is in unboxing Python proxies of C++ objects,
+in particular when passed as an argument to a Numba-JITed function.
+The main costs are in the lookup (types are matched at every invocation) and
+to a lesser extent the subsequent copying of the instance data.
+Thus, functions that take a C++ object as an argument will require more time
+spent in the function body for JITing to be worth it than functions that do
+not.
+
+The current implementation invokes C++ callables through function pointers
+and accesses data through offsets calculations from the object's base
+address.
+A future implementation will be able to inline C++ into the Numba trace if
+code is available in headers files or was JITed.
+
+
+.. _Numba: https://numba.pydata.org/
