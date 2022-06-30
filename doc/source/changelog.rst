@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.4.0
--------------
+2022-06-29: 2.4.0
+-----------------
 
 * Support for free (templated) functions in Numba
 * Basic support for unboxing C++ public data members in Numba
@@ -45,7 +45,7 @@ master: 2.4.0
 * Support for (multiple and nested) anonymous structs
 * Pull forward upstream patch for PPC
 * Only apply system_dirs patch (for asan) on Linux
-* Add unloaded classes to namespaces in dir()
+* Add not-yet loaded classes to namespaces in dir()
 * Fix lookup of templates of function with template args
 * Fix lookup of templates types with << in name
 * Fix regression for accessing `char16_t` data member arrays

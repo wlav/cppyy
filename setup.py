@@ -8,7 +8,7 @@ add_pkg = ['cppyy', 'cppyy.__pyinstaller']
 try:
     import __pypy__, sys
     version = sys.pypy_version_info
-    requirements = ['cppyy-backend==1.14.8', 'cppyy-cling==6.25.3']
+    requirements = ['cppyy-backend==1.14.9', 'cppyy-cling==6.27.0']
     if version[0] == 5:
         if version[1] <= 9:
             requirements = ['cppyy-backend<0.3', 'cppyy-cling<6.12']
@@ -23,7 +23,7 @@ try:
             requirements = ['cppyy-backend<=1.10', 'cppyy-cling<=6.18.2.3']
 except ImportError:
     # CPython
-    requirements = ['CPyCppyy==1.12.9', 'cppyy-backend==1.14.8', 'cppyy-cling==6.25.3']
+    requirements = ['CPyCppyy==1.12.11', 'cppyy-backend==1.14.9', 'cppyy-cling==6.27.0']
 
 setup_requirements = ['wheel']
 if 'build' in sys.argv or 'install' in sys.argv:
