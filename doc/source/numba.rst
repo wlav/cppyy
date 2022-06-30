@@ -1,4 +1,4 @@
-.. _Numba:
+.. _numba:
 
 
 Numba support
@@ -11,7 +11,7 @@ Numba support
     It is still incomplete (see listing below) and has only been tested on
     Linux on x86_64.
 
-`Numba`_ is a JIT compiler for Python functions that can be statically typed
+Numba `is a JIT compiler`_ for Python functions that can be statically typed
 based on their input arguments.
 Since C++ objects are always statically typed and already implemented at the
 machine level, they can be dynamically integrated into the Numba type tracing
@@ -182,4 +182,4 @@ A future implementation will be able to inline C++ into the Numba trace if
 code is available in headers files or was JITed.
 
 
-.. _Numba: https://numba.pydata.org/
+.. _is a JIT compiler: https://numba.pydata.org/
