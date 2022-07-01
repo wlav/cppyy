@@ -154,6 +154,7 @@ development environments.
    exceptions
    python
    numba
+   cuda
    lowlevel
    misc
    debugging
