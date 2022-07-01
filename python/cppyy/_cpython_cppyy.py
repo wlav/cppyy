@@ -10,6 +10,7 @@ __all__ = [
     'addressof',
     'bind_object',
     'nullptr',
+    'default',
     '_backend',
     '_begin_capture_stderr',
     '_end_capture_stderr'
@@ -171,6 +172,7 @@ del add_default_paths
 addressof     = _backend.addressof
 bind_object   = _backend.bind_object
 nullptr       = _backend.nullptr
+default       = _backend.default
 
 def load_reflection_info(name):
     sc = gbl.gSystem.Load(name)

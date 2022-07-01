@@ -262,6 +262,18 @@ class TestDATATYPES:
             getattr(c, 'set_'+names[i]+'_rv')(4*i)
             assert eval('c.m_%s' % names[i]) == 4*i
 
+        for i in range(len(names)):
+            setattr(c, 'm_'+names[i], cppyy.default)
+            assert eval('c.get_%s()' % names[i]) == 0
+
+        for i in range(len(names)):
+            getattr(c, 'set_'+names[i])(cppyy.default)
+            assert eval('c.m_%s' % names[i]) == 0
+
+        for i in range(len(names)):
+            getattr(c, 'set_'+names[i]+'_cr')(cppyy.default)
+            assert eval('c.m_%s' % names[i]) == 0
+
         # float types through functions
         c.set_float(0.123);   assert round(c.get_float()   - 0.123, 5) == 0
         c.set_double(0.456);  assert round(c.get_double()  - 0.456, 8) == 0
@@ -277,6 +289,19 @@ class TestDATATYPES:
         c.m_ldouble = 0.876;     assert round(c.get_ldouble() - 0.876, 8) == 0
         c.set_ldouble(0.098);    assert round(c.m_ldouble     - 0.098, 8) == 0
         c.set_ldouble_cr(0.210); assert round(c.m_ldouble     - 0.210, 8) == 0
+
+        names = ['float', 'double', 'ldouble']
+        for i in range(len(names)):
+            setattr(c, 'm_'+names[i], cppyy.default)
+            assert eval('c.get_%s()' % names[i]) == 0.
+
+        for i in range(len(names)):
+            getattr(c, 'set_'+names[i])(cppyy.default)
+            assert eval('c.m_%s' % names[i]) == 0.
+
+        for i in range(len(names)):
+            getattr(c, 'set_'+names[i]+'_cr')(cppyy.default)
+            assert eval('c.m_%s' % names[i]) == 0.
 
         # (non-)writing of enum types
         raises(TypeError, setattr, CppyyTestData, 'kNothing', 42)

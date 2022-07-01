@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 2.5.0
+-------------
+
+* Added a generic "cppyy.default" object
+
+
 2022-06-29: 2.4.0
 -----------------
 
