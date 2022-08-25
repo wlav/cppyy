@@ -14,6 +14,7 @@ master: 2.5.0
 -------------
 
 * Added a generic "cppyy.default" object
+* Support explicitly created initializer lists as arguments
 
 
 2022-06-29: 2.4.0

@@ -1191,3 +1191,26 @@ class TestREGRESSION:
         assert len(list(vec3))     == 1
         assert type(list(vec2)[0]) == Base2
         assert len([d for d in vec3 if isinstance(d, Derived3)]) == 1
+
+    def test40_explicit_initializer_list(self):
+        """Construct and pass an explicit initializer list"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""\
+        namespace ExplicitInitializer {
+        enum class TestEnum { Foo, Bar };
+
+        using TestDictClass = std::initializer_list<std::pair<TestEnum, int>>;
+
+        class TestClass {
+        public:
+            TestClass(TestDictClass x) {}
+        }; }""")
+
+        ns = cppyy.gbl.ExplicitInitializer
+
+        TestPair = cppyy.gbl.std.pair[ns.TestEnum, int]
+        arg = ns.TestDictClass([TestPair(ns.TestEnum.Bar, 4), TestPair(ns.TestEnum.Foo, 12)])
+        assert ns.TestClass(arg)
+
