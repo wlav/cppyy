@@ -17,6 +17,14 @@ master: 2.5.0
 * Support explicitly created initializer lists as arguments
 
 
+master: 2.4.1
+-------------
+
+* Drop Numba extension entry point
+* Pass instances by-ref in NUmba traces
+* Support non-POD by-value returns in Numba traces
+
+
 2022-06-29: 2.4.0
 -----------------
 
