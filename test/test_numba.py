@@ -329,6 +329,7 @@ class TestNUMBA_DOC:
         class MyData {
         public:
             MyData(int i, int j) : fField1(i), fField2(j) {}
+            virtual ~MyData() {}
 
         public:
             int get_field1() { return fField1; }
@@ -370,3 +371,12 @@ class TestNUMBA_DOC:
             return total
 
         assert tsdcm(a, d) == 155
+
+        @numba.jit(nopython=True)
+        def tsdcmm(a, d):
+            total = type(a[0])(0)
+            for i in range(len(a)):
+                total += a[i] + d.copy().fField1 + d.copy().fField2
+            return total
+
+        assert tsdcmm(a, d) == 155

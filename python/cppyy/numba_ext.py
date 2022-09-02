@@ -27,9 +27,10 @@ class Qualified:
     default   = 0
     value     = 1
 
-ir_voidptr  = ir.PointerType(ir.IntType(8))  # by convention
-ir_byteptr  = ir_voidptr
-ir_intptr_t = ir.IntType(cppyy.sizeof('void*')*8)     # use MACHINE_BITS?
+ir_byte     = ir.IntType(8)
+ir_voidptr  = ir.PointerType(ir_byte)                 # by convention
+ir_byteptr  = ir_voidptr                              # for clarity
+ir_intptr_t = ir.IntType(cppyy.sizeof('void*')*8)
 
 # special case access to unboxing/boxing APIs
 cppyy_as_voidptr   = cppyy.addressof('Instance_AsVoidPtr')
@@ -235,6 +236,7 @@ class CppClassNumbaType(CppFunctionNumbaType):
     def key(self):
         return (self._scope, self._qualifier)
 
+
 @nb_tmpl.infer_getattr
 class CppClassFieldResolver(nb_tmpl.AttributeTemplate):
     key = CppClassNumbaType
@@ -282,7 +284,6 @@ def cppclass_getattr_impl(context, builder, typ, val, attr):
             return builder.load(pf)
 
         elif q == Qualified.value:
-            # TODO: access members of by value returns
             model = nb_dm.default_manager.lookup(typ)
             return model.get(builder, val, attr)
 
@@ -308,6 +309,48 @@ def cppclass_getattr_impl(context, builder, typ, val, attr):
         assert not "unknown qualified type"
 
     return context.cppyy_currentcall_this
+
+
+class ImplAggregateValueModel(nb_dm.models.StructModel):
+    def get(self, builder, val, pos):
+        """Get a field at the given position/field name"""
+
+        if isinstance(pos, str):
+            pos = self.get_field_position(pos)
+
+      # Use the offsets for direct addressing, rather than getting the elements
+      # from the struct type.
+        dmi = self._data_members[pos]
+
+        stack = nb_cgu.alloca_once(builder, self.get_data_type())
+        builder.store(val, stack)
+
+        llval = builder.bitcast(stack, ir_byteptr)
+        pfc = builder.gep(llval, [ir.Constant(ir_intptr_t, dmi.f_offset)])
+        pf = builder.bitcast(pfc, ir.PointerType(dmi.f_irtype))
+
+        return builder.load(pf)
+
+class ImplClassValueModel(ImplAggregateValueModel):
+  # value: representation inside function body. Maybe stored in stack.
+  #        The representation here are flexible.
+    def get_value_type(self):
+        return self.get_data_type()
+
+  # data: representation used when storing into containers (e.g. arrays).
+    def get_data_type(self):
+      # The struct model relies on data being a POD, but for C++ objects, there
+      # can be hidden data (e.g. vtable, thunks, or simply private members), and
+      # the alignment of Cling and Numba also need not be the same. Therefore, the
+      # struct is split in a series of byte members to get the total size right
+      # and to allow addressing at the correct offsets.
+        if self._data_type is None:
+            self._data_type = ir.LiteralStructType([ir_byte for i in range(self._sizeof)], packed=True)
+        return self._data_type
+
+  # return: representation used for return argument.
+    def get_return_type(self):
+        return self.get_data_type()
 
 
 scope_numbatypes = (dict(), dict())
@@ -375,6 +418,9 @@ def typeof_scope(val, c, q = Qualified.default):
               # as a pointer to POD to allow indexing by Numba for data member type checking, but the
               # address offsetting for loading data member values is independent (see get(), below),
               # so the exact layout need not match a POD
+
+              # TODO: this doesn't work for real PODs, b/c those are unpacked into their elements and
+              # passed through registers
                 return ir.PointerType(super(ImplClassModel, self).get_value_type())
 
           # argument: representation used for function argument. Needs to be builtin type,
@@ -394,20 +440,38 @@ def typeof_scope(val, c, q = Qualified.default):
           # access to public data members
             def get(self, builder, val, pos):
                 """Get a field at the given position/field name"""
+
                 if isinstance(pos, str):
                     pos = self.get_field_position(pos)
+
                 dmi = self._data_members[pos]
+
                 llval = builder.bitcast(val, ir_byteptr)
                 pfc = builder.gep(llval, [ir.Constant(ir_intptr_t, dmi.f_offset)])
                 pf = builder.bitcast(pfc, ir.PointerType(dmi.f_irtype))
+
                 return builder.load(pf)
 
     elif q == Qualified.value:
-        @nb_ext.register_model(ImplClassType)
-        class ImplClassModel(nb_dm.models.StructModel):
-            def __init__(self, dmm, fe_type):
-                members = [(dmi.f_name, dmi.f_nbtype) for dmi in data_members]
-                nb_dm.models.StructModel.__init__(self, dmm, fe_type, members)
+        if val.__cpp_reflex__(cpp_refl.IS_AGGREGATE):
+            @nb_ext.register_model(ImplClassType)
+            class ImplClassModel(ImplAggregateValueModel):
+                pass
+        else:
+            @nb_ext.register_model(ImplClassType)
+            class ImplClassModel(ImplClassValueModel):
+                pass
+
+        def init(self, dmm, fe_type, sz = cppyy.sizeof(val)):
+            self._data_members = data_members
+            self._sizeof = sz
+
+          # TODO: this code exists purely to be able to use the indexing and hierarchy
+          # of the base class StructModel, which isn't much of a reason
+            members = [(dmi.f_name, dmi.f_nbtype) for dmi in data_members]
+            nb_dm.models.StructModel.__init__(self, dmm, fe_type, members)
+
+        ImplClassModel.__init__ = init
 
     else:
         assert not "unknown qualified type"
