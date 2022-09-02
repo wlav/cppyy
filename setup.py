@@ -144,11 +144,15 @@ setup(
     package_dir={'': 'python'},
     packages=find_packages('python', include=add_pkg),
 
-    entry_points={
-        'numba_extensions': [
-            'init = cppyy.numba_ext:_init_extension',
-        ],
-    },
+    # TODO: numba_extensions will load all extensions even if the package
+    # itself is not otherwise imported, just installed; in the case of cppyy,
+    # that is currently too heavy (and breaks on conda)
+
+    #entry_points={
+    #    'numba_extensions': [
+    #        'init = cppyy.numba_ext:_init_extension',
+    #    ],
+    #},
 
     cmdclass=cmdclass,
 
