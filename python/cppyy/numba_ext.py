@@ -67,10 +67,15 @@ def cpp2numba(val):
 _numba2cpp = dict()
 for key, value in _cpp2numba.items():
     _numba2cpp[value] = key
+# prefer "int" in the case of intc over "int32_t"
+_numba2cpp[nb_types.intc] = 'int'
 
 def numba2cpp(val):
     if hasattr(val, 'literal_type'):
         val = val.literal_type
+        if val == nb_types.int64:      # Python int
+            # TODO: this is only necessary until "best matching" is in place
+            val = nb_types.intc        # more likely match candidate
     return _numba2cpp[val]
 
 # TODO: looks like Numba treats unsigned types as signed when lowering,
@@ -127,26 +132,30 @@ class CppFunctionNumbaType(nb_types.Callable):
 
         ol = CppFunctionNumbaType(self._func.__overload__(*(numba2cpp(x) for x in args)), self._is_method)
 
+        thistype = None
         if self._is_method:
-            args = (nb_types.voidptr, *args)
+            thistype = nb_types.voidptr
 
         ol.sig = nb_typing.Signature(
             return_type=cpp2numba(ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)),
             args=args,
-            recvr=None)  # this pointer
+            recvr=thistype)
+
+        extsig = ol.sig
+        if self._is_method:
+            args = (nb_types.voidptr, *args)
+            extsig = nb_typing.Signature(
+                return_type=ol.sig.return_type, args=args, recvr=None)
 
         self._impl_keys[args] = ol
 
         @nb_iutils.lower_builtin(ol, *args)
         def lower_external_call(context, builder, sig, args,
-                ty=nb_types.ExternalFunctionPointer(ol.sig, ol.get_pointer), pyval=self._func):
+                ty=nb_types.ExternalFunctionPointer(extsig, ol.get_pointer), pyval=self._func, is_method=self._is_method):
             ptrty = context.get_function_pointer_type(ty)
             ptrval = context.add_dynamic_addr(
                 builder, ty.get_pointer(pyval), info=str(pyval))
             fptr = builder.bitcast(ptrval, ptrty)
-            if hasattr(context, 'cppyy_currentcall_this'):
-                args = [context.cppyy_currentcall_this]+args
-                del context.cppyy_currentcall_this
             return context.call_function_pointer(builder, fptr, args)
 
         return ol.sig
@@ -159,7 +168,7 @@ class CppFunctionNumbaType(nb_types.Callable):
 
     def get_pointer(self, func):
         if func is None: func = self._func
-        ol = func.__overload__(*(numba2cpp(x) for x in self.sig.args[int(self._is_method):]))
+        ol = func.__overload__(*(numba2cpp(x) for x in self.sig.args))
         address = cppyy.addressof(ol)
         if not address:
             raise RuntimeError("unresolved address for %s" % str(ol))
@@ -299,16 +308,14 @@ def cppclass_getattr_impl(context, builder, typ, val, attr):
   # assume this is a method
     q = typ.get_qualifier()
     if q == Qualified.default:
-        context.cppyy_currentcall_this = builder.bitcast(val, ir_voidptr)
+        return builder.bitcast(val, ir_voidptr)
 
     elif q == Qualified.value:
         # TODO: take address of by value returns
-        context.cppyy_currentcall_this = None
+        return None
 
-    else:
-        assert not "unknown qualified type"
-
-    return context.cppyy_currentcall_this
+    assert not "unknown qualified type"
+    return None
 
 
 class ImplAggregateValueModel(nb_dm.models.StructModel):
