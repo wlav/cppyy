@@ -431,7 +431,7 @@ def typeof_scope(val, c, q = Qualified.default):
                 return ir.PointerType(super(ImplClassModel, self).get_value_type())
 
           # argument: representation used for function argument. Needs to be builtin type,
-          #           but unlike other Numba composites, C++ proxies are no flattened.
+          #           but unlike other Numba composites, C++ proxies are not flattened.
             def get_argument_type(self):
                 return self.get_value_type()
 
