@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+2022-10-03: 2.4.1
+-----------------
+
+* Drop Numba extension entry point
+
+
 2022-06-29: 2.4.0
 -----------------
 
