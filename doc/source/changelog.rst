@@ -15,14 +15,14 @@ master: 2.5.0
 
 * Added a generic "cppyy.default" object
 * Support explicitly created initializer lists as arguments
+* Pass instances by-ref in Numba traces
+* Support non-POD by-value returns in Numba traces
 
 
-master: 2.4.1
--------------
+2022-10-03: 2.4.1
+-----------------
 
 * Drop Numba extension entry point
-* Pass instances by-ref in NUmba traces
-* Support non-POD by-value returns in Numba traces
 
 
 2022-06-29: 2.4.0
