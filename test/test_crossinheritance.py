@@ -1601,3 +1601,38 @@ class TestCROSSINHERITANCE:
                 super(ns.Y, self).__init__()
 
         assert PyY2()
+
+    def test35_deletion(self):
+        """C++ side deletion should propagate to the Python side"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace DeletionTest {
+        class Base {
+        public:
+            virtual ~Base() {}
+            void do_work() {}
+        };
+
+        void delete_it(Base *p) { delete p; }
+        }""")
+
+        ns = cppyy.gbl.DeletionTest
+
+        class Derived(ns.Base):
+            was_deleted = False
+            def __del__(self):
+                Derived.was_deleted = True
+
+        o1 = Derived()
+        o1.do_work()
+        o1.__python_owns__ = False
+        ns.delete_it(o1)
+
+        with raises(ReferenceError):
+            o1.do_work()
+
+        assert Derived.was_deleted == False
+        del o1
+        assert Derived.was_deleted == True
