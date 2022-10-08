@@ -15,6 +15,14 @@ class TestTEMPLATES:
         import cppyy
         cls.templates = cppyy.load_reflection_info(cls.test_dct)
 
+    def test00_template_back_reference(self):
+        """Template reflection"""
+
+        import cppyy
+
+        v1 = cppyy.gbl.std.vector[int]
+        assert v1.__cpp_template__[int] is v1
+
     def test01_template_member_functions(self):
         """Template member functions lookup and calls"""
 

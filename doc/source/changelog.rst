@@ -18,6 +18,7 @@ master: 2.5.0
 * Pass instances by-ref in Numba traces
 * Support non-POD by-value returns in Numba traces
 * Nullify derived class Python proxy when the C++ object is deleted
+* Add ``__cpp_template__`` back reference for instantiated templated classes
 
 
 2022-10-03: 2.4.1

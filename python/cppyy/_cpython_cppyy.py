@@ -61,7 +61,8 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
     stl_mapping_types    = ['std::map']
 
     def __init__(self, name):
-        self.__name__ = name
+        self.__name__     = name
+        self.__cpp_name__ = name
 
     def __repr__(self):
         return "<cppyy.Template '%s' object at %s>" % (self.__name__, hex(id(self)))
@@ -91,6 +92,9 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
                     for x in ll: self.push_back(x)
                     return self
             pyclass.__iadd__ = iadd
+
+      # back-pointer for reflection
+        pyclass.__cpp_template__ = self
 
         return pyclass
 
