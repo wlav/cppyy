@@ -642,6 +642,24 @@ class TestSTLVECTOR:
         a[0] = 5
         assert b[0] == 5
 
+        cppyy.cppdef("""\
+        namespace ImplicitVector {
+        int func(std::vector<int> v) {
+            return std::accumulate(v.begin(), v.end(), 0);
+        } }""")
+
+        ns = cppyy.gbl.ImplicitVector
+
+        v = np.array(range(10), dtype=np.intc)
+        assert ns.func(v) == sum(v)
+
+        v = np.array(range(10), dtype=np.uint8)
+        with raises(TypeError):
+            ns.func(v)
+
+        v = np.array(v, dtype=np.intc)
+        assert ns.func(v) == sum(v)
+
     def test19_vector_point3d(self):
         """Iteration over a vector of by-value objects"""
 
