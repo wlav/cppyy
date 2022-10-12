@@ -20,6 +20,7 @@ master: 2.5.0
 * Nullify derived class Python proxy when the C++ object is deleted
 * Add ``__cpp_template__`` back reference for instantiated templated classes
 * Improved buffer checking for ``std::initializer_list``
+* Add convenience functions ``argc()`` and ``argv()`` to ``cppyy.ll``
 
 
 2022-10-03: 2.4.1

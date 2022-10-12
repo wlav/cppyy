@@ -2,6 +2,8 @@
 """
 
 import cppyy
+import ctypes
+import sys
 import warnings
 
 try:
@@ -12,6 +14,8 @@ except ImportError:
     ispypy = False
 
 __all__ = [
+    'argv',
+    'argc',
     'cast',
     'static_cast',
     'reinterpret_cast',
@@ -29,6 +33,15 @@ __all__ = [
     'AbortSignal',
     ]
 
+
+# convenience functions to create C-style argv/argc
+def argv():
+    argc = len(sys.argv)
+    cargsv = (ctypes.c_char_p * len(sys.argv))(*(x.encode() for x in sys.argv))
+    return ctypes.POINTER(ctypes.c_char_p)(cargsv)
+
+def argc():
+    return len(sys.argv)
 
 # import low-level python converters
 for _name in ['addressof', 'as_cobject', 'as_capsule', 'as_ctypes']:
