@@ -201,7 +201,10 @@ class TestCPP11FEATURES:
         nullptr = cppyy.nullptr
       # assert not hasattr(cppyy.gbl, 'nullptr')
 
-      # usage is tested in datatypes.py:test15_nullptr_passing
+        assert     cppyy.bind_object(cppyy.nullptr, 'std::vector<int>') == cppyy.nullptr
+        assert not cppyy.bind_object(cppyy.nullptr, 'std::vector<int>') != cppyy.nullptr
+
+      # further usage is tested in datatypes.py:test15_nullptr_passing
 
     def test07_move(self):
         """Move construction, assignment, and methods"""
