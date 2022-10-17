@@ -156,26 +156,27 @@ gbl.std.move  = _backend.move
 #- add to the dynamic path as needed -----------------------------------------
 import os
 def add_default_paths():
-    gSystem = gbl.gSystem
+    libInterOp = gbl.cling.InterOp
+    gCling = gbl.cling.runtime.gCling
     if os.getenv('CONDA_PREFIX'):
       # MacOS, Linux
         lib_path = os.path.join(os.getenv('CONDA_PREFIX'), 'lib')
-        if os.path.exists(lib_path): gSystem.AddDynamicPath(lib_path)
+        if os.path.exists(lib_path): libInterOp.AddSearchPath(gCling, lib_path)
 
       # Windows
         lib_path = os.path.join(os.getenv('CONDA_PREFIX'), 'Library', 'lib')
-        if os.path.exists(lib_path): gSystem.AddDynamicPath(lib_path)
+        if os.path.exists(lib_path): libInterOp.AddSearchPath(gCling, lib_path)
 
   # assuming that we are in PREFIX/lib/python/site-packages/cppyy, add PREFIX/lib to the search path
     lib_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, os.path.pardir))
-    if os.path.exists(lib_path): gSystem.AddDynamicPath(lib_path)
+    if os.path.exists(lib_path): libInterOp.AddSearchPath(gCling, lib_path)
 
     try:
         with open('/etc/ld.so.conf') as ldconf:
             for line in ldconf:
                 f = line.strip()
                 if (os.path.exists(f)):
-                    gSystem.AddDynamicPath(f)
+                    libInterOp.AddSearchPath(gCling, f)
     except IOError:
         pass
 add_default_paths()
@@ -189,7 +190,8 @@ nullptr       = _backend.nullptr
 default       = _backend.default
 
 def load_reflection_info(name):
-    sc = gbl.gSystem.Load(name)
+    gDLM = gbl.cling.runtime.gDLM
+    sc = gDLM.loadLibrary(name)
     if sc == -1:
         raise RuntimeError("Unable to load reflection library "+name)
 

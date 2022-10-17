@@ -182,7 +182,7 @@ del make_smartptr
 #--- interface to Cling ------------------------------------------------------
 class _stderr_capture(object):
     def __init__(self):
-       self._capture = not gbl.CppyyLegacy.gDebug and True or False
+       self._capture = False
        self.err = ""
 
     def __enter__(self):
@@ -198,8 +198,8 @@ def cppdef(src):
     """Declare C++ source <src> to Cling."""
     with _stderr_capture() as err:
         print(src)
-        errcode = gbl.cling.runtime.gCling.declare(src)
-    if not errcode or err.err:
+        errcode = gbl.cling.InterOp.Declare(gbl.cling.runtime.gCling, src)
+    if not errcode == 0 or err.err:
         if 'warning' in err.err.lower() and not 'error' in err.err.lower():
             warnings.warn(err.err, SyntaxWarning)
             return True
@@ -244,18 +244,18 @@ def load_library(name):
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
     with _stderr_capture() as err:
-        errcode = gbl.cling.runtime.gCling.declare('#include "%s"' % header)
-    if not errcode:
+        errcode = gbl.cling.InterOp.Declare(gbl.cling.runtime.gCling, '#include "%s"' % header)
+    if not errcode == 0:
         raise ImportError('Failed to load header file "%s"%s' % (header, err.err))
     return True
 
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
     with _stderr_capture() as err:
-        errcode = gbl.cling.runtime.gCling.declare("""extern "C" {
+        errcode = gbl.cling.InterOp.Declare(gbl.cling.runtime.gCling, """extern "C" {
 #include "%s"
 }""" % header)
-    if not errcode:
+    if not errcode == 0:
         raise ImportError('Failed to load header file "%s"%s' % (header, err.err))
     return True
 
@@ -263,7 +263,7 @@ def add_include_path(path):
     """Add a path to the include paths available to Cling."""
     if not os.path.isdir(path):
         raise OSError('No such directory: %s' % path)
-    gbl.cling.runtime.gCling.AddIncludePath(path)
+    gbl.cling.InterOp.AddIncludePath(gbl.cling.runtime.gCling, path)
 
 def add_library_path(path):
     """Add a path to the library search paths available to Cling."""
