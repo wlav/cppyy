@@ -286,7 +286,7 @@ def make_property(match_class, match_get, match_set=None, match_del=None, prop_n
                             named_setters[name] = k
                         else:
                             fset = self.make_set_proxy(k)
-                        break
+                            break
 
             if self.match_del:
                 for k in dir(obj): #.__dict__:
