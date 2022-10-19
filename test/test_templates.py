@@ -1096,6 +1096,35 @@ class TestTEMPLATES:
                         run_n = getattr(cppyy.gbl, 'TNaRun_%d' % n)
                         getattr(run_n, t)
 
+    def test33_using_template_argument(self):
+        """`using` type as template argument"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        namespace UsingPtr {
+        struct Test {};
+        using testptr = Test*;
+
+        template<typename T>
+        bool testfun(T const& x) { return !(bool)x; }
+        }""")
+
+        ns = cppyy.gbl.UsingPtr
+
+        assert ns.testfun["testptr"](cppyy.bind_object(cppyy.nullptr, ns.Test))
+
+        # TODO: raises TypeError; the problem is that the type is resolved
+        # from UsingPtr::Test*const& to UsingPtr::Test*& (ie. `const` is lost)
+        # assert ns.testfun["UsingPtr::testptr"](cppyy.nullptr)
+
+        assert ns.testptr.__name__     == "Test"
+        assert ns.testptr.__cpp_name__ == "UsingPtr::Test*"
+
+        assert cppyy.gbl.std.vector[ns.Test]
+        assert ns.testptr
+        assert cppyy.gbl.std.vector[ns.testptr]
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
