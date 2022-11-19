@@ -1627,7 +1627,6 @@ class TestCROSSINHERITANCE:
 
         o1 = Derived()
         o1.do_work()
-        o1.__python_owns__ = False
         ns.delete_it(o1)
 
         with raises(ReferenceError):
