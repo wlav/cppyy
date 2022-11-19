@@ -1636,3 +1636,75 @@ class TestCROSSINHERITANCE:
         assert Derived.was_deleted == False
         del o1
         assert Derived.was_deleted == True
+
+    def test36_deep_tree(self):
+        """Find overridable methods deep in the tree"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace DeepTree {
+
+        class Base {
+        public:
+            virtual ~Base() {}
+
+            virtual std::string f1() { return "C++: Base::f1()"; }
+            virtual std::string f2() { return "C++: Base::f2()"; }
+            virtual std::string f3() { return "C++: Base::f3()"; }
+        };
+
+        class Intermediate: public Base {
+        public:
+            virtual ~Intermediate() {}
+
+            using Base::f2;
+        };
+
+        class Sub: public Intermediate {
+        public:
+            virtual ~Sub() {}
+
+            using Intermediate::f3; // `using Base::f3;` would also work
+        };
+
+        class CppSub: public Sub {
+        public:
+            virtual ~CppSub() {}
+
+            std::string f1() { return "C++: CppSub::f1()"; }
+            std::string f2() { return "C++: CppSub::f2()"; }
+            std::string f3() { return "C++: CppSub::f3()"; }
+        };
+
+        std::string call_fs(Base *b) {
+            std::string res;
+            res += b->f1();
+            res += b->f2();
+            res += b->f3();
+            return res;
+        } }""")
+
+        ns = cppyy.gbl.DeepTree
+
+        cppsub = ns.CppSub()
+        assert cppsub.f1() == "C++: CppSub::f1()"
+        assert cppsub.f2() == "C++: CppSub::f2()"
+        assert cppsub.f3() == "C++: CppSub::f3()"
+        assert ns.call_fs(cppsub) == cppsub.f1() + cppsub.f2() + cppsub.f3()
+
+        class PySub(ns.Sub):
+            def f1(self):
+                return "Python: PySub::f1()"
+
+            def f2(self):
+                return "Python: PySub::f2()"
+
+            def f3(self):
+                return "Python: PySub::f3()"
+
+        pysub = PySub()
+        assert pysub.f1() == "Python: PySub::f1()"
+        assert pysub.f2() == "Python: PySub::f2()"
+        assert pysub.f3() == "Python: PySub::f3()"
+        assert ns.call_fs(pysub) == pysub.f1() + pysub.f2() + pysub.f3()

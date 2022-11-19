@@ -23,6 +23,7 @@ master: 2.5.0
 * Add convenience functions ``argc()`` and ``argv()`` to ``cppyy.ll``
 * Added ``nullptr`` comparisons for for typed ``nullptr``
 * Support for ``using`` pointer types as template arguments
+* Walk the full inheritance tree to find the overloads
 
 
 2022-10-03: 2.4.1
