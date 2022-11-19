@@ -1608,7 +1608,7 @@ class TestCROSSINHERITANCE:
         import cppyy
 
         cppyy.cppdef("""\
-        namespace DeletionTest {
+        namespace DeletionTest1 {
         class Base {
         public:
             virtual ~Base() {}
@@ -1618,7 +1618,7 @@ class TestCROSSINHERITANCE:
         void delete_it(Base *p) { delete p; }
         }""")
 
-        ns = cppyy.gbl.DeletionTest
+        ns = cppyy.gbl.DeletionTest1
 
         class Derived(ns.Base):
             was_deleted = False
@@ -1636,7 +1636,47 @@ class TestCROSSINHERITANCE:
         del o1
         assert Derived.was_deleted == True
 
-    def test36_deep_tree(self):
+    def test36_custom_destruct(self):
+        """C++ side deletion calls __destruct__"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace DeletionTest2 {
+        class Base {
+        public:
+            virtual ~Base() {}
+            void do_work() {}
+        };
+
+        void delete_it(Base *p) { delete p; }
+        }""")
+
+        ns = cppyy.gbl.DeletionTest2
+
+        class Derived(ns.Base):
+            was_cpp_deleted = False
+            was_py_deleted  = False
+
+            def __destruct__(self):
+                Derived.was_cpp_deleted = True
+
+            def __del__(self):
+                Derived.was_py_deleted  = True
+
+        o1 = Derived()
+        o1.do_work()
+        ns.delete_it(o1)
+
+        with raises(ReferenceError):
+            o1.do_work()
+
+        assert Derived.was_cpp_deleted == True
+        assert Derived.was_py_deleted  == False
+        del o1
+        assert Derived.was_py_deleted  == True
+
+    def test37_deep_tree(self):
         """Find overridable methods deep in the tree"""
 
         import cppyy

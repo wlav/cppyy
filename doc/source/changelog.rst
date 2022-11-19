@@ -24,6 +24,7 @@ master: 2.5.0
 * Added ``nullptr`` comparisons for for typed ``nullptr``
 * Support for ``using`` pointer types as template arguments
 * Walk the full inheritance tree to find the overloads
+* Allow __destruct__ override in Python derived class
 
 
 2022-10-03: 2.4.1
