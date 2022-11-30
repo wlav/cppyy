@@ -80,7 +80,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
             pass
 
       # construct the type name from the types or their string representation
-        newargs = [self.__name__]
+        newargs = [self.__name__] if self.__name__ != "vector" else ["std::vector"]
         for arg in args:
             if type(arg) == str:
                 arg = ','.join(map(lambda x: x.strip(), arg.split(',')))
