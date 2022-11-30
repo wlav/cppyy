@@ -231,14 +231,12 @@ def cppexec(stmt):
 def load_library(name):
     """Explicitly load a shared library."""
     with _stderr_capture() as err:
-        gSystem = gbl.gSystem
-        if name[:3] != 'lib':
-            if not gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString(name), True) and\
-                   gSystem.FindDynamicLibrary(gbl.CppyyLegacy.TString('lib'+name), True):
-                name = 'lib'+name
-        sc = gSystem.Load(name)
-    if sc == -1:
-        raise RuntimeError('Unable to load library "%s"%s' % (name, err.err))
+        InterOp = gbl.cling.InterOp
+        gCling = gbl.cling.runtime.gCling
+        result = InterOp.LoadLibrary(gCling, name)
+    if result == False:
+        raise RuntimeError('Could not load library "%s": %s' % (name, err.err))
+
     return True
 
 def include(header):
