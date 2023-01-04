@@ -10,7 +10,7 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.5.0
+master: 2.4.2
 -------------
 
 * Added a generic "cppyy.default" object
@@ -25,6 +25,7 @@ master: 2.5.0
 * Support for ``using`` pointer types as template arguments
 * Walk the full inheritance tree to find the overloads
 * Allow __destruct__ override in Python derived class
+* Allow NULL function pointers to be returned as std::function objects
 
 
 2022-10-03: 2.4.1

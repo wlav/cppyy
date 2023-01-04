@@ -1290,8 +1290,9 @@ class TestDATATYPES:
         assert 7 == cppyy.gbl.sum_of_int_ptr(2, 3)
 
         cppyy.gbl.sum_of_int_ptr = cppyy.nullptr
-        with raises(TypeError):        # not attribute error!
-            cppyy.gbl.sum_of_int_ptr
+        assert not cppyy.gbl.sum_of_int_ptr
+        with raises(cppyy.gbl.std.bad_function_call):
+            cppyy.gbl.sum_of_int_ptr(2, 3)
         with raises(AttributeError):
             cppyy.gbl.sim_of_int_ptr   # incorrect spelling
 
