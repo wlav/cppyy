@@ -26,6 +26,7 @@ master: 2.4.2
 * Walk the full inheritance tree to find the overloads
 * Allow __destruct__ override in Python derived class
 * Allow NULL function pointers to be returned as std::function objects
+* Add Python traceback to C++ exception what()
 
 
 2022-10-03: 2.4.1

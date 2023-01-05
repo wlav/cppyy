@@ -250,6 +250,23 @@ class TestCROSSINHERITANCE:
         except ValueError as e:
             assert errmsg in str(e)
 
+        cppyy.cppdef("""\
+        namespace CrossInheritance {
+        std::string call_base1(Base1* b) {
+            try {
+                b->sum_value(-7);
+            } catch (CPyCppyy::PyException& e) {
+                e.clear();
+                return e.what();
+            }
+            return "";
+        } }""")
+
+        res = cppyy.gbl.CrossInheritance.call_base1(d)
+
+        assert 'ValueError' in res
+        assert os.path.basename(__file__) in res
+
     def test09_interface_checking(self):
         """Conversion errors should be Python exceptions"""
 
