@@ -3,7 +3,8 @@ from pytest import mark, skip
 from .support import setup_make, pylong, pyunicode
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("datatypesDict"))
+test_dct = str(currpath.join("datatypesDict.so"))
+test_h = str(currpath.join("datatypes.h"))
 
 def setup_module(mod):
     setup_make("datatypes")
@@ -21,7 +22,9 @@ class TestLEAKCHECK:
         import cppyy, psutil
 
         cls.test_dct = test_dct
-        cls.memory = cppyy.load_reflection_info(cls.test_dct)
+        cls.test_h = test_h
+        cls.memory = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
         cls.process = psutil.Process(os.getpid())
 

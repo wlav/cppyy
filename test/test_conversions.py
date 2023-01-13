@@ -3,7 +3,8 @@ from pytest import raises
 from .support import setup_make
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("conversionsDict"))
+test_dct = str(currpath.join("conversionsDict.so"))
+test_h = str(currpath.join("conversions.h"))
 
 def setup_module(mod):
     setup_make("conversions")
@@ -12,8 +13,10 @@ def setup_module(mod):
 class TestCONVERSIONS:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h = test_h
         import cppyy
-        cls.conversion = cppyy.load_reflection_info(cls.test_dct)
+        cls.conversion = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_implicit_vector_conversions(self):
         """Test implicit conversions of std::vector"""

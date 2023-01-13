@@ -3,7 +3,8 @@ from pytest import raises, skip
 from .support import setup_make, pylong, ispypy
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("example01Dict"))
+test_dct = str(currpath.join("example01Dict.so"))
+test_h = str(currpath.join("example01.h"))
 
 def setup_module(mod):
     setup_make("example01")
@@ -12,14 +13,17 @@ def setup_module(mod):
 class TestPYTHONIFY:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h = test_h
         import cppyy
-        cls.example01 = cppyy.load_reflection_info(cls.test_dct)
+        cls.example01 = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_load_dictionary_cache(self):
         """Test whether loading a dictionary twice results in the same object"""
 
         import cppyy
-        lib2 = cppyy.load_reflection_info(self.test_dct)
+        lib2 = cppyy.load_library(self.test_dct)
+        cppyy.include(self.test_h)
         assert self.example01 is lib2
 
     def test02_finding_classes(self):
@@ -537,8 +541,10 @@ class TestPYTHONIFY:
 class TestPYTHONIFY_UI:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h
         import cppyy
-        cls.example01 = cppyy.load_reflection_info(cls.test_dct)
+        cls.example01 = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_pythonizations(self):
         """Test addition of user-defined pythonizations"""

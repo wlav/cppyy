@@ -3,7 +3,8 @@ from pytest import raises, skip
 from .support import setup_make, pylong, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("advancedcppDict"))
+test_dct = str(currpath.join("advancedcppDict.so"))
+test_h = str(currpath.join("advancedcpp.h"))
 
 def setup_module(mod):
     setup_make("advancedcpp")
@@ -13,8 +14,10 @@ def setup_module(mod):
 class TestADVANCEDCPP:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h = test_h
         import cppyy
-        cls.advanced = cppyy.load_reflection_info(cls.test_dct)
+        cls.advanced = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_default_arguments(self):
         """Test usage of default arguments"""
@@ -159,7 +162,8 @@ class TestADVANCEDCPP:
         import cppyy
         gbl = cppyy.gbl
 
-        lib2 = cppyy.load_reflection_info("advancedcpp2Dict")
+        lib2 = cppyy.load_library("advancedcpp2")
+        lib2 = cppyy.include("advancedcpp2")
 
         assert gbl.a_ns      is gbl.a_ns
         assert gbl.a_ns.d_ns is gbl.a_ns.d_ns

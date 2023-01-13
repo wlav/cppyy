@@ -4,7 +4,8 @@ from .support import setup_make, ispypy, IS_WINDOWS, IS_MAC_ARM
 
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("fragileDict"))
+test_dct = str(currpath.join("fragileDict.so"))
+test_h = str(currpath.join("fragile.h"))
 
 def setup_module(mod):
     setup_make("fragile")
@@ -13,8 +14,10 @@ def setup_module(mod):
 class TestFRAGILE:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h = test_h
         import cppyy
-        cls.fragile = cppyy.load_reflection_info(cls.test_dct)
+        cls.fragile = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_load_failure(self):
         """Test failure to load dictionary"""
@@ -602,8 +605,10 @@ class TestFRAGILE:
 class TestSIGNALS:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h = test_h
         import cppyy
-        cls.fragile = cppyy.load_reflection_info(cls.test_dct)
+        cls.fragile = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_abortive_signals(self):
         """Conversion from abortive signals to Python exceptions"""

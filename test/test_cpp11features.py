@@ -4,7 +4,8 @@ from .support import setup_make, ispypy
 
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("cpp11featuresDict"))
+test_dct = str(currpath.join("cpp11featuresDict.so"))
+test_h = str(currpath.join("cpp11features.h"))
 
 def setup_module(mod):
     setup_make("cpp11features")
@@ -12,8 +13,10 @@ def setup_module(mod):
 class TestCPP11FEATURES:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h = test_h
         import cppyy
-        cls.cpp11features = cppyy.load_reflection_info(cls.test_dct)
+        cls.cpp11features = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_smart_ptr(self):
         """Usage and access of std::shared/unique_ptr<>"""

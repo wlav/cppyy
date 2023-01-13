@@ -4,7 +4,8 @@ from .support import setup_make, pylong, IS_MAC_ARM
 
 
 currpath = py.path.local(__file__).dirpath()
-test_dct = str(currpath.join("crossinheritanceDict"))
+test_dct = str(currpath.join("crossinheritanceDict.so"))
+test_h = str(currpath.join("crossinheritance.h"))
 
 def setup_module(mod):
     setup_make("crossinheritance")
@@ -13,8 +14,10 @@ def setup_module(mod):
 class TestCROSSINHERITANCE:
     def setup_class(cls):
         cls.test_dct = test_dct
+        cls.test_h = test_h
         import cppyy
-        cls.example01 = cppyy.load_reflection_info(cls.test_dct)
+        cls.example01 = cppyy.load_library(cls.test_dct)
+        cppyy.include(cls.test_h)
 
     def test01_override_function(self):
         """Test ability to override a simple function"""
