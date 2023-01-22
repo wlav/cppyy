@@ -88,8 +88,14 @@ There should not be a reason to call a destructor directly in CPython, but
 PyPy uses a garbage collector and that makes it sometimes useful to destruct
 a C++ object where you want it destroyed.
 Destructors are accessible through the conventional ``__destruct__`` method.
-Accessing an object after it has been destroyed will result in a Python
-``ReferenceError`` exception.
+If a Python-side derived class overrides ``__destruct__``, that method will
+be called when the instance gets deleted in C++.
+The Python destructor, ``__del__``, gets called when the Python proxy goes
+away, which will only delete the C++ instance if owned by Python.
+Note that ``__del__`` is not guaranteed to be called, it may e.g. be skipped
+on program shutdown or because of an outstanding exception.
+Accessing an object after it has been destroyed using ``__destruct__`` will
+result in a Python ``ReferenceError`` exception.
 
 
 `Inheritance`

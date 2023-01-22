@@ -13,7 +13,7 @@ PyPy support lags CPython support.
 2023-01-21: 2.4.2
 -----------------
 
-* Added a generic "cppyy.default" object
+* Added a generic ``cppyy.default`` object
 * Support explicitly created initializer lists as arguments
 * Pass instances by-ref in Numba traces
 * Support non-POD by-value returns in Numba traces
@@ -24,9 +24,9 @@ PyPy support lags CPython support.
 * Added ``nullptr`` comparisons for for typed ``nullptr``
 * Support for ``using`` pointer types as template arguments
 * Walk the full inheritance tree to find the overloads
-* Allow __destruct__ override in Python derived class
-* Allow NULL function pointers to be returned as std::function objects
-* Add Python traceback to C++ exception what()
+* Allow ``__destruct__`` override in Python derived class
+* Allow ``NULL`` function pointers to be returned as ``std::function`` objects
+* Add Python traceback to C++ exception ``what()``
 
 
 2022-10-03: 2.4.1
