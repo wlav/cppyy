@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 2.4.2
--------------
+2023-01-21: 2.4.2
+-----------------
 
 * Added a generic "cppyy.default" object
 * Support explicitly created initializer lists as arguments
