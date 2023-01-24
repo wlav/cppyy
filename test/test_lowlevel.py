@@ -715,3 +715,19 @@ class TestMULTIDIMARRAYS:
             assert foo3.eq(bar)
 
             cppyy.ll.free(bar)
+
+    def test05_char_multidim(self):
+        """Multi-dimensional char arrays"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""\
+        namespace StringArray {
+           char str_array[3][8] = {"s1\0", "s23\0", "s456\0"};
+        }""")
+
+        ns = cppyy.gbl.StringArray
+
+        for i, v in enumerate(("s1", "s23", "s456")):
+            assert len(ns.str_array[i]) == 8
+            assert str(ns.str_array[i])[:len(v)] == v
