@@ -1125,6 +1125,29 @@ class TestTEMPLATES:
         assert ns.testptr
         assert cppyy.gbl.std.vector[ns.testptr]
 
+    def test34_cstring_template_argument(self):
+        """`const char*` use over std::string"""
+
+        import cppyy
+        import ctypes
+
+        cppyy.cppdef(r"""\
+        namespace CStringTemplateArg {
+        template <typename... Args>
+        std::string stringify(Args&&... args) {
+            std::ostringstream o;
+            ((o << args << ' '),...);
+            return o.str();
+        } }""")
+
+        ns = cppyy.gbl.CStringTemplateArg
+
+        assert type(ns.stringify("Alice")) == cppyy.gbl.std.string
+        assert ns.stringify("Alice", "Bob")                          == "Alice Bob "
+        assert ns.stringify(1, 2, 3)                                 == "1 2 3 "
+        assert ns.stringify["const char*"]("Aap")                    == "Aap "
+        assert ns.stringify(ctypes.c_char_p(bytes("Noot", "ascii"))) == "Noot "
+
 
 class TestTEMPLATED_TYPEDEFS:
     def setup_class(cls):
