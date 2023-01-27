@@ -301,7 +301,7 @@ A common idiom has these values subsequently passed on to the entry point of
 e.g. a framework or library.
 Since the type of ``argv`` in particular (``char*[]``) is clunky to work with
 in Python, the low level module contains two convenient helper functions,
- ``ll.argc()`` and ``ll.argv()``, that convert the command line arguments as
+``ll.argc()`` and ``ll.argv()``, that convert the command line arguments as
 provided by Python's ``sys`` module, into typed values that are can be passed
 to by C/C++.
 

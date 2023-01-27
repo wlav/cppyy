@@ -20,7 +20,9 @@ interactive exploration of C++ libraries.
 cppyy delivers this without any language extensions, intermediate languages,
 or the need for boiler-plate hand-written code.
 For design and performance, see this `PyHPC'16 paper`_, albeit that the
-CPython/cppyy performance has been vastly improved since.
+CPython/cppyy performance has been vastly improved since, as well as this
+`CAAS presentation`_.
+For a quick teaser, see `Jason Turner's`_ introduction video.
 
 cppyy is based on `Cling`_, the C++ interpreter, to match Python's dynamism,
 interactivity, and run-time behavior.
@@ -117,6 +119,8 @@ development environments.
 .. _Cling: https://github.com/vgvassilev/cling
 .. _tutorial: https://github.com/wlav/cppyy/blob/master/doc/tutorial/CppyyTutorial.ipynb
 .. _`PyHPC'16 paper`: http://wlav.web.cern.ch/wlav/Cppyy_LavrijsenDutta_PyHPC16.pdf
+.. _`CAAS presentation`: https://www.youtube.com/watch?v=stMD7VDWlVU
+.. _`Jason Turner's`: https://www.youtube.com/watch?v=TL83P77vZ1k
 .. _`Boost`: http://www.boost.org/
 .. _`CPython`: http://python.org
 .. _`PyPy`: http://pypy.org
