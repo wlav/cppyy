@@ -12,6 +12,7 @@ PyPy support lags CPython support.
 master: 3.0.0
 -------------
 
+* Upgrade backend to Cling on top of LLVM 13
 * improve handling of `const char*` as template argument
 
 
