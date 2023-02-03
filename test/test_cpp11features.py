@@ -290,6 +290,19 @@ class TestCPP11FEATURES:
                 for i in range(len(l)):
                     assert v[i].m_int == l[i].m_int
 
+        import cppyy
+
+        cppyy.cppdef(r"""
+        namespace InitializerListTest {
+        std::vector<std::string> foo(const std::initializer_list<std::string>& vals) {
+            return std::vector<std::string>{vals};
+        } }""")
+
+        ns = cppyy.gbl.InitializerListTest
+
+        for l in (['x'], ['x', 'y', 'z']):
+            assert ns.foo(l) == std.vector['std::string'](l)
+
     def test09_lambda_calls(self):
         """Call (global) lambdas"""
 
