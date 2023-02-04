@@ -124,7 +124,7 @@ double global_function(double) {
     return std::exp(1);
 }
 
-int call_int_int(int (*f)(int, int), int i1, int i2) {
+int call_int_int_function(int (*f)(int, int), int i1, int i2) {
     return f(i1, i2);
 }
 
@@ -262,7 +262,7 @@ namespace Namespace {
     def test_functions(self):
         import cppyy
 
-        from cppyy.gbl import global_function, call_int_int, Namespace
+        from cppyy.gbl import global_function, call_int_int_function, Namespace
         assert not(global_function == Namespace.global_function)
 
         assert round(global_function(1.)-2.718281828459045, 8) == 0.
@@ -275,8 +275,8 @@ namespace Namespace {
 
         def add(a, b):
             return a+b
-        assert call_int_int(add, 3, 4) == 7
-        assert call_int_int(lambda x, y: x*y, 3, 7) == 21
+        assert call_int_int_function(add, 3, 4) == 7
+        assert call_int_int_function(lambda x, y: x*y, 3, 7) == 21
 
     def test_inheritance(self):
         import cppyy
