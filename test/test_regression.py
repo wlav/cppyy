@@ -1214,3 +1214,21 @@ class TestREGRESSION:
         arg = ns.TestDictClass([TestPair(ns.TestEnum.Bar, 4), TestPair(ns.TestEnum.Foo, 12)])
         assert ns.TestClass(arg)
 
+    def test41_typedefed_enums(self):
+        """Typedef-ed enums do not have enum tag in declarations"""
+
+        import cppyy
+        cppyy.cppdef("""\
+        namespace TypedefedEnum {
+        typedef enum {
+            MONDAY    = 0,
+            TUESDAY   = 1,
+            WEDNESDAY = 2
+        } Day;
+
+        int func(const Day day) { return (int)day; }
+        }""")
+
+        ns = cppyy.gbl.TypedefedEnum
+
+        assert ns.func(ns.WEDNESDAY) == 2

@@ -9,11 +9,13 @@ level packages, which have their own releases.
 See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
+
 master: 3.0.0
 -------------
 
 * Upgrade backend to Cling on top of LLVM 13
-* improve handling of `const char*` as template argument
+* Improve handling of `const char*` as template argument
+* Fix regression in use of unnamed but typedef'ed enums
 
 
 2023-01-21: 2.4.2
