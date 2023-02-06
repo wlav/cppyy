@@ -156,7 +156,7 @@ gbl.std.move  = _backend.move
 #- add to the dynamic path as needed -----------------------------------------
 import os
 def add_default_paths():
-    libInterOp = gbl.cling.InterOp
+    libInterOp = gbl.InterOp
     gCling = gbl.cling.runtime.gCling
     if os.getenv('CONDA_PREFIX'):
       # MacOS, Linux

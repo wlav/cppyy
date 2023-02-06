@@ -198,7 +198,7 @@ def cppdef(src):
     """Declare C++ source <src> to Cling."""
     with _stderr_capture() as err:
         print(src)
-        errcode = gbl.cling.InterOp.Declare(gbl.cling.runtime.gCling, src)
+        errcode = gbl.InterOp.Declare(gbl.cling.runtime.gCling, src)
     if not errcode == 0 or err.err:
         if 'warning' in err.err.lower() and not 'error' in err.err.lower():
             warnings.warn(err.err, SyntaxWarning)
@@ -231,7 +231,7 @@ def cppexec(stmt):
 def load_library(name):
     """Explicitly load a shared library."""
     with _stderr_capture() as err:
-        InterOp = gbl.cling.InterOp
+        InterOp = gbl.InterOp
         gCling = gbl.cling.runtime.gCling
         result = InterOp.LoadLibrary(gCling, name)
     if result == False:
@@ -242,7 +242,7 @@ def load_library(name):
 def include(header):
     """Load (and JIT) header file <header> into Cling."""
     with _stderr_capture() as err:
-        errcode = gbl.cling.InterOp.Declare(gbl.cling.runtime.gCling, '#include "%s"' % header)
+        errcode = gbl.InterOp.Declare(gbl.cling.runtime.gCling, '#include "%s"' % header)
     if not errcode == 0:
         raise ImportError('Failed to load header file "%s"%s' % (header, err.err))
     return True
@@ -250,7 +250,7 @@ def include(header):
 def c_include(header):
     """Load (and JIT) header file <header> into Cling."""
     with _stderr_capture() as err:
-        errcode = gbl.cling.InterOp.Declare(gbl.cling.runtime.gCling, """extern "C" {
+        errcode = gbl.InterOp.Declare(gbl.cling.runtime.gCling, """extern "C" {
 #include "%s"
 }""" % header)
     if not errcode == 0:
@@ -261,7 +261,7 @@ def add_include_path(path):
     """Add a path to the include paths available to Cling."""
     if not os.path.isdir(path):
         raise OSError('No such directory: %s' % path)
-    gbl.cling.InterOp.AddIncludePath(gbl.cling.runtime.gCling, path)
+    gbl.InterOp.AddIncludePath(gbl.cling.runtime.gCling, path)
 
 def add_library_path(path):
     """Add a path to the library search paths available to Cling."""
