@@ -582,12 +582,21 @@ class TestFRAGILE:
           # missing return statement
             cppyy.cppdef("""\
             namespace fragile {
-                int add42d(double d) { d + 42.; }
+                double add42d(double d) { d + 42.; }
             }""")
 
         assert len(w) == 1
         assert issubclass(w[-1].category, SyntaxWarning)
         assert "return" in str(w[-1].message)
+
+      # mix of error and warning
+        with raises(SyntaxError):
+          # redefine symbol, leading to duplicate
+            cppyy.cppdef("""\
+            namespace fragile {
+                float add42f(float d) { d + 42.f; }
+                int add42(int i) { return i + 42; }
+            }""")
 
 
 class TestSIGNALS:

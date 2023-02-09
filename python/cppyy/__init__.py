@@ -199,7 +199,7 @@ def cppdef(src):
     with _stderr_capture() as err:
         errcode = gbl.gInterpreter.Declare(src)
     if not errcode or err.err:
-        if 'warning' in err.err.lower():
+        if 'warning' in err.err.lower() and not 'error' in err.err.lower():
             warnings.warn(err.err, SyntaxWarning)
             return True
         raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
