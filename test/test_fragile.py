@@ -2,6 +2,7 @@ import py, os, sys
 from pytest import raises
 from .support import setup_make, ispypy, IS_WINDOWS, IS_MAC_ARM
 
+
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("fragileDict"))
 
@@ -562,6 +563,31 @@ class TestFRAGILE:
             return
 
         cppyy.include('sanitizer/asan_interface.h')
+
+    def test25_cppdef_error_reporting(self):
+        """Check error reporting of cppyy.cppdef"""
+
+        import cppyy, warnings
+
+        assert cppyy.gbl.fragile.add42(1) == 43     # brings in symbol from library
+
+        with raises(SyntaxError):
+          # redefine symbol, leading to duplicate
+            cppyy.cppdef("""\
+            namespace fragile {
+                int add42(int i) { return i + 42; }
+            }""")
+
+        with warnings.catch_warnings(record=True) as w:
+          # missing return statement
+            cppyy.cppdef("""\
+            namespace fragile {
+                int add42d(double d) { d + 42.; }
+            }""")
+
+        assert len(w) == 1
+        assert issubclass(w[-1].category, SyntaxWarning)
+        assert "return" in str(w[-1].message)
 
 
 class TestSIGNALS:

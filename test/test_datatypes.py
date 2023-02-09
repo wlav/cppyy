@@ -1215,9 +1215,9 @@ class TestDATATYPES:
         void* vvv[3][5][7];
         struct Init {
           Init() {
-            for (int i = 0; i < 3; ++i) {
-              for (int j = 0; j < 5; ++j) {
-                for (int k = 0; k < 7; ++k)
+            for (size_t i = 0; i < 3; ++i) {
+              for (size_t j = 0; j < 5; ++j) {
+                for (size_t k = 0; k < 7; ++k)
                   vvv[i][j][k] = (void*)(i+j+k);
               }
             }
@@ -2104,10 +2104,10 @@ class TestDATATYPES:
 
         cppyy.cppdef("""\
         namespace StructWithCChar {
-        typedef struct BufInfo {
+        typedef struct {
             const char* name;
             int val;
-        }; }""")
+        } BufInfo; }""")
 
         ns = cppyy.gbl.StructWithCChar
 
@@ -2157,11 +2157,11 @@ class TestDATATYPES:
 
         cppyy.cppdef("""\
         namespace StructWithBuf {
-        typedef struct BufInfo {
+        typedef struct {
             double* data1;
             double* data2;
             int size;
-        }; }""")
+        } BufInfo; }""")
 
         ns = cppyy.gbl.StructWithBuf
 

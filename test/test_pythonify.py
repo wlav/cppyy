@@ -407,7 +407,7 @@ class TestPYTHONIFY:
         };
 
         struct B {
-            B() = default;
+            B() = delete;
             B(const A& in_A, const A& out_A) : fVal(42), fIn(in_A), fOut(out_A) {}
             B(int val, const A& in_A, const A& out_A) : fVal(val), fIn(in_A), fOut(out_A) {}
             int fVal;

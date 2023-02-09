@@ -198,7 +198,10 @@ def cppdef(src):
     """Declare C++ source <src> to Cling."""
     with _stderr_capture() as err:
         errcode = gbl.gInterpreter.Declare(src)
-    if not errcode:
+    if not errcode or err.err:
+        if 'warning' in err.err.lower():
+            warnings.warn(err.err, SyntaxWarning)
+            return True
         raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
     return True
 
