@@ -58,7 +58,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
     stl_sequence_types   = ['std::vector', 'std::list', 'std::set', 'std::deque']
     stl_unrolled_types   = ['std::pair']
     stl_fixed_size_types = ['std::array']
-    stl_mapping_types    = ['std::map']
+    stl_mapping_types    = ['std::map', 'std::unordered_map']
 
     def __init__(self, name):
         self.__name__     = name

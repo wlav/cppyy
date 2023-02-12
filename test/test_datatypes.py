@@ -2302,3 +2302,29 @@ class TestDATATYPES:
         }""")
         #ns.bar(ns.Foo.FOO)
 
+    def test48_bool_typemap(self):
+        """Test mapping of bool type typedefs"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        struct BoolTypeMapTest {
+            typedef bool BoolType;
+        };
+        """)
+
+        bt = cppyy.gbl.BoolTypeMapTest.BoolType
+
+        assert bt.__name__ == 'BoolType'
+        assert bt.__cpp_name__ == 'BoolTypeMapTest::BoolType'
+        assert bt(1)
+        assert bt(1) == True
+        assert bt(1) != False
+        assert bt(1) is True
+        assert bt() == bt(0)
+        assert not bt()
+        assert bt() == False
+        assert bt() != True
+        assert bt() is False
+        assert str(bt(1)) == 'True'
+        assert str(bt(0)) == 'False'

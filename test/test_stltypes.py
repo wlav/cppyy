@@ -1117,28 +1117,37 @@ class TestSTLMAP:
         import cppyy
         std = cppyy.gbl.std
 
-        a = std.map(int, int)()
-        for i in range(self.N):
-            a[i] = i
-            assert a[i] == i
+        for mtype in (std.map, std.unordered_map):
+            a = mtype(int, int)()
+            for i in range(self.N):
+                a[i] = i
+                assert a[i] == i
 
-        assert len(a) == self.N
+            assert len(a) == self.N
 
-        for key, value in a:
-            assert key == value
-        assert key   == self.N-1
-        assert value == self.N-1
+            itercount = 0
+            for key, value in a:
+                assert key == value
+                itercount += 1
+            assert itercount == len(a)
+            if mtype == std.map:            # ordered
+                assert key   == self.N-1
+                assert value == self.N-1
 
-        # add a variation, just in case
-        m = std.map(int, int)()
-        for i in range(self.N):
-            m[i] = i*i
-            assert m[i] == i*i
+            # add a variation, just in case
+            m = mtype(int, int)()
+            for i in range(self.N):
+                m[i] = i*i
+                assert m[i] == i*i
 
-        for key, value in m:
-            assert key*key == value
-        assert key   == self.N-1
-        assert value == (self.N-1)*(self.N-1)
+            itercount = 0
+            for key, value in m:
+                assert key*key == value
+                itercount += 1
+            assert itercount == len(m)
+            if mtype == std.map:            # ordered
+                assert key   == self.N-1
+                assert value == (self.N-1)*(self.N-1)
 
     def test02_keyed_maptype(self):
         """Test access to a map<std::string,int>"""
@@ -1146,12 +1155,13 @@ class TestSTLMAP:
         import cppyy
         std = cppyy.gbl.std
 
-        a = std.map(std.string, int)()
-        assert not a
-        for i in range(self.N):
-            a[str(i)] = i
-            assert a[str(i)] == i
-        assert a
+        for mtype in (std.map, std.unordered_map):
+            a = mtype(std.string, int)()
+            assert not a
+            for i in range(self.N):
+                a[str(i)] = i
+                assert a[str(i)] == i
+            assert a
 
         assert len(a) == self.N
 
@@ -1161,10 +1171,11 @@ class TestSTLMAP:
         import cppyy
         std = cppyy.gbl.std
 
-        m = std.map(int, int)()
-        assert not m
-        for key, value in m:
-            pass
+        for mtype in (std.map, std.unordered_map):
+            m = mtype(int, int)()
+            assert not m
+            for key, value in m:
+                pass
 
     def test04_unsignedvalue_typemap_types(self):
         """Test assignability of maps with unsigned value types"""
@@ -1172,52 +1183,26 @@ class TestSTLMAP:
         import cppyy, math, sys
         std = cppyy.gbl.std
 
-        mui = std.map(str, 'unsigned int')()
-        mui['one'] = 1
-        assert mui['one'] == 1
-        raises(ValueError, mui.__setitem__, 'minus one', -1)
+        for mtype in (std.map, std.unordered_map):
+            mui = mtype(str, 'unsigned int')()
+            mui['one'] = 1
+            assert mui['one'] == 1
+            raises(ValueError, mui.__setitem__, 'minus one', -1)
 
-        # UInt_t is always 32b, maxvalue is sys.maxint/maxsize and follows system int
-        maxint32 = int(math.pow(2,31)-1)
-        mui['maxint'] = maxint32 + 3
-        assert mui['maxint'] == maxint32 + 3
+            # UInt_t is always 32b, maxvalue is sys.maxint/maxsize and follows system int
+            maxint32 = int(math.pow(2,31)-1)
+            mui['maxint'] = maxint32 + 3
+            assert mui['maxint'] == maxint32 + 3
 
-        mul = std.map(str, 'unsigned long')()
-        mul['two'] = 2
-        assert mul['two'] == 2
-        mul['maxint'] = maxvalue + 3
-        assert mul['maxint'] == maxvalue + 3
+            mul = mtype(str, 'unsigned long')()
+            mul['two'] = 2
+            assert mul['two'] == 2
+            mul['maxint'] = maxvalue + 3
+            assert mul['maxint'] == maxvalue + 3
 
-        raises(ValueError, mul.__setitem__, 'minus two', -2)
+            raises(ValueError, mul.__setitem__, 'minus two', -2)
 
-    def test05_bool_typemap(self):
-        """Test mapping of bool type typedefs"""
-
-        import cppyy
-
-        cppyy.cppdef("""
-        struct BoolTypeMapTest {
-            typedef bool BoolType;
-        };
-        """)
-
-        bt = cppyy.gbl.BoolTypeMapTest.BoolType
-
-        assert bt.__name__ == 'BoolType'
-        assert bt.__cpp_name__ == 'BoolTypeMapTest::BoolType'
-        assert bt(1)
-        assert bt(1) == True
-        assert bt(1) != False
-        assert bt(1) is True
-        assert bt() == bt(0)
-        assert not bt()
-        assert bt() == False
-        assert bt() != True
-        assert bt() is False
-        assert str(bt(1)) == 'True'
-        assert str(bt(0)) == 'False'
-
-    def test06_STL_like_class_indexing_overloads(self):
+    def test05_STL_like_class_indexing_overloads(self):
         """Test overloading of operator[] in STL like class"""
 
         import cppyy
@@ -1227,7 +1212,110 @@ class TestSTLMAP:
         assert a["some string" ] == 'string'
         assert a[3.1415] == 'double'
 
-    def test07_STL_like_class_iterators(self):
+    def test06_initialize_from_dict(self):
+        """Test std::map initializion from Python dict"""
+
+        import cppyy
+        std = cppyy.gbl.std
+
+        for mtype in (std.map, std.unordered_map):
+            m = mtype[str, int]({'1' : 1, '2' : 2})
+
+            assert m['1'] == 1
+            assert m['2'] == 2
+
+            with raises(TypeError):
+                m = mtype[int, str]({'1' : 1, '2' : 2})
+
+    def test07_map_cpp17_style(self):
+        """C++17 style initialization of std::map"""
+
+        if ispypy:
+            py.test.skip('emulated class crash')
+
+        import cppyy
+        std = cppyy.gbl.std
+
+        for mtype in (std.map, std.unordered_map):
+            m = mtype({'1': 2, '2':1})
+            assert m['1'] == 2
+            assert m['2'] == 1
+
+    def test08_map_derived_objects(self):
+        """Enter derived objects through an initializer list"""
+
+        import cppyy
+        std = cppyy.gbl.std
+
+        cppyy.cppdef("""\
+        namespace MapInitializer {
+        class Base {
+        public:
+            virtual ~Base() {}
+        };
+
+        class Derived : public Base { };
+        } """)
+
+        ns = cppyy.gbl.MapInitializer
+
+        for mtype in (std.map, std.unordered_map):
+          # dictionary style initializer; allow derived through assignment (this may slice
+          # but that is the choice of the program; in this case it's fine as both are the
+          # same size
+            m = mtype['std::string', ns.Base]({"aap": ns.Base(), "noot": ns.Base()})
+            assert len(m) == 2
+
+            m = mtype['std::string', ns.Base]({"aap": ns.Derived(), "noot": ns.Derived()})
+            assert len(m) == 2
+
+          # similar but now initialize through the initializer_list of pairs style
+            m = mtype['std::string', ns.Base]((("aap", ns.Base()),))
+            assert len(m) == 1
+            m = mtype['std::string', ns.Base]([("aap", ns.Base()),])   # list instead of tuple
+            assert len(m) == 1
+
+            m = mtype['std::string', ns.Base]((("aap", ns.Base()), ("noot", ns.Base())))
+            assert len(m) == 2
+
+            m = mtype['std::string', ns.Base]((("aap", ns.Derived()), ("noot", ns.Derived())))
+            assert len(m) == 2
+
+
+class TestSTLITERATOR:
+    def setup_class(cls):
+        cls.test_dct = test_dct
+        import cppyy
+        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
+
+    def test01_builtin_vector_iterators(self):
+        """Test iterator comparison with operator== reflected"""
+
+        import cppyy
+        from cppyy.gbl import std
+
+        v = std.vector(int)()
+        v.resize(1)
+
+        b1, e1 = v.begin(), v.end()
+        b2, e2 = v.begin(), v.end()
+
+        assert b1 == b2
+        assert not b1 != b2
+
+        assert e1 == e2
+        assert not e1 != e2
+
+        assert not b1 == e1
+        assert b1 != e1
+
+        b1.__preinc__()
+        assert not b1 == b2
+        assert b1 == e2
+        assert b1 != b2
+        assert b1 == e2
+
+    def test02_STL_like_class_iterators(self):
         """Test the iterator protocol mapping for an STL like class"""
 
         import cppyy
@@ -1265,7 +1353,7 @@ class TestSTLMAP:
             assert len(b) == 3
             assert sum(b) == 6
 
-    def test08_stllike_preinc(self):
+    def test03_stllike_preinc(self):
         """STL-like class with preinc by-ref returns"""
 
         import cppyy
@@ -1304,7 +1392,7 @@ class TestSTLMAP:
         assert next(it).value == 1
         assert next(it).value == 2
 
-    def test09_stllike_confusing_name(self):
+    def test04_stllike_confusing_name(self):
         """Having "iterator" in the container name used to fail"""
 
         import cppyy
@@ -1354,104 +1442,6 @@ class TestSTLMAP:
         m = a.members()
 
         assert [x for x in m] == [1, 2, 3, 4]
-
-    def test10_initialize_from_dict(self):
-        """Test std::map initializion from Python dict"""
-
-        import cppyy
-
-        m = cppyy.gbl.std.map[str, int]({'1' : 1, '2' : 2})
-
-        assert m['1'] == 1
-        assert m['2'] == 2
-
-        with raises(TypeError):
-            m = cppyy.gbl.std.map[int, str]({'1' : 1, '2' : 2})
-
-    def test11_map_cpp17_style(self):
-        """C++17 style initialization of std::map"""
-
-        if ispypy:
-            py.test.skip('emulated class crash')
-
-        import cppyy
-
-        m = cppyy.gbl.std.map({'1': 2, '2':1})
-        assert m['1'] == 2
-        assert m['2'] == 1
-
-    def test12_map_derived_objects(self):
-        """Enter derived objects through an initializer list"""
-
-        import cppyy
-
-        cppyy.cppdef("""\
-        namespace MapInitializer {
-        class Base {
-        public:
-            virtual ~Base() {}
-        };
-
-        class Derived : public Base { };
-        } """)
-
-        ns = cppyy.gbl.MapInitializer
-        std = cppyy.gbl.std
-
-      # dictionary style initializer; allow derived through assignment (this may slice
-      # but that is the choice of the program; in this case it's fine as both are the
-      # same size
-        m = std.map['std::string', ns.Base]({"aap": ns.Base(), "noot": ns.Base()})
-        assert len(m) == 2
-
-        m = std.map['std::string', ns.Base]({"aap": ns.Derived(), "noot": ns.Derived()})
-        assert len(m) == 2
-
-      # similar but now initialize through the initializer_list of pairs style
-        m = std.map['std::string', ns.Base]((("aap", ns.Base()),))
-        assert len(m) == 1
-        m = std.map['std::string', ns.Base]([("aap", ns.Base()),])   # list instead of tuple
-        assert len(m) == 1
-
-        m = std.map['std::string', ns.Base]((("aap", ns.Base()), ("noot", ns.Base())))
-        assert len(m) == 2
-
-        m = std.map['std::string', ns.Base]((("aap", ns.Derived()), ("noot", ns.Derived())))
-        assert len(m) == 2
-
-
-class TestSTLITERATOR:
-    def setup_class(cls):
-        cls.test_dct = test_dct
-        import cppyy
-        cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
-
-    def test01_builtin_vector_iterators(self):
-        """Test iterator comparison with operator== reflected"""
-
-        import cppyy
-        from cppyy.gbl import std
-
-        v = std.vector(int)()
-        v.resize(1)
-
-        b1, e1 = v.begin(), v.end()
-        b2, e2 = v.begin(), v.end()
-
-        assert b1 == b2
-        assert not b1 != b2
-
-        assert e1 == e2
-        assert not e1 != e2
-
-        assert not b1 == e1
-        assert b1 != e1
-
-        b1.__preinc__()
-        assert not b1 == b2
-        assert b1 == e2
-        assert b1 != b2
-        assert b1 == e2
 
 
 class TestSTLARRAY:
