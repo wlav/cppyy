@@ -18,7 +18,7 @@ class TestDATATYPES:
         cls.datatypes = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
         cls.N = 5 #cppyy.gbl.N
-        at_least_17 = False #201402 < cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;")
+        at_least_17 = False #201402 < cppyy.gbl.cling.runtime.gCling.process("__cplusplus;")
         cls.has_byte     = at_least_17
         cls.has_optional = at_least_17
 

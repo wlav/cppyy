@@ -65,13 +65,13 @@ class TestCONCURRENT:
             bool _stopit = false; volatile bool* stopit = &_stopit;
         }""")
 
-        cppyy.gbl.gInterpreter.ProcessLine.__release_gil__ = True
+        cppyy.gbl.cling.runtime.gCling.process.__release_gil__ = True
         cmd = r"""\
            *test12_timeout::islive = true;
            while (!*test12_timeout::stopit);
         """
 
-        t = threading.Thread(target=cppyy.gbl.gInterpreter.ProcessLine, args=(cmd,))
+        t = threading.Thread(target=cppyy.gbl.cling.runtime.gCling.process, args=(cmd,))
         t.start()
 
       # have to give ProcessLine() time to actually start doing work

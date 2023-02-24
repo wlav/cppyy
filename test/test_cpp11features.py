@@ -317,7 +317,8 @@ class TestCPP11FEATURES:
         assert cppyy.gbl.gMyLambda(2)  == 42
         assert cppyy.gbl.gMyLambda(40) == 80
 
-        if cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;") >= 201402:
+        # FIXME: Need to get the output of process somehow
+        if cppyy.gbl.cling.runtime.gCling.process("__cplusplus;") >= 201402:
             cppyy.cppdef("auto gime_a_lambda1() { return []() { return 42; }; }")
             l1 = cppyy.gbl.gime_a_lambda1()
             assert l1
@@ -338,7 +339,8 @@ class TestCPP11FEATURES:
 
         import cppyy
 
-        if 201703 <= cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;"):
+        # FIXME: Need to get the output of process somehow
+        if 201703 <= cppyy.gbl.cling.runtime.gCling.process("__cplusplus;"):
             assert cppyy.gbl.std.optional
             assert cppyy.gbl.std.nullopt
 

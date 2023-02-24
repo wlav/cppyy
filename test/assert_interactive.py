@@ -14,4 +14,4 @@ try:
     assert g.std
 except ImportError:
  # full lazy lookup available
-    assert gInterpreter
+    assert cling.runtime.gCling
