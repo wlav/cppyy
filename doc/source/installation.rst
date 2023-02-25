@@ -40,8 +40,10 @@ To install with ``pip`` through `PyPI`_, it is recommend to use
 `virtualenv`_ (or module `venv`_ for modern pythons).
 The use of virtualenv prevents pollution of any system directories and allows
 you to wipe out the full installation simply by removing the virtualenv
+First install virtualenv package that allows you to create virtual environment.
 created directory ("WORK" in this example)::
-
+  
+  $ python -m pip install virtualenv
   $ virtualenv WORK
   $ source WORK/bin/activate
   (WORK) $ python -m pip install cppyy
