@@ -36,15 +36,29 @@ and install from the conda-forge channel::
   (WORK) $ conda install -c conda-forge cppyy
   (WORK) [current compiler] $
 
-To install with ``pip`` through `PyPI`_, it is recommend to use
-`virtualenv`_ (or module `venv`_ for modern pythons).
-The use of virtualenv prevents pollution of any system directories and allows
-you to wipe out the full installation simply by removing the virtualenv
+
+To install with ``pip`` through `PyPI`_, use `venv`.
+The use of virtual environment (`venv`) prevents pollution of any system directories and allows
+you to wipe out the full installation simply by removing the virtual environment (`venv`)
 created directory ("WORK" in this example)::
 
-  $ virtualenv WORK
-  $ source WORK/bin/activate
+  $ python -m venv WORK 
+  $ WORK\Scripts\activate
   (WORK) $ python -m pip install cppyy
+  (WORK) $
+
+.. note::  
+  If you are using python version less than 3.3, you should use `virtualenv` instead of `venv`.
+  First install virtualenv package that allows you to create virtual environment.
+
+  $ python -m pip install virtualenv 
+
+  $ virtualenv WORK
+
+  $ source WORK/bin/activate
+
+  (WORK) $ python -m pip install cppyy
+
   (WORK) $
 
 If you use the ``--user`` option to ``pip`` and use ``pip`` directly on the
