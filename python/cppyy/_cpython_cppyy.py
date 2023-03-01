@@ -60,10 +60,11 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
     stl_fixed_size_types = ['std::array']
     stl_mapping_types    = ['std::map', 'std::unordered_map']
 
-    def __init__(self, name):
+    def __init__(self, name, scope):
         self.__name__     = name
         self.__cpp_name__ = name
         self._instantiations = dict()
+        self.__scope__    = scope
 
     def __repr__(self):
         return "<cppyy.Template '%s' object at %s>" % (self.__name__, hex(id(self)))
