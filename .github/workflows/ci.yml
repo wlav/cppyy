@@ -1,0 +1,243 @@
+name: Main
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  release:
+    types: [published]
+  schedule:
+    - cron: '30 20 * * *' # Warning: Timezone dep - 20:00 is 1:00
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubu22-gcc9-clang13
+            os: ubuntu-22.04
+            compiler: gcc-9
+            clang-runtime: '13'
+#          - name: ubu22-gcc9-clang14
+#            os: ubuntu-22.04
+#            compiler: gcc-9
+#            clang-runtime: '14'
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Save PR Info
+      run: |
+        mkdir -p ./pr
+        echo ${{ github.event.number }} > ./pr/NR
+        echo ${{ github.repository }} > ./pr/REPO
+        
+        export CLING_HASH=$(git ls-remote https://github.com/root-project/cling.git HEAD| tr '\t' '-')
+        # FIXME: We need something like cling-llvm to bump automatically...
+        export LLVM_HASH=$(git ls-remote https://github.com/root-project/llvm-project.git cling-llvm13 | tr '\t' '-')
+        echo "CLING_HASH=$CLING_HASH" >> $GITHUB_ENV
+        echo "LLVM_HASH=$LLVM_HASH" >> $GITHUB_ENV
+        
+    - uses: nelonoel/branch-name@v1.0.1
+    - name: Setup compiler on Linux
+      if: runner.os == 'Linux'
+      run: |
+        # https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
+        vers="${compiler#*-}"
+        os_codename="`cat /etc/os-release | grep UBUNTU_CODENAME | cut -d = -f 2`"
+        sudo apt update
+        if [[ "${{ matrix.compiler }}" == *"gcc"* ]]; then
+          sudo apt install -y gcc-${vers} g++-${vers} lld
+          echo "CC=gcc-${vers}" >> $GITHUB_ENV
+          echo "CXX=g++-${vers}" >> $GITHUB_ENV
+        else
+          if ! sudo apt install -y clang-${vers}; then
+            curl https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+            echo "deb https://apt.llvm.org/${os_codename}/ llvm-toolchain-${os_codename}-${vers} main" | sudo tee -a /etc/apt/sources.list
+            sudo apt update
+            sudo apt install -y clang-${vers}
+          fi
+          echo "CC=clang-${vers}" >> $GITHUB_ENV
+          echo "CXX=clang++-${vers}" >> $GITHUB_ENV
+        fi
+      env:
+        compiler: ${{ matrix.compiler }}
+    - name: Install deps on Linux
+      if: runner.os == 'Linux'
+      run: |
+        # Install deps
+        sudo apt-get update
+        sudo apt-get install git g++ debhelper devscripts gnupg python3
+        conda install -y -q -c conda-forge \
+          distro \
+          pytest
+    - name: Restore Cache LLVM/Clang runtime build directory
+      uses: actions/cache/restore@v3
+      id: cache
+      with:
+        path: |
+          llvm-project/
+          cling/
+        #key: ...-.x-patch-${{ hashFiles('patches/llvm/*') }}
+        #key: ${{ env.CLING_HASH }}-${{ env.LLVM_HASH }}-${{ runner.os }}-${{ matrix.os }}-${{ matrix.compiler }}-clang-${{ matrix.clang-runtime }}.x
+        key: ${{ env.CLING_HASH }}-${{ runner.os }}-${{ matrix.os }}-${{ matrix.compiler }}-clang-${{ matrix.clang-runtime }}.x
+    - name: Build Cling on Linux if the cache is invalid
+      if: ${{ runner.os == 'Linux' && steps.cache.outputs.cache-hit != 'true' }}
+      run: |
+        #if [[ "${{ steps.cling-build-cache.outputs.cache-hit }}" != "true" ]]; then
+        git clone --depth=1 https://github.com/root-project/cling.git
+        git clone --depth=1 -b cling-llvm13 https://github.com/root-project/llvm-project.git
+        cd llvm-project
+        mkdir build
+        cd build
+        cmake -DLLVM_ENABLE_PROJECTS=clang                  \
+              -DLLVM_EXTERNAL_PROJECTS=cling                \
+              -DLLVM_EXTERNAL_CLING_SOURCE_DIR=../../cling  \
+              -DLLVM_TARGETS_TO_BUILD="host;NVPTX"          \
+              -DCMAKE_BUILD_TYPE=Release                    \
+              -DLLVM_ENABLE_ASSERTIONS=ON                   \
+              -DLLVM_USE_LINKER=lld                         \
+              -DCLANG_ENABLE_STATIC_ANALYZER=OFF            \
+              -DCLANG_ENABLE_ARCMT=OFF                      \
+              -DCLANG_ENABLE_FORMAT=OFF                     \
+              -DCLANG_ENABLE_BOOTSTRAP=OFF                  \
+              ../llvm
+        cmake --build . --target clang --parallel $(nproc --all)
+        cmake --build . --target cling --parallel $(nproc --all)
+        cmake --build . --target libcling --parallel $(nproc --all)
+        # Now build gtest.a and gtest_main for InterOp to run its tests.
+        cmake --build . --target gtest_main --parallel $(nproc --all)
+        cd ../../
+        #fi
+    - name: Save Cache LLVM/Clang runtime build directory
+      uses: actions/cache/save@v3
+      if: ${{ steps.cache.outputs.cache-hit != 'true' }}
+      with:
+        path: |
+          llvm-project/
+          cling/
+        key: ${{ steps.cache.outputs.cache-primary-key }}
+    - name: Build and Install InterOp on Linux
+      if: runner.os == 'Linux'
+      run: |
+        # Build InterOp next to cling and llvm-project.
+        LLVM_DIR="$(realpath llvm-project)"
+        LLVM_BUILD_DIR="$(realpath llvm-project/build)"
+        CLING_DIR="$(realpath cling)"
+        CLING_BUILD_DIR="$(realpath cling/build)"
+        CPLUS_INCLUDE_PATH="${CLING_DIR}/tools/cling/include:${CLING_BUILD_DIR}/include:${LLVM_DIR}/llvm/include:${LLVM_DIR}/clang/include:${LLVM_BUILD_DIR}/include:${LLVM_BUILD_DIR}/tools/clang/include"
+        git clone https://github.com/compiler-research/InterOp.git
+        cd InterOp
+        pwd
+        mkdir build install
+        export INTEROP_DIR="$(realpath install)"
+        cd build
+        cmake -DUSE_CLING=ON -DCling_DIR=$LLVM_BUILD_DIR -DCMAKE_INSTALL_PREFIX=$INTEROP_DIR ../
+        #cmake --build . --target check-interop --parallel $(nproc --all)
+        cmake --build . --target install --parallel $(nproc --all)
+        cd ../..
+        # We need INTEROP_DIR, LLVM_BUILD_DIR and CPLUS_INCLUDE_PATH later
+        echo "INTEROP_DIR=$INTEROP_DIR" >> $GITHUB_ENV
+        echo "LLVM_BUILD_DIR=$LLVM_BUILD_DIR" >> $GITHUB_ENV
+        echo "CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH" >> $GITHUB_ENV
+    - name: Build and Install cppyy-backend on Linux
+      if: runner.os == 'Linux'
+      run: |
+        # Install cppyy-backend
+        git clone https://github.com/compiler-research/cppyy-backend.git
+        cd cppyy-backend
+        mkdir python/cppyy_backend/lib build && cd build
+        cmake -DInterOp_DIR=$INTEROP_DIR ..
+        cmake --build . --parallel $(nproc --all)
+        cp libcppyy-backend.so ../python/cppyy_backend/lib/
+        cp $LLVM_BUILD_DIR/lib/libcling.so ../python/cppyy_backend/lib/
+        #
+        cd ../python
+        export CB_PYTHON_DIR=$PWD
+        cd ../..
+        # We need CB_PYTHON_DIR later
+        echo "CB_PYTHON_DIR=$CB_PYTHON_DIR" >> $GITHUB_ENV
+    - name: Install CPyCppyy on Linux
+      if: runner.os == 'Linux'
+      run: |
+        # Setup virtual environment
+        python3 -m venv .venv
+        source .venv/bin/activate
+        # Install CPyCppyy
+        git clone https://github.com/compiler-research/CPyCppyy.git
+        cd CPyCppyy
+        mkdir build && cd build
+        cmake ..
+        cmake --build . --parallel $(nproc --all)
+        #
+        export CPYCPPYY_DIR=$PWD
+        cd ../..
+        # We need CPYCPPYY_DIR later
+        echo "CPYCPPYY_DIR=$CPYCPPYY_DIR" >> $GITHUB_ENV
+    - name: Install cppyy on Linux
+      if: runner.os == 'Linux'
+      run: |
+        # source virtual environment
+        source .venv/bin/activate
+        # Install cppyy
+        python -m pip install --upgrade . --no-deps
+    - name: Run cppyy on Linux
+      if: runner.os == 'Linux'
+      run: |
+        # Run cppyy
+        source .venv/bin/activate
+        export PYTHONPATH=$PYTHONPATH:$CPYCPPYY_DIR:$CB_PYTHON_DIR
+        python -c "import cppyy"
+        # We need PYTHONPATH later
+        echo "PYTHONPATH=$PYTHONPATH" >> $GITHUB_ENV
+    - name: Run the tests on Linux
+      continue-on-error: true
+      if: runner.os == 'Linux'
+      run: |
+        # Run the tests
+        source .venv/bin/activate
+        cd cppyy/test
+        make all || true
+        python -m pip install --upgrade pip
+        python -m pip install pytest
+        export PASSED=0
+        export NO_OF_TESTS=0
+        export SETUP_PLAN=$(python -m pytest --setup-plan | grep -o -P '(?<=test\/).*?(?=\ \(fixtures)')
+        echo ::group::Test Status
+        set +e
+        for test in ${SETUP_PLAN} ; do
+          NO_OF_TESTS=$((NO_OF_TESTS+1))
+          (
+            python -m pytest -s $test >> test.log 2>&1
+          )
+          if [[ $? -eq 0 ]]; then
+            PASSED=$((PASSED+1))
+            echo "$test PASSED"
+          else
+            echo "$test FAILED"
+          fi
+        done
+        set -e
+        echo ::endgroup::
+        echo "TEST SUMMARY: $PASSED out of $NO_OF_TESTS tests passed"
+        echo ::group::Test Logs
+        cat test.log
+        echo ::endgroup::
+        if [[ $PASSED -ne $NO_OF_TESTS ]]; then
+          exit 1
+        fi
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+      # When debugging increase to a suitable value!
