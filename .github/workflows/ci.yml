@@ -207,7 +207,7 @@ jobs:
       run: |
         # Run the tests
         source .venv/bin/activate
-        cd cppyy/test
+        cd test
         make all || true
         python -m pip install --upgrade pip
         python -m pip install pytest
