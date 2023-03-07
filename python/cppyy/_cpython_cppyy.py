@@ -63,6 +63,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
     def __init__(self, name):
         self.__name__     = name
         self.__cpp_name__ = name
+        self._instantiations = dict()
 
     def __repr__(self):
         return "<cppyy.Template '%s' object at %s>" % (self.__name__, hex(id(self)))
@@ -72,6 +73,12 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
         if args and type(args[0]) is tuple:
             args = args[0]
 
+      # if already instantiated, return the existing class
+        try:
+            return self._instantiations[args]
+        except KeyError:
+            pass
+
       # construct the type name from the types or their string representation
         newargs = [self.__name__]
         for arg in args:
@@ -79,6 +86,9 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
                 arg = ','.join(map(lambda x: x.strip(), arg.split(',')))
             newargs.append(arg)
         pyclass = _backend.MakeCppTemplateClass(*newargs)
+
+      # memoize the class to prevent spurious lookups/re-pythonizations
+        self._instantiations[args] = pyclass
 
       # special case pythonization (builtin_map is not available from the C-API)
         if 'push_back' in pyclass.__dict__ and not '__iadd__' in pyclass.__dict__:
