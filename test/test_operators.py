@@ -14,7 +14,6 @@ class TestOPERATORS:
         cls.test_dct = test_dct
         import cppyy
         cls.operators = cppyy.load_reflection_info(cls.test_dct)
-        cls.N = cppyy.gbl.N
 
     def teardown_method(self, meth):
         import gc
