@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, IS_WINDOWS, ispypy
 
 
@@ -24,7 +24,7 @@ class TestREGRESSION:
         qtpath = "/usr/include/qt5"
         kdcraw_h = "/usr/include/KF5/KDCRAW/kdcraw/kdcraw.h"
         if not os.path.isdir(qtpath) or not os.path.exists(kdcraw_h):
-            py.test.skip("no KDE/Qt found, skipping test01_kdcraw")
+            skip("no KDE/Qt found, skipping test01_kdcraw")
 
         # need to resolve qt_version_tag for the incremental compiler; since
         # it's not otherwise used, just make something up
@@ -48,7 +48,7 @@ class TestREGRESSION:
         """For the same reasons as test01_kdcraw, this used to crash."""
 
         if ispypy:
-            py.test.skip('hangs (??) in pypy')
+            skip('hangs (??) in pypy')
 
         import cppyy, pydoc
 
@@ -1002,7 +1002,7 @@ class TestREGRESSION:
 
         if IS_WINDOWS:
             # TODO: this is b/c of the mangling: it's looking for '_std', but name is '__'
-            py.test.skip('fails due to missing _std_fs_convert_narrow_to_wide symbol')
+            skip('fails due to missing _std_fs_convert_narrow_to_wide symbol')
 
         import cppyy
 

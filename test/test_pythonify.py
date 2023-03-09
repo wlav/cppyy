@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, pylong, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -313,7 +313,7 @@ class TestPYTHONIFY:
         """Test (un)bound method calls"""
 
         if ispypy:
-            py.test.skip('segfaults in pypy')
+            skip('segfaults in pypy')
 
         import cppyy
 

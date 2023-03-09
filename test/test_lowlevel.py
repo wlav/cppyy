@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, pylong, pyunicode, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -275,7 +275,7 @@ class TestLOWLEVEL:
         """Use ctypes for pass-by-ptr/ptr-ptr"""
 
         if ispypy:
-            py.test.skip('memory corruption')
+            skip('memory corruption')
 
         # See:
         #  https://docs.python.org/2/library/ctypes.html#fundamental-data-types
@@ -327,7 +327,7 @@ class TestLOWLEVEL:
         try:
             import numpy as np
         except ImportError:
-            py.test.skip('numpy is not installed')
+            skip('numpy is not installed')
 
         cppyy.cppdef('int convert_bool(bool* x) {return *x;}')
 
@@ -443,7 +443,7 @@ class TestLOWLEVEL:
         try:
             import numpy as np
         except ImportError:
-            py.test.skip('numpy is not installed')
+            skip('numpy is not installed')
 
         cppyy.cppdef("""\
         namespace ArrayConversions {
@@ -488,7 +488,7 @@ class TestLOWLEVEL:
             cppyy.include("gmpxx.h")
             cppyy.load_library('gmpxx')
         except ImportError:
-            py.test.skip("gmpxx not installed")
+            skip("gmpxx not installed")
 
         assert cppyy.gbl.std.vector[cppyy.gbl.mpz_class].value_type
 
@@ -582,7 +582,7 @@ class TestMULTIDIMARRAYS:
         try:
             import numpy as np
         except ImportError:
-            py.test.skip('numpy is not installed')
+            skip('numpy is not installed')
 
         ns = cppyy.gbl.MultiDimArrays
         h = ns.DataHolder()

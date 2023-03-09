@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, pylong, pyunicode
 
 currpath = py.path.local(__file__).dirpath()
@@ -2045,7 +2045,7 @@ class TestDATATYPES:
         try:
             import numpy as np
         except ImportError:
-            py.test.skip('numpy is not installed')
+            skip('numpy is not installed')
 
         cppyy.cppdef("""\
         namespace ComplexArrays {
@@ -2153,7 +2153,7 @@ class TestDATATYPES:
         try:
             import numpy as np
         except ImportError:
-            py.test.skip('numpy is not installed')
+            skip('numpy is not installed')
 
         cppyy.cppdef("""\
         namespace StructWithBuf {

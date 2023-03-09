@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import IS_MAC_ARM
 
 
@@ -43,7 +43,7 @@ class TestCONCURRENT:
         try:
             import concurrent.futures
         except ImportError:
-            py.test.skip("module concurrent is not installed")
+            skip("module concurrent is not installed")
 
         total = 0.
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.data)) as executor:
@@ -88,7 +88,7 @@ class TestCONCURRENT:
         """Threads and Python exceptions"""
 
         if IS_MAC_ARM:
-            py.test.skip("JIT exceptions can not be caught in JITed code on Mac ARM")
+            skip("JIT exceptions can not be caught in JITed code on Mac ARM")
 
         import cppyy
 
@@ -259,7 +259,7 @@ class TestCONCURRENT:
 
         if IS_MAC_ARM:
           # the culprit here is occasional std::system_error if a thread can not be joined
-            py.test.skip("JIT exceptions can not be caught in JITed code on Mac ARM")
+            skip("JIT exceptions can not be caught in JITed code on Mac ARM")
 
         import cppyy
         import threading

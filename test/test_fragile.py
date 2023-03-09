@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, ispypy, IS_WINDOWS, IS_MAC_ARM
 
 
@@ -435,7 +435,7 @@ class TestFRAGILE:
         import sys
 
         if 0x030b0000 <= sys.hexversion:
-            py.test.skip('"from cppyy.interactive import *" is no longer supported')
+            skip('"from cppyy.interactive import *" is no longer supported')
 
         oldsp = sys.path[:]
         sys.path.append('.')
@@ -609,10 +609,10 @@ class TestSIGNALS:
         """Conversion from abortive signals to Python exceptions"""
 
         if ispypy:
-            py.test.skip('signals not yet implemented')
+            skip('signals not yet implemented')
 
         if IS_MAC_ARM:
-            py.test.skip("JIT exceptions from signals not supported on Mac ARM")
+            skip("JIT exceptions from signals not supported on Mac ARM")
 
         import cppyy
         import cppyy.ll

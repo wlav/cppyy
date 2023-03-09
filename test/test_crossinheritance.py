@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, pylong, IS_MAC_ARM
 
 
@@ -246,7 +246,7 @@ class TestCROSSINHERITANCE:
         raises(ValueError, Base1.call_sum_value, d, -7)
 
         if IS_MAC_ARM:
-            py.test.skip("JIT exceptions from signals not supported on Mac ARM")
+            skip("JIT exceptions from signals not supported on Mac ARM")
 
         try:
             Base1.call_sum_value(d, -7)

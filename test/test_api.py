@@ -1,12 +1,12 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import ispypy
 
 
 class TestAPI:
     def setup_class(cls):
         if ispypy:
-            py.test.skip('C++ API only available on CPython')
+            skip('C++ API only available on CPython')
 
         import cppyy
         cppyy.include('CPyCppyy/API.h')

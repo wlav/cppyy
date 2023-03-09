@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, pylong, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -629,7 +629,7 @@ class TestADVANCEDCPP:
         """Test assignment to an instance returned by reference"""
 
         if ispypy:
-            py.test.skip('segfaults in pypy')
+            skip('segfaults in pypy')
 
         from cppyy import gbl
 

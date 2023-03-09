@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, ispypy, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
@@ -451,7 +451,7 @@ namespace Namespace {
         """Exception throwing and catching"""
 
         if ispypy:
-            py.test.skip('throwing exceptions terminates the process')
+            skip('throwing exceptions terminates the process')
 
         import cppyy
 
@@ -1224,7 +1224,7 @@ class TestTALKEXAMPLES:
         """Exceptions example"""
 
         if ispypy or IS_WINDOWS:
-             py.test.skip('throwing exceptions from the JIT terminates the process')
+            skip('throwing exceptions from the JIT terminates the process')
 
         import cppyy
         import cppyy.gbl.talk_examples as CC
