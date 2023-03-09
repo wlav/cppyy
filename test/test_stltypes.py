@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import py, os, sys
-from pytest import raises
+from pytest import raises, skip
 from .support import setup_make, pylong, pyunicode, maxvalue, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -622,7 +622,7 @@ class TestSTLVECTOR:
         try:
             import numpy as np
         except ImportError:
-            py.test.skip('numpy is not installed')
+            skip('numpy is not installed')
 
         a = cppyy.gbl.std.vector[int]((1, 2, 3))
 
@@ -690,6 +690,26 @@ class TestSTLVECTOR:
             cppsum += p.square()
 
         assert cppsum == pysum
+
+    def test20_vector_cstring(self):
+        """Usage of a vector of const char*"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace VectorConstCharStar {
+            std::vector<const char*> test = {"hello"};
+        }""")
+
+        ns = cppyy.gbl.VectorConstCharStar
+
+        assert len(ns.test) == 1
+        assert ns.test[0] == "hello"
+
+        ns.test.push_back("world")
+        assert len(ns.test) == 2
+        assert ns.test[0] == "hello"
+        assert ns.test[1] == "world"
 
 
 class TestSTLSTRING:
@@ -1231,7 +1251,7 @@ class TestSTLMAP:
         """C++17 style initialization of std::map"""
 
         if ispypy:
-            py.test.skip('emulated class crash')
+            skip('emulated class crash')
 
         import cppyy
         std = cppyy.gbl.std
@@ -1955,7 +1975,7 @@ class TestSTLEXCEPTION:
         """Catch C++ exceptiosn from C++"""
 
         if ispypy:
-            py.test.skip('currently terminates')
+            skip('currently terminates')
 
         import cppyy, gc
 
