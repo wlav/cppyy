@@ -90,6 +90,8 @@ class TestCONVERSIONS:
     def test04_implicit_conversion_from_tuple(self):
         """Allow implicit conversions from tuples as arguments {}-like"""
 
+        # Note: fails on windows b/c the assignment operator for strings is
+        # template, which ("operator=(std::string)") doesn't instantiate
         import cppyy
 
         m = cppyy.gbl.std.map[str, str]()
