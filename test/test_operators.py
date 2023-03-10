@@ -1,6 +1,6 @@
 import py, os, sys
-from pytest import raises
-from .support import setup_make, pylong, maxvalue
+from pytest import raises, skip
+from .support import setup_make, pylong, maxvalue, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
 test_dct = str(currpath.join("operatorsDict"))
@@ -338,6 +338,9 @@ class TestOPERATORS:
 
     def test15_class_and_global_mix(self):
         """Iterator methods have both class and global overloads"""
+
+        if IS_WINDOWS:
+            skip("missing symbol __std_max_element_4")
 
         from cppyy.gbl import std
 
