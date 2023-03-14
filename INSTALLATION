@@ -1,0 +1,19 @@
+TO DOWNLOAD CPPYY EASILY IN MAC
+
+DOWNLOAD BREW IF NOT AVAILABLE FROM COPYING BREW LINK FROM HOMEBREW WEBSITE AND RUNNING IT IN THE TERMINAL. YOU CAN ALSO DOWNLOAD IT BY BELOW GIVEN LINK
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  IF NOT RUNNING RESTART THE COMPUTER AND THEN RUN IT.
+  STILL NOT RUNNING WAIT FOR SOME TIME AND REPEAT IT.
+
+INSTALL XCODE IF NOT INSTALLED FROM APP STORE AND RUN IT
+  THEN RUN:
+          -> brew install root 
+  if xcode is intalled otherwise wait for installation and restart terminal
+
+IF THE ABOVE PROCESS ARE COMPLETED
+          -> brew install cling 
+          -> brew install clang 
+          -> pip3 install cppyy
+5) RUN -> python3 
+    ON TERMINAL 
+6)RUN COMMAND ->  import cppyy
