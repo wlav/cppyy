@@ -10,14 +10,14 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 3.0.0
--------------
+2023-03-19: 3.0.0
+-----------------
 
 * Upgrade backend to Cling on top of LLVM 13
 * Improve handling of `const char*` as template argument
 * Fix regression in use of unnamed but typedef'ed enums
 * Report C++ warnings from ``cppdef`` as ``SyntaxWarning``
-* Add pythonizations for std::unordered_map
+* Add pythonizations for ``std::unordered_map``
 
 
 2023-01-21: 2.4.2
