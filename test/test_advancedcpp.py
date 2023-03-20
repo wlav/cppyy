@@ -897,3 +897,32 @@ class TestADVANCEDCPP:
         assert ns.some_func_xc() == 21
 
         assert ns.deeper.some_other_func_xc() == 42
+
+    def test29_castcpp(self):
+        """Allow casting a Python class to a C++ one"""
+
+        import cppyy
+        import math
+
+        cppyy.cppdef("""\
+        namespace castcpp {
+        struct MyPoint {
+            double x, y;
+        };
+
+        double norm(const MyPoint& p) {
+            return std::sqrt(p.x*p.x + p.y*p.y);
+        } }""")
+
+        ns = cppyy.gbl.castcpp
+
+        class MyPyPoint:
+            def __init__(self, x, y):
+                self.x = x
+                self.y = y
+
+            def __cast_cpp__(self):
+                return ns.MyPoint(self.x, self.y)
+
+        p = MyPyPoint(5, 10)
+        assert round(ns.norm(p) - math.sqrt(p.x**2+p.y**2), 8) == 0
