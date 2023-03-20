@@ -910,19 +910,40 @@ class TestADVANCEDCPP:
             double x, y;
         };
 
-        double norm(const MyPoint& p) {
+        double norm_cr(const MyPoint& p) {
             return std::sqrt(p.x*p.x + p.y*p.y);
+        }
+
+        double norm_r(MyPoint& p) {
+            return std::sqrt(p.x*p.x + p.y*p.y);
+        }
+
+        double norm_v(MyPoint p) {
+            return std::sqrt(p.x*p.x + p.y*p.y);
+        }
+
+        double norm_p(MyPoint* p) {
+            return std::sqrt(p->x*p->x + p->y*p->y);
         } }""")
 
         ns = cppyy.gbl.castcpp
 
-        class MyPyPoint:
+        class MyPyPoint1:
             def __init__(self, x, y):
                 self.x = x
                 self.y = y
 
+        class MyPyPoint2(MyPyPoint1):
             def __cast_cpp__(self):
                 return ns.MyPoint(self.x, self.y)
 
-        p = MyPyPoint(5, 10)
-        assert round(ns.norm(p) - math.sqrt(p.x**2+p.y**2), 8) == 0
+        p1 = MyPyPoint1(5, 10)
+        p2 = MyPyPoint2(p1.x, p1.y)
+        pynorm = math.sqrt(p2.x**2+p2.y**2)
+
+        for norm in [ns.norm_cr, ns.norm_r, ns.norm_v, ns.norm_p]:
+            with raises(TypeError):
+                norm(p1)
+
+            assert round(norm(p2) - pynorm, 8) == 0
+
