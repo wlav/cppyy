@@ -211,32 +211,13 @@ jobs:
         make all || true
         python -m pip install --upgrade pip
         python -m pip install pytest
-        export PASSED=0
-        export NO_OF_TESTS=0
-        export SETUP_PLAN=$(python -m pytest --setup-plan | grep -o -P '(?<=test\/).*?(?=\ \(fixtures)')
-        echo ::group::Test Status
-        set +e
-        for test in ${SETUP_PLAN} ; do
-          NO_OF_TESTS=$((NO_OF_TESTS+1))
-          (
-            python -m pytest -s $test >> test.log 2>&1
-          )
-          if [[ $? -eq 0 ]]; then
-            PASSED=$((PASSED+1))
-            echo "$test PASSED"
-          else
-            echo "$test FAILED"
-          fi
-        done
-        set -e
-        echo ::endgroup::
-        echo "TEST SUMMARY: $PASSED out of $NO_OF_TESTS tests passed"
+        python -m pip install pytest-xdist
         echo ::group::Test Logs
-        cat test.log
+        python -m pytest -n auto -sv --max-worker-restart 512 | tee test.log 2>&1
         echo ::endgroup::
-        if [[ $PASSED -ne $NO_OF_TESTS ]]; then
-          exit 1
-        fi
+        echo "TEST SUMMARY: \n"
+        tail -n1 test.log
+        echo "OF TOTAL $(python3 -m pytest  --collect-only -q | tail -n1)"
     - name: Setup tmate session
       if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
