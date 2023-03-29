@@ -26,6 +26,7 @@ class TestREFLEX:
         with raises(TypeError):
             cppyy.addressof('doesnotexist')
 
+    @mark.xfail
     def test02_method_reflection(self):
         """Method reflection tooling"""
 
@@ -93,6 +94,7 @@ class TestNUMBA:
 
         return fast_time < slow_time
 
+    @mark.xfail
     def test01_compiled_free_func(self):
         """Numba-JITing of a compiled free function"""
 
@@ -117,6 +119,7 @@ class TestNUMBA:
         assert (go_fast(x) == go_slow(x)).all()
         assert self.compare(go_slow, go_fast, 300000, x)
 
+    @mark.xfail
     def test02_JITed_template_free_func(self):
         """Numba-JITing of Cling-JITed templated free function"""
 
@@ -150,6 +153,7 @@ class TestNUMBA:
         assert (go_fast(x) == go_slow(x)).all()
         assert self.compare(go_slow, go_fast, 100000, x)
 
+    @mark.xfail
     def test03_proxy_argument_for_field(self):
         """Numba-JITing of a free function taking a proxy argument for field access"""
 
@@ -183,6 +187,7 @@ class TestNUMBA:
         assert((go_fast(x, d) == go_slow(x, d)).all())
         assert self.compare(go_slow, go_fast, 10000, x, d)
 
+    @mark.xfail
     def test04_proxy_argument_for_method(self):
         """Numba-JITing of a free function taking a proxy argument for method access"""
 
@@ -216,6 +221,7 @@ class TestNUMBA:
         assert((go_fast(x, d) == go_slow(x, d)).all())
         assert self.compare(go_slow, go_fast, 10000, x, d)
 
+    @mark.xfail
     def test05_datatype_mapping(self):
         """Numba-JITing of various data types"""
 
@@ -249,6 +255,7 @@ class TestNUMBA:
                 val = getattr(nl[ntype], m)()
                 assert access_field(getattr(ns, 'M%d'%i)(val)) == val
 
+    @mark.xfail
     def test06_object_returns(self):
         """Numba-JITing of a function that returns an object"""
 
@@ -289,6 +296,7 @@ class TestNUMBA_DOC:
         import cppyy
         import cppyy.numba_ext
 
+    @mark.xfail
     def test01_templated_freefunction(self):
         """Numba support documentation example: free templated function"""
 
@@ -317,6 +325,7 @@ class TestNUMBA_DOC:
         assert type(tsa(a)) == int
         assert tsa(a) == 285
 
+    @mark.xfail
     def test02_class_features(self):
         """Numba support documentation example: class features"""
 

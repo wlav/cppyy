@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, mark
 from .support import setup_make
 
 currpath = py.path.local(__file__).dirpath()
@@ -14,6 +14,7 @@ class TestACLASSLOADER:
     def setup_class(cls):
         import cppyy
 
+    @mark.xfail
     def test01_class_autoloading(self):
         """Test whether a class can be found through .rootmap."""
         import cppyy

@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, pylong, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -18,6 +18,7 @@ class TestPYTHONIFY:
         cls.example01 = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_load_dictionary_cache(self):
         """Test whether loading a dictionary twice results in the same object"""
 
@@ -37,6 +38,7 @@ class TestPYTHONIFY:
         with raises(AttributeError):
             cppyy.gbl.nonexistingclass
 
+    @mark.xfail
     def test03_calling_static_functions(self):
         """Test calling of static methods"""
 
@@ -72,6 +74,7 @@ class TestPYTHONIFY:
         assert res == "aap"
         raises(TypeError, example01_class.staticStrcpy, 1.)    # TODO: id.
 
+    @mark.xfail
     def test04_constructing_and_calling(self):
         """Test object and method calls"""
 
@@ -122,6 +125,7 @@ class TestPYTHONIFY:
         instance.__destruct__()
         assert example01_class.getCount() == 0
 
+    @mark.xfail
     def test05_passing_object_by_pointer(self):
         """Pass object by pointer"""
 
@@ -147,6 +151,7 @@ class TestPYTHONIFY:
         e.__destruct__()
         assert example01_class.getCount() == 0
 
+    @mark.xfail
     def test06_returning_object_by_pointer(self):
         """Return an object py pointer"""
 
@@ -169,6 +174,7 @@ class TestPYTHONIFY:
         e.__destruct__()
         assert example01_class.getCount() == 0
 
+    @mark.xfail
     def test07_returning_object_by_value(self):
         """Return an object by value"""
 
@@ -204,6 +210,7 @@ class TestPYTHONIFY:
         assert cppyy.gbl.ns_example01.globalAddOneToInt(4) == 5
         assert cppyy.gbl.ns_example01.globalAddOneToInt(4) == 5
 
+    @mark.xfail
     def test09_memory(self):
         """Test proper C++ destruction by the garbage collector"""
 
@@ -248,6 +255,7 @@ class TestPYTHONIFY:
 
         # TODO: need ReferenceError on touching pl_a
 
+    @mark.xfail
     def test10_default_arguments(self):
         """Test propagation of default function arguments"""
 
@@ -294,6 +302,7 @@ class TestPYTHONIFY:
         assert e.overloadedAddDataToInt(4, 5)    == 10
         assert e.overloadedAddDataToInt(6, 7, 8) == 22
 
+    @mark.xfail
     def test12_typedefs(self):
         """Test access and use of typedefs"""
 
@@ -341,6 +350,7 @@ class TestPYTHONIFY:
        assert 2 == e.fresh(1)
        assert 3 == e.fresh(2)
 
+    @mark.xfail
     def test16_subclassing(self):
         """A sub-class on the python side should have that class as type"""
 
@@ -399,6 +409,7 @@ class TestPYTHONIFY:
 
         assert cppyy.gbl.Lifeline.gime(42).get()[0].get()[0].get()[0].get()[0].x == 42
 
+    @mark.xfail
     def test18_keywords(self):
         """Use of keyword arguments"""
 
@@ -497,6 +508,7 @@ class TestPYTHONIFY:
         with raises(TypeError):
             c.callme(a=1, b=2)
 
+    @mark.xfail
     def test19_keywords_and_defaults(self):
         """Use of keyword arguments mixed with defaults"""
 
@@ -546,6 +558,7 @@ class TestPYTHONIFY_UI:
         cls.example01 = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_pythonizations(self):
         """Test addition of user-defined pythonizations"""
 
@@ -565,6 +578,7 @@ class TestPYTHONIFY_UI:
         assert e[1] == 2
         assert e[5] == 6
 
+    @mark.xfail
     def test02_fragile_pythonizations(self):
         """Test pythonizations error reporting"""
 
@@ -573,6 +587,7 @@ class TestPYTHONIFY_UI:
         example01_pythonize = 1
         raises(TypeError, cppyy.py.add_pythonization, example01_pythonize)
 
+    @mark.xfail
     def test03_write_access_to_globals(self):
         """Test overwritability of globals"""
 

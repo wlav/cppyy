@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, pylong, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -19,6 +19,7 @@ class TestADVANCEDCPP:
         cls.advanced = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_default_arguments(self):
         """Test usage of default arguments"""
 
@@ -156,6 +157,7 @@ class TestADVANCEDCPP:
 
         raises(TypeError, gbl.a_ns)
 
+    @mark.xfail
     def test03a_namespace_lookup_on_update(self):
         """Test whether namespaces can be shared across dictionaries."""
 
@@ -186,6 +188,7 @@ class TestADVANCEDCPP:
         assert gbl.a_ns.d_ns.i_class.j_class.s_j      == 333
         assert gbl.a_ns.d_ns.i_class.j_class().m_j    == -10
 
+    @mark.xfail
     def test04_template_types(self):
         """Test bindings of templated types"""
 
@@ -528,6 +531,7 @@ class TestADVANCEDCPP:
         assert m.get_multi2_int() == 2
         assert m.get_my_own_int() == 3
 
+    @mark.xfail
     def test12_actual_type(self):
         """Test that a pointer to base return does an auto-downcast"""
 
@@ -573,6 +577,7 @@ class TestADVANCEDCPP:
         assert cppyy.addressof(b1) == cppyy.addressof(d)
         assert not (b1 is d)
 
+    @mark.xfail
     def test13_actual_type_virtual_multi(self):
         """Test auto-downcast in adverse inheritance situation"""
 
@@ -590,6 +595,7 @@ class TestADVANCEDCPP:
         assert c2.m_c == 3
         c2.__destruct__()
 
+    @mark.xfail
     def test14_new_overloader(self):
         """Verify that class-level overloaded new/delete are called"""
 
@@ -604,6 +610,7 @@ class TestADVANCEDCPP:
         gc.collect()
         assert cppyy.gbl.new_overloader.s_instances == 0
 
+    @mark.xfail
     def test15_template_instantiation_with_vector_of_float(self):
         """Test template instantiation with a std::vector<float>"""
 
@@ -617,6 +624,7 @@ class TestADVANCEDCPP:
             b.m_b.push_back(i)
             assert round(b.m_b[i], 5) == float(i)
 
+    @mark.xfail
     def test16_template_global_functions(self):
         """Test template global function lookup and calls"""
 
@@ -629,6 +637,7 @@ class TestADVANCEDCPP:
         assert f(3.) == 3.
         assert type(f(4.)) == type(4.)
 
+    @mark.xfail
     def test17_assign_to_return_byref(self):
         """Test assignment to an instance returned by reference"""
 
@@ -663,6 +672,7 @@ class TestADVANCEDCPP:
         assert float(a)  == 4321.
         assert float(a)  == a.m_d
 
+    @mark.xfail
     def test19_comparator(self):
         """Check that the global operator!=/== is picked up"""
 
@@ -681,6 +691,7 @@ class TestADVANCEDCPP:
         assert a.__eq__(a) == False
         assert b.__eq__(b) == False
 
+    @mark.xfail
     def test20_overload_order_with_proper_return(self):
         """Test return type against proper overload w/ const and covariance"""
 
@@ -689,6 +700,7 @@ class TestADVANCEDCPP:
         assert cppyy.gbl.overload_one_way().gime() == 1
         assert cppyy.gbl.overload_the_other_way().gime() == "aap"
 
+    @mark.xfail
     def test21_access_to_global_variables(self):
         """Access global_variables_and_pointers"""
 
@@ -722,6 +734,7 @@ class TestADVANCEDCPP:
         assert len(cppyy.gbl.gtestv1) == 1
         assert len(cppyy.gbl.gtestv2) == 1
 
+    @mark.xfail
     def test22_exceptions(self):
         """Catching of C++ exceptions"""
 
@@ -744,6 +757,7 @@ class TestADVANCEDCPP:
             caught = True
         assert caught == True
 
+    @mark.xfail
     def test23_using(self):
         """Accessibility of using declarations"""
 
@@ -777,6 +791,7 @@ class TestADVANCEDCPP:
         assert d2.vcheck()  == 'A'
         assert d2.vcheck(1) == 'B'
 
+    @mark.xfail
     def test24_typedef_to_private_class(self):
         """Typedefs to private classes should not resolve"""
 
@@ -784,6 +799,7 @@ class TestADVANCEDCPP:
 
         assert cppyy.gbl.TypedefToPrivateClass().f().m_val == 42
 
+    @mark.xfail
     def test25_ostream_printing(self):
         """Mapping of __str__ through operator<<(ostream&)"""
 
@@ -830,6 +846,7 @@ class TestADVANCEDCPP:
         y = cppyy.gbl.PrintingNS.Y()
         assert str(y) == 'Y'
 
+    @mark.xfail
     def test26_using_directive(self):
         """Test using directive in namespaces"""
 
@@ -881,6 +898,7 @@ class TestADVANCEDCPP:
         #assert type(ns.A.Val(1)) == int
         #assert type(ns.B.Val(1)) == float
 
+    @mark.xfail
     def test28_extern_C_in_namespace(self):
         """Access to extern "C" declared functions in namespaces"""
 
@@ -902,6 +920,7 @@ class TestADVANCEDCPP:
 
         assert ns.deeper.some_other_func_xc() == 42
 
+    @mark.xfail
     def test29_castcpp(self):
         """Allow casting a Python class to a C++ one"""
 

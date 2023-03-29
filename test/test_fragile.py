@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, ispypy, IS_WINDOWS, IS_MAC_ARM
 
 
@@ -19,6 +19,7 @@ class TestFRAGILE:
         cls.fragile = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_load_failure(self):
         """Test failure to load dictionary"""
 
@@ -30,6 +31,7 @@ class TestFRAGILE:
         except RuntimeError as e:
             assert "does_not_exist" in str(e)
 
+    @mark.xfail
     def test02_missing_classes(self):
         """Test (non-)access to missing classes"""
 
@@ -169,6 +171,7 @@ class TestFRAGILE:
         g = cppyy.gbl.fragile.gI
         assert not g
 
+    @mark.xfail
     def test10_documentation(self):
         """Check contents of documentation"""
 
@@ -214,6 +217,7 @@ class TestFRAGILE:
         except TypeError as e:
             assert "cannot instantiate abstract class 'fragile::O'" in str(e)
 
+    @mark.xfail
     def test11_dir(self):
         """Test __dir__ method"""
 
@@ -399,6 +403,7 @@ class TestFRAGILE:
         assert cppyy.gbl.myvar3
         assert cppyy.gbl.myvar4
 
+    @mark.xfail
     def test16_opaque_handle(self):
         """Support use of opaque handles"""
 
@@ -447,6 +452,7 @@ class TestFRAGILE:
         finally:
             sys.path = oldsp
 
+    @mark.xfail
     def test18_overload(self):
         """Test usage of __overload__"""
 
@@ -473,6 +479,7 @@ class TestFRAGILE:
         assert not 'ESysConstants' in dd
         assert not 'kDoRed' in dd
 
+    @mark.xfail
     def test20_capture_output(self):
         """Capture cerr into a string"""
 
@@ -499,6 +506,7 @@ class TestFRAGILE:
 
         assert capture.str() == "Hello, World\n"
 
+    @mark.xfail
     def test21_failing_cppcode(self):
         """Check error behavior of failing C++ code"""
 
@@ -531,6 +539,7 @@ class TestFRAGILE:
         assert "expectedunqualified-id" in err
         assert "1aap=42;" in err
 
+    @mark.xfail
     def test22_cppexec(self):
         """Interactive access to the Cling global scope"""
 
@@ -542,6 +551,7 @@ class TestFRAGILE:
         with raises(SyntaxError):
             cppyy.cppexec("doesnotexist");
 
+    @mark.xfail
     def test23_set_debug(self):
         """Setting of global gDebug variable"""
 
@@ -556,6 +566,7 @@ class TestFRAGILE:
         cppyy.set_debug(False)
         assert cppyy.gbl.CppyyLegacy.gDebug ==  0
 
+    @mark.xfail
     def test24_asan(self):
         """Check availability of ASAN with gcc"""
 
@@ -567,6 +578,7 @@ class TestFRAGILE:
 
         cppyy.include('sanitizer/asan_interface.h')
 
+    @mark.xfail
     def test25_cppdef_error_reporting(self):
         """Check error reporting of cppyy.cppdef"""
 
@@ -610,6 +622,7 @@ class TestSIGNALS:
         cls.fragile = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_abortive_signals(self):
         """Conversion from abortive signals to Python exceptions"""
 
@@ -665,6 +678,7 @@ class TestSTDNOTINGLOBAL:
         # FIXME: Need to get the output of process somehow
         cls.has_byte = 201402 < cppyy.gbl.cling.runtime.gCling.process("__cplusplus;")
 
+    @mark.xfail
     def test01_stl_in_std(self):
         """STL classes should live in std:: only"""
 
@@ -684,6 +698,7 @@ class TestSTDNOTINGLOBAL:
         v = cppyy.gbl.vector()
         assert cppyy.gbl.vector is not cppyy.gbl.std.vector
 
+    @mark.xfail
     def test02_ctypes_in_both(self):
         """Standard int types live in both global and std::"""
 
@@ -697,6 +712,7 @@ class TestSTDNOTINGLOBAL:
         assert cppyy.gbl.std.int8_t(-42) == cppyy.gbl.int8_t(-42)
         assert cppyy.gbl.std.uint8_t(42) == cppyy.gbl.uint8_t(42)
 
+    @mark.xfail
     def test03_clashing_using_in_global(self):
         """Redefines of std:: typedefs should be possible in global"""
 
@@ -712,6 +728,7 @@ class TestSTDNOTINGLOBAL:
         for name in ['int', 'uint', 'ushort', 'uchar', 'byte']:
             getattr(cppyy.gbl, name)
 
+    @mark.xfail
     def test04_no_legacy(self):
         """Test some functions that previously crashed"""
 

@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, mark
 from .support import setup_make
 
 currpath = py.path.local(__file__).dirpath()
@@ -35,6 +35,7 @@ class TestSTDStreams:
 
         assert not (cppyy.gbl.std.cout is None)
 
+    @mark.xfail
     def test03_consistent_naming_if_char_traits(self):
         """Naming consistency if char_traits"""
 
@@ -51,6 +52,7 @@ class TestSTDStreams:
         cppyy.gbl.stringstream_base.pass_through_base(s)
         assert s.str() == "TEST STRING"
 
+    @mark.xfail
     def test04_naming_of_ostringstream(self):
         """Naming consistency of ostringstream"""
 

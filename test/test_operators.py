@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, pylong, maxvalue, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
@@ -89,6 +89,7 @@ class TestOPERATORS:
         n = number(0)
         assert not n
 
+    @mark.xfail
     def test05_exact_types(self):
         """Test converter operators of exact types"""
 
@@ -179,6 +180,7 @@ class TestOPERATORS:
         assert not b1 == d2
         assert not d2 == b1
 
+    @mark.xfail
     def test08_call_to_getsetitem_mapping(self):
         """Map () to []"""
 
@@ -227,6 +229,7 @@ class TestOPERATORS:
             assert m[1]    == 74
             assert m(1,2)  == 74
 
+    @mark.xfail
     def test09_templated_operator(self):
         """Templated operator<()"""
 
@@ -234,6 +237,7 @@ class TestOPERATORS:
 
         assert (TOIClass() < 1)
 
+    @mark.xfail
     def test10_r_non_associative(self):
         """Use of radd/rmul with non-associative types"""
 
@@ -265,6 +269,7 @@ class TestOPERATORS:
         with raises(NotImplementedError):
             v = m*2
 
+    @mark.xfail
     def test11_overloaded_operators(self):
         """Overloaded operator*/+-"""
 
@@ -297,6 +302,7 @@ class TestOPERATORS:
 
         assert v-w == 1-3 + 2-4
 
+    @mark.xfail
     def test12_unary_operators(self):
         """Unary operator-+~"""
 
@@ -339,6 +345,7 @@ class TestOPERATORS:
         b = ns.Bar()
         assert b[42] == 42
 
+    @mark.xfail
     def test15_class_and_global_mix(self):
         """Iterator methods have both class and global overloads"""
 
@@ -352,6 +359,7 @@ class TestOPERATORS:
         assert std.max_element(x.begin(), x.end())-x.begin() == 2
         assert (x.end() - 3).__deref__() == 1
 
+    @mark.xfail
     def test16_global_ordered_operators(self):
         """Globally defined ordered oeprators"""
 

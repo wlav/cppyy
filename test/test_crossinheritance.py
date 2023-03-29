@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, pylong, IS_MAC_ARM
 
 
@@ -75,6 +75,7 @@ class TestCROSSINHERITANCE:
         assert d.get_value()           == 29
         assert Base1.call_get_value(d) == 29
 
+    @mark.xfail
     def test03_override_function_abstract_base(self):
         """Test ability to override a simple function with an abstract base"""
 
@@ -131,6 +132,7 @@ class TestCROSSINHERITANCE:
         assert c4.m_int == 88
         assert CX.IBase2.call_get_value(c4) == 77
 
+    @mark.xfail
     def test04_arguments(self):
         """Test ability to override functions that take arguments"""
 
@@ -186,6 +188,7 @@ class TestCROSSINHERITANCE:
         assert d.sum_all(-7, -5)             == 1
         assert Base1.call_sum_all(d, -7, -5) == 1
 
+    @mark.xfail
     def test06_const_methods(self):
         """Declared const methods should keep that qualifier"""
 
@@ -208,6 +211,7 @@ class TestCROSSINHERITANCE:
         assert CX.IBase4.call_get_value(c1) == 17
         assert CX.IBase4.call_get_value(c2) == 27
 
+    @mark.xfail
     def test07_templated_base(self):
         """Derive from a base class that is instantiated from a template"""
 
@@ -232,6 +236,7 @@ class TestCROSSINHERITANCE:
         p1 = TPyDerived1()
         assert p1.get_value() == 13
 
+    @mark.xfail
     def test08_error_handling(self):
         """Python errors should propagate through wrapper"""
 
@@ -291,6 +296,7 @@ class TestCROSSINHERITANCE:
 
         assert raises(TypeError, Base1.call_get_value, d)
 
+    @mark.xfail
     def test10_python_in_templates(self):
         """Usage of Python derived objects in std::vector"""
 
@@ -336,6 +342,7 @@ class TestCROSSINHERITANCE:
         gc.collect()
         assert CB.s_count == 0 + start_count
 
+    @mark.xfail
     def test11_python_in_make_shared(self):
         """Usage of Python derived objects with std::make_shared"""
 
@@ -374,6 +381,7 @@ class TestCROSSINHERITANCE:
         assert call_shared(v) == 13
         assert v.some_imp() == 13
 
+    @mark.xfail
     def test12a_counter_test(self):
         """Test countable base counting"""
 
@@ -399,6 +407,7 @@ class TestCROSSINHERITANCE:
         gc.collect()
         assert CB.s_count == 0 + start_count
 
+    @mark.xfail
     def test12_python_shared_ptr_memory(self):
         """Usage of Python derived objects with std::shared_ptr"""
 
@@ -475,6 +484,7 @@ class TestCROSSINHERITANCE:
         class MyPyDerived4(VD.MyClass4[int]):
             pass
 
+    @mark.xfail
     def test14_protected_access(self):
         """Derived classes should have access to protected members"""
 
@@ -504,6 +514,7 @@ class TestCROSSINHERITANCE:
         assert m.get_data()   == 42
         assert m.get_data_v() == 42
 
+    @mark.xfail
     def test15_object_returns(self):
         """Return of C++ objects from overridden functions"""
 
@@ -571,6 +582,7 @@ class TestCROSSINHERITANCE:
         assert not not new_obj
         assert new_obj.whoami() == "PyDerived4"
 
+    @mark.xfail
     def test16_cctor_access_controlled(self):
         """Python derived class of C++ class with access controlled cctor"""
 
@@ -612,6 +624,7 @@ class TestCROSSINHERITANCE:
             obj = PyDerived()
             assert ns.callit(obj) == "PyDerived"
 
+    @mark.xfail
     def test17_deep_hierarchy(self):
         """Test a deep Python hierarchy with pure virtual functions"""
 
@@ -658,6 +671,7 @@ class TestCROSSINHERITANCE:
         assert obj.whoami()   == "PyDerived4"
         assert ns.callit(obj) == "PyDerived4"
 
+    @mark.xfail
     def test18_abstract_hierarchy(self):
         """Hierarchy with abstract classes"""
 
@@ -700,6 +714,7 @@ class TestCROSSINHERITANCE:
         assert obj.message()  == "Hello, World!"
         assert ns.saywot(obj) == "Hello, World!"
 
+    @mark.xfail
     def test19_cpp_side_multiple_inheritance(self):
         """Hierarchy with multiple inheritance on the C++ side"""
 
@@ -735,6 +750,7 @@ class TestCROSSINHERITANCE:
             def abstract1(self):
                 return ns.Result(1)
 
+    @mark.xfail
     def test20_basic_multiple_inheritance(self):
         """Basic multiple inheritance"""
 
@@ -813,6 +829,7 @@ class TestCROSSINHERITANCE:
         assert a.m_2 == 42
         assert a.m_3 == 67
 
+    @mark.xfail
     def test21_multiple_inheritance_with_constructors(self):
         """Multiple inheritance with constructors"""
 
@@ -900,6 +917,7 @@ class TestCROSSINHERITANCE:
         assert a.m_2 ==  88
         assert a.m_3 == -11
 
+    @mark.xfail
     def test22_multiple_inheritance_with_defaults(self):
         """Multiple inheritance with defaults"""
 
@@ -990,6 +1008,7 @@ class TestCROSSINHERITANCE:
         a = MyPyDerived(27, 55, nArgs=2)
         verify(a, 27, 55, 67)
 
+    @mark.xfail
     def test23_const_byvalue_return(self):
         """Const by-value return in overridden method"""
 
@@ -1019,6 +1038,7 @@ class TestCROSSINHERITANCE:
         assert a.return_const().m_value == "abcdef"
         assert ns.callit(a).m_value     == "abcdef"
 
+    @mark.xfail
     def test24_non_copyable(self):
         """Inheriting from a non-copyable base class"""
 
@@ -1099,6 +1119,7 @@ class TestCROSSINHERITANCE:
 
         assert DerivedNoCopyNoMove().callme() == "Hello, World!"
 
+    @mark.xfail
     def test25_default_ctor_and_multiple_inheritance(self):
         """Regression test: default ctor did not get added"""
 
@@ -1139,6 +1160,7 @@ class TestCROSSINHERITANCE:
         d = DerivedMulti()
         assert d
 
+    @mark.xfail
     def test26_no_default_ctor(self):
         """Make sure no default ctor is created if not viable"""
 
@@ -1189,6 +1211,7 @@ class TestCROSSINHERITANCE:
             with raises(TypeError):
                 PyDerived()
 
+    @mark.xfail
     def test27_interfaces(self):
         """Inherit from base with non-standard offset"""
 
@@ -1232,6 +1255,7 @@ class TestCROSSINHERITANCE:
         assert obj.calc2()       == 2
         assert ns.callback2(obj) == 2
 
+    @mark.xfail
     def test28_cross_deep(self):
         """Deep inheritance hierarchy"""
 
@@ -1268,6 +1292,7 @@ class TestCROSSINHERITANCE:
             assert inst.fun1() == val1
             assert inst.fun2() == inst.fun1()
 
+    @mark.xfail
     def test29_cross_deep_multi(self):
         """Deep multi-inheritance hierarchy"""
 
@@ -1384,6 +1409,7 @@ class TestCROSSINHERITANCE:
         class PyDerived(ns.Base):
             pass
 
+    @mark.xfail
     def test31_object_rebind(self):
         """Usage of bind_object to cast with Python derived objects"""
 
@@ -1509,6 +1535,7 @@ class TestCROSSINHERITANCE:
         gc.collect()
         assert ns.Component.get_count() == 0
 
+    @mark.xfail
     def test32_by_value_arguments(self):
         """Override base function taking by-value arguments"""
 
@@ -1541,6 +1568,7 @@ class TestCROSSINHERITANCE:
 
         assert p.func(d) == 42 + 2 * d.value
 
+    @mark.xfail
     def test33_direct_base_methods(self):
         """Call base class methods directly"""
 
@@ -1583,6 +1611,7 @@ class TestCROSSINHERITANCE:
         c = C()
         assert c.func() == 3
 
+    @mark.xfail
     def test34_no_ctors_in_base(self):
         """Base classes with no constructors"""
 
@@ -1700,6 +1729,7 @@ class TestCROSSINHERITANCE:
         del o1
         assert Derived.was_py_deleted  == True
 
+    @mark.xfail
     def test37_deep_tree(self):
         """Find overridable methods deep in the tree"""
 

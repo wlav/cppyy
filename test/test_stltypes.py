@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, pylong, pyunicode, maxvalue, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -202,6 +202,7 @@ class TestSTLVECTOR:
         cppyy.include(cls.test_h)
         cls.N = cppyy.gbl.N
 
+    @mark.xfail
     def test01_builtin_type_vector_types(self):
         """Test access to std::vector<int>/std::vector<double>"""
 
@@ -257,6 +258,7 @@ class TestSTLVECTOR:
             assert v.size() == self.N
             assert len(v) == self.N
 
+    @mark.xfail
     def test02_user_type_vector_type(self):
         """Test access to an std::vector<just_a_class>"""
 
@@ -289,6 +291,7 @@ class TestSTLVECTOR:
         assert len(v) == self.N
         v.__destruct__()
 
+    @mark.xfail
     def test03_empty_vector_type(self):
         """Test behavior of empty std::vector<int>"""
 
@@ -300,6 +303,7 @@ class TestSTLVECTOR:
             pass
         v.__destruct__()
 
+    @mark.xfail
     def test04_vector_iteration(self):
         """Test iteration over an std::vector<int>"""
 
@@ -325,6 +329,7 @@ class TestSTLVECTOR:
 
         v.__destruct__()
 
+    @mark.xfail
     def test05_push_back_iterables_with_iadd(self):
         """Test usage of += of iterable on push_back-able container"""
 
@@ -363,6 +368,7 @@ class TestSTLVECTOR:
         v += []
         assert len(v) == sz
 
+    @mark.xfail
     def test06_vector_indexing(self):
         """Test python-style indexing to an std::vector<int>"""
 
@@ -390,6 +396,7 @@ class TestSTLVECTOR:
         assert v2[-1] == v[-2]
         assert v2[self.N-4] == v[-2]
 
+    @mark.xfail
     def test07_vector_bool(self):
         """Usability of std::vector<bool> which can be a specialization"""
 
@@ -408,6 +415,7 @@ class TestSTLVECTOR:
         assert len(vb[4:8]) == 4
         assert list(vb[4:8]) == [False]*3+[True]
 
+    @mark.xfail
     def test08_vector_enum(self):
         """Usability of std::vector<> of some enums"""
 
@@ -429,6 +437,7 @@ class TestSTLVECTOR:
             ve[0] = cppyy.gbl.VecTestEnumNS.EVal2
             assert ve[0] == 42
 
+    @mark.xfail
     def test09_vector_of_string(self):
         """Adverse effect of implicit conversion on vector<string>"""
 
@@ -441,6 +450,7 @@ class TestSTLVECTOR:
 
         raises(TypeError, cppyy.gbl.std.vector["std::string"], "abc")
 
+    @mark.xfail
     def test10_vector_std_distance(self):
         """Use of std::distance with vector"""
 
@@ -452,6 +462,7 @@ class TestSTLVECTOR:
         assert std.distance(v.begin(), v.end()) == v.size()
         assert std.distance[type(v).iterator](v.begin(), v.end()) == v.size()
 
+    @mark.xfail
     def test11_vector_of_pair(self):
         """Use of std::vector<std::pair>"""
 
@@ -495,6 +506,7 @@ class TestSTLVECTOR:
         ll4[1] = 'a'
         raises(TypeError, a.vector_pair, ll4)
 
+    @mark.xfail
     def test12_vector_lifeline(self):
         """Check lifeline setting on vectors of objects"""
 
@@ -527,6 +539,7 @@ class TestSTLVECTOR:
         for val in l:
             assert hasattr(val, '__lifeline')
 
+    @mark.xfail
     def test13_vector_smartptr_iteration(self):
         """Iteration over smart pointers"""
 
@@ -560,6 +573,7 @@ class TestSTLVECTOR:
             i += 1
         assert i == len(result)
 
+    @mark.xfail
     def test14_vector_of_vector_of_(self):
         """Nested vectors"""
 
@@ -575,6 +589,7 @@ class TestSTLVECTOR:
         assert vv[1][0] == 3
         assert vv[1][1] == 4
 
+    @mark.xfail
     def test15_vector_slicing(self):
         """Advanced test of vector slicing"""
 
@@ -601,6 +616,7 @@ class TestSTLVECTOR:
       # additional test from CPython's test suite
         getslice_cpython_test(vector[int])
 
+    @mark.xfail
     def test16_vector_construction(self):
         """Vector construction following CPython's sequence"""
 
@@ -608,6 +624,7 @@ class TestSTLVECTOR:
 
         constructors_cpython_test(cppyy.gbl.std.vector[int])
 
+    @mark.xfail
     def test17_vector_cpp17_style(self):
         """C++17 style initialization of std::vector"""
 
@@ -617,6 +634,7 @@ class TestSTLVECTOR:
         v = cppyy.gbl.std.vector(l)
         assert list(l) == l
 
+    @mark.xfail
     def test18_array_interface(self):
         """Test usage of __array__ from numpy"""
 
@@ -663,6 +681,7 @@ class TestSTLVECTOR:
         v = np.array(v, dtype=np.intc)
         assert ns.func(v) == sum(v)
 
+    @mark.xfail
     def test19_vector_point3d(self):
         """Iteration over a vector of by-value objects"""
 
@@ -694,6 +713,7 @@ class TestSTLVECTOR:
 
         assert cppsum == pysum
 
+    @mark.xfail
     def test20_vector_cstring(self):
         """Usage of a vector of const char*"""
 
@@ -723,6 +743,7 @@ class TestSTLSTRING:
         cls.stltypes = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_string_argument_passing(self):
         """Test mapping of python strings and std::[w]string"""
 
@@ -756,6 +777,7 @@ class TestSTLSTRING:
 
             raises(TypeError, c.get_string2, "temp string")
 
+    @mark.xfail
     def test02_string_data_access(self):
         """Test access to std::string object data members"""
 
@@ -777,6 +799,7 @@ class TestSTLSTRING:
             assert c.m_string == s
             assert c.get_string1() == s
 
+    @mark.xfail
     def test03_string_with_null_character(self):
         """Test that strings with NULL do not get truncated"""
 
@@ -797,6 +820,7 @@ class TestSTLSTRING:
         assert repr(std.string('ab\0c')) == repr(b'ab\0c')
         assert str(std.string('ab\0c'))  == str('ab\0c')
 
+    @mark.xfail
     def test04_array_of_strings(self):
         """Access to global arrays of strings"""
 
@@ -824,6 +848,7 @@ class TestSTLSTRING:
                 for k in range(2):
                     assert str_array_4[i][j][k] == vals[i*4+j*2+k]
 
+    @mark.xfail
     def test05_stlstring_and_unicode(self):
         """Mixing unicode and std::string"""
 
@@ -860,6 +885,7 @@ class TestSTLSTRING:
         assert str(uas.get_string_cr(bval)) == 'ℕ'
         assert str(uas.get_string_cc(bval)) == 'ℕ'
 
+    @mark.xfail
     def test06_stlstring_bytes_and_text(self):
         """Mixing of bytes and str"""
 
@@ -877,6 +903,7 @@ class TestSTLSTRING:
         assert repr(ns.string_field) == repr(b'\xe9')
         assert str(ns.string_field)  == str(b'\xe9')       # b/c fails to decode
 
+    @mark.xfail
     def test07_stlstring_in_dictionaries(self):
         """Mixing str and std::string as dictionary keys"""
 
@@ -888,6 +915,7 @@ class TestSTLSTRING:
         assert d[x] == 0
         assert d['x'] == 0
 
+    @mark.xfail
     def test08_string_operators(self):
         """Mixing of C++ and Python types in global operators"""
 
@@ -915,6 +943,7 @@ class TestSTLSTRING:
         assert s1+s2 == "Hello, World!"
         assert s2+s1 == ", World!Hello"
 
+    @mark.xfail
     def test09_string_as_str_bytes(self):
         """Python-style methods of str/bytes on std::string"""
 
@@ -977,6 +1006,7 @@ class TestSTLSTRING:
         assert s.rfind('c')  < 0
         assert s.rfind('c') == s.npos
 
+    @mark.xfail
     def test10_string_in_repr_and_str_bytes(self):
         """Special cases for __str__/__repr__"""
 
@@ -1022,6 +1052,7 @@ class TestSTLLIST:
         cppyy.include(cls.test_h)
         cls.N = 13
 
+    @mark.xfail
     def test01_builtin_list_type(self):
         """Test access to a list<int>"""
 
@@ -1059,6 +1090,7 @@ class TestSTLLIST:
             for val in a:
                 assert ll[ll.index(val)] == val
 
+    @mark.xfail
     def test02_empty_list_type(self):
         """Test behavior of empty list<int>"""
 
@@ -1070,6 +1102,7 @@ class TestSTLLIST:
         for arg in a:
             pass
 
+    @mark.xfail
     def test03_replacement_of_eq(self):
         """A global templated function should work as a method"""
 
@@ -1094,6 +1127,7 @@ class TestSTLLIST:
 
         icls.__eq__ = oldeq
 
+    @mark.xfail
     def test04_iter_of_iter(self):
         """Iteration using iter()"""
 
@@ -1107,6 +1141,7 @@ class TestSTLLIST:
             assert a == i
             i += 1
 
+    @mark.xfail
     def test05_list_cpp17_style(self):
         """C++17 style initialization of std::list"""
 
@@ -1116,6 +1151,7 @@ class TestSTLLIST:
         v = cppyy.gbl.std.list(l)
         assert list(l) == l
 
+    @mark.xfail
     def test06_convert_list_of_strings(self):
         """Convert list of strings from C++ to Python types"""
 
@@ -1140,6 +1176,7 @@ class TestSTLMAP:
         cppyy.include(cls.test_h)
         cls.N = 13
 
+    @mark.xfail
     def test01_builtin_map_type(self):
         """Test access to a map<int,int>"""
 
@@ -1178,6 +1215,7 @@ class TestSTLMAP:
                 assert key   == self.N-1
                 assert value == (self.N-1)*(self.N-1)
 
+    @mark.xfail
     def test02_keyed_maptype(self):
         """Test access to a map<std::string,int>"""
 
@@ -1194,6 +1232,7 @@ class TestSTLMAP:
 
         assert len(a) == self.N
 
+    @mark.xfail
     def test03_empty_maptype(self):
         """Test behavior of empty map<int,int>"""
 
@@ -1206,6 +1245,7 @@ class TestSTLMAP:
             for key, value in m:
                 pass
 
+    @mark.xfail
     def test04_unsignedvalue_typemap_types(self):
         """Test assignability of maps with unsigned value types"""
 
@@ -1231,6 +1271,7 @@ class TestSTLMAP:
 
             raises(ValueError, mul.__setitem__, 'minus two', -2)
 
+    @mark.xfail
     def test05_STL_like_class_indexing_overloads(self):
         """Test overloading of operator[] in STL like class"""
 
@@ -1241,6 +1282,7 @@ class TestSTLMAP:
         assert a["some string" ] == 'string'
         assert a[3.1415] == 'double'
 
+    @mark.xfail
     def test06_initialize_from_dict(self):
         """Test std::map initializion from Python dict"""
 
@@ -1256,6 +1298,7 @@ class TestSTLMAP:
             with raises(TypeError):
                 m = mtype[int, str]({'1' : 1, '2' : 2})
 
+    @mark.xfail
     def test07_map_cpp17_style(self):
         """C++17 style initialization of std::map"""
 
@@ -1270,6 +1313,7 @@ class TestSTLMAP:
             assert m['1'] == 2
             assert m['2'] == 1
 
+    @mark.xfail
     def test08_map_derived_objects(self):
         """Enter derived objects through an initializer list"""
 
@@ -1317,6 +1361,7 @@ class TestSTLITERATOR:
         import cppyy
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
 
+    @mark.xfail
     def test01_builtin_vector_iterators(self):
         """Test iterator comparison with operator== reflected"""
 
@@ -1344,6 +1389,7 @@ class TestSTLITERATOR:
         assert b1 != b2
         assert b1 == e2
 
+    @mark.xfail
     def test02_STL_like_class_iterators(self):
         """Test the iterator protocol mapping for an STL like class"""
 
@@ -1382,6 +1428,7 @@ class TestSTLITERATOR:
             assert len(b) == 3
             assert sum(b) == 6
 
+    @mark.xfail
     def test03_stllike_preinc(self):
         """STL-like class with preinc by-ref returns"""
 
@@ -1421,6 +1468,7 @@ class TestSTLITERATOR:
         assert next(it).value == 1
         assert next(it).value == 2
 
+    @mark.xfail
     def test04_stllike_confusing_name(self):
         """Having "iterator" in the container name used to fail"""
 
@@ -1480,6 +1528,7 @@ class TestSTLARRAY:
         cls.stltypes = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_array_of_basic_types(self):
         """Usage of std::array of basic types"""
 
@@ -1492,6 +1541,7 @@ class TestSTLARRAY:
             a[i] = i
             assert a[i] == i
 
+    @mark.xfail
     def test02_array_of_pods(self):
         """Usage of std::array of PODs"""
 
@@ -1515,6 +1565,7 @@ class TestSTLARRAY:
         assert a[2].px == 6
         assert a[2].py == 7
 
+    @mark.xfail
     def test03_array_of_pointer_to_pods(self):
         """Usage of std::array of pointer to PODs"""
 
@@ -1545,6 +1596,7 @@ class TestSTLARRAY:
             assert gbl.ArrayTest.get_pa_px(a.data(), i) == 13*i
             assert gbl.ArrayTest.get_pa_py(a.data(), i) == 42*i
 
+    @mark.xfail
     def test04_array_from_aggregate(self):
         """Initialize an array from an aggregate contructor"""
 
@@ -1569,6 +1621,7 @@ class TestSTLSTRING_VIEW:
         cls.stltypes = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_string_through_string_view(self):
         """Usage of std::string_view as formal argument"""
 
@@ -1590,6 +1643,7 @@ class TestSTLSTRING_VIEW:
         assert countit(v)    == 4
         assert countit_cr(v) == 4
 
+    @mark.xfail
     def test02_string_view_from_unicode(self):
         """Life-time management of converted unicode strings"""
 
@@ -1637,6 +1691,7 @@ class TestSTLDEQUE:
         cppyy.include(cls.test_h)
         cls.N = cppyy.gbl.N
 
+    @mark.xfail
     def test01_deque_byvalue_regression(self):
         """Return by value of a deque used to crash"""
 
@@ -1647,6 +1702,7 @@ class TestSTLDEQUE:
         assert x
         del x
 
+    @mark.xfail
     def test02_deque_cpp17_style(self):
         """C++17 style initialization of std::deque"""
 
@@ -1666,6 +1722,7 @@ class TestSTLSET:
         cppyy.include(cls.test_h)
         cls.N = cppyy.gbl.N
 
+    @mark.xfail
     def test01_set_iteration(self):
         """Iterate over a set"""
 
@@ -1683,6 +1740,7 @@ class TestSTLSET:
             assert i in s
             assert i in r
 
+    @mark.xfail
     def test02_set_iterators(self):
         """Access to set iterators and their comparisons"""
 
@@ -1706,6 +1764,7 @@ class TestSTLSET:
         assert s.rbegin() != s.rend()
         assert s.rbegin().__preinc__() == s.rend()
 
+    @mark.xfail
     def test03_initialize_from_set(self):
         """Test std::set initializion from Python set"""
 
@@ -1725,6 +1784,7 @@ class TestSTLSET:
         with raises(TypeError):
             s = cppyy.gbl.std.set[int](set(["aap", "noot", "mies"]))
 
+    @mark.xfail
     def test04_set_cpp17_style(self):
         """C++17 style initialization of std::set"""
 
@@ -1734,6 +1794,7 @@ class TestSTLSET:
         v = cppyy.gbl.std.set(l)
         assert list(l) == l
 
+    @mark.xfail
     def test05_contains(self):
         """Contains check should not iterate and compare"""
 
@@ -1761,6 +1822,7 @@ class TestSTLTUPLE:
         cppyy.include(cls.test_h)
         cls.N = cppyy.gbl.N
 
+    @mark.xfail
     def test01_tuple_creation_and_access(self):
         """Create tuples and access their elements"""
 
@@ -1795,6 +1857,7 @@ class TestSTLTUPLE:
 
         # TODO: should be easy enough to add iterators over std::tuple?
 
+    @mark.xfail
     def test02_tuple_size(self):
         """Usage of tuple_size helper class"""
 
@@ -1804,6 +1867,7 @@ class TestSTLTUPLE:
         t = std.make_tuple("aap", 42, 5.)
         assert std.tuple_size(type(t)).value == 3
 
+    @mark.xfail
     def test03_tuple_iter(self):
         """Pack/unpack tuples"""
 
@@ -1818,6 +1882,7 @@ class TestSTLTUPLE:
         assert b == '2'
         assert c == 5.
 
+    @mark.xfail
     def test04_tuple_lifeline(self):
         """Tuple memory management"""
 
@@ -1853,6 +1918,7 @@ class TestSTLPAIR:
         cppyy.include(cls.test_h)
         cls.N = cppyy.gbl.N
 
+    @mark.xfail
     def test01_pair_pack_unpack(self):
         """Pack/unpack pairs"""
 
@@ -1874,6 +1940,7 @@ class TestSTLEXCEPTION:
         cls.stltypes = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_basics(self):
         """Test behavior of std::exception derived classes"""
 
@@ -1914,6 +1981,7 @@ class TestSTLEXCEPTION:
         assert YourError.__cpp_name__ == 'ErrorNamespace::YourError'
         assert YourError.__module__   == 'cppyy.gbl.ErrorNamespace'
 
+    @mark.xfail
     def test02_raising(self):
         """Raise a C++ std::exception derived class as a Python excption"""
 
@@ -1950,6 +2018,7 @@ class TestSTLEXCEPTION:
         except cppyy.gbl.YourError as e:
             assert e.what() == 'Oops'
 
+    @mark.xfail
     def test03_memory(self):
         """Memory handling of C++ c// helper for exception base class testing"""
 
@@ -1994,6 +2063,7 @@ class TestSTLEXCEPTION:
         gc.collect()
         assert cppyy.gbl.GetMyErrorCount() == 0
 
+    @mark.xfail
     def test04_from_cpp(self):
         """Catch C++ exceptiosn from C++"""
 

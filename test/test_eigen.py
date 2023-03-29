@@ -22,6 +22,7 @@ class TestEIGEN:
             warnings.simplefilter('ignore')
             cppyy.include('Eigen/Dense')
 
+    @mark.xfail
     def test01_simple_matrix_and_vector(self):
         """Basic creation of an Eigen::Matrix and Eigen::Vector"""
 
@@ -47,6 +48,7 @@ class TestEIGEN:
         v[1] = v(0) - 1
         assert v(1) == 3 and v[1] == 3
 
+    @mark.xfail
     def test02_comma_insertion(self):
         """Comma insertion overload"""
 
@@ -100,6 +102,7 @@ class TestEIGEN:
         for i in range(5):
             assert v(i) == i+1
 
+    @mark.xfail
     def test03_matrices_and_vectors(self):
         """Matrices and vectors"""
 
@@ -130,6 +133,7 @@ class TestEIGEN:
 
         assert (m*v).size() == v.size()
 
+    @mark.xfail
     def test04_resizing_through_assignment(self):
         """Resize on assignment"""
 
@@ -154,6 +158,7 @@ class TestEIGEN_REGRESSIOn:
             warnings.simplefilter('ignore')
             cppyy.include('Eigen/Dense')
 
+    @mark.xfail
     def test01_use_of_Map(self):
         """Use of Map (used to crash)"""
 

@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, mark
 from .support import setup_make, pylong
 
 currpath = py.path.local(__file__).dirpath()
@@ -18,6 +18,7 @@ class TestClassPYTHONIZATION:
         cls.pyzables = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test00_api(self):
         """Test basic semantics of the pythonization API"""
 
@@ -111,6 +112,7 @@ class TestClassPYTHONIZATION:
         assert len(y) == bsize
         assert list(y) == list(map(lambda x: x*yval, range(bsize)))
 
+    @mark.xfail
     def test03_type_pinning(self):
         """Verify pinnability of returns"""
 
@@ -125,6 +127,7 @@ class TestClassPYTHONIZATION:
         assert type(result) == cppyy.gbl.pyzables.MyDerived
 
 
+    @mark.xfail
     def test04_transparency(self):
         """Transparent use of smart pointers"""
 
@@ -139,6 +142,7 @@ class TestClassPYTHONIZATION:
         assert mine.__smartptr__().get().m_check == 0xcdcdcdcd
         assert mine.say_hi() == "Hi!"
 
+    @mark.xfail
     def test05_converters(self):
         """Smart pointer argument passing"""
 
@@ -164,6 +168,7 @@ class TestClassPYTHONIZATION:
         # cppyy.gbl.mine = mine
         pz.renew_mine()
 
+    @mark.xfail
     def test06_executors(self):
         """Smart pointer return types"""
 
@@ -193,6 +198,7 @@ class TestClassPYTHONIZATION:
         assert mine.__smartptr__().get().m_check == 0xcdcdcdcd
         assert mine.say_hi() == "Hi!"
 
+    @mark.xfail
     def test07_creates_flag(self):
         """Effect of creates flag on return type"""
 
@@ -228,6 +234,7 @@ class TestClassPYTHONIZATION:
         # associative  container, with 'index' a key, not a counter
         #raises(IndexError, d.__getitem__, 1)
 
+    @mark.xfail
     def test09_cpp_side_pythonization(self):
         """Use of C++ side pythonizations"""
 

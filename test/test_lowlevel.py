@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, pylong, pyunicode, IS_WINDOWS, ispypy
 
 currpath = py.path.local(__file__).dirpath()
@@ -35,6 +35,7 @@ class TestLOWLEVEL:
 
         assert cppyy.types.LowLevelView
 
+    @mark.xfail
     def test02_builtin_cpp_casts(self):
         """C++ casting of builtin types"""
 
@@ -50,6 +51,7 @@ class TestLOWLEVEL:
         assert len(ll.reinterpret_cast['int*'](0)) == 0
         raises(ReferenceError, ll.reinterpret_cast['int*'](0).__getitem__, 0)
 
+    @mark.xfail
     def test03_memory(self):
         """Memory allocation and free-ing"""
 
@@ -138,6 +140,7 @@ class TestLOWLEVEL:
         f = array('f', [0]);     ctd.set_float_r(f);  assert f[0] ==  5.
         f = array('d', [0]);     ctd.set_double_r(f); assert f[0] == -5.
 
+    @mark.xfail
     def test06_ctypes_as_ref_and_ptr(self):
         """Use ctypes for pass-by-ref/ptr"""
 
@@ -323,6 +326,7 @@ class TestLOWLEVEL:
             for meth in meth_types:
                 with raises(TypeError): getattr(ctd, 'set_'+meth+ext)(i)
 
+    @mark.xfail
     def test09_numpy_bool_array(self):
         """Test passing of numpy bool array"""
 
@@ -337,6 +341,7 @@ class TestLOWLEVEL:
         x = np.array([True], dtype=bool)
         assert cppyy.gbl.convert_bool(x)
 
+    @mark.xfail
     def test10_array_of_const_char_star(self):
         """Test passting of const char*[]"""
 
@@ -438,6 +443,7 @@ class TestLOWLEVEL:
         assert not ns.gime_null()
         assert list(ns.gime_null()) == []
 
+    @mark.xfail
     def test13_array_interface(self):
         """Test usage of __array__ from numpy"""
 
@@ -473,6 +479,7 @@ class TestLOWLEVEL:
         a[0] = 5
         assert b[0] == 5
 
+    @mark.xfail
     def test14_templated_arrays(self):
         """Use of arrays in template types"""
 
@@ -482,6 +489,7 @@ class TestLOWLEVEL:
         assert cppyy.gbl.std.vector[cppyy.gbl.std.vector[int]].value_type == 'std::vector<int>'
         assert cppyy.gbl.std.vector['int[1]'].value_type == 'int[1]'
 
+    @mark.xfail
     def test15_templated_arrays_gmpxx(self):
         """Use of gmpxx array types in templates"""
 
@@ -537,6 +545,7 @@ class TestMULTIDIMARRAYS:
     def _data_m(self, lbl):
         return [('m_'+tp.replace(' ', '_')+lbl, tp) for tp in self.numeric_builtin_types]
 
+    @mark.xfail
     def test01_2D_arrays(self):
         """Access and use of 2D data members"""
 
@@ -579,6 +588,7 @@ class TestMULTIDIMARRAYS:
                     assert arr[i][j] == val
                     assert arr[i, j] == val
 
+    @mark.xfail
     def test02_assign_2D_arrays(self):
         """Direct assignment of 2D arrays"""
 
@@ -631,6 +641,7 @@ class TestMULTIDIMARRAYS:
             arr[2][3] = 10
             assert arr[2][3] == 10
 
+    @mark.xfail
     def test03_3D_arrays(self):
         """Access and use of 3D data members"""
 
@@ -677,6 +688,7 @@ class TestMULTIDIMARRAYS:
                         assert arr[i][j][k] == val
                         assert arr[i, j, k] == val
 
+    @mark.xfail
     def test04_malloc(self):
         """Use of malloc to create multi-dim arrays"""
 

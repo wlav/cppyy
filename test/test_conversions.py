@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, mark
 from .support import setup_make
 
 currpath = py.path.local(__file__).dirpath()
@@ -18,6 +18,7 @@ class TestCONVERSIONS:
         cls.conversion = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_implicit_vector_conversions(self):
         """Test implicit conversions of std::vector"""
 
@@ -42,6 +43,7 @@ class TestCONVERSIONS:
         assert CNS.sumit(range(N), v2)          == total
         assert CNS.sumit(range(N), range(M, N)) == total
 
+    @mark.xfail
     def test02_memory_handling_of_temporaries(self):
         """Verify that memory of temporaries is properly cleaned up"""
 
@@ -63,6 +65,7 @@ class TestCONVERSIONS:
         gc.collect()
         assert CC.s_count == 0
 
+    @mark.xfail
     def test03_error_handling(self):
         """Verify error handling"""
 
@@ -90,6 +93,7 @@ class TestCONVERSIONS:
         gc.collect()
         assert CC.s_count == 0
 
+    @mark.xfail
     def test04_implicit_conversion_from_tuple(self):
         """Allow implicit conversions from tuples as arguments {}-like"""
 

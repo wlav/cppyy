@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, ispypy, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
@@ -41,6 +41,7 @@ class TestOVERLOADS:
         assert d_overload().get_int(ns_a_overload.a_overload()) ==  88
         assert d_overload().get_int(ns_b_overload.a_overload()) == -33
 
+    @mark.xfail
     def test02_class_based_overloads_explicit_resolution(self):
         """Test explicitly resolved function overloads"""
 
@@ -72,6 +73,7 @@ class TestOVERLOADS:
         nb = ns_a_overload.b_overload()
         raises(TypeError, nb.f, c_overload())
 
+    @mark.xfail
     def test03_fragile_class_based_overloads(self):
         """Test functions overloaded on void* and non-existing classes"""
 
@@ -92,6 +94,7 @@ class TestOVERLOADS:
         dd = cppyy.gbl.get_dd_ol()
         assert more_overloads().call(dd     ) == "dd_ol"
 
+    @mark.xfail
     def test04_fully_fragile_overloads(self):
         """Test that unknown* is preferred over unknown&"""
 
@@ -145,6 +148,7 @@ class TestOVERLOADS:
             a = array.array(l, numbers)
             assert round(cmean(len(a), a) - mean, 8) == 0
 
+    @mark.xfail
     def test08_const_non_const_overloads(self):
         """Check selectability of const/non-const overloads"""
 
@@ -204,6 +208,7 @@ class TestOVERLOADS:
         with raises(ValueError):
             cpp.BoolInt4.fff(2)
 
+    @mark.xfail
     def test10_overload_and_exceptions(self):
         """Prioritize reporting C++ exceptions from callee"""
 

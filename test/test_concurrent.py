@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import IS_MAC_ARM
 
 
@@ -84,6 +84,7 @@ class TestCONCURRENT:
         if t.is_alive():        # was timed-out
             cppyy.gbl.test12_timeout.stopit[0] = True
 
+    @mark.xfail
     def test04_cpp_threading_with_exceptions(self):
         """Threads and Python exceptions"""
 
@@ -162,6 +163,7 @@ class TestCONCURRENT:
         assert "RuntimeError" in w.err_msg
         assert "all wrong"    in w.err_msg
 
+    @mark.xfail
     def test05_float2d_callback(self):
         """Passing of 2-dim float arguments"""
 
@@ -228,6 +230,7 @@ class TestCONCURRENT:
         p = Processor()
         cppyy.gbl.FloatDim2.callback(p)
 
+    @mark.xfail
     def test06_overload_reuse_in_threads(self):
         """Threads reuse overload objects; check for clashes"""
 

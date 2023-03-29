@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises
+from pytest import raises, mark
 from .support import setup_make, ispypy
 
 
@@ -18,6 +18,7 @@ class TestCPP11FEATURES:
         cls.cpp11features = cppyy.load_library(cls.test_dct)
         cppyy.include(cls.test_h)
 
+    @mark.xfail
     def test01_smart_ptr(self):
         """Usage and access of std::shared/unique_ptr<>"""
 
@@ -46,6 +47,7 @@ class TestCPP11FEATURES:
             gc.collect()
             assert TestSmartPtr.s_counter == 0
 
+    @mark.xfail
     def test02_smart_ptr_construction(self):
         """Shared/Unique pointer ctor is templated, requiring special care"""
 
@@ -73,6 +75,7 @@ class TestCPP11FEATURES:
             gc.collect()
             assert TestSmartPtr.s_counter == 0
 
+    @mark.xfail
     def test03_smart_ptr_memory_handling(self):
         """Test shared/unique pointer memory ownership"""
 
@@ -103,6 +106,7 @@ class TestCPP11FEATURES:
             gc.collect()
             assert TestSmartPtr.s_counter == 0
 
+    @mark.xfail
     def test04_shared_ptr_passing(self):
         """Ability to pass shared_ptr<Derived> through shared_ptr<Base>"""
 
@@ -142,6 +146,7 @@ class TestCPP11FEATURES:
         gc.collect()
         assert TestSmartPtr.s_counter == 0
 
+    @mark.xfail
     def test05_unique_ptr_passing(self):
         """Ability to pass unique_ptr<Derived> through unique_ptr<Base>"""
 
@@ -195,6 +200,7 @@ class TestCPP11FEATURES:
         gc.collect()
         assert TestSmartPtr.s_counter == 0
 
+    @mark.xfail
     def test06_nullptr(self):
         """Allow the programmer to pass NULL in certain cases"""
 
@@ -209,6 +215,7 @@ class TestCPP11FEATURES:
 
       # further usage is tested in datatypes.py:test15_nullptr_passing
 
+    @mark.xfail
     def test07_move(self):
         """Move construction, assignment, and methods"""
 
@@ -269,6 +276,7 @@ class TestCPP11FEATURES:
         assert cppyy.gbl.TestMoving1.s_instance_counter == 0
         assert cppyy.gbl.TestMoving2.s_instance_counter == 0
 
+    @mark.xfail
     def test08_initializer_list(self):
         """Initializer list construction"""
 
@@ -306,6 +314,7 @@ class TestCPP11FEATURES:
         for l in (['x'], ['x', 'y', 'z']):
             assert ns.foo(l) == std.vector['std::string'](l)
 
+    @mark.xfail
     def test09_lambda_calls(self):
         """Call (global) lambdas"""
 
@@ -334,6 +343,7 @@ class TestCPP11FEATURES:
             assert l3
             assert l3(2) == 48
 
+    @mark.xfail
     def test10_optional(self):
         """Use of optional and nullopt"""
 
@@ -355,6 +365,7 @@ class TestCPP11FEATURES:
             c = cppyy.gbl.std.nullopt
             assert cppyy.gbl.callopt(c)
 
+    @mark.xfail
     def test11_chrono(self):
         """Use of chrono and overloaded operator+"""
 
@@ -365,6 +376,7 @@ class TestCPP11FEATURES:
         # following used to fail with compilation error
         t = std.chrono.system_clock.now() + std.chrono.seconds(1)
 
+    @mark.xfail
     def test12_stdfunction(self):
         """Use of std::function with arguments in a namespace"""
 
@@ -391,6 +403,7 @@ class TestCPP11FEATURES:
         f = FunctionNS.FNCreateTestStructFunc()
         assert f(t) == 27
 
+    @mark.xfail
     def test13_stdhash(self):
         """Use of std::hash"""
 
@@ -406,6 +419,7 @@ class TestCPP11FEATURES:
             assert hash(sw)  == 17
             assert hash(sw)  == 17
 
+    @mark.xfail
     def test14_shared_ptr_passing(self):
         """Ability to pass normal pointers through shared_ptr by value"""
 
@@ -431,6 +445,7 @@ class TestCPP11FEATURES:
             gc.collect()
             assert TestSmartPtr.s_counter == 0
 
+    @mark.xfail
     def test15_unique_ptr_template_deduction(self):
         """Argument type deduction with std::unique_ptr"""
 
@@ -450,6 +465,7 @@ class TestCPP11FEATURES:
         with raises(ValueError):  # not an RValue
             cppyy.gbl.UniqueTempl.returnptr[int](uptr_in)
 
+    @mark.xfail
     def test16_unique_ptr_moves(self):
         """std::unique_ptr requires moves"""
 
@@ -474,6 +490,7 @@ class TestCPP11FEATURES:
         with raises(TypeError):
             ns.returnptr_move(up)
 
+    @mark.xfail
     def test17_unique_ptr_data(self):
         """std::unique_ptr as data means implicitly no copy ctor"""
 

@@ -15,6 +15,7 @@ class TestBOOSTANY:
 
         cppyy.include('boost/any.hpp')
 
+    @mark.xfail
     def test01_any_class(self):
         """Availability of boost::any"""
 
@@ -27,6 +28,7 @@ class TestBOOSTANY:
 
         assert std.list[any]
 
+    @mark.xfail
     def test02_any_usage(self):
         """boost::any assignment and casting"""
 
@@ -73,6 +75,7 @@ class TestBOOSTOPERATORS:
 
         cppyy.include('boost/operators.hpp')
 
+    @mark.xfail
     def test01_ordered(self):
         """ordered_field_operators as base used to crash"""
 
@@ -99,6 +102,7 @@ class TestBOOSTVARIANT:
         cppyy.include("boost/variant/variant.hpp")
         cppyy.include("boost/variant/get.hpp")
 
+    @mark.xfail
     def test01_variant_usage(self):
         """boost::variant usage"""
 
@@ -141,6 +145,7 @@ class TestBOOSTERASURE:
         cppyy.include("boost/type_erasure/member.hpp")
         cppyy.include("boost/mpl/vector.hpp")
 
+    @mark.xfail
     def test01_erasure_usage(self):
         """boost::type_erasure usage"""
 

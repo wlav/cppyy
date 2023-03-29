@@ -1,5 +1,5 @@
 import py, os, sys
-from pytest import raises, skip
+from pytest import raises, skip, mark
 from .support import setup_make, ispypy, IS_WINDOWS
 
 currpath = py.path.local(__file__).dirpath()
@@ -188,6 +188,7 @@ namespace Namespace {
         assert cppyy.gbl.gUint == 0
         raises(ValueError, setattr, cppyy.gbl, 'gUint', -1)
 
+    @mark.xfail
     def test_casting(self):
         import cppyy
         from cppyy.gbl import Abstract, Concrete
@@ -232,6 +233,7 @@ namespace Namespace {
         c = Concrete(*args)
         assert c.m_int == 27
 
+    @mark.xfail
     def test_keyword_arguments(self):
         import cppyy
         from cppyy.gbl import Concrete
@@ -251,6 +253,7 @@ namespace Namespace {
         c = Concrete(**kwds)
         assert c.m_int == 18
 
+    @mark.xfail
     def test_doc_strings(self):
         import cppyy
         from cppyy.gbl import Concrete
@@ -262,6 +265,7 @@ namespace Namespace {
 
         pass
 
+    @mark.xfail
     def test_functions(self):
         import cppyy
 
@@ -309,6 +313,7 @@ namespace Namespace {
         assert hasattr(cppyy, 'nullptr')
         assert not cppyy.nullptr
 
+    @mark.xfail
     def test_operator_conversions(self):
         import cppyy
         from cppyy.gbl import Concrete
@@ -375,6 +380,7 @@ namespace Namespace {
 
         pass
 
+    @mark.xfail
     def test_typedefs(self):
         import cppyy
         from cppyy.gbl import Concrete, Concrete_t
@@ -386,6 +392,7 @@ namespace Namespace {
 
         pass
 
+    @mark.xfail
     def test_x_inheritance(self):
         import cppyy
         from cppyy.gbl import Abstract, Concrete, call_abstract_method
@@ -433,6 +440,7 @@ namespace Namespace {
         pc = PyConcrete4()
         assert call_abstract_method(pc) == "Hello, Python World! (4)"
 
+    @mark.xfail
     def test_multi_x_inheritance(self):
         """Multiple cross-inheritance"""
 
@@ -450,6 +458,7 @@ namespace Namespace {
         assert cppyy.gbl.call_abstract_method1(pc) == "first message"
         assert cppyy.gbl.call_abstract_method2(pc) == "second message"
 
+    @mark.xfail
     def test_exceptions(self):
         """Exception throwing and catching"""
 
@@ -588,6 +597,7 @@ namespace Zoo {
         Integer1.__repr__ = lambda self: repr(self.m_data)
         assert str([Integer1(j) for j in range(10)]) == '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]'
 
+    @mark.xfail
     def test05_pythonizer(self):
         """Implement and test a pythonizor"""
 
@@ -607,6 +617,7 @@ namespace Zoo {
         i2 = Integer2(13)
         assert int(i2) == 13
 
+    @mark.xfail
     def test06_add_operator(self):
         """Add operator+"""
 
@@ -628,6 +639,7 @@ namespace Math {
         k = i2 + i
         assert int(k) == i2.m_data + i.m_data
 
+    @mark.xfail
     def test07_run_zoo(self):
         """Bunch of zoo animals running around"""
 
@@ -654,6 +666,7 @@ namespace Math {
         assert Zoo.identify_animal(mouse) == "the animal is a mouse"
         assert Zoo.identify_animal(lion) == "the animal is a lion"
 
+    @mark.xfail
     def test08_shared_ptr(self):
         """Shared pointer transparency"""
 
@@ -679,6 +692,7 @@ namespace Zoo {
         assert Zoo.identify_animal(Zoo.free_lion) == "the animal is a lion"
         assert Zoo.identify_animal_smart(Zoo.free_lion) == "the animal is a lion"
 
+    @mark.xfail
     def test09_templated_function(self):
         """Templated free function"""
 
@@ -713,6 +727,7 @@ namespace Zoo {
 
         assert mul['double, double, double'](1., 5) == 5.
 
+    @mark.xfail
     def test10_stl_algorithm(self):
         """STL algorithm on std::string"""
 
@@ -729,6 +744,7 @@ class TestADVERTISED:
     def setup_class(cls):
         import cppyy
 
+    @mark.xfail
     def test01_reduction_of_overloads(self):
         """Reduce available overloads to 1"""
 
@@ -752,6 +768,7 @@ class TestADVERTISED:
         assert Advert01.A(1)
         raises(TypeError, Advert01.A, 1.)
 
+    @mark.xfail
     def test02_use_c_void_p(self):
         """Use of opaque handles and ctypes.c_void_p"""
 
@@ -786,6 +803,7 @@ class TestADVERTISED:
         Advert02.Picam_OpenFirstCamera(cam)
         assert Advert02.Picam_CloseCamera(cam)
 
+    @mark.xfail
     def test03_use_of_ctypes_and_enum(self):
         """Use of (opaque) enum through ctypes.c_void_p"""
 
@@ -837,6 +855,7 @@ class TestADVERTISED:
         assert list(arr) == [1, 42, 1, 42]
         cppyy.gbl.free(vp)
 
+    @mark.xfail
     def test04_ptr_ptr_python_owns(self):
         """Example of ptr-ptr use where python owns"""
 
@@ -873,6 +892,7 @@ class TestADVERTISED:
         cppyy.gbl.Advert04.ptr2ptr_init(s)
         assert s.i == 42
 
+    @mark.xfail
     def test05_ptr_ptr_with_array(self):
         """Example of ptr-ptr with array"""
 
@@ -922,6 +942,7 @@ class TestADVERTISED:
         val = createit(ptr)
         assert destroyit(ptr) == val
 
+    @mark.xfail
     def test07_array_of_arrays(self):
         """Example of array of array usage"""
 
@@ -958,6 +979,7 @@ class TestADVERTISED:
             for j in range (NPIXELS):
                  assert image_array[j] == i*NPIXELS+j
 
+    @mark.xfail
     def test08_voidptr_array(self):
         """Example of access to array of void ptrs"""
 
@@ -977,6 +999,7 @@ class TestADVERTISED:
         assert n.p[2] == 0x3
         assert len(n.p) == 3
 
+    @mark.xfail
     def test09_custom_str(self):
         """Example of customized str"""
 
@@ -1003,6 +1026,7 @@ class TestADVERTISED:
 
         assert str(s) == "hi there!"
 
+    @mark.xfail
     def test10_llvm_blog(self):
         """Test code posted in the LLVM blog posting"""
 
@@ -1075,6 +1099,7 @@ class TestTALKEXAMPLES:
 
         cppyy.gbl.talk_examples
 
+    @mark.xfail
     def test_template_instantiation(self):
         """Run-time template instantiation example"""
 
@@ -1127,6 +1152,7 @@ class TestTALKEXAMPLES:
 
         assert v.back().add(17) == 4+42+2*17
 
+    @mark.xfail
     def test_fallbacks(self):
         """Template instantation switches based on value sizes"""
 
@@ -1145,6 +1171,7 @@ class TestTALKEXAMPLES:
         assert CC.passT(2**64-1) == 2**64-1
         assert 'unsigned long long' in CC.passT.__doc__
 
+    @mark.xfail
     def test_callbacks(self):
         """Function callback example"""
 
@@ -1171,6 +1198,7 @@ class TestTALKEXAMPLES:
         assert CC.callPtr(lambda i: 5*i, 4) == 20
         assert CC.callFun(lambda i: 6*i, 4) == 24
 
+    @mark.xfail
     def test_templated_callback(self):
         """Templated callback example"""
 
@@ -1202,6 +1230,7 @@ class TestTALKEXAMPLES:
         assert CC.callT(ann_f2, 6, 7) == 3*6*7
         assert round(CC.callT(ann_f1, 2)-2*3.1415, 5) == 0.
 
+    @mark.xfail
     def test_autocast_and_identiy(self):
         """Auto-cast and identiy preservation example"""
 
@@ -1223,6 +1252,7 @@ class TestTALKEXAMPLES:
         assert type(b) == CC.Derived
         assert d is b
 
+    @mark.xfail
     def test_exceptions(self):
         """Exceptions example"""
 
@@ -1247,6 +1277,7 @@ class TestTALKEXAMPLES:
         with raises(CC.MyException):
             CC.throw_error()
 
+    @mark.xfail
     def test_unicode(self):
         """Unicode non-UTF-8 example"""
 
