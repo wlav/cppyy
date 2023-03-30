@@ -16,6 +16,7 @@ master: 3.0.1
 * Default to C++20 on all platforms
 * Add C++20 standard headers to the PCH
 * Fix std::span compatibility
+* Look for ``__cast_cpp__`` for custom converters
 
 
 2023-03-19: 3.0.0

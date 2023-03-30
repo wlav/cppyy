@@ -918,6 +918,10 @@ class TestADVANCEDCPP:
             return std::sqrt(p.x*p.x + p.y*p.y);
         }
 
+        double norm_m(MyPoint&& p) {
+            return std::sqrt(p.x*p.x + p.y*p.y);
+        }
+
         double norm_v(MyPoint p) {
             return std::sqrt(p.x*p.x + p.y*p.y);
         }
@@ -937,8 +941,13 @@ class TestADVANCEDCPP:
             def __cast_cpp__(self):
                 return ns.MyPoint(self.x, self.y)
 
+        class MyPyPoint3(MyPyPoint1):
+            def __cast_cpp__(self):
+                return (self.x, self.y)
+
         p1 = MyPyPoint1(5, 10)
         p2 = MyPyPoint2(p1.x, p1.y)
+        p3 = MyPyPoint3(p1.x, p1.y)
         pynorm = math.sqrt(p2.x**2+p2.y**2)
 
         for norm in [ns.norm_cr, ns.norm_r, ns.norm_v, ns.norm_p]:
@@ -946,4 +955,7 @@ class TestADVANCEDCPP:
                 norm(p1)
 
             assert round(norm(p2) - pynorm, 8) == 0
+
+        for norm in [ns.norm_cr, ns.norm_m, ns.norm_v]:
+            assert round(norm(p3) - pynorm, 8) == 0
 
