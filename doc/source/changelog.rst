@@ -10,6 +10,14 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master: 3.0.1
+-------------
+
+* Default to C++20 on all platforms
+* Add C++20 standard headers to the PCH
+* Fix std::span compatibility
+
+
 2023-03-19: 3.0.0
 -----------------
 

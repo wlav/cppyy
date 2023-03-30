@@ -724,3 +724,15 @@ class TestSTDNOTINGLOBAL:
         };""")
 
         assert cppyy.gbl.ELogLevel != cppyy.gbl.CppyyLegacy.ELogLevel
+
+    def test05_span_compatibility(self):
+        """Test compatibility of span under C++2a compilers that support it"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        #if __has_include(<span>)
+        #include <span>
+        std::span<int> my_test_span1;
+        #endif
+        """)
