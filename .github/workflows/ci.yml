@@ -214,10 +214,14 @@ jobs:
         python -m pip install pytest-xdist
         echo ::group::Test Logs
         python -m pytest -n auto -sv --max-worker-restart 512 | tee test.log 2>&1
+        export PYTEST_RETCODE="${PIPESTATUS[0]}"
         echo ::endgroup::
         echo "TEST SUMMARY: \n"
         tail -n1 test.log
         echo "OF TOTAL $(python3 -m pytest  --collect-only -q | tail -n1)"
+        echo "Return Code: ${PYTEST_RETCODE}"
+        tail -n1 test.log | grep -q "xpassed" ; test $? -eq 1
+        exit $PYTEST_RETCODE
     - name: Setup tmate session
       if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
