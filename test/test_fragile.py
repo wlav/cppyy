@@ -598,6 +598,20 @@ class TestFRAGILE:
                 int add42(int i) { return i + 42; }
             }""")
 
+    def test26_macro(self):
+        """Test access to C++ pre-processor macro's"""
+
+        import cppyy
+
+        cppyy.cppdef('#define HELLO "Hello, World!"')
+        assert cppyy.macro("HELLO") == "Hello, World!"
+
+        with raises(ValueError):
+            cppyy.macro("SOME_INT")
+
+        cppyy.cppdef('#define SOME_INT 42')
+        assert cppyy.macro("SOME_INT") == 42
+
 
 class TestSIGNALS:
     def setup_class(cls):

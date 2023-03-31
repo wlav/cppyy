@@ -17,6 +17,7 @@ master: 3.0.1
 * Add C++20 standard headers to the PCH
 * Fix std::span compatibility
 * Look for ``__cast_cpp__`` for custom converters
+* Add ``macro()`` helper for evaluation of preprocessor macros
 
 
 2023-03-19: 3.0.0

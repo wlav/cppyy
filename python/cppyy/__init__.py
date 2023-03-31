@@ -36,6 +36,7 @@ __author__ = 'Wim Lavrijsen <WLavrijsen@lbl.gov>'
 __all__ = [
     'cppdef',                 # declare C++ source to Cling
     'cppexec',                # execute a C++ statement
+    'macro',                  # attempt to evaluate a cpp macro
     'include',                # load and jit a header file
     'c_include',              # load and jit a C header file
     'load_library',           # load a shared library
@@ -226,6 +227,20 @@ def cppexec(stmt):
         sys.stderr.write(err.err[1:])
 
     return True
+
+def macro(cppm):
+    """Attempt to evalute a C/C++ pre-processor macro as a constant"""
+
+    try:
+        macro_val = getattr(getattr(gbl, '__cppyy_macros', None), cppm+'_', None)
+        if macro_val is None:
+            cppdef("namespace __cppyy_macros { auto %s_ = %s; }" % (cppm, cppm))
+        return getattr(getattr(gbl, '__cppyy_macros'), cppm+'_')
+    except Exception:
+        pass
+
+    raise ValueError('Failed to evaluate macro %s', cppm)
+
 
 def load_library(name):
     """Explicitly load a shared library."""
