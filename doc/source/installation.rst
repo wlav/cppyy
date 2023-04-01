@@ -15,9 +15,8 @@ clang5, or MSVC'17.
     directly) needs to be opened from within an environment with MSVC setup,
     otherwise the compiler will not be accessible.
 
-When installing from source, the only requirement is full support for C++11
-(e.g. minimum gcc 4.8.1 on GNU/Linux), but older compilers than the ones
-listed for the wheels have not been tested.
+When installing from source, the only requirement is a compiler that supports
+C++14, this in order to build LLVM.
 
 With CPython on Linux or MacOS, probably by far the easiest way to install
 cppyy, is through conda-forge on `Anaconda`_ (or `miniconda`_).
@@ -125,13 +124,14 @@ enough, the following can be made to work::
 C++ standard with pip
 ---------------------
 
-The C++17 standard is the default for Mac and Linux (both PyPI and
-conda-forge); but it is C++14 for MS Windows (compiler limitation).
+The C++20 standard is the default on all systems as of release 3.0.1 (both
+PyPI and conda-forge); it is C++17 for older releases.
 When installing from PyPI using ``pip``, you can control the standard
-selection by setting the ``STDCXX`` envar to '17', '14', or '11' (for Linux,
-the backend does not need to be recompiled).
-Note that the build will lower your choice if the compiler used does not
-support a newer standard.
+selection by setting the ``STDCXX`` envar to '20', '17', or '14' (for Linux,
+the backend does not need to be recompiled) for the 3.x releases; '17', '14',
+or '11' for the 2.x releases.
+Note that the build will automatically lower your choice if the compiler used
+does not support a newer standard.
 
 
 Install from source
@@ -142,7 +142,7 @@ To build an existing release from source, tell ``pip`` to not download any
 binary wheels.
 Build-time only dependencies are ``cmake`` (for general build), ``python``
 (obviously, but also for LLVM), and a modern C++ compiler (one that supports
-at least C++11).
+at least C++14).
 Use the envar ``STDCXX`` to control the C++ standard version; ``MAKE`` to
 change the ``make`` command, ``MAKE_NPROCS`` to control the maximum number of
 parallel jobs allowed, and ``VERBOSE=1`` to see full build/compile commands.

@@ -19,13 +19,12 @@ Building the pre-compiled header will also pick up common CUDA libraries such
 as cuBLAS, if installed.
 
 Each version of CUDA requires specific versions of Clang and the system
-compiler (e.g. gcc) for proper functioning.
-Since Cling as used by ``cppyy`` is still running Clang9 (work on the port to
-Clang13 is on-going) and since CUDA has changed the APIs for launching kernels
-in v11, the latest supported version of CUDA is v10.2.
-This is also the default for the binary distribution; use of a different
-version of CUDA (older than v10.2) will work but does require rebuilding
-``cppyy-cling`` from source.
+compiler (e.g. gcc) for proper functioning; it's therefore best to build the
+backend (``cppyy-cling``) from source for the specific combination of
+interest.
+The 3.x series of cppyy uses Clang13, the 2.x series Clang9, and this may
+limit the CUDA versions supported (especially since CUDA has changed the APIs
+for launching kernels in v11).
 
 There are three environment variables to control Cling's handling of CUDA:
 
@@ -36,7 +35,7 @@ There are three environment variables to control Cling's handling of CUDA:
   in a standard location.
 
 * ``CLING_CUDA_ARCH`` (optional): set the architecture to target; default is
-  ``sm_35`` and Clang9 is limited to ``sm_75``.
+  ``sm_35`` (Clang9 is limited to ``sm_75``).
 
 After enabling CUDA with ``CLING_ENABLE_CUDA=1`` CUDA code can be used and
 kernels can be launched from JITed code by in ``cppyy.cppdef()``.

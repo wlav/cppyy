@@ -88,6 +88,26 @@ For class methods, see the :ref:`methods section <sec-methods-label>` under
 the :doc:`classes heading<classes>`.
 
 
+`Lambda's`
+----------
+
+C++ lambda functions are supported by first binding to a ``std::function``,
+then providing a proxy to that on the Python side.
+Example::
+
+    >>> cppyy.cppdef("""\
+    ... auto create_lambda(int a) {
+    ...     return [a](int b) { return a+b; };
+    ... }""")
+    True
+    >>> l = cppyy.gbl.create_lambda(4)
+    >>> type(l)
+    <class cppyy.gbl.std.function<int(int)> at 0x11505b830>
+    >>> l(2)
+    6
+    >>> 
+
+
 `Operators`
 -----------
 

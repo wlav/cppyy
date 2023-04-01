@@ -84,10 +84,11 @@ will result in a Python ``ReferenceError`` exception.
 `Destructors`
 -------------
 
-There should not be a reason to call a destructor directly in CPython, but
+There should no be reason to call a destructor directly in CPython, but e.g.
 PyPy uses a garbage collector and that makes it sometimes useful to destruct
-a C++ object where you want it destroyed.
-Destructors are accessible through the conventional ``__destruct__`` method.
+a C++ object exactly when you want it destroyed.
+Destructors are by convention accessible through the ``__destruct__`` method
+(since "~" can not be part of a Python method name).
 If a Python-side derived class overrides ``__destruct__``, that method will
 be called when the instance gets deleted in C++.
 The Python destructor, ``__del__``, gets called when the Python proxy goes

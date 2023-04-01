@@ -29,6 +29,22 @@ It needs to be imported explicitly:
     >>>
 
 
+`LowLevelView`
+--------------
+
+Python has an elaborate array interface (buffer) specification, but no
+standard library array type that completely implements it; instead, the
+canonical Python array type is the NumPy one.
+cppyy introduces the basic ``LowLevelView`` array class to avoid having a
+direct dependency on NumPy and to guarantee zero copy.
+The ``LowLevelView`` type gives access to array details such as the size,
+type, etc. and allows reading/writing of array elements, both for interactive
+use and through the buffer interface to allow NumPy to interface with them.
+For more complex operations, it's recommended to copy from the
+``LowLevelView`` inta a NumPy array, or to create a NumPy view (see below,
+under :ref:`NumPy Casts <npcasts>`).
+
+
 `C/C++ casts`
 -------------
 
@@ -115,6 +131,8 @@ is required to turn it into something usable.
   applies to objects, for which auto-casting will work.
   The syntax is "template-style", just like for the C-style cast above.
 
+
+.. _npcasts:
 
 `NumPy casts`
 -------------
@@ -235,7 +253,7 @@ C++ has three ways of allocating heap memory (``malloc``, ``new``, and
 ``new[]``) and three corresponding ways of deallocation (``free``,
 ``delete``, and ``delete[]``).
 Direct use of ``malloc`` and ``new`` should be avoided for C++ classes, as
-these may override ``operator new`` to control their allocation own.
+these may override ``operator new`` to control their own allocation.
 However these low-level allocators can be necessary for builtin types on
 occasion if the C++ side takes ownership (otherwise, prefer either
 ``array`` from the builtin module ``array`` or ``ndarray`` from Numpy).

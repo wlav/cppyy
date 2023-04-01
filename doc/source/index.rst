@@ -149,6 +149,7 @@ development environments.
    :caption: Features
    :maxdepth: 1
 
+   interpreter
    basic_types
    strings
    classes
