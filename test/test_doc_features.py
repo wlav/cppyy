@@ -1171,7 +1171,6 @@ class TestTALKEXAMPLES:
         assert CC.passT(2**64-1) == 2**64-1
         assert 'unsigned long long' in CC.passT.__doc__
 
-    @mark.xfail
     def test_callbacks(self):
         """Function callback example"""
 
