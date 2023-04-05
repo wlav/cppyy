@@ -750,7 +750,6 @@ class TestCROSSINHERITANCE:
             def abstract1(self):
                 return ns.Result(1)
 
-    @mark.xfail
     def test20_basic_multiple_inheritance(self):
         """Basic multiple inheritance"""
 
@@ -829,7 +828,6 @@ class TestCROSSINHERITANCE:
         assert a.m_2 == 42
         assert a.m_3 == 67
 
-    @mark.xfail
     def test21_multiple_inheritance_with_constructors(self):
         """Multiple inheritance with constructors"""
 
@@ -917,7 +915,6 @@ class TestCROSSINHERITANCE:
         assert a.m_2 ==  88
         assert a.m_3 == -11
 
-    @mark.xfail
     def test22_multiple_inheritance_with_defaults(self):
         """Multiple inheritance with defaults"""
 

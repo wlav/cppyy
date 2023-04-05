@@ -376,7 +376,6 @@ class TestCPP11FEATURES:
         # following used to fail with compilation error
         t = std.chrono.system_clock.now() + std.chrono.seconds(1)
 
-    @mark.xfail
     def test12_stdfunction(self):
         """Use of std::function with arguments in a namespace"""
 
