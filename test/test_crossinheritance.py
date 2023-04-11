@@ -75,7 +75,6 @@ class TestCROSSINHERITANCE:
         assert d.get_value()           == 29
         assert Base1.call_get_value(d) == 29
 
-    @mark.xfail
     def test03_override_function_abstract_base(self):
         """Test ability to override a simple function with an abstract base"""
 
@@ -714,7 +713,6 @@ class TestCROSSINHERITANCE:
         assert obj.message()  == "Hello, World!"
         assert ns.saywot(obj) == "Hello, World!"
 
-    @mark.xfail
     def test19_cpp_side_multiple_inheritance(self):
         """Hierarchy with multiple inheritance on the C++ side"""
 
@@ -1289,7 +1287,6 @@ class TestCROSSINHERITANCE:
             assert inst.fun1() == val1
             assert inst.fun2() == inst.fun1()
 
-    @mark.xfail
     def test29_cross_deep_multi(self):
         """Deep multi-inheritance hierarchy"""
 
