@@ -11,7 +11,7 @@
 #endif
 #include <utility>
 #include <vector>
-
+#include "datatypes.h" // for gbl.N
 
 //- basic example class
 class just_a_class {
