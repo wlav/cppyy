@@ -216,7 +216,58 @@ class TestNUMBA:
         assert((go_fast(x, d) == go_slow(x, d)).all())
         assert self.compare(go_slow, go_fast, 10000, x, d)
 
-    def test05_datatype_mapping(self):
+    def test05_multiple_arguments_function(self):
+        """Numba-JITing of functions with multiple arguments"""
+
+        import cppyy
+        import numpy as np
+
+        cppyy.cppdef("""
+               double add_double(double a, double b, double c) {
+                   double d = a + b + c;
+                   return d;
+                   }
+               """)
+        @numba.njit()
+        def loop_add(x):
+            sum = 0
+            for row in x:
+                sum += cppyy.gbl.add_double(row[0], row[1], row[2])
+            return sum
+
+        x = np.arange(3000, dtype=np.float64).reshape(1000, 3)
+        sum = 0
+        for row in x:
+            sum += row[0] + row[1] + row[2]
+
+        assert sum == loop_add(x)
+
+    def test06_multiple_arguments_template_freefunction(self):
+        """Numba-JITing of a free template function that recieves more than one template arg"""
+
+        import cppyy
+        import numpy as np
+        cppyy.cppdef("""
+                namespace NumbaSupportExample {
+                template<typename T1>
+                T1 add(T1 a, T1 b) { return a + b; }
+                }""")
+
+        @numba.jit(nopython=True)
+        def tma(x):
+            sum = 0
+            for row in x:
+                sum += cppyy.gbl.NumbaSupportExample.add(row[0], row[1])
+            return sum
+
+        x = np.arange(2000, dtype=np.float64).reshape(1000, 2)
+        sum = 0
+        for row in x:
+            sum += row[0] + row[1]
+
+        assert sum == tma(x)
+
+    def test07_datatype_mapping(self):
         """Numba-JITing of various data types"""
 
         import cppyy
@@ -249,7 +300,7 @@ class TestNUMBA:
                 val = getattr(nl[ntype], m)()
                 assert access_field(getattr(ns, 'M%d'%i)(val)) == val
 
-    def test06_object_returns(self):
+    def test08_object_returns(self):
         """Numba-JITing of a function that returns an object"""
 
         import cppyy
