@@ -4,7 +4,6 @@
 import cppyy
 import cppyy.types as cpp_types
 import cppyy.reflex as cpp_refl
-
 import numba
 import numba.extending as nb_ext
 import numba.core.cgutils as nb_cgu
@@ -14,14 +13,13 @@ import numba.core.registry as nb_reg
 import numba.core.typing.templates as nb_tmpl
 import numba.core.types as nb_types
 import numba.core.typing as nb_typing
-
 from llvmlite import ir
-
+import itertools
+import re
 
 # setuptools entry point for Numba
 def _init_extension():
     pass
-
 
 class Qualified:
     default   = 0
@@ -48,14 +46,15 @@ _cpp2numba = {
     'unsigned int'           : nb_types.uintc,
     'int32_t'                : nb_types.int32,
     'uint32_t'               : nb_types.uint32,
-    'int64_t'                : nb_types.int64,
     'uint64_t'               : nb_types.uint64,
     'long'                   : nb_types.long_,
     'unsigned long'          : nb_types.ulong,
     'long long'              : nb_types.longlong,
+    'int64_t'                : nb_types.int64,
     'unsigned long long'     : nb_types.ulonglong,
     'float'                  : nb_types.float32,
     'double'                 : nb_types.float64,
+    'const char*'           : nb_types.unicode_type,
 }
 
 def cpp2numba(val):
@@ -66,9 +65,14 @@ def cpp2numba(val):
 
 _numba2cpp = dict()
 for key, value in _cpp2numba.items():
-    _numba2cpp[value] = key
+    if value in _numba2cpp:
+        _numba2cpp[value].append(key)
+        continue
+    _numba2cpp[value] = [key]
+
+
 # prefer "int" in the case of intc over "int32_t"
-_numba2cpp[nb_types.intc] = 'int'
+# _numba2cpp[nb_types.intc].append('int')
 
 def numba2cpp(val):
     if hasattr(val, 'literal_type'):
@@ -77,6 +81,12 @@ def numba2cpp(val):
             # TODO: this is only necessary until "best matching" is in place
             val = nb_types.intc        # more likely match candidate
     return _numba2cpp[val]
+
+def to_ref(type_list):
+    ref_list = []
+    for i, l in enumerate(type_list):
+        ref_list.append(l + '&')
+    return ref_list
 
 # TODO: looks like Numba treats unsigned types as signed when lowering,
 # which seems to work as they're just reinterpret_casts
@@ -120,6 +130,8 @@ class CppFunctionNumbaType(nb_types.Callable):
 
         self._signatures = list()
         self._impl_keys = dict()
+        self._arg_set_matched = tuple()
+        # self._is_reftype = is_reftype TODO : After reference types for objects is fixed, shift the bool for is_ref_type here
 
     def is_precise(self):
         return True          # by definition
@@ -130,14 +142,59 @@ class CppFunctionNumbaType(nb_types.Callable):
         except KeyError:
             pass
 
-        ol = CppFunctionNumbaType(self._func.__overload__(*(numba2cpp(x) for x in args)), self._is_method)
+        args_mapping = []
+        for i, arg in enumerate(list(args)):
+            match = re.search(r"typeref\[(.*?)\*\]", str(arg))
+            if match:
+                literal_val = match.group(1)
+                arg_type = numba.typeof(eval(literal_val))
+                args_mapping.append(to_ref(numba2cpp(arg_type)))
+            else:
+                args_mapping.append(numba2cpp(arg))
+        args_combinations = itertools.product(*args_mapping)
+
+        for arg_combo in args_combinations:
+            try:
+                if(len(arg_combo) > 1):
+                    signature = ", ".join(arg_combo)
+                elif(len(arg_combo) == 0):
+                    signature = ""
+                else:
+                    signature = arg_combo[0]
+                ol = CppFunctionNumbaType(self._func.__overload__(signature), self._is_method)
+                self._arg_set_matched = arg_combo
+                break
+            except:
+                # TODO : Find a better way to handle this error case. Despite a succesful __overload__ match,
+                #  the error could arise from failures in the lowering pass
+                # print("__overload__ call failed")
+                pass
 
         thistype = None
         if self._is_method:
             thistype = nb_types.voidptr
 
+        return_type = ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)
+        is_reference_return = False
+
+        # TODO : This works for builtin reference type returns but not for objects, for now leaving it commented out
+        #  assuming no reference type tests are added. Use typeof_scope() and eventually merge this logic into cpp2numba
+        # if not str(type(return_type)).startswith("<class"):
+        #     if return_type.endswith("&"):
+        #         is_reference_return = True
+        #         return_type = return_type[:-1]
+        #     else:
+        #         is_reference_return = False
+
+        # print("Is reference:", is_reference_return)
+
+        sig_return_type = cpp2numba(return_type)
+
+        if is_reference_return:
+            sig_return_type = nb_types.CPointer(sig_return_type)
+
         ol.sig = nb_typing.Signature(
-            return_type=cpp2numba(ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)),
+            return_type=sig_return_type,
             args=args,
             recvr=thistype)
 
@@ -166,9 +223,33 @@ class CppFunctionNumbaType(nb_types.Callable):
     def get_impl_key(self, sig):
         return self._impl_keys[sig.args]
 
+
+    #TODO : Remove the redundancy of __overload__ matching and use this function to only obtain the address given the matched overload
     def get_pointer(self, func):
         if func is None: func = self._func
-        ol = func.__overload__(*(numba2cpp(x) for x in self.sig.args))
+        args_mapping = []
+        for i, arg in enumerate(list(self.sig.args)):
+            match = re.search(r"typeref\[(.*?)\*\]", str(arg))
+            if match:
+                literal_val = match.group(1)
+                arg_type = numba.typeof(eval(literal_val))
+                args_mapping.append(to_ref(numba2cpp(arg_type)))
+            else:
+                args_mapping.append(numba2cpp(arg))
+
+        args_combinations = itertools.product(*args_mapping)
+
+        for arg_combo in args_combinations:
+            try:
+                signature = ", ".join(arg_combo)
+                ol = func.__overload__(signature)
+                self._arg_set_matched = arg_combo
+                break
+            except:
+                ## It could also be successful and the error could arise from failures in the lowering pass
+                # print("__overload__ call failed")
+                pass
+
         address = cppyy.addressof(ol)
         if not address:
             raise RuntimeError("unresolved address for %s" % str(ol))
