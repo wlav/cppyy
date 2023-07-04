@@ -18,6 +18,7 @@ master: 3.0.1
 * Fix std::span compatibility
 * Look for ``__cast_cpp__`` for custom converters
 * Add ``macro()`` helper for evaluation of preprocessor macros
+* Extended support for int8_t/uint8_t array and pointer types
 
 
 2023-03-19: 3.0.0
