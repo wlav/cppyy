@@ -2,6 +2,7 @@
 """
 
 import cppyy
+import cppyy.ll
 import cppyy.types as cpp_types
 import cppyy.reflex as cpp_refl
 
@@ -16,7 +17,9 @@ import numba.core.types as nb_types
 import numba.core.typing as nb_typing
 
 from llvmlite import ir
-
+import itertools
+import re
+import inspect
 
 # setuptools entry point for Numba
 def _init_extension():
@@ -26,6 +29,7 @@ def _init_extension():
 class Qualified:
     default   = 0
     value     = 1
+    instance  = 2
 
 ir_byte     = ir.IntType(8)
 ir_voidptr  = ir.PointerType(ir_byte)                 # by convention
@@ -35,7 +39,6 @@ ir_intptr_t = ir.IntType(cppyy.sizeof('void*')*8)
 # special case access to unboxing/boxing APIs
 cppyy_as_voidptr   = cppyy.addressof('Instance_AsVoidPtr')
 cppyy_from_voidptr = cppyy.addressof('Instance_FromVoidPtr')
-
 
 _cpp2numba = {
     'void'                   : nb_types.void,
@@ -56,19 +59,29 @@ _cpp2numba = {
     'unsigned long long'     : nb_types.ulonglong,
     'float'                  : nb_types.float32,
     'double'                 : nb_types.float64,
+    'const char*'           : nb_types.unicode_type,
 }
 
 def cpp2numba(val):
     if type(val) != str:
         # TODO: distinguish ptr/ref/byval
         return typeof_scope(val, nb_typing.typeof.Purpose.argument, Qualified.value)
+    elif val[-1] == '*':
+        return nb_types.CPointer(_cpp2numba[val[:-1]])
     return _cpp2numba[val]
 
 _numba2cpp = dict()
 for key, value in _cpp2numba.items():
-    _numba2cpp[value] = key
-# prefer "int" in the case of intc over "int32_t"
-_numba2cpp[nb_types.intc] = 'int'
+    if value in _numba2cpp:
+        _numba2cpp[value].append(key)
+        continue
+    _numba2cpp[value] = [key]
+
+
+def refactor_eigen_to_cpp(input_string):
+    pattern = r'(Eigen::Matrix<\w+,\d+,\d+,\d+),\d+,\d+>'
+    refactored_string = re.sub(pattern, r'\1>', input_string)
+    return refactored_string
 
 def numba2cpp(val):
     if hasattr(val, 'literal_type'):
@@ -76,7 +89,19 @@ def numba2cpp(val):
         if val == nb_types.int64:      # Python int
             # TODO: this is only necessary until "best matching" is in place
             val = nb_types.intc        # more likely match candidate
+    elif val not in _numba2cpp:
+            if(isinstance(val, CppClassNumbaType)):
+                cppclass_type = (str(val).rstrip(')')).lstrip("CppClass(")
+                if cppclass_type.startswith("Eigen"):
+                    cppclass_type = refactor_eigen_to_cpp(cppclass_type)
+                return [cppclass_type]
     return _numba2cpp[val]
+
+def to_ref(type_list):
+    ref_list = []
+    for i, l in enumerate(type_list):
+        ref_list.append(l + '&')
+    return ref_list
 
 # TODO: looks like Numba treats unsigned types as signed when lowering,
 # which seems to work as they're just reinterpret_casts
@@ -101,7 +126,11 @@ _cpp2ir = {
 }
 
 def cpp2ir(val):
-    return _cpp2ir[val]
+    if val != "char*" and val[-1] == "*":
+        type_2 = _cpp2ir[val[:-1]]
+        return ir.PointerType(type_2)
+    else:
+        return _cpp2ir[val]
 
 
 #
@@ -120,6 +149,7 @@ class CppFunctionNumbaType(nb_types.Callable):
 
         self._signatures = list()
         self._impl_keys = dict()
+        self._arg_set_matched = tuple()
 
     def is_precise(self):
         return True          # by definition
@@ -130,14 +160,57 @@ class CppFunctionNumbaType(nb_types.Callable):
         except KeyError:
             pass
 
-        ol = CppFunctionNumbaType(self._func.__overload__(*(numba2cpp(x) for x in args)), self._is_method)
+        args_cpp = []
+        for i, arg in enumerate(list(args)):
+            # If the user explicitly passes an argument using numba CPointer, the regex match is used
+            # to detect the pass by reference since the dispatcher always returns typeref[val*]
+            match = re.search(r"typeref\[(.*?)\*\]", str(arg))
+            if match:
+                literal_val = match.group(1)
+                arg_type = numba.typeof(eval(literal_val))
+                args_cpp.append(to_ref(numba2cpp(arg_type)))
+            else:
+                args_cpp.append(numba2cpp(arg))
+        args_combinations = itertools.product(*args_cpp)
+
+        for arg_combo in args_combinations:
+            if len(arg_combo) >= 1:
+                signature = ", ".join(arg_combo)
+            elif len(arg_combo) == 0:
+                signature = ""
+            try:
+                ol = CppFunctionNumbaType(self._func.__overload__(signature), self._is_method)
+                self._arg_set_matched = arg_combo
+                break
+            except:
+                # TODO : Find a better way to handle this error case. Despite a succesful __overload__ match,
+                #  the error could arise from failures in the lowering pass
+                raise RuntimeError("__overload__ call failed")
+                pass
 
         thistype = None
         if self._is_method:
             thistype = nb_types.voidptr
 
+        return_type = ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)
+        is_reference_return = False
+
+        # TODO : This works for builtin reference type returns but not for objects
+        #  Use typeof_scope() and eventually merge this logic into cpp2numba
+        if str(type(return_type)) == "<class 'str'>":
+            if return_type.endswith("&"):
+                is_reference_return = True
+                return_type = return_type[:-1]
+            else:
+                is_reference_return = False
+
+        sig_return_type = cpp2numba(return_type)
+
+        if is_reference_return:
+            sig_return_type = nb_types.CPointer(sig_return_type)
+
         ol.sig = nb_typing.Signature(
-            return_type=cpp2numba(ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)),
+            return_type=sig_return_type,
             args=args,
             recvr=thistype)
 
@@ -166,9 +239,32 @@ class CppFunctionNumbaType(nb_types.Callable):
     def get_impl_key(self, sig):
         return self._impl_keys[sig.args]
 
+    #TODO : Remove the redundancy of __overload__ matching and use this function to only obtain the address given the matched overload
     def get_pointer(self, func):
         if func is None: func = self._func
-        ol = func.__overload__(*(numba2cpp(x) for x in self.sig.args))
+        args_mapping = []
+        for i, arg in enumerate(list(self.sig.args)):
+            match = re.search(r"typeref\[(.*?)\*\]", str(arg))
+            if match:
+                literal_val = match.group(1)
+                arg_type = numba.typeof(eval(literal_val))
+                args_mapping.append(to_ref(numba2cpp(arg_type)))
+            else:
+                args_mapping.append(numba2cpp(arg))
+
+        args_combinations = itertools.product(*args_mapping)
+
+        for arg_combo in args_combinations:
+            signature = ", ".join(arg_combo)
+            try:
+                ol = func.__overload__(signature)
+                self._arg_set_matched = arg_combo
+                break
+            except:
+                # It could also be successful and the error could arise from failures in the lowering pass
+                raise RuntimeError("__overload__ call failed")
+                pass
+
         address = cppyy.addressof(ol)
         if not address:
             raise RuntimeError("unresolved address for %s" % str(ol))
@@ -222,10 +318,19 @@ class CppDataMemberInfo(object):
 #
 class CppClassNumbaType(CppFunctionNumbaType):
     def __init__(self, scope, qualifier):
+        addr = None
+        cppinstance_val = None
+        if qualifier == Qualified.instance:
+            addr = cppyy.ll.addressof(scope)
+            cppinstance_val = scope
+            scope = type(scope)
+            qualifier = Qualified.default
         super(CppClassNumbaType, self).__init__(scope.__init__)
         self.name = 'CppClass(%s)' % scope.__cpp_name__    # overrides value in Type
         self._scope     = scope
         self._qualifier = qualifier
+        self._cppinstanceval = cppinstance_val
+        self._addr = addr
 
     def get_scope(self):
         return self._scope
@@ -339,6 +444,9 @@ class ImplAggregateValueModel(nb_dm.models.StructModel):
         return builder.load(pf)
 
 class ImplClassValueModel(ImplAggregateValueModel):
+
+    # TODO : Should the address have to be passed here and stored in meminfo
+
   # value: representation inside function body. Maybe stored in stack.
   #        The representation here are flexible.
     def get_value_type(self):
@@ -364,6 +472,14 @@ scope_numbatypes = (dict(), dict())
 
 @nb_ext.typeof_impl.register(cpp_types.Scope)
 def typeof_scope(val, c, q = Qualified.default):
+    is_instance = False
+    cppinstance_val = None
+    if q == Qualified.instance:
+        cppinstance_val = val
+        val = type(val)
+        q = Qualified.default
+        is_instance = True
+
     global scope_numbatypes
 
     try:
@@ -379,7 +495,11 @@ def typeof_scope(val, c, q = Qualified.default):
     class ImplClassType(CppClassNumbaType):
         pass
 
-    cnt = ImplClassType(val, q)
+    if is_instance:
+        cnt = ImplClassType(cppinstance_val, Qualified.instance)
+    else:
+        cnt = ImplClassType(val, q)
+
     scope_numbatypes[q][val] = cnt
 
   # declare data members to Numba
@@ -525,6 +645,8 @@ def typeof_scope(val, c, q = Qualified.default):
 #
 @nb_ext.typeof_impl.register(cpp_types.Instance)
 def typeof_instance(val, c):
+    # Store the Cling address of the CPPInstance for reference to C++ objects passed as args
+    addr = cppyy.ll.addressof(val)
     global scope_numbatypes
 
     try:
@@ -532,4 +654,4 @@ def typeof_instance(val, c):
     except KeyError:
         pass
 
-    return typeof_scope(type(val), c, Qualified.default)
+    return typeof_scope(val, c, Qualified.instance)

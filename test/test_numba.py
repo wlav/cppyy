@@ -216,7 +216,58 @@ class TestNUMBA:
         assert((go_fast(x, d) == go_slow(x, d)).all())
         assert self.compare(go_slow, go_fast, 10000, x, d)
 
-    def test05_datatype_mapping(self):
+    def test05_multiple_arguments_function(self):
+        """Numba-JITing of functions with multiple arguments"""
+
+        import cppyy
+        import numpy as np
+
+        cppyy.cppdef("""
+               double add_double(double a, double b, double c) {
+                   double d = a + b + c;
+                   return d;
+                   }
+               """)
+        @numba.njit()
+        def loop_add(x):
+            sum = 0
+            for row in x:
+                sum += cppyy.gbl.add_double(row[0], row[1], row[2])
+            return sum
+
+        x = np.arange(3000, dtype=np.float64).reshape(1000, 3)
+        sum = 0
+        for row in x:
+            sum += row[0] + row[1] + row[2]
+
+        assert sum == loop_add(x)
+
+    def test06_multiple_arguments_template_freefunction(self):
+        """Numba-JITing of a free template function that recieves more than one template arg"""
+
+        import cppyy
+        import numpy as np
+        cppyy.cppdef("""
+                namespace NumbaSupportExample {
+                template<typename T1>
+                T1 add(T1 a, T1 b) { return a + b; }
+                }""")
+
+        @numba.jit(nopython=True)
+        def tma(x):
+            sum = 0
+            for row in x:
+                sum += cppyy.gbl.NumbaSupportExample.add(row[0], row[1])
+            return sum
+
+        x = np.arange(2000, dtype=np.float64).reshape(1000, 2)
+        sum = 0
+        for row in x:
+            sum += row[0] + row[1]
+
+        assert sum == tma(x)
+
+    def test07_datatype_mapping(self):
         """Numba-JITing of various data types"""
 
         import cppyy
@@ -249,7 +300,7 @@ class TestNUMBA:
                 val = getattr(nl[ntype], m)()
                 assert access_field(getattr(ns, 'M%d'%i)(val)) == val
 
-    def test06_object_returns(self):
+    def test08_object_returns(self):
         """Numba-JITing of a function that returns an object"""
 
         import cppyy
@@ -281,6 +332,168 @@ class TestNUMBA:
 
         assert((go_fast(x) == go_slow(x)).all())
         assert self.compare(go_slow, go_fast, 100000, x)
+
+    def test09_non_typed_templates(self):
+        """Numba-JITing of a free template function that recieves multiple template args with non types"""
+
+        import cppyy
+        import numpy as np
+        cppyy.cppdef("""
+                namespace NumbaSupportExample {
+                template<typename T1, typename T2>
+                double add(double a, T1 b, T2 c) { return a + b + c; }
+                }""")
+
+        @numba.jit(nopython=True)
+        def tma(x):
+            sum = 0
+            for row in x:
+                sum += cppyy.gbl.NumbaSupportExample.add(row[0], row[1], row[2])
+            return sum
+
+        x = np.arange(3000, dtype=np.float64).reshape(1000, 3)
+        sum = 0
+        for row in x:
+            sum += row[0] + row[1] + row[2]
+
+        assert sum == tma(x)
+
+    def test10_returning_a_reference(self):
+        import cppyy
+        import numpy as np
+        import numba
+
+        cppyy.cppdef("""
+        int64_t& ref_add_8(int64_t x, int64_t y) {
+        int64_t c = x + y;
+        static int64_t result = c;
+        return c;
+        }
+        """)
+
+        def slow_add(X):
+            i = 0
+            k = []
+            for row in X:
+                k.append(row[0] + row[1])
+                i = i + 1
+            return k
+
+
+        @numba.njit()
+        def fast_add(X):
+            res = []
+            for row in X:
+                a = row[0]
+                b = row[1]
+                k = cppyy.gbl.ref_add_8(a, b)
+                res.append(k[0])
+            return res
+
+        X = np.arange(100, dtype=np.int64).reshape(50, 2)
+        assert fast_add(X) == slow_add(X)
+
+    @mark.skip(reason="ir PointerType memory issue")
+    def test11_ptr_ref_support(self):
+        import cppyy
+        import ctypes
+
+        cppyy.cppdef("""
+           namespace RefTest {
+               class Box{
+                   public:
+                       long a;
+                       long b;
+                       long *c;
+                       Box(long i, long j, long& k){
+                       a = i;
+                       b = j;
+                       c = &k;
+                       }
+
+                       void swap_ref() {
+                           long temp = a;
+                           a = b;
+                           b = temp;
+                       }
+
+                       void inc(long& value) {
+                           value++;
+                       }
+                   }; 
+               }
+           """)
+
+        ns = cppyy.gbl.RefTest
+        assert ns.Box.__dict__['a'].__cpp_reflex__(cppyy.reflex.TYPE) == 'long'
+        assert ns.Box.__dict__['b'].__cpp_reflex__(cppyy.reflex.TYPE) == 'long'
+
+        @numba.njit()
+        def inc_box(d, k):
+            for i in range(k):
+                d.inc(d.c)
+
+        x = 5
+        y = 10
+        z = ctypes.c_long(y)
+        d = ns.Box(x, y, z)
+        d.swap_ref()
+
+        assert d.a == y
+        assert d.b == x
+
+        k = 50
+        d.inc(d.c)
+        inc_box(d, k)
+        assert z.value == y + k + 1
+
+    @mark.xfail(reason="Fails at ImplCLassType Boxing call in lowering")
+    def test12_eigen_numba(self):
+        """Numba-JITing of a function that uses a cppyy declared Eigen Vector"""
+
+        import numpy as np
+        import time
+        import cppyy, numba, warnings
+        import cppyy.numba_ext
+        import os
+
+        inc_paths = [os.path.join(os.path.sep, 'usr', 'include'),
+                     os.path.join(os.path.sep, 'usr', 'local', 'include')]
+
+        eigen_path = None
+        for p in inc_paths:
+            p = os.path.join(p, 'eigen3')
+            if os.path.exists(p):
+                eigen_path = p
+
+        cppyy.add_include_path(eigen_path)
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            cppyy.include('Eigen/Dense')
+
+        # Define the templated function that takes Eigen objects
+        cppyy.cppdef('''
+        template<typename T>
+        T multiply_scalar(const T value, int64_t scalar) {
+            return value * scalar;
+        }
+        ''')
+
+        @numba.jit(nopython=True)
+        def mul_njit(m, x):
+            matrix = cppyy.gbl.multiply_scalar(m, x)
+            return matrix
+
+        # Verify the result
+        matrix = cppyy.gbl.Eigen.Vector3f()
+        print()
+        matrix[0] = 4.0
+        matrix[1] = 2.0
+        matrix[2] = 3.0
+
+        matrix2 = cppyy.gbl.multiply_scalar(matrix, 5)
+        result = mul_njit(matrix, 5)
+        assert(result == matrix2)
 
 
 @mark.skipif(has_numba == False, reason="numba not found")
