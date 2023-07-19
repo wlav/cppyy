@@ -141,6 +141,10 @@ public:
     std::byte*      get_byte_array();
     std::byte*      get_byte_array2();
 #endif
+    int8_t*         get_int8_array();
+    int8_t*         get_int8_array2();
+    uint8_t*        get_uint8_array();
+    uint8_t*        get_uint8_array2();
     short*          get_short_array();
     short*          get_short_array2();
     unsigned short* get_ushort_array();
@@ -340,6 +344,8 @@ public:
 #if __cplusplus > 201402L
     void set_byte_p(std::byte*);
 #endif
+    void set_int8_p(int8_t*);
+    void set_uint8_p(uint8_t*);
     void set_short_p(short*);
     void set_ushort_p(unsigned short*);
     void set_int_p(int*);
@@ -363,6 +369,8 @@ public:
 #if __cplusplus > 201402L
     void set_byte_ppa(std::byte**);
 #endif
+    void set_int8_ppa(int8_t**);
+    void set_uint8_ppa(uint8_t**);
     void set_short_ppa(short**);
     void set_ushort_ppa(unsigned short**);
     void set_int_ppa(int**);
@@ -498,6 +506,10 @@ public:
     std::byte       m_byte_array[N];
     std::byte*      m_byte_array2;
 #endif
+    int8_t          m_int8_array[N];
+    int8_t*         m_int8_array2;
+    uint8_t         m_uint8_array[N];
+    uint8_t*        m_uint8_array2;
     short           m_short_array[N];
     short*          m_short_array2;
     unsigned short  m_ushort_array[N];

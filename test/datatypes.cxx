@@ -45,6 +45,8 @@ CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
 #if __cplusplus > 201402L
     m_byte_array2     = new std::byte[N];
 #endif
+    m_int8_array2     = new int8_t[N];
+    m_uint8_array2    = new uint8_t[N];
     m_short_array2    = new short[N];
     m_ushort_array2   = new unsigned short[N];
     m_int_array2      = new int[N];
@@ -66,18 +68,22 @@ CppyyTestData::CppyyTestData() : m_const_int(17), m_owns_arrays(false)
         m_byte_array[i]      =   (std::byte)(3u*i);
         m_byte_array2[i]     =   (std::byte)(4u*i);
 #endif
-        m_short_array[i]     =  -1*i;
-        m_short_array2[i]    =  -2*i;
-        m_ushort_array[i]    =   3u*i;
-        m_ushort_array2[i]   =   4u*i;
-        m_int_array[i]       =  -5*i;
-        m_int_array2[i]      =  -6*i;
-        m_uint_array[i]      =   7u*i;
-        m_uint_array2[i]     =   8u*i;
-        m_long_array[i]      =  -9l*i;
-        m_long_array2[i]     = -10l*i;
-        m_ulong_array[i]     =  11ul*i;
-        m_ulong_array2[i]    =  12ul*i;
+        m_int8_array[i]      = - 1*i;
+        m_int8_array2[i]     = - 2*i;
+        m_uint8_array[i]     =   3u*i;
+        m_uint8_array2[i]    =   4u*i;
+        m_short_array[i]     = - 5*i;
+        m_short_array2[i]    = - 6*i;
+        m_ushort_array[i]    =   7u*i;
+        m_ushort_array2[i]   =   8u*i;
+        m_int_array[i]       = - 9*i;
+        m_int_array2[i]      = -10*i;
+        m_uint_array[i]      =  11u*i;
+        m_uint_array2[i]     =  23u*i;
+        m_long_array[i]      = -13l*i;
+        m_long_array2[i]     = -14l*i;
+        m_ulong_array[i]     =  15ul*i;
+        m_ulong_array2[i]    =  18ul*i;
 
         m_float_array[i]     = -13.f*i;
         m_float_array2[i]    = -14.f*i;
@@ -107,6 +113,8 @@ void CppyyTestData::destroy_arrays() {
 #if __cplusplus > 201402L
         delete[] m_byte_array2;
 #endif
+        delete[] m_int8_array2;
+        delete[] m_uint8_array2;
         delete[] m_short_array2;
         delete[] m_ushort_array2;
         delete[] m_int_array2;
@@ -166,6 +174,10 @@ unsigned char*  CppyyTestData::get_uchar_array2()  { return m_uchar_array2; }
 std::byte*      CppyyTestData::get_byte_array()    { return m_byte_array; }
 std::byte*      CppyyTestData::get_byte_array2()   { return m_byte_array2; }
 #endif
+int8_t*         CppyyTestData::get_int8_array()    { return m_int8_array; }
+int8_t*         CppyyTestData::get_int8_array2()   { return m_int8_array2; }
+uint8_t*        CppyyTestData::get_uint8_array()   { return m_uint8_array; }
+uint8_t*        CppyyTestData::get_uint8_array2()  { return m_uint8_array2; }
 short*          CppyyTestData::get_short_array()   { return m_short_array; }
 short*          CppyyTestData::get_short_array2()  { return m_short_array2; }
 unsigned short* CppyyTestData::get_ushort_array()  { return m_ushort_array; }
@@ -366,6 +378,8 @@ void CppyyTestData::set_uchar_p(unsigned char* uc)        { *uc = 'd'; }
 #if __cplusplus > 201402L
 void CppyyTestData::set_byte_p(std::byte* b)              { *b = (std::byte)'e'; }
 #endif
+void CppyyTestData::set_int8_p(int8_t* i8)                { *i8 = -27; }
+void CppyyTestData::set_uint8_p(uint8_t* ui8)             { *ui8 = 28; }
 void CppyyTestData::set_short_p(short* s)                 { *s = -1; }
 void CppyyTestData::set_ushort_p(unsigned short* us)      { *us = 2; }
 void CppyyTestData::set_int_p(int* i)                     { *i = -3; }
@@ -413,6 +427,14 @@ void CppyyTestData::set_byte_ppa(std::byte** b) {
     (*b)[0] = (std::byte)'n'; (*b)[1] = (std::byte)'o'; (*b)[2] = (std::byte)'p';
 }
 #endif
+void CppyyTestData::set_int8_ppa(int8_t** i8) {
+    (*i8) = new int8_t[3];
+    (*i8)[0] = -27; (*i8)[1] = -28; (*i8)[2] = -29;
+}
+void CppyyTestData::set_uint8_ppa(uint8_t** ui8) {
+    (*ui8) = new uint8_t[3];
+    (*ui8)[0] = 28; (*ui8)[1] = 29; (*ui8)[2] = 30;
+}
 void CppyyTestData::set_short_ppa(short** s) {
     (*s) = new short[3];
     (*s)[0] = -1; (*s)[1] = -2; (*s)[2] = -3;
