@@ -74,12 +74,12 @@ void implicit_converion_move(TestMoving2&&);
 
 //===========================================================================
 struct TestData {            // for initializer list construction
-    TestData(int i) : m_int(i) {}
+    TestData(int i=0) : m_int(i) {}
     int m_int;
 };
 
 struct TestData2 {
-    TestData2(int i) : m_int(i) {}
+    TestData2(int i=0) : m_int(i) {}
     virtual ~TestData2() {}
     int m_int;
 };
