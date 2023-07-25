@@ -39,6 +39,7 @@ ir_intptr_t = ir.IntType(cppyy.sizeof('void*')*8)
 cppyy_as_voidptr   = cppyy.addressof('Instance_AsVoidPtr')
 cppyy_from_voidptr = cppyy.addressof('Instance_FromVoidPtr')
 
+
 _cpp2numba = {
     'void'                   : nb_types.void,
     'void*'                  : nb_types.voidptr,
@@ -64,8 +65,10 @@ _cpp2numba = {
 def cpp2numba(val):
     if type(val) != str:
         # TODO: distinguish ptr/ref/byval
+        # TODO: Only metaclasses/proxies end up here since
+        #  const ref cases makes the RETURN_TYPE from reflex a string
         return typeof_scope(val, nb_typing.typeof.Purpose.argument, Qualified.value)
-    elif val[-1] == '*':
+    elif val[-1] == '*' or val[-1] == '&':
         return nb_types.CPointer(_cpp2numba[val[:-1]])
     return _cpp2numba[val]
 
@@ -195,25 +198,8 @@ class CppFunctionNumbaType(nb_types.Callable):
         if self._is_method:
             thistype = nb_types.voidptr
 
-        return_type = ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)
-        is_reference_return = False
-
-        # TODO : This works for builtin reference type returns but not for objects
-        #  Use typeof_scope() and eventually merge this logic into cpp2numba
-        if type(return_type) is str:
-            if return_type.endswith("&"):
-                is_reference_return = True
-                return_type = return_type[:-1]
-            else:
-                is_reference_return = False
-
-        sig_return_type = cpp2numba(return_type)
-
-        if is_reference_return:
-            sig_return_type = nb_types.CPointer(sig_return_type)
-
         ol.sig = nb_typing.Signature(
-            return_type=sig_return_type,
+            return_type=cpp2numba(ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)),
             args=args,
             recvr=thistype)
 
@@ -447,9 +433,7 @@ class ImplAggregateValueModel(nb_dm.models.StructModel):
         return builder.load(pf)
 
 class ImplClassValueModel(ImplAggregateValueModel):
-
-    # TODO : Should the address have to be passed here and stored in meminfo
-
+  # TODO : Should the address have to be passed here and stored in meminfo
   # value: representation inside function body. Maybe stored in stack.
   #        The representation here are flexible.
     def get_value_type(self):

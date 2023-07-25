@@ -364,7 +364,7 @@ class TestNUMBA:
         import numba
 
         cppyy.cppdef("""
-        int64_t& ref_add_8(int64_t x, int64_t y) {
+        int64_t& ref_add(int64_t x, int64_t y) {
         int64_t c = x + y;
         static int64_t result = c;
         return c;
@@ -386,7 +386,7 @@ class TestNUMBA:
             for row in X:
                 a = row[0]
                 b = row[1]
-                k = cppyy.gbl.ref_add_8(a, b)
+                k = cppyy.gbl.ref_add(a, b)
                 res.append(k[0])
             return res
 
