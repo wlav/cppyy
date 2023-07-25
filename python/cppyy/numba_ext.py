@@ -2,7 +2,6 @@
 """
 
 import cppyy
-import cppyy.ll
 import cppyy.types as cpp_types
 import cppyy.reflex as cpp_refl
 
@@ -78,10 +77,14 @@ for key, value in _cpp2numba.items():
     _numba2cpp[value] = [key]
 
 
-def refactor_eigen_to_cpp(input_string):
-    pattern = r'(Eigen::Matrix<\w+,\d+,\d+,\d+),\d+,\d+>'
-    refactored_string = re.sub(pattern, r'\1>', input_string)
-    return refactored_string
+def refactor_eigen_to_cpp(input_eigen_obj):
+    # Matrix<typename Scalar, int RowsAtCompileTime, int ColsAtCompileTime>
+    scalar = 'float'
+    maxrows = input_eigen_obj.MaxRowsAtCompileTime
+    maxcols = input_eigen_obj.MaxColsAtCompileTime
+    eigen_type = "Eigen::Matrix<%s, %s, %s, 0>" % (scalar, maxrows, maxcols)
+    return eigen_type
+
 
 def numba2cpp(val):
     if hasattr(val, 'literal_type'):
@@ -90,11 +93,11 @@ def numba2cpp(val):
             # TODO: this is only necessary until "best matching" is in place
             val = nb_types.intc        # more likely match candidate
     elif val not in _numba2cpp:
-            if(isinstance(val, CppClassNumbaType)):
-                cppclass_type = (str(val).rstrip(')')).lstrip("CppClass(")
-                if cppclass_type.startswith("Eigen"):
-                    cppclass_type = refactor_eigen_to_cpp(cppclass_type)
-                return [cppclass_type]
+        if isinstance(val, CppClassNumbaType):
+            scope = val._scope
+            if scope.__cpp_name__.startswith("Eigen::Matrix"):
+                cppclass_type = refactor_eigen_to_cpp(scope)
+            return [cppclass_type]
     return _numba2cpp[val]
 
 def to_ref(type_list):
@@ -197,7 +200,7 @@ class CppFunctionNumbaType(nb_types.Callable):
 
         # TODO : This works for builtin reference type returns but not for objects
         #  Use typeof_scope() and eventually merge this logic into cpp2numba
-        if str(type(return_type)) == "<class 'str'>":
+        if type(return_type) is str:
             if return_type.endswith("&"):
                 is_reference_return = True
                 return_type = return_type[:-1]
@@ -321,7 +324,7 @@ class CppClassNumbaType(CppFunctionNumbaType):
         addr = None
         cppinstance_val = None
         if qualifier == Qualified.instance:
-            addr = cppyy.ll.addressof(scope)
+            addr = cppyy.addressof(scope)
             cppinstance_val = scope
             scope = type(scope)
             qualifier = Qualified.default
@@ -639,19 +642,16 @@ def typeof_scope(val, c, q = Qualified.default):
 
     return cnt
 
-
 #
 # C++ instance -> Numba
 #
 @nb_ext.typeof_impl.register(cpp_types.Instance)
 def typeof_instance(val, c):
-    # Store the Cling address of the CPPInstance for reference to C++ objects passed as args
-    addr = cppyy.ll.addressof(val)
     global scope_numbatypes
 
     try:
         return scope_numbatypes[Qualified.default][type(val)]
     except KeyError:
         pass
-
+    # Pass the val itself to obtain Cling address of the CPPInstance for reference to C++ objects
     return typeof_scope(val, c, Qualified.instance)

@@ -474,7 +474,7 @@ class TestNUMBA:
         # Define the templated function that takes Eigen objects
         cppyy.cppdef('''
         template<typename T>
-        T multiply_scalar(const T value, int64_t scalar) {
+        T multiply_scalar(T value, int64_t scalar) {
             return value * scalar;
         }
         ''')
