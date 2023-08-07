@@ -2333,3 +2333,11 @@ class TestDATATYPES:
         assert bt() is False
         assert str(bt(1)) == 'True'
         assert str(bt(0)) == 'False'
+
+    def test49_addressof_method(self):
+        """Use of addressof for (const) methods"""
+
+        import cppyy
+
+        assert cppyy.addressof(cppyy.gbl.std.vector[int].at.__overload__(':any:', False))
+        assert cppyy.addressof(cppyy.gbl.std.vector[int].at.__overload__(':any:', True))
