@@ -252,6 +252,10 @@ def load_library(name):
                 name = 'lib'+name
         sc = gSystem.Load(name)
     if sc == -1:
+      # special case for Windows as of python3.8: use winmode=0, otherwise the default
+      # will not consider regular search paths (such as $PATH)
+        if 0x3080000 <= sys.hexversion and 'win32' in sys.platform and os.path.isabs(name):
+            return ctypes.CDLL(name, ctypes.RTLD_GLOBAL, winmode=0)  # raises on error
         raise RuntimeError('Unable to load library "%s"%s' % (name, err.err))
     return True
 
