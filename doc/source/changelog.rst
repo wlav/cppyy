@@ -560,7 +560,7 @@ master: 3.0.1
 * Improved support for alias templates
 * Faster template lookup
 * Have rootcling/genreflex respect compile-time flags (except for --std if
-  overridden by CLING_EXTRA_FLAGS)
+  overridden by CLING_EXTRA_ARGS)
 * Utility to build dictionarys on Windows (32/64)
 * Name mangling fixes in Cling for JITed global/static variables on Windows
 * Several pointer truncation fixes for 64b Windows
