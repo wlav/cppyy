@@ -199,5 +199,13 @@ def _begin_capture_stderr():
 def _end_capture_stderr():
     err = _backend._end_capture_stderr()
     if err:
-        return "\n%s" % err
+        try:
+            return "\n%s" % err
+        except UnicodeDecodeError as e:
+            original_error = e
+        try:
+            return "\n%s" % err.decode('gbk')       # not guaranteed, but common
+        except UnicodeDecodeError:
+            pass
+        return "C++ issued an error message that could not be decoded (%s)" % str(original_error)
     return ""
