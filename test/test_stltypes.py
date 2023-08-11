@@ -715,6 +715,7 @@ class TestSTLVECTOR:
         """Vector of structs data() should return array-like"""
 
         import cppyy
+        import cppyy.ll
 
         cppyy.cppdef("""\
         namespace ArrayLike {
@@ -736,6 +737,14 @@ class TestSTLVECTOR:
             assert d.x == float(i)
             assert d.y == float(i*N)
             assert d.z == float(i*N**2)
+
+      # the following should not raise
+        mv = cppyy.ll.as_memoryview(data)
+
+      # length of the view is in bytes
+        assert len(mv) == len(v)
+        assert mv.itemsize == cppyy.sizeof(cppyy.gbl.ArrayLike.Vector3f)
+        assert mv.nbytes   == cppyy.sizeof(cppyy.gbl.ArrayLike.Vector3f) * len(v)
 
 
 class TestSTLSTRING:

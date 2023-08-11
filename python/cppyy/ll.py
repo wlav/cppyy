@@ -44,7 +44,7 @@ def argc():
     return len(sys.argv)
 
 # import low-level python converters
-for _name in ['addressof', 'as_cobject', 'as_capsule', 'as_ctypes']:
+for _name in ['addressof', 'as_cobject', 'as_capsule', 'as_ctypes', 'as_memoryview']:
     try:
         exec('%s = cppyy._backend.%s' % (_name, _name))
         __all__.append(_name)

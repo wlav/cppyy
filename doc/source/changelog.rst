@@ -19,6 +19,7 @@ master: 3.0.1
 * Look for ``__cast_cpp__`` for custom converters
 * Add ``macro()`` helper for evaluation of preprocessor macros
 * Extended support for int8_t/uint8_t array and pointer types
+* Added ``cppyy.ll.as_memoryview()`` for byte-views of arrays of PODs
 
 
 2023-03-19: 3.0.0
