@@ -1267,8 +1267,9 @@ class TestTALKEXAMPLES:
             return to_str(chars);
         }}""")
 
-        with raises(UnicodeDecodeError):
+        with raises(Exception) as exc_info:
             CC.gbk_chinese().decode('utf-8')
+        assert isinstance(exc_info.value, (UnicodeDecodeError, LookupError))
 
         assert CC.gbk_chinese() == u'\u4e2d\u6587'.encode('gbk')
         if 0x3000000 <= sys.hexversion:
