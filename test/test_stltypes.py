@@ -711,6 +711,32 @@ class TestSTLVECTOR:
         assert ns.test[0] == "hello"
         assert ns.test[1] == "world"
 
+    def test21_vector_of_structs_data(self):
+        """Vector of structs data() should return array-like"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace ArrayLike {
+        struct __attribute__((__packed__)) Vector3f {
+            float x, y, z;
+        }; }""")
+
+        N = 5
+
+        v = cppyy.gbl.std.vector['ArrayLike::Vector3f'](N)
+
+        for i in range(N):
+            d = v[i]
+            d.x, d.y, d.z = i, i*N, i*N**2
+
+        data = v.data()
+        for i in range(N):
+            d = data[i]
+            assert d.x == float(i)
+            assert d.y == float(i*N)
+            assert d.z == float(i*N**2)
+
 
 class TestSTLSTRING:
     def setup_class(cls):
