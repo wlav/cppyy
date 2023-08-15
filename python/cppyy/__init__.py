@@ -126,7 +126,7 @@ def _standard_pythonizations(pyclass, name):
             raise IndexError(idx)
         pyclass.__getitem__ = tuple_getitem
 
-  # pythoniztion of std::string; placed here because it's simpler to write the
+  # pythonization of std::string; placed here because it's simpler to write the
   # custom "npos" object (to allow easy result checking of find/rfind) in Python
     elif pyclass.__cpp_name__ == "std::string":
         class NPOS(0x3000000 <= sys.hexversion and int or long):

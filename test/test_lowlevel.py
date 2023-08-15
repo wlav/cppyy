@@ -147,12 +147,14 @@ class TestLOWLEVEL:
         #
         # c_char            char 1-character                            string
         # c_wchar           wchar_t 1-character                         unicode string
-        # c_byte            char                                        int/long
-        # c_ubyte           unsigned char                               int/long
+        # c_byte            char                                        int
+        # c_ubyte           unsigned char                               int
         #
-        # c_short           short                                       int/long
-        # c_ushort          unsigned short                              int/long
-        # c_int             int                                         int/long
+        # c_int8            signed char                                 int
+        # c_uint8           unsigned char                               int
+        # c_short           short                                       int
+        # c_ushort          unsigned short                              int
+        # c_int             int                                         int
         # c_uint            unsigned int                                int/long
         # c_long            long                                        int/long
         # c_ulong           unsigned long                               int/long
@@ -164,6 +166,7 @@ class TestLOWLEVEL:
         # c_longdouble      long double                                 float
 
         import cppyy, ctypes
+        import cppyy.ll
 
         ctd = cppyy.gbl.CppyyTestData()
 
@@ -206,6 +209,8 @@ class TestLOWLEVEL:
         c = ctypes.c_ubyte(0);        ctd.set_uchar_p(cb(c));    assert c.value == ord('d')
 
       # integer types
+        i = ctypes.c_int8(0);         ctd.set_int8_p(cb(i));     assert i.value == -27
+        i = ctypes.c_uint8(0);        ctd.set_uint8_p(cb(i));    assert i.value ==  28
         i = ctypes.c_short(0);        ctd.set_short_p(cb(i));    assert i.value == -1
         i = ctypes.c_ushort(0);       ctd.set_ushort_p(cb(i));   assert i.value ==  2
         i = ctypes.c_int(0);          ctd.set_int_p(cb(i));      assert i.value == -3
@@ -235,6 +240,12 @@ class TestLOWLEVEL:
         cppyy.ll.array_delete(c)
 
       # integer types
+        i = POINTER(ctypes.c_int8)();         ctd.set_int8_ppa(i)
+        assert i[0] == -27; assert i[1] == -28; assert i[2] == -29
+        cppyy.ll.array_delete['void'](i)    # template resolves as signed char*
+        i = POINTER(ctypes.c_uint8)();       ctd.set_uint8_ppa(i)
+        assert i[0] ==  28; assert i[1] ==  29; assert i[2] ==  30
+        cppyy.ll.array_delete['void'](i)    # template resolves as unsigned char*
         i = POINTER(ctypes.c_short)();        ctd.set_short_ppa(i)
         assert i[0] ==  -1; assert i[1] ==  -2; assert i[2] ==  -3
         cppyy.ll.array_delete(i)
