@@ -196,8 +196,9 @@ class CppFunctionNumbaType(nb_types.Callable):
             return self._impl_keys[args].sig
         except KeyError:
             pass
+
         ol = CppFunctionNumbaType(self._func.__overload__(numba_arg_convertor(args)), self._is_method)
-        print(ol)
+
         thistype = None
         if self._is_method:
             thistype = nb_types.voidptr
@@ -239,7 +240,9 @@ class CppFunctionNumbaType(nb_types.Callable):
     #TODO : Remove the redundancy of __overload__ matching and use this function to only obtain the address given the matched overload
     def get_pointer(self, func):
         if func is None: func = self._func
+
         ol = func.__overload__(numba_arg_convertor(self.sig.args))
+
         address = cppyy.addressof(ol)
         if not address:
             raise RuntimeError("unresolved address for %s" % str(ol))

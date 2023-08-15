@@ -18,6 +18,8 @@ master: 3.0.1
 * Fix std::span compatibility
 * Look for ``__cast_cpp__`` for custom converters
 * Add ``macro()`` helper for evaluation of preprocessor macros
+* Extended support for int8_t/uint8_t array and pointer types
+* Added ``cppyy.ll.as_memoryview()`` for byte-views of arrays of PODs
 
 
 2023-03-19: 3.0.0
@@ -559,7 +561,7 @@ master: 3.0.1
 * Improved support for alias templates
 * Faster template lookup
 * Have rootcling/genreflex respect compile-time flags (except for --std if
-  overridden by CLING_EXTRA_FLAGS)
+  overridden by CLING_EXTRA_ARGS)
 * Utility to build dictionarys on Windows (32/64)
 * Name mangling fixes in Cling for JITed global/static variables on Windows
 * Several pointer truncation fixes for 64b Windows

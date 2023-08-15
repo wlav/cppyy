@@ -150,8 +150,8 @@ class TestDATATYPES:
             assert c.get_bool_array2()[i]   ==   bool((i+1)%2)
 
         # reading of integer array types
-        names = ['schar', 'uchar', 'short', 'ushort',    'int', 'uint',    'long',  'ulong']
-        alpha = [ (1, 2), (1, 2), (-1, -2),   (3, 4), (-5, -6), (7, 8), (-9, -10), (11, 12)]
+        names = ['schar', 'uchar',   'int8', 'uint8',  'short', 'ushort',     'int',   'uint',     'long',  'ulong']
+        alpha = [ (1, 2),  (1, 2), (-1, -2),  (3, 4), (-5, -6),   (7, 8), (-9, -10), (11, 12), (-13, -14), (15, 16)]
         if self.has_byte: names.append('byte'); alpha.append((3,4))
 
         for j in range(self.N):
@@ -172,6 +172,8 @@ class TestDATATYPES:
         raises(IndexError, c.m_uchar_array.__getitem__,  self.N)
         if self.has_byte:
             raises(IndexError, c.m_byte_array.__getitem__,   self.N)
+        raises(IndexError, c.m_int8_array.__getitem__,   self.N)
+        raises(IndexError, c.m_uint8_array.__getitem__,  self.N)
         raises(IndexError, c.m_short_array.__getitem__,  self.N)
         raises(IndexError, c.m_ushort_array.__getitem__, self.N)
         raises(IndexError, c.m_int_array.__getitem__,    self.N)
@@ -309,7 +311,7 @@ class TestDATATYPES:
         # arrays; there will be pointer copies, so destroy the current ones
         c.destroy_arrays()
 
-        # integer arrays
+        # integer arrays (skip int8_t and uint8_t as these are presented as (unsigned) char still)
         names = ['uchar', 'short', 'ushort', 'int', 'uint', 'long', 'ulong']
         if self.has_byte: names.append('byte')
 
@@ -1142,6 +1144,9 @@ class TestDATATYPES:
             byte_array_names = ['get_byte_array', 'get_byte_array2']
         for func in ['get_bool_array',   'get_bool_array2',
                      'get_uchar_array',  'get_uchar_array2',
+                     'get_int8_array',   'get_int8_array2',
+                     'get_uint8_array',  'get_uint8_array2',
+                     'get_short_array',  'get_short_array2',
                      'get_ushort_array', 'get_ushort_array2',
                      'get_int_array',    'get_int_array2',
                      'get_uint_array',   'get_uint_array2',
@@ -2328,3 +2333,11 @@ class TestDATATYPES:
         assert bt() is False
         assert str(bt(1)) == 'True'
         assert str(bt(0)) == 'False'
+
+    def test49_addressof_method(self):
+        """Use of addressof for (const) methods"""
+
+        import cppyy
+
+        assert cppyy.addressof(cppyy.gbl.std.vector[int].at.__overload__(':any:', False))
+        assert cppyy.addressof(cppyy.gbl.std.vector[int].at.__overload__(':any:', True))

@@ -126,7 +126,7 @@ def _standard_pythonizations(pyclass, name):
             raise IndexError(idx)
         pyclass.__getitem__ = tuple_getitem
 
-  # pythoniztion of std::string; placed here because it's simpler to write the
+  # pythonization of std::string; placed here because it's simpler to write the
   # custom "npos" object (to allow easy result checking of find/rfind) in Python
     elif pyclass.__cpp_name__ == "std::string":
         class NPOS(0x3000000 <= sys.hexversion and int or long):
@@ -252,6 +252,10 @@ def load_library(name):
                 name = 'lib'+name
         sc = gSystem.Load(name)
     if sc == -1:
+      # special case for Windows as of python3.8: use winmode=0, otherwise the default
+      # will not consider regular search paths (such as $PATH)
+        if 0x3080000 <= sys.hexversion and 'win32' in sys.platform and os.path.isabs(name):
+            return ctypes.CDLL(name, ctypes.RTLD_GLOBAL, winmode=0)  # raises on error
         raise RuntimeError('Unable to load library "%s"%s' % (name, err.err))
     return True
 
