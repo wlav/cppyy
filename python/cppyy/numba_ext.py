@@ -59,8 +59,14 @@ _cpp2numba = {
     'unsigned long long'     : nb_types.ulonglong,
     'float'                  : nb_types.float32,
     'double'                 : nb_types.float64,
-    'const char*'           : nb_types.unicode_type,
+    'const char*'            : nb_types.unicode_type,
 }
+
+def resolve_std_vector(val):
+    return re.match(r'std::vector<(.+?)>', val).group(1)
+
+def resolve_const_types(val):
+    return re.match(r'const\s+(.+)\s*\*', val).group(1)
 
 def cpp2numba(val):
     if type(val) != str:
@@ -68,26 +74,20 @@ def cpp2numba(val):
         # TODO: Only metaclasses/proxies end up here since
         #  const ref cases makes the RETURN_TYPE from reflex a string
         return typeof_scope(val, nb_typing.typeof.Purpose.argument, Qualified.value)
+    elif val.startswith("std::vector"):
+        type_arr = getattr(numba, str(cpp2numba(resolve_std_vector(val))))[:]
+        return type_arr
     elif val[-1] == '*' or val[-1] == '&':
+        if val.startswith('const'):
+            return nb_types.CPointer(cpp2numba(resolve_const_types(val)))
         return nb_types.CPointer(_cpp2numba[val[:-1]])
     return _cpp2numba[val]
 
 _numba2cpp = dict()
 for key, value in _cpp2numba.items():
-    if value in _numba2cpp:
-        _numba2cpp[value].append(key)
-        continue
-    _numba2cpp[value] = [key]
-
-
-def refactor_eigen_to_cpp(input_eigen_obj):
-    # Matrix<typename Scalar, int RowsAtCompileTime, int ColsAtCompileTime>
-    scalar = 'float'
-    maxrows = input_eigen_obj.MaxRowsAtCompileTime
-    maxcols = input_eigen_obj.MaxColsAtCompileTime
-    eigen_type = "Eigen::Matrix<%s, %s, %s, 0>" % (scalar, maxrows, maxcols)
-    return eigen_type
-
+    _numba2cpp[value] = key
+# prefer "int" in the case of intc over "int32_t"
+_numba2cpp[nb_types.intc] = 'int'
 
 def numba2cpp(val):
     if hasattr(val, 'literal_type'):
@@ -95,13 +95,35 @@ def numba2cpp(val):
         if val == nb_types.int64:      # Python int
             # TODO: this is only necessary until "best matching" is in place
             val = nb_types.intc        # more likely match candidate
-    elif val not in _numba2cpp:
-        if isinstance(val, CppClassNumbaType):
-            scope = val._scope
-            if scope.__cpp_name__.startswith("Eigen::Matrix"):
-                cppclass_type = refactor_eigen_to_cpp(scope)
-            return [cppclass_type]
-    return _numba2cpp[val]
+    elif isinstance(val, numba.types.CPointer):
+        return _numba2cpp[val.dtype]
+    elif isinstance(val, numba.types.RawPointer):
+        return _numba2cpp[nb_types.voidptr]
+    elif isinstance(val, numba.types.Array):
+        # TODO : currently we fix the type to std::vector<type> CPPOverload tries a const ref if it fails
+        #  can be better handled with work on interop allowing gInterpreter provides a way to know if the TMethodArg is a const ref
+        return "std::vector<" + _numba2cpp[val.dtype] + ">"
+    elif isinstance(val, CppClassNumbaType):
+        return val._scope.__cpp_name__
+    else:
+        try:
+            return _numba2cpp[val]
+        except:
+            raise RuntimeError("Type mapping failed from Numba to C++ for ", val)
+
+def numba_arg_convertor(args):
+    args_cpp = []
+    for i, arg in enumerate(list(args)):
+        # If the user explicitly passes an argument using numba CPointer, the regex match is used
+        # to detect the pass by reference since the dispatcher always returns typeref[val*]
+        match = re.search(r"typeref\[(.*?)\*\]", str(arg))
+        if match:
+            literal_val = match.group(1)
+            arg_type = numba.typeof(eval(literal_val))
+            args_cpp.append(to_ref(numba2cpp(arg_type)))
+        else:
+            args_cpp.append(numba2cpp(arg))
+    return tuple(args_cpp)
 
 def to_ref(type_list):
     ref_list = []
@@ -132,11 +154,19 @@ _cpp2ir = {
 }
 
 def cpp2ir(val):
-    if val != "char*" and val[-1] == "*":
-        type_2 = _cpp2ir[val[:-1]]
-        return ir.PointerType(type_2)
-    else:
+    try:
         return _cpp2ir[val]
+    except KeyError:
+        if val.startswith("std::vector"):
+            ## TODO should be possible to obtain the vector length from the CPPDataMember val
+            type_arr = ir.VectorType(cpp2ir(resolve_std_vector(val)), 3)
+            return type_arr
+        elif val != "char*" and val[-1] == "*":
+            if val.startswith('const'):
+                return ir.PointerType(cpp2ir(resolve_const_types(val)))
+            else:
+                type_2 = _cpp2ir[val[:-1]]
+                return ir.PointerType(type_2)
 
 
 #
@@ -156,6 +186,7 @@ class CppFunctionNumbaType(nb_types.Callable):
         self._signatures = list()
         self._impl_keys = dict()
         self._arg_set_matched = tuple()
+        self.ret_type = None
 
     def is_precise(self):
         return True          # by definition
@@ -165,51 +196,28 @@ class CppFunctionNumbaType(nb_types.Callable):
             return self._impl_keys[args].sig
         except KeyError:
             pass
-
-        args_cpp = []
-        for i, arg in enumerate(list(args)):
-            # If the user explicitly passes an argument using numba CPointer, the regex match is used
-            # to detect the pass by reference since the dispatcher always returns typeref[val*]
-            match = re.search(r"typeref\[(.*?)\*\]", str(arg))
-            if match:
-                literal_val = match.group(1)
-                arg_type = numba.typeof(eval(literal_val))
-                args_cpp.append(to_ref(numba2cpp(arg_type)))
-            else:
-                args_cpp.append(numba2cpp(arg))
-        args_combinations = itertools.product(*args_cpp)
-
-        for arg_combo in args_combinations:
-            if len(arg_combo) >= 1:
-                signature = ", ".join(arg_combo)
-            elif len(arg_combo) == 0:
-                signature = ""
-            try:
-                ol = CppFunctionNumbaType(self._func.__overload__(signature), self._is_method)
-                self._arg_set_matched = arg_combo
-                break
-            except:
-                # TODO : Find a better way to handle this error case. Despite a succesful __overload__ match,
-                #  the error could arise from failures in the lowering pass
-                raise RuntimeError("__overload__ call failed")
-                pass
-
+        ol = CppFunctionNumbaType(self._func.__overload__(numba_arg_convertor(args)), self._is_method)
+        print(ol)
         thistype = None
         if self._is_method:
             thistype = nb_types.voidptr
 
+        self.ret_type = cpp2numba(ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE))
         ol.sig = nb_typing.Signature(
-            return_type=cpp2numba(ol._func.__cpp_reflex__(cpp_refl.RETURN_TYPE)),
+            return_type=self.ret_type,
             args=args,
             recvr=thistype)
 
         extsig = ol.sig
         if self._is_method:
+            self.ret_type = ol.sig.return_type
             args = (nb_types.voidptr, *args)
             extsig = nb_typing.Signature(
                 return_type=ol.sig.return_type, args=args, recvr=None)
 
         self._impl_keys[args] = ol
+        self._arg_set_matched = numba_arg_convertor(args)
+
 
         @nb_iutils.lower_builtin(ol, *args)
         def lower_external_call(context, builder, sig, args,
@@ -231,29 +239,7 @@ class CppFunctionNumbaType(nb_types.Callable):
     #TODO : Remove the redundancy of __overload__ matching and use this function to only obtain the address given the matched overload
     def get_pointer(self, func):
         if func is None: func = self._func
-        args_mapping = []
-        for i, arg in enumerate(list(self.sig.args)):
-            match = re.search(r"typeref\[(.*?)\*\]", str(arg))
-            if match:
-                literal_val = match.group(1)
-                arg_type = numba.typeof(eval(literal_val))
-                args_mapping.append(to_ref(numba2cpp(arg_type)))
-            else:
-                args_mapping.append(numba2cpp(arg))
-
-        args_combinations = itertools.product(*args_mapping)
-
-        for arg_combo in args_combinations:
-            signature = ", ".join(arg_combo)
-            try:
-                ol = func.__overload__(signature)
-                self._arg_set_matched = arg_combo
-                break
-            except:
-                # It could also be successful and the error could arise from failures in the lowering pass
-                raise RuntimeError("__overload__ call failed")
-                pass
-
+        ol = func.__overload__(numba_arg_convertor(self.sig.args))
         address = cppyy.addressof(ol)
         if not address:
             raise RuntimeError("unresolved address for %s" % str(ol))

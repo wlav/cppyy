@@ -393,62 +393,252 @@ class TestNUMBA:
         X = np.arange(100, dtype=np.int64).reshape(50, 2)
         assert fast_add(X) == slow_add(X)
 
-    @mark.skip(reason="ir PointerType memory issue")
     def test11_ptr_ref_support(self):
+        """Numba-JITing of a increment method belonging to a class, and also swaps the pointers and reflects the change on the python ctypes variables"""
         import cppyy
         import ctypes
+        import random
 
         cppyy.cppdef("""
            namespace RefTest {
                class Box{
                    public:
                        long a;
-                       long b;
+                       long *b;
                        long *c;
-                       Box(long i, long j, long& k){
+                       Box(long i, long& j, long& k){
                        a = i;
-                       b = j;
+                       b = &j;
                        c = &k;
                        }
 
-                       void swap_ref() {
-                           long temp = a;
-                           a = b;
-                           b = temp;
-                       }
+                       void swap_ref(long &a, long &b) {
+                            long temp = a;
+                            a = b;
+                            b = temp;
+                        }
 
-                       void inc(long& value) {
-                           value++;
-                       }
+                       void inc(long* value) {
+                        (*value)++;
+                        }
                    }; 
                }
            """)
 
         ns = cppyy.gbl.RefTest
         assert ns.Box.__dict__['a'].__cpp_reflex__(cppyy.reflex.TYPE) == 'long'
-        assert ns.Box.__dict__['b'].__cpp_reflex__(cppyy.reflex.TYPE) == 'long'
+        assert ns.Box.__dict__['b'].__cpp_reflex__(cppyy.reflex.TYPE) == 'long*'
 
         @numba.njit()
-        def inc_box(d, k):
+        def inc_b(d, k):
+            for i in range(k):
+                d.inc(d.b)
+
+        @numba.njit()
+        def inc_c(d, k):
             for i in range(k):
                 d.inc(d.c)
 
-        x = 5
-        y = 10
-        z = ctypes.c_long(y)
-        d = ns.Box(x, y, z)
-        d.swap_ref()
+        x = random.randint(1, 5000)
+        y = random.randint(1, 5000)
+        z = random.randint(1, 5000)
+        b = ctypes.c_long(y)
+        c = ctypes.c_long(z)
 
-        assert d.a == y
-        assert d.b == x
+        d = ns.Box(x, b, c)
+        k = 5000
 
-        k = 50
-        d.inc(d.c)
-        inc_box(d, k)
-        assert z.value == y + k + 1
+        inc_b(d, k)
+        inc_c(d, k)
 
-    @mark.xfail(reason="Fails at ImplCLassType Boxing call in lowering")
-    def test12_eigen_numba(self):
+        assert b.value == y + k
+        assert c.value == z + k
+
+        d.swap_ref(d.b, d.c)
+
+        assert b.value == z + k
+        assert c.value == y + k
+
+    def test12_std_vector_pass_by_ref(self):
+        """Numba-JITing of a method that performs scalar addition to a std::vector initialised through pointers """
+        import cppyy
+        import ctypes
+        import numba
+        import numpy as np
+
+        cppyy.cppdef("""
+        template<typename T>
+        std::vector<T> make_vector(const std::vector<T>& v, std::vector<T> l) {
+           std::vector<T> u(l);
+           u.insert(u.end(), v.begin(), v.end());
+           return u;
+        }
+           namespace RefTest {
+               class BoxVector{
+                    public:
+                        std::vector<long>* a;
+                        
+                        BoxVector() : a(new std::vector<long>()) {}
+                        BoxVector(std::vector<long>* i) : a(i){}
+                                      
+                          
+                           void square_vec(){
+                           for (auto& num : *a) {
+                                num = num * num;
+                            }
+                        }
+                        
+                            void add_2_vec(long k){
+                           for (auto& num : *a) {
+                                num = num + k;
+                            }
+                        }
+        
+                            void append_vector(const std::vector<long>& value) {
+                                *a = make_vector(value, *a);
+                            }
+                       }; 
+                   }
+           """)
+        ns = cppyy.gbl.RefTest
+        @numba.njit()
+        def add_vec_fast(d):
+            for i in range(10000):
+                d.add_2_vec(i)
+
+        @numba.njit()
+        def add_vec_slow(x):
+            for i in range(10000):
+                x = x + i
+            return x
+
+        @numba.njit()
+        def square_vec_fast(d):
+            for i in range(5):
+                d.square_vec()
+
+        @numba.njit()
+        def square_vec_slow(x):
+            for i in range(5):
+                x = np.square(x)
+            return x
+
+        assert ns.BoxVector.__dict__['a'].__cpp_reflex__(cppyy.reflex.TYPE) == 'std::vector<long>*'
+
+        add_vec_fast(ns.BoxVector())
+        square_vec_fast(ns.BoxVector())
+
+        # We use b to run square_vec where the values must be < 4 to avoid exceeding longs max value
+        a = np.random.randint(1, 100, size=10000, dtype=np.int64)
+        b = np.random.randint(1, 4, size=10, dtype=np.int64)
+
+        x = cppyy.gbl.std.vector['long'](a.flatten())
+        y = cppyy.gbl.std.vector['long'](b.flatten())
+
+        t0 = time.time()
+        add_vec_fast(ns.BoxVector(x))
+        time_add_njit = time.time() - t0
+
+        t0 = time.time()
+        square_vec_fast(ns.BoxVector(y))
+        time_square_njit = time.time() - t0
+
+        t0 = time.time()
+        np_add_res = add_vec_slow(a)
+        time_add_normal = time.time() - t0
+
+        t0 = time.time()
+        np_square_res = square_vec_slow(b)
+        time_square_normal = time.time() - t0
+
+        assert (np.array(y) == np_square_res).all()
+        assert (np.array(x) == np_add_res).all()
+
+    def test13_std_vector_dot_product(self):
+        """Numba-JITing of a dot_product method of a class that stores pointers to std::vectors on the python side"""
+        import cppyy, cppyy.ll
+        import ctypes
+        import cppyy.numba_ext
+        import numba
+        import numpy as np
+
+        cppyy.cppdef("""
+        namespace RefTest {
+            class DotVector{
+                private:
+                    std::vector<long>* a;
+                    std::vector<long>* b;
+                    
+                public:
+                    long g = 0;
+                    long *res = &g;
+                    DotVector(std::vector<long>* i, std::vector<long>* j) : a(i), b(j) {}
+                
+                    long self_dot_product() {
+                        long result = 0;
+                        size_t size = a->size();  // Cache the vector size
+                        const long* data_a = a->data();
+                        const long* data_b = b->data();
+                
+                        for (size_t i = 0; i < size; ++i) {
+                            result += data_a[i] * data_b[i];
+                        }
+                        return result;
+                    }
+                    
+                    long dot_product(const std::vector<long>& vec1, const std::vector<long>& vec2) {
+                                        long result = 0;
+                                        for (size_t i = 0; i < vec1.size(); ++i) {
+                                            result += vec1[i] * vec2[i];
+                                        }
+                                        return result;
+                    }
+                };      
+            }""")
+
+        @numba.njit()
+        def dot_product_fast(d):
+            res = 0
+            for i in range(10000):
+                res += d.self_dot_product()
+            return res
+        def np_dot_product(x, y):
+            res = 0
+            for i in range(10000):
+                res += np.dot(x, y)
+            return res
+
+        ns = cppyy.gbl.RefTest
+
+        a = np.arange(20000, dtype=np.int64)
+        b = np.arange(20000, dtype=np.int64)
+
+        # TODO : Interestingly njit fails while passing a list of std.vectors because it
+        #  cannot reflect element of reflected container: reflected list(reflected list(CppClass(std::vector<long>))<iv=None>)<iv=None>
+        # vec_list = []
+        # for i in a:
+        #     vec_list.append([vector['long'](i[0]), vector['long'](i[1])])
+
+        x = cppyy.gbl.std.vector['long'](a.flatten())
+        y = cppyy.gbl.std.vector['long'](b.flatten())
+        d = ns.DotVector(x, y)
+        dot_product_fast(d)
+        res = 0
+
+        t0 = time.time()
+        njit_res = dot_product_fast(d)
+        time_njit = time.time() - t0
+
+        res = 0
+        t0 = time.time()
+        res = np_dot_product(x, y)
+        time_np = time.time() - t0
+
+        assert (njit_res == res)
+        assert (time_njit < time_np)
+
+    @mark.skip(reason="Fails at ImplCLassType Boxing call in lowering")
+    def test14_eigen_numba(self):
         """Numba-JITing of a function that uses a cppyy declared Eigen Vector"""
 
         import numpy as np
@@ -479,20 +669,49 @@ class TestNUMBA:
         }
         ''')
 
+        cppyy.cppdef('''
+        #include <iostream>
+        #include <vector>
+        namespace EigenFake {
+        template <typename T, int Rows, int Cols>
+        class Matrix {
+        public:
+            std::vector<T> data_;
+            Matrix() {
+                data_.resize(Rows * Cols);
+            }
+            Matrix(std::initializer_list<T> values) {
+                if (values.size() != Rows * Cols) {
+                throw std::runtime_error("Initializer list size does not match matrix dimensions.");
+                }
+                std::copy(values.begin(), values.end(), data_.begin());
+            }
+
+            T& operator()(int row, int col) {
+                return data_[row * Cols + col];
+            }
+
+            const T& operator()(int row, int col) const {
+                return data_[row * Cols + col];
+            }
+        };
+        }
+        ''')
+
         @numba.jit(nopython=True)
         def mul_njit(m, x):
             matrix = cppyy.gbl.multiply_scalar(m, x)
             return matrix
 
-        # Verify the result
-        matrix = cppyy.gbl.Eigen.Vector3f()
-        print()
-        matrix[0] = 4.0
-        matrix[1] = 2.0
-        matrix[2] = 3.0
+        mat = cppyy.gbl.EigenFake.Matrix(int, 2, 2)
+        mat = {1.0, 2.0, 3.0, 4.0}
 
-        matrix2 = cppyy.gbl.multiply_scalar(matrix, 5)
-        result = mul_njit(matrix, 5)
+        vector = cppyy.gbl.Eigen.VectorXd(2)
+        vector[0] = 4.0
+        vector[1] = 2.0
+        vector[2] = 3.0
+        matrix2 = cppyy.gbl.multiply_scalar(vector, 5)
+        result = mul_njit(vector, 5)
         assert(result == matrix2)
 
 
