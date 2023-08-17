@@ -100,7 +100,7 @@ def numba2cpp(val):
     elif isinstance(val, numba.types.RawPointer):
         return _numba2cpp[nb_types.voidptr]
     elif isinstance(val, numba.types.Array):
-        # TODO : currently we fix the type to std::vector<type>, CPPOverload tries a const ref if it fails
+        # TODO : currently we fix the type to std::vector<type> CPPOverload tries a const ref if it fails
         #  can be better handled with work on interop allowing gInterpreter provides a way to know if the TMethodArg is a const ref
         return "std::vector<" + _numba2cpp[val.dtype] + ">"
     elif isinstance(val, CppClassNumbaType):
@@ -196,7 +196,9 @@ class CppFunctionNumbaType(nb_types.Callable):
             return self._impl_keys[args].sig
         except KeyError:
             pass
+
         ol = CppFunctionNumbaType(self._func.__overload__(numba_arg_convertor(args)), self._is_method)
+
         thistype = None
         if self._is_method:
             thistype = nb_types.voidptr
@@ -238,7 +240,9 @@ class CppFunctionNumbaType(nb_types.Callable):
     #TODO : Remove the redundancy of __overload__ matching and use this function to only obtain the address given the matched overload
     def get_pointer(self, func):
         if func is None: func = self._func
+
         ol = func.__overload__(numba_arg_convertor(self.sig.args))
+
         address = cppyy.addressof(ol)
         if not address:
             raise RuntimeError("unresolved address for %s" % str(ol))
