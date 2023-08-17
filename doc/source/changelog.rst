@@ -20,6 +20,7 @@ master: 3.0.1
 * Add ``macro()`` helper for evaluation of preprocessor macros
 * Extended support for int8_t/uint8_t array and pointer types
 * Added ``cppyy.ll.as_memoryview()`` for byte-views of arrays of PODs
+* Check for ``nullptr`` as ``false`` in ``operator bool()``
 
 
 2023-03-19: 3.0.0

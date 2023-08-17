@@ -98,3 +98,31 @@ class TestCONVERSIONS:
         m.insert(('a', 'b'))      # implicit conversion to std::pair
 
         assert m['a'] == 'b'
+
+    def test05_bool_conversions(self):
+        """Test operator bool() and null pointer behavior"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace BoolConversions {
+        struct Test1 {};
+        struct Test2 {
+            Test2(bool b) : m_b(b) {}
+            explicit operator bool() const { return m_b; }
+            bool m_b;
+        };
+
+        Test1* CreateNullTest1() { return nullptr; }
+        Test2* CreateNullTest2() { return nullptr; }
+        }""")
+
+        ns = cppyy.gbl.BoolConversions
+
+        for t in [ns.CreateNullTest1(), ns.CreateNullTest2()]:
+            assert not t
+
+        assert     ns.Test1()
+        assert     ns.Test2(True)
+        assert not ns.Test2(False)
+
