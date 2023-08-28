@@ -16,6 +16,8 @@ import numba.core.types as nb_types
 import numba.core.typing as nb_typing
 
 from llvmlite import ir
+from llvmlite.llvmpy.core import Type as llvmfnty
+from numba.extending import make_attribute_wrapper
 import itertools
 import re
 import inspect
@@ -59,7 +61,9 @@ _cpp2numba = {
     'unsigned long long'     : nb_types.ulonglong,
     'float'                  : nb_types.float32,
     'double'                 : nb_types.float64,
-    'const char*'            : nb_types.unicode_type,
+    'char'                   : nb_types.char,
+    'unsigned char'          : nb_types.uchar,
+    'char*'                  : nb_types.unicode_type
 }
 
 def resolve_std_vector(val):
@@ -72,7 +76,7 @@ def cpp2numba(val):
     if type(val) != str:
         # TODO: distinguish ptr/ref/byval
         # TODO: Only metaclasses/proxies end up here since
-        #  const ref cases makes the RETURN_TYPE from reflex a string
+        #  ref cases makes the RETURN_TYPE from reflex a string
         return typeof_scope(val, nb_typing.typeof.Purpose.argument, Qualified.value)
     elif val.startswith("std::vector"):
         type_arr = getattr(numba, str(cpp2numba(resolve_std_vector(val))))[:]
@@ -100,8 +104,6 @@ def numba2cpp(val):
     elif isinstance(val, numba.types.RawPointer):
         return _numba2cpp[nb_types.voidptr]
     elif isinstance(val, numba.types.Array):
-        # TODO : currently we fix the type to std::vector<type> CPPOverload tries a const ref if it fails
-        #  can be better handled with work on interop allowing gInterpreter provides a way to know if the TMethodArg is a const ref
         return "std::vector<" + _numba2cpp[val.dtype] + ">"
     elif isinstance(val, CppClassNumbaType):
         return val._scope.__cpp_name__
@@ -394,7 +396,6 @@ def cppclass_getattr_impl(context, builder, typ, val, attr):
         return builder.bitcast(val, ir_voidptr)
 
     elif q == Qualified.value:
-        # TODO: take address of by value returns
         return None
 
     assert not "unknown qualified type"
@@ -480,11 +481,15 @@ def typeof_scope(val, c, q = Qualified.default):
 
   # declare data members to Numba
     data_members = list()
+    member_methods = dict()
+
     for name, field in val.__dict__.items():
         if type(field) == cpp_types.DataMember:
             data_members.append(CppDataMemberInfo(
                 name, field.__cpp_reflex__(cpp_refl.OFFSET), field.__cpp_reflex__(cpp_refl.TYPE))
             )
+        elif type(field) == cpp_types.Function:
+            member_methods[name] = field.__cpp_reflex__(cpp_refl.RETURN_TYPE)
 
   # TODO: this refresh is needed b/c the scope type is registered as a
   # callable after the tracing started; no idea of the side-effects ...
@@ -496,6 +501,7 @@ def typeof_scope(val, c, q = Qualified.default):
         class ImplClassModel(nb_dm.models.StructModel):
             def __init__(self, dmm, fe_type):
                 self._data_members = data_members
+                self._member_methods = member_methods
 
               # TODO: eventually we need not derive from StructModel
                 members = [(dmi.f_name, dmi.f_nbtype) for dmi in data_members]
@@ -567,6 +573,7 @@ def typeof_scope(val, c, q = Qualified.default):
 
         def init(self, dmm, fe_type, sz = cppyy.sizeof(val)):
             self._data_members = data_members
+            self._member_methods = member_methods
             self._sizeof = sz
 
           # TODO: this code exists purely to be able to use the indexing and hierarchy
@@ -594,24 +601,46 @@ def typeof_scope(val, c, q = Qualified.default):
 
         return nb_ext.NativeValue(pobj, is_error=None, cleanup=None)
 
+    def make_implclass(context, builder, typ, **kwargs):
+        return nb_cgu.create_struct_proxy(typ)(context, builder, **kwargs)
+
   # C++ object to Python proxy wrapping for returns from Numba trace
     @nb_ext.box(ImplClassType)
     def box_instance(typ, val, c):
-        assert not "requires object model and passing of intact object, not memberwise copy"
+
         global cppyy_from_voidptr
 
-        ir_pyobj = c.context.get_argument_type(nb_types.pyobject)
-        ir_int   = cpp2ir('int')
+        implclass = make_implclass(c.context, c.builder, typ)
+        classobj = c.pyapi.unserialize(c.pyapi.serialize_object(cpp_types.Instance))
+        pyobj = c.context.get_argument_type(nb_types.pyobject)
 
-        ptrty = ir.PointerType(ir.FunctionType(ir_pyobj, [ir_voidptr, cpp2ir('char*'), ir_int]))
-        ptrval = c.context.add_dynamic_addr(c.builder, cppyy_from_voidptr, info='Instance_FromVoidPtr')
-        fp = c.builder.bitcast(ptrval, ptrty)
+        if type(val) == ir.Constant:
+            if val.constant == ir.Undefined:
+                assert not "Value passed to instance boxing is undefined"
 
-        module = c.builder.basic_block.function.module
-        clname = c.context.insert_const_string(module, typ._scope.__cpp_name__)
+        box_list = []
 
-        NULL = c.context.get_constant_null(nb_types.voidptr)     # TODO: get the real thing
-        return c.context.call_function_pointer(c.builder, fp, [NULL, clname, ir_int(0)])
+        model = implclass._datamodel
+        cfr = CppClassFieldResolver(c.context)
+
+        for i in typ._scope.__dict__:
+            if isinstance(cfr.generic_resolve(typ, i), CppFunctionNumbaType):
+                ret_type = CppFunctionNumbaType
+                fnty = llvmfnty.function(ir_voidptr, [pyobj, pyobj, pyobj])
+                fn = c.pyapi._get_function(fnty, name=i)
+                box_list.append(c.builder.call(fn, [c.pyapi.get_null_object()]*3))
+            elif isinstance(cfr.generic_resolve(typ, i), nb_types.Type):
+                box_list.append(c.box(cfr.generic_resolve(typ, i), getattr(implclass, i)))
+
+        box_res = c.pyapi.call_function_objargs(
+            classobj, tuple(box_list)
+        )
+
+        # Required for nopython mode, numba nrt requres each member box call to decref since it steals the reference
+        for i in box_list:
+            c.pyapi.decref(i)
+
+        return box_res
 
     return cnt
 
