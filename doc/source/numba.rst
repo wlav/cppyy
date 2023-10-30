@@ -29,131 +29,359 @@ A future version may integrate C++ (Cling-generated) IR with Numba IR, if the
 C++ code is exposed from (precompiled) header files, thus allowing inlining of
 C++ code into Numba traces, for further expected speedups.
 
+How Numba deals with the Python related Challenges
+--------------------------------------------------
 
-`Usage`
+Python uses the Duck Typing conventions, where each type is stored in a
+wrapper, making it harder to deduce the types of stored artifacts. 
+This is also one of the contributing factors for its lack of efficiency and 
+speed.
+
+Numba converts the code into LLVM IR. 
+Doing this removes the need for conversion from basic types to their wrapped 
+counterparts. 
+In other words, Numba translates python functions into native code (using the
+LLVM framework), helping numerically heavy programs execute much faster
+than vanilla python.
+
+
+Advantages of using Numba with cppyy
+------------------------------------
+
+-  Numba makes loops fast: When using cppyy with Python, the
+   loops in Python are slower as compared to languages such as C/C++.
+   Numba alleviates this problem and can make it as fast as C without
+   much code instrumentation.
+
+-  Flexibility to Code completely in python: This makes debugging
+   easier. To debug Numba instrumented code you can either comment out
+   the instrumentation line and debug the code as you would do in Python
+   or use gdb using numba.gdb . Numba also has a variety of flags that
+   can be turned on to see tracebacks and the intermediate steps taken
+   by Numba. This is easier than to debug a code that is setup in Python
+   and uses RDF for hotspots.
+
+-  No extra conversions required for machine code: cppyy can be
+   converted to machine code cleanly, that is no boxing and unboxing is
+   required, so we do not spend any time in type conversions and gain
+   the maximum amount of speedup possible.
+
+-  Easier transitioning from one language to the other: You can switch
+   easily between C++ and Python as and when you want.
+
+Recent enhancements in Numba
+----------------------------
+
+While adopting the existing work done by `wlav`_, the 
+`Compiler Research Organization's`_ contributors made enhancements to the 
+following:
+
+- Enabling Numba to digest C++ code. This work builds on top of the principles
+  established during Python/C++ interoperability development. This was the next
+  step in advancing this research, that is, adding a third programming entity
+  to the mix. This meant more rules and restrictions since all three entities
+  needed to agree on the specific operations.
+
+Usage
 -------
 
-``cppyy`` exposes extension hooks that automatically make it available to
-Numba.
-If, however, you do not use ``setuptools`` (through ``pip`` or otherwise),
+``cppyy`` exposes extension hooks that automatically make it available
+to Numba. 
+If, however, you do not use ``setuptools`` (through ``pip`` or otherwise), 
 you can load the extensions explicitly::
 
-    >>> import cppyy.numba_ext
-    >>> 
+  import cppyy.numba_ext
 
-After that, Numba is able to trace ``cppyy`` bound code.
-Note that the ``numba_ext`` module will register only the proxy base classes,
-to keep overheads to a minimum.
-The pre-registered base classes will, lazily and automatically, register
-further type information for the concrete classes and overloads on actual
-use in Numba traces, not from other uses.
+After that, Numba is able to trace ``cppyy`` bound code. 
+Note that the ``numba_ext`` module will register only the proxy base classes, 
+to keep overheads to a minimum. 
+The pre-registered base classes will, lazily and automatically, register 
+further type information for the concrete classes and overloads on actual use 
+in Numba traces, not from other uses.
 
+Examples
+--------
 
-`Examples`
-----------
-
-The following, non-exhaustive, set of examples gives an idea of the current
-level of support.
-The overall goal, however, is to be able to use ``cppyy`` bound code in Numba
+The following, non-exhaustive, set of examples gives an idea of the
+current level of support. 
+The overall goal, however, is to be able to use cppyy bound code in Numba 
 traces in the same as it can be used in normal Python code.
 
-C++ free (global) functions can be called and overloads will be selected, or a
-template will be instantiated, based on the provided types, assuming all types
-match explicitly (thus e.g. typedefs, implicit conversions, and default
-arguments are not yet supported).
+C++ free (global) functions can be called and overloads will be
+selected, or a template will be instantiated, based on the provided
+types, assuming all types match explicitly (thus e.g. typedefs, implicit
+conversions, and default arguments are not yet supported).
+
+-  **Template instantiation**: cppyy supports template instantiation
+   which gives you access to an important feature set in C++ that is
+   used abundantly in lot of codebases. This extension extends that
+   support to Numba too so any templated C++ function can be used in
+   Numba. Below we have a templated square function and depending on the
+   type of the matrix the extension instantiates the required template
+   argument.
+
+.. code-block:: python
+
+   >>> import cppyy
+   >>> import cppyy.numba_ext
+   >>> import numba
+   >>> import numpy as np
+   >>> cppyy.cppdef("""
+   ... template<typename T>
+   ... T square(T t) { return t*t; }
+   ... """)
+   >>> @numba.jit(nopython=True)
+   ... def tsa(a):
+   ...   total = type(a[0])(0)
+   ...   for i in range(len(a)):
+   ...      total += cppyy.gbl.square(a[i])
+   ...   return total
+   >>> a = np.array(range(10), dtype=np.float32)
+   >>> print("Float array: ", a)
+   Float array: [0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]
+   >>> print("Sum of squares: ", tsa(a))
+   Sum of squares: 285.0
+   >>> print()
+   >>> a = np.array(range(10), dtype=np.int32)
+   >>> print("Integer array: ", a)
+   Integer array: [0 1 2 3 4 5 6 7 8 9]
+   >>> print("Sum of squares: ", tsa(a))
+   Sum of squares: 285
+
+
+
+
+-  **Plug and Play**: To use the extension you just need to import
+   cppyy.numba_ext and then you can use C++ functions in Numba directly.
+   In the example shown below sqrt is a C++ function that can be used
+   directly inside the Numba JIT-ed function with the help of the
+   extension.
+
+.. code-block:: python
+
+   >>> import numba
+   >>> import cppyy
+   >>> import cppyy.numba_ext # <------- Imports the necessary information for numba to work with cppyy
+   >>> import math
+   >>> @numba.jit(nopython=True)
+   ... def cpp_sqrt(x):
+   ...   return cppyy.gbl.sqrt(x) # <------------ Direct use, no extra setup required
+   >>> print("Sqrt of 4: ", cpp_sqrt(4.0))
+   Sqrt of 4: 2.0
+   >>> print("Sqrt of Pi: ", cpp_sqrt(math.pi))
+   Sqrt of Pi: 1.7724538509055159
+
+
+-  **Overload selection**: Similar to template instantiation the
+   extension helps select the appropriate overload based on the type of
+   the input provided to the function.
+
+.. code-block:: python
+
+   >>> cppyy.cppdef("""
+   ... int mul(int x) { return x * 2; }
+   ... float mul(float x) { return x * 3; }
+   ... """)
+   >>> @numba.jit(nopython=True)
+   ... def oversel(a):
+   ...   total = type(a[0])(0)
+   ...   for i in range(len(a)):
+   ...      total += cppyy.gbl.mul(a[i])
+   ...   return total
+
+   >>> a = np.array(range(10), dtype=np.float32)
+   >>> print("Array: ", a)
+   Array: [0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]
+   >>> print("Overload selection output: ", oversel(a))
+   Overload selection output: 135.0
+   >>> a = np.array(range(10), dtype=np.int32)
+   >>> print("Array: ", a)
+   Array: [0 1 2 3 4 5 6 7 8 9]
+   >>> print("Overload selection output: ", oversel(a))
+   Overload selection output: 90
+
+  
+
+Instances of C++ classes can be passed into Numba traces. 
+They can be returned from functions called *within* the trace, but cannot yet 
+be returned *from* the trace. 
+Their public data is accessible (read-only) if of built-in type and their 
+public methods can be called, for which overload selection works. 
 Example:
 
-  .. code-block:: python
+.. code-block:: python
 
-    >>> import cppyy
-    >>> import numba
-    >>> import numpy as np
-    >>>
-    >>> cppyy.cppdef("""
-    ... template<typename T>
-    ... T square(T t) { return t*t; }
-    ... """)
-    True
-    >>> @numba.jit(nopython=True)
-    ... def tsa(a):
-    ...     total = type(a[0])(0)
-    ...     for i in range(len(a)):
-    ...         total += cppyy.gbl.square(a[i])
-    ...     return total
-    ...
-    >>> a = np.array(range(10), dtype=np.float32)
-    >>> print(tsa(a))
-    285.0
-    >>> a = np.array(range(10), dtype=np.int64)
-    >>> print(tsa(a))
-    285
-    >>>
-
-Instances of C++ classes can be passed into Numba traces.
-They can be returned from functions called _within_ the trace, but can not yet
-be returned _from_ the trace.
-Their public data is accessible (read-only) if of builtin type and their public
-methods can be called, for which overload selection works.
-Example:
-
-  .. code-block:: python
-
-    >>> import cppyy
-    >>> import numba
-    >>> import numpy as np
-    >>> 
-    >>> cppyy.cppdef("""\
-    ... class MyData {
-    ... public:
-    ...     MyData(int i, int j) : fField1(i), fField2(j) {}
-    ...
-    ... public:
-    ...     int get_field1() { return fField1; }
-    ...     int get_field2() { return fField2; }
-    ...
-    ...     MyData copy() { return *this; }
-    ...
-    ... public:
-    ...     int fField1;
-    ...     int fField2;
-    ... };""")
-    True
-    >>> @numba.jit(nopython=True)
-    >>> def tsdf(a, d):
-    ...     total = type(a[0])(0)
-    ...     for i in range(len(a)):
-    ...         total += a[i] + d.fField1 + d.fField2
-    ...     return total
-    ...
-    >>> d = cppyy.gbl.MyData(5, 6)
-    >>> a = np.array(range(10), dtype=np.int32)
-    >>> print(tsdf(a, d))
-    155
-    >>> # example of method calls
-    >>> @numba.jit(nopython=True)
-    >>> def tsdm(a, d):
-    ...     total = type(a[0])(0)
-    ...     for i in range(len(a)):
-    ...         total += a[i] +  d.get_field1() + d.get_field2()
-    ...     return total
-    ...
-    >>> print(tsdm(a, d))
-    155
-    >>> # example of object return by-value
-    >>> @numba.jit(nopython=True)
-    >>> def tsdcm(a, d):
-    ...     total = type(a[0])(0)
-    ...     for i in range(len(a)):
-    ...         total += a[i] + d.copy().fField1 + d.get_field2()
-    ...     return total
-    ...
-    >>> print(tsdcm(a, d))
-    155
-    >>>
+   >>> import cppyy
+   >>> import numba
+   >>> import numpy as np
+   >>> 
+   >>> cppyy.cppdef("""\
+   ... class MyData {
+   ... public:
+   ...     MyData(int i, int j) : fField1(i), fField2(j) {}
+   ...
+   ... public:
+   ...     int get_field1() { return fField1; }
+   ...     int get_field2() { return fField2; }
+   ...
+   ...     MyData copy() { return *this; }
+   ...
+   ... public:
+   ...     int fField1;
+   ...     int fField2;
+   ... };""")
+   True
+   >>> @numba.jit(nopython=True)
+   >>> def tsdf(a, d):
+   ...     total = type(a[0])(0)
+   ...     for i in range(len(a)):
+   ...         total += a[i] + d.fField1 + d.fField2
+   ...     return total
+   ...
+   >>> d = cppyy.gbl.MyData(5, 6)
+   >>> a = np.array(range(10), dtype=np.int32)
+   >>> print(tsdf(a, d))
+   155
+   >>> # example of method calls
+   >>> @numba.jit(nopython=True)
+   >>> def tsdm(a, d):
+   ...     total = type(a[0])(0)
+   ...     for i in range(len(a)):
+   ...         total += a[i] +  d.get_field1() + d.get_field2()
+   ...     return total
+   ...
+   >>> print(tsdm(a, d))
+   155
+   >>> # example of object return by-value
+   >>> @numba.jit(nopython=True)
+   >>> def tsdcm(a, d):
+   ...     total = type(a[0])(0)
+   ...     for i in range(len(a)):
+   ...         total += a[i] + d.copy().fField1 + d.get_field2()
+   ...     return total
+   ...
+   >>> print(tsdcm(a, d))
+   155
+   >>>
 
 
-`Performance`
--------------
+Demo: Numba physics example
+---------------------------
+
+Taken from:
+`numba_scalar_impl.py <https://github.com/numba/numba-examples/blob/master/examples/physics/lennard_jones/numba_scalar_impl.py>`_
+
+.. code-block:: python
+
+   >>> import numba
+   >>> import cppyy
+   >>> import cppyy.numba_ext
+
+   >>> cppyy.cppdef("""
+   ... #include <vector>
+   ... struct Atom {
+   ...    float x;
+   ...    float y;
+   ...    float z;
+   ... };
+
+   ... std::vector<Atom> atoms = {{1, 2, 3}, {2, 3, 4}, {3, 4, 5}, {4, 5, 6}, {5, 6, 7}};
+   ... """)
+
+   >>> @numba.njit
+   >>> def lj_numba_scalar(r):
+   ...    sr6 = (1./r)**6
+   ...    pot = 4.*(sr6*sr6 - sr6)
+   ...    return pot
+
+   >>> @numba.njit
+   >>> def distance_numba_scalar(atom1, atom2):
+   ...    dx = atom2.x - atom1.x
+   ...    dy = atom2.y - atom1.y
+   ...    dz = atom2.z - atom1.z
+
+   ...    r = (dx * dx + dy * dy + dz * dz) ** 0.5
+
+   ...    return r
+
+    >>> def potential_numba_scalar(cluster):
+    ...   energy = 0.0
+    ...   for i in range(cluster.size() - 1):
+    ...     for j in range(i + 1, cluster.size()):
+    ...       r = distance_numba_scalar(cluster[i], cluster[j])
+    ...       e = lj_numba_scalar(r)
+    ...       energy += e
+
+    ...   return energy
+
+   >>> print("Total lennard jones potential =", potential_numba_scalar(cppyy.gbl.atoms))
+   Total lennard jones potential = -0.5780277345740283
+
+
+
+Where do these enhancements reside?
+------------------------------------------
+
+Recent enhancements discussed in this document can be found in the following
+file in cppyy repository:
+
+- `cppyy/python/cppyy/numba_ext.py <https://github.com/wlav/cppyy/blob/master/python/cppyy/numba_ext.py>`_
+
+
+**C++ to LLVM IR Mappings**
+
+Similarly, the mapping between C++ and LLVM IR (``_cpp2ir``) is also
+manually defined. 
+It uses the values from the `llvmlite <https://github.com/numba/llvmlite>`_ 
+library to fetch relevant LLVM types.
+
+   **llvmlite** is a lightweight LLVM-Python binding for writing JIT
+   compilers.
+
+**Support for Functions and Classes**
+
+Using the mappings defined in this file, support for functions
+(``CppFunctionNumbaType``) and classes (``CppClassNumbaType``) is
+available.
+
+   Note that constructing classes inside Numba is not yet supported.
+
+..
+
+   Numba doesn't know the overload of the function before the user inputs their
+   arguments (Note that Numba allows you to add annotations to the decorator).
+   ``CppFunctionNumbaType`` tries to deduce the overload of the chosen function
+   through the arguments supplied by the user. It then provides the signature
+   of the chosen function to Numba. This is needed because Python doesn't have
+   types, while Numba has its own types for each Python argument that is
+   supplied.
+
+How to start using Numba in my code?
+------------------------------------
+
+To start using Numba, specific
+`decorators <https://numba.readthedocs.io/en/stable/user/jit.html>`_
+are used above the relevant functions to help Numba identify and JIT
+compile them. 
+Numba will convert it into LLVM IR the first time you execute that function.
+
+Overcoming Limitations
+----------------------
+
+Numba currently only supports a subset of Python. 
+For example, it didn't natively support the types of structures that are 
+created by cppyy, which is why cppyy support needed to be explicitly added to 
+Numba, to be able to keep using cppyy within Python, while also benefitting 
+with the conversion to LLVM IR that Numba can provide for specific functions.
+
+This is challenging since three entities (C++, cppyy, and Numba) that
+communicate differently need to work together, leading to a stricter set
+of restrictions.
+
+Numba now supports primitive types and some class types in C++, as well as
+several other core C++ features (e.g., reference types).
+
+**Performance**
 
 The main overhead of JITing Numba traces is in Numba itself; optimization of
 the IR and assembly by the backend plays a much smaller role.
@@ -181,5 +409,87 @@ address.
 A future implementation will be able to inline C++ into the Numba trace if
 code is available in headers files or was JITed.
 
+**Long Term Outlook**
+
+Working with cppyy, Numba also work with C++ code. This enables a whole
+new understanding of how two languages can work together. 
+If an optimizer can see the same representation coming from both, Numba and 
+C++, it can optimize it a lot better.
+
+The next step would be to merge those runtimes together for better 
+optimization to take place. 
+This is because normally, when two languages are communicating with each 
+other, at some point, the low-level code will request a function call at some 
+address with some parameters. 
+This crossing of the language boundary is slow, especially when large 
+computations are involved.
+
+The proposed solution is, that instead of incorporating the slow
+function call (where the function's progress is invisible), incorporate
+the body of the function call itself, where it is supposed to be called.
+This gives better visibility to the optimizer, enabling it to remove
+indirection and scope-related parts.
+
+This is what the current POC has paved the way for, that it is possible
+to combine cppyy and Numba, empowering greater language
+interoperability.
+
+What Should be Your Motivation in Adopting/ Enhancing Numba
+-----------------------------------------------------------
+
+The following are the two main motivations/ directions in which work needs to
+be done:
+
+- Further improving Numba's performance (most of the enhancements discussed in
+  this document focus on this aspect), and
+
+- To allow kernels for C++ frameworks (in particular GPU ones, although we're
+  not there yet) to be written in Python. Researchers will find this to be an
+  interesting challenge, something worth exploring. 
+
+Further Reading
+---------------
+
+-  Numba documentation:
+   `numba.readthedocs.io <https://numba.readthedocs.io/en/stable/user/index.html>`_.
+
+-  `Using C++ From Numba, Fast and Automatic, PyHEP
+   2022 <https://compiler-research.org/presentations/#CppyyNumbaPyHEP2022>`_
+
+   -  `How to try out this
+      notebook <https://github.com/sudo-panda/PyHEP-2022>`_
+
+-  `Parallelism, Performance and Programming Model
+   Meeting <https://indico.cern.ch/event/1196174/>`_
+
+   -  `Notebook <https://indico.cern.ch/event/1196174/contributions/5028203/attachments/2501253/4296735/PPP.ipynb>`_
+   -  `Slides <https://indico.cern.ch/event/1196174/contributions/5028203/attachments/2501253/4296778/PPP.pdf>`_
+
+-  `Using C++ From Numba, Fast and
+   Automatic <https://compiler-research.org/assets/presentations/B_Kundu-PyHEP22_Cppyy_Numba.pdf>`_
+
+   -  `Video <https://www.youtube.com/watch?v=RceFPtB4m1I>`_
+
+**Credits:**
+
+-  `Wim Lavrijsen <https://github.com/wlav>`_ (Lawrence Berkeley National Lab.)
+   for his original work in cppyy and mentorship towards student contributors.
+
+-  `Vassil Vasilev <https://github.com/vgvassilev>`_ (Princeton University)
+   for his mentorship towards Compiler Research Org's student contributors.
+
+-  `Baidyanath Kundu <https://github.com/sudo-panda>`_ (Princeton University)
+   for his research work on cppyy and Numba with `Compiler Research Organization`_ 
+   (as discussed in this document).
+   
+- `Aaron Jomy <https://github.com/maximusron>`_ (Princeton University) for
+  continuing this research work with `Compiler Research Organization`_.
+
+
+.. _Compiler Research Organization: https://compiler-research.org/
+
+.. _Compiler Research Organization's: https://compiler-research.org/
 
 .. _is a JIT compiler: https://numba.pydata.org/
+
+.. _wlav: https://github.com/wlav
