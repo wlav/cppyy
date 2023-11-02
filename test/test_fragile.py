@@ -582,7 +582,7 @@ class TestFRAGILE:
           # missing return statement
             cppyy.cppdef("""\
             namespace fragile {
-                double add42d(double d) { d + 42.; }
+                double add42d(double d) { d + 42.; return d; }
             }""")
 
         assert len(w) == 1
