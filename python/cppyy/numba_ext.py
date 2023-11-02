@@ -16,7 +16,6 @@ import numba.core.types as nb_types
 import numba.core.typing as nb_typing
 
 from llvmlite import ir
-from llvmlite.llvmpy.core import Type as llvmfnty
 from numba.extending import make_attribute_wrapper
 import itertools
 import re
@@ -169,7 +168,6 @@ def cpp2ir(val):
             else:
                 type_2 = _cpp2ir[val[:-1]]
                 return ir.PointerType(type_2)
-
 
 #
 # C++ function pointer -> Numba
@@ -607,16 +605,18 @@ def typeof_scope(val, c, q = Qualified.default):
   # C++ object to Python proxy wrapping for returns from Numba trace
     @nb_ext.box(ImplClassType)
     def box_instance(typ, val, c):
+        assert not "requires object model and passing of intact object, not memberwise copy"
 
         global cppyy_from_voidptr
-
-        implclass = make_implclass(c.context, c.builder, typ)
-        classobj = c.pyapi.unserialize(c.pyapi.serialize_object(cpp_types.Instance))
-        pyobj = c.context.get_argument_type(nb_types.pyobject)
 
         if type(val) == ir.Constant:
             if val.constant == ir.Undefined:
                 assert not "Value passed to instance boxing is undefined"
+                return NULL
+
+        implclass = make_implclass(c.context, c.builder, typ)
+        classobj = c.pyapi.unserialize(c.pyapi.serialize_object(cpp_types.Instance))
+        pyobj = c.context.get_argument_type(nb_types.pyobject)
 
         box_list = []
 
@@ -624,18 +624,12 @@ def typeof_scope(val, c, q = Qualified.default):
         cfr = CppClassFieldResolver(c.context)
 
         for i in typ._scope.__dict__:
-            if isinstance(cfr.generic_resolve(typ, i), CppFunctionNumbaType):
-                ret_type = CppFunctionNumbaType
-                fnty = llvmfnty.function(ir_voidptr, [pyobj, pyobj, pyobj])
-                fn = c.pyapi._get_function(fnty, name=i)
-                box_list.append(c.builder.call(fn, [c.pyapi.get_null_object()]*3))
-            elif isinstance(cfr.generic_resolve(typ, i), nb_types.Type):
+            if isinstance(cfr.generic_resolve(typ, i), nb_types.Type):
                 box_list.append(c.box(cfr.generic_resolve(typ, i), getattr(implclass, i)))
 
         box_res = c.pyapi.call_function_objargs(
             classobj, tuple(box_list)
         )
-
         # Required for nopython mode, numba nrt requres each member box call to decref since it steals the reference
         for i in box_list:
             c.pyapi.decref(i)
