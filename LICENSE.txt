@@ -51,6 +51,7 @@ source code):
   Simone Bacchio
   Aditi Dutta
   Shaheed Haque
+  Aaron Jomy
   Toby StClere-Smithe
   Stefan Wunsch
 
