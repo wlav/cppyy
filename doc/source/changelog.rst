@@ -10,9 +10,11 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 3.0.1
+master: 3.1.0
 -------------
 
+* Use xcrun to find header files on Mac as a last resort
+* Fix for "symbols failed to materialize" with newer gcc on Linux
 * Default to C++20 on all platforms
 * Add C++20 standard headers to the PCH
 * Fix std::span compatibility
@@ -21,6 +23,9 @@ master: 3.0.1
 * Extended support for int8_t/uint8_t array and pointer types
 * Added ``cppyy.ll.as_memoryview()`` for byte-views of arrays of PODs
 * Check for ``nullptr`` as ``false`` in ``operator bool()``
+* Automatically array-ify std::vector<some struct>::data() results
+* Use __name__ to stringify if an annotation object provides it
+* Extended Numba support
 
 
 2023-03-19: 3.0.0
