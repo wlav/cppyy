@@ -628,6 +628,9 @@ class TestSIGNALS:
         if IS_MAC_ARM:
             skip("JIT exceptions from signals not supported on Mac ARM")
 
+        if IS_WINDOWS:
+            skip("abortive signals crash on most Windows platforms")
+
         import cppyy
         import cppyy.ll
 
@@ -650,7 +653,8 @@ class TestSIGNALS:
                 f.sigabort()
 
       # can only recover once from each error on Windows, which is functionally
-      # enough, but precludes further testing here
+      # enough, but precludes further testing here (change: now drop all, see above,
+      # as on some MSVC builds, no signals are caught ??)
         if not IS_WINDOWS:
             cppyy.ll.set_signals_as_exception(True)
             with raises((cppyy.ll.SegmentationViolation, cppyy.ll.IllegalInstruction)):
