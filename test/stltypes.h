@@ -227,9 +227,6 @@ public:
 public:
     explicit MyError(const std::string& msg);
     MyError(const MyError&);
-#ifndef WIN32
-    MyError(const MyError&&) = delete;
-#endif
     virtual ~MyError();
     MyError& operator=(const MyError&) = default;
     const char* what() const throw() override;
