@@ -11,10 +11,12 @@ def setup_module(mod):
 
 class TestDATATYPES:
     def setup_class(cls):
-        cls.test_dct = test_dct
         import cppyy
+
+        cls.test_dct = test_dct
         cls.datatypes = cppyy.load_reflection_info(cls.test_dct)
         cls.N = cppyy.gbl.N
+
         at_least_17 = 201402 < cppyy.gbl.gInterpreter.ProcessLine("__cplusplus;")
         cls.has_byte     = at_least_17
         cls.has_optional = at_least_17
