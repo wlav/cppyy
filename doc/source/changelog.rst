@@ -17,6 +17,7 @@ master: 3.1.0
 * Fix for "symbols failed to materialize" with newer gcc on Linux
 * Default to C++20 on all platforms
 * Add C++20 standard headers to the PCH
+* Fixes for new p11 and p12 type properties
 * Fix std::span compatibility
 * Look for ``__cast_cpp__`` for custom converters
 * Add ``macro()`` helper for evaluation of preprocessor macros
@@ -26,6 +27,7 @@ master: 3.1.0
 * Automatically array-ify std::vector<some struct>::data() results
 * Use __name__ to stringify if an annotation object provides it
 * Extended Numba support
+* Update to latest Cling release (6.30)
 
 
 2023-03-19: 3.0.0
