@@ -26,6 +26,7 @@ master: 3.1.0
 * Check for ``nullptr`` as ``false`` in ``operator bool()``
 * Automatically array-ify std::vector<some struct>::data() results
 * Use __name__ to stringify if an annotation object provides it
+* Improve consistency of ``char[]`` arrays
 * Extended Numba support
 * Update to latest Cling release (6.30)
 

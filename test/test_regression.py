@@ -1232,3 +1232,44 @@ class TestREGRESSION:
         ns = cppyy.gbl.TypedefedEnum
 
         assert ns.func(ns.WEDNESDAY) == 2
+
+    def test42_char_arrays_consistence(self):
+        """Consistent usage of char[] arrays"""
+
+        import cppyy
+
+        cppyy.cppdef(r"""
+        namespace CharArrays {
+        struct Foo {
+            char val[10], *ptr;
+            char values[2][10], *pointers[2];
+        };
+
+        void set_pointers(struct Foo* foo) {
+        // populate arrays
+            strcpy(foo->val, "howdy!");
+            strcpy(foo->values[0], "hello");
+            strcpy(foo->values[1], "world!");
+
+        // set pointers
+            foo->ptr = foo->val;
+            foo->pointers[0] = foo->values[0];
+            foo->pointers[1] = foo->values[1];
+        } }""")
+
+        ns = cppyy.gbl.CharArrays
+
+        foo = ns.Foo()
+        ns.set_pointers(foo)
+
+        howdy = 'howdy!'
+        hello = 'hello'
+        world = 'world!'
+
+        assert ''.join(foo.val)[:len(howdy)] == howdy
+        assert foo.ptr == howdy
+        assert foo.values[0].as_string() == hello
+        assert foo.values[1].as_string() == world
+        assert foo.pointers[0] == 'hello'
+        assert foo.pointers[1] == 'world!'
+
