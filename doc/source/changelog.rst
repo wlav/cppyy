@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master: 3.1.0
--------------
+2023-11-13: 3.1.0
+-----------------
 
 * Use xcrun to find header files on Mac as a last resort
 * Fix for "symbols failed to materialize" with newer gcc on Linux
