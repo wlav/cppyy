@@ -2343,3 +2343,15 @@ class TestDATATYPES:
 
         assert cppyy.addressof(cppyy.gbl.std.vector[int].at.__overload__(':any:', False))
         assert cppyy.addressof(cppyy.gbl.std.vector[int].at.__overload__(':any:', True))
+
+    def test50_int8_uint8_global_arrays(self):
+        """Access to int8_t/uint8_t arrays that are global variables"""
+
+        import cppyy
+
+        ns = cppyy.gbl.Int8_Uint8_Arrays
+
+        assert [ns.test[i]  for i in range(6)] == [-0x12, -0x34, -0x56, -0x78, 0x0, 0x0]
+        assert [ns.utest[i] for i in range(6)] == [ 0x12,  0x34,  0x56,  0x78, 0x0, 0x0]
+
+

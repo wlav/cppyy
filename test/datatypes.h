@@ -855,4 +855,11 @@ struct DataHolder {
 
 } // namespace MultiDimArrays
 
+
+//= int8_t/uint8_t arrays ===================================================
+namespace Int8_Uint8_Arrays {
+    extern  int8_t  test[6];
+    extern uint8_t utest[6];
+}
+
 #endif // !CPPYY_TEST_DATATYPES_H

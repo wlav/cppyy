@@ -1037,3 +1037,10 @@ MULTIDIM_ARRAYS_NEW2D(long long, llong)
 MULTIDIM_ARRAYS_NEW2D(unsigned long long, ullong)
 MULTIDIM_ARRAYS_NEW2D(float, float)
 MULTIDIM_ARRAYS_NEW2D(double, double)
+
+
+//===========================================================================
+namespace Int8_Uint8_Arrays {
+     int8_t  test[6] = {-0x12, -0x34, -0x56, -0x78};
+    uint8_t utest[6] = { 0x12,  0x34,  0x56,  0x78};
+}
