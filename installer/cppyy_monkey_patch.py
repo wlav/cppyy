@@ -18,7 +18,7 @@ def get_requires_for_build_wheel(*args, **kwds):
     try:
         import __pypy__, sys
         version = sys.pypy_version_info
-        requirements = ['cppyy-cling==6.28.0']
+        requirements = ['cppyy-cling==6.30.0']
         if version[0] == 5:
             if version[1] <= 9:
                 requirements = ['cppyy-cling<6.12']
@@ -32,7 +32,7 @@ def get_requires_for_build_wheel(*args, **kwds):
                 requirements = ['cppyy-cling<=6.18.2.3']
     except ImportError:
         # CPython
-        requirements = ['cppyy-backend==1.14.11', 'cppyy-cling==6.28.0']
+        requirements = ['cppyy-backend==1.15.1', 'cppyy-cling==6.30.0']
 
     return requirements + _get_requires_for_build_wheel(*args, **kwds)
 

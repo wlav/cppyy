@@ -10,6 +10,12 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+2023-11-13: 3.1.1
+-----------------
+
+* Alt fix for "failed to materialize symbols" on some Linux systems
+
+
 2023-11-13: 3.1.0
 -----------------
 
