@@ -32,7 +32,7 @@ def get_requires_for_build_wheel(*args, **kwds):
                 requirements = ['cppyy-cling<=6.18.2.3']
     except ImportError:
         # CPython
-        requirements = ['cppyy-backend==1.15.1', 'cppyy-cling==6.30.0']
+        requirements = ['cppyy-backend==1.15.2', 'cppyy-cling==6.30.0']
 
     return requirements + _get_requires_for_build_wheel(*args, **kwds)
 

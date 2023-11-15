@@ -10,9 +10,11 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-2023-11-13: 3.1.1
+2023-11-15: 3.1.2
 -----------------
 
+* Deprecate 3.1.1 b/c of an installation problem outside of virtualenv
+* Fix installation problem when purelib and platlib differ
 * Alt fix for "failed to materialize symbols" on some Linux systems
 
 
