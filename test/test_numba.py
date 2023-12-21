@@ -1,4 +1,4 @@
-import py, os, sys
+import os
 import math, time
 from pytest import mark, raises
 from .support import setup_make
@@ -421,7 +421,7 @@ class TestNUMBA:
                        void inc(long* value) {
                         (*value)++;
                         }
-                   }; 
+                   };
                }
            """)
 
@@ -477,27 +477,27 @@ class TestNUMBA:
                class BoxVector{
                     public:
                         std::vector<long>* a;
-                        
+
                         BoxVector() : a(new std::vector<long>()) {}
                         BoxVector(std::vector<long>* i) : a(i){}
-                                      
-                          
+
+
                            void square_vec(){
                            for (auto& num : *a) {
                                 num = num * num;
                             }
                         }
-                        
+
                             void add_2_vec(long k){
                            for (auto& num : *a) {
                                 num = num + k;
                             }
                         }
-        
+
                             void append_vector(const std::vector<long>& value) {
                                 *a = make_vector(value, *a);
                             }
-                       }; 
+                       };
                    }
            """)
         ns = cppyy.gbl.RefTest
@@ -568,24 +568,24 @@ class TestNUMBA:
                 private:
                     std::vector<long>* a;
                     std::vector<long>* b;
-                    
+
                 public:
                     long g = 0;
                     long *res = &g;
                     DotVector(std::vector<long>* i, std::vector<long>* j) : a(i), b(j) {}
-                
+
                     long self_dot_product() {
                         long result = 0;
                         size_t size = a->size();  // Cache the vector size
                         const long* data_a = a->data();
                         const long* data_b = b->data();
-                
+
                         for (size_t i = 0; i < size; ++i) {
                             result += data_a[i] * data_b[i];
                         }
                         return result;
                     }
-                    
+
                     long dot_product(const std::vector<long>& vec1, const std::vector<long>& vec2) {
                                         long result = 0;
                                         for (size_t i = 0; i < vec1.size(); ++i) {
@@ -593,7 +593,7 @@ class TestNUMBA:
                                         }
                                         return result;
                     }
-                };      
+                };
             }""")
 
         @numba.njit()

@@ -1,4 +1,4 @@
-import py, os, sys
+import py
 from pytest import raises, skip
 from .support import setup_make, ispypy, IS_WINDOWS
 
@@ -254,4 +254,3 @@ class TestOVERLOADS:
 
         with raises(TypeError):
             ns.MyClass3("some_file")
-

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-import py, os, sys
+import py, sys
 from pytest import raises, skip
 from .support import setup_make, pylong, pyunicode, maxvalue, ispypy
 
@@ -221,7 +221,7 @@ class TestSTLVECTOR:
             assert tv1 is tv2
             assert tv1.iterator is cppyy.gbl.std.vector(p_type).iterator
 
-            #----- 
+            #-----
             v = tv1()
             assert not v
             v += range(self.N)

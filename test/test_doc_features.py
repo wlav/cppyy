@@ -1,4 +1,4 @@
-import py, os, sys
+import py, sys
 from pytest import raises, skip
 from .support import setup_make, ispypy, IS_WINDOWS
 

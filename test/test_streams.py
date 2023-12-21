@@ -1,4 +1,4 @@
-import py, os, sys
+import py
 from pytest import raises
 from .support import setup_make
 
@@ -73,4 +73,3 @@ class TestSTDStreams:
         assert cl0 == cl1
         assert cl1 == cl2
         assert cl2 == cl0
-

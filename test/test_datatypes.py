@@ -1,4 +1,4 @@
-import py, os, sys
+import py, sys
 from pytest import raises, skip
 from .support import setup_make, pylong, pyunicode
 
@@ -2353,5 +2353,3 @@ class TestDATATYPES:
 
         assert [ns.test[i]  for i in range(6)] == [-0x12, -0x34, -0x56, -0x78, 0x0, 0x0]
         assert [ns.utest[i] for i in range(6)] == [ 0x12,  0x34,  0x56,  0x78, 0x0, 0x0]
-
-

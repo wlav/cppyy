@@ -1,4 +1,4 @@
-import py, os, sys
+import os, sys
 from pytest import raises, skip
 from .support import setup_make, IS_WINDOWS, ispypy
 
@@ -1272,4 +1272,3 @@ class TestREGRESSION:
         assert foo.values[1].as_string() == world
         assert foo.pointers[0] == 'hello'
         assert foo.pointers[1] == 'world!'
-
