@@ -1,4 +1,3 @@
-import py, os, sys
 from pytest import raises, skip
 from .support import ispypy
 

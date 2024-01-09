@@ -1,4 +1,4 @@
-import py, os, sys
+import py
 from pytest import raises, skip
 from .support import setup_make, pylong, IS_WINDOWS, ispypy
 
@@ -958,4 +958,3 @@ class TestADVANCEDCPP:
 
         for norm in [ns.norm_cr, ns.norm_m, ns.norm_v]:
             assert round(norm(p3) - pynorm, 8) == 0
-

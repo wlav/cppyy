@@ -1,4 +1,4 @@
-import py, os, sys
+import py
 from pytest import raises
 from .support import setup_make
 
@@ -125,4 +125,3 @@ class TestCONVERSIONS:
         assert     ns.Test1()
         assert     ns.Test2(True)
         assert not ns.Test2(False)
-

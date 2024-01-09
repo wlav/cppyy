@@ -1,4 +1,4 @@
-import py, os
+import py
 from pytest import raises
 from .support import setup_make, pylong
 

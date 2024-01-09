@@ -1,4 +1,4 @@
-import py, os, sys
+import py, os
 from pytest import raises, skip
 from .support import setup_make, pylong, IS_MAC_ARM
 
@@ -723,7 +723,7 @@ class TestCROSSINHERITANCE:
 
         class Base : public Base1, public Base2 {
         public:
-          Result abstract2() override { return Result(999); } 
+          Result abstract2() override { return Result(999); }
         }; } """)
 
         ns = cppyy.gbl.cpp_side_multiple_inheritance

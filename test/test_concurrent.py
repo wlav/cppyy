@@ -1,4 +1,3 @@
-import py, os, sys
 from pytest import raises, skip
 from .support import IS_MAC_ARM
 
@@ -300,4 +299,3 @@ class TestCONCURRENT:
 
         assert State.c1 == 1000
         assert State.c2 == State.c3
-
