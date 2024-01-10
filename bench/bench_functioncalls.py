@@ -16,8 +16,6 @@ all_configs = [('py', 'py_functioncalls'), ('cppyy', 'cppyy.gbl')]
 N = 10000
 preamble = "@pytest.mark.benchmark(group=group, warmup=True)"
 looprange = range
-if sys.hexversion < 0x3000000:
-    looprange = xrange
 
 try:
     import __pypy__

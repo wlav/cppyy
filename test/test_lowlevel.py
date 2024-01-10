@@ -130,9 +130,8 @@ class TestLOWLEVEL:
         i = array('I', [0]);     ctd.set_uint_r(i);   assert i[0] ==  4
         i = array('l', [0]);     ctd.set_long_r(i);   assert i[0] == -5
         i = array('L', [0]);     ctd.set_ulong_r(i);  assert i[0] ==  6
-        if sys.hexversion >= 0x3000000:
-            i = array('q', [0]); ctd.set_llong_r(i);  assert i[0] == -7
-            i = array('Q', [0]); ctd.set_ullong_r(i); assert i[0] ==  8
+        i = array('q', [0]); ctd.set_llong_r(i);  assert i[0] == -7
+        i = array('Q', [0]); ctd.set_ullong_r(i); assert i[0] ==  8
 
       # floating point types
         f = array('f', [0]);     ctd.set_float_r(f);  assert f[0] ==  5.
@@ -158,11 +157,11 @@ class TestLOWLEVEL:
         # c_short           short                                       int
         # c_ushort          unsigned short                              int
         # c_int             int                                         int
-        # c_uint            unsigned int                                int/long
-        # c_long            long                                        int/long
-        # c_ulong           unsigned long                               int/long
-        # c_longlong        __int64 or long long                        int/long
-        # c_ulonglong       unsigned __int64 or unsigned long long      int/long
+        # c_uint            unsigned int                                int
+        # c_long            long                                        int
+        # c_ulong           unsigned long                               int
+        # c_longlong        __int64 or long long                        int
+        # c_ulonglong       unsigned __int64 or unsigned long long      int
         #
         # c_float           float                                       float
         # c_double          double                                      float
@@ -298,7 +297,7 @@ class TestLOWLEVEL:
         # ------------------------------------------------------------------------------
         # c_char_p          char* (NULL terminated)                     string or None
         # c_wchar_p         wchar_t* (NULL terminated)                  unicode or None
-        # c_void_p          void*                                       int/long or None
+        # c_void_p          void*                                       int or None
 
         import cppyy, ctypes
 

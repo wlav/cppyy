@@ -1,4 +1,4 @@
-import os, sys
+import os
 from pytest import raises, skip
 from .support import setup_make, IS_WINDOWS, ispypy
 
@@ -86,11 +86,7 @@ class TestREGRESSION:
         import sysconfig as sc
 
         cppyy.add_include_path(sc.get_config_var("INCLUDEPY"))
-        if sys.hexversion < 0x3000000:
-            cppyy.cppdef("#undef _POSIX_C_SOURCE")
-            cppyy.cppdef("#undef _XOPEN_SOURCE")
-        else:
-            cppyy.cppdef("#undef slots")     # potentially pulled in by Qt/xapian.h
+        cppyy.cppdef("#undef slots")     # potentially pulled in by Qt/xapian.h
 
         cppyy.cppdef("""#include "Python.h"
            long py2long(PyObject* obj) { return PyLong_AsLong(obj); }""")

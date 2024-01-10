@@ -1245,10 +1245,7 @@ class TestDATATYPES:
         buf = b'123456789'
         total = 0
         for c in buf:
-            try:
-                total += ord(c)        # p2
-            except TypeError:
-                total += c             # p3
+            total += c
 
         def run(self, f, buf, total):
 

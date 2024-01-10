@@ -223,10 +223,7 @@ class TestCPP11FEATURES:
             i2 = T(i1)  # cctor
             assert T.s_move_counter == 0
 
-            if ispypy or 0x3000000 <= sys.hexversion:
-                i3 = T(std.move(T()))            # can't check ref-count
-            else:
-                i3 = T(T()) # should call move, not memoized cctor
+            i3 = T(T()) # should call move, not memoized cctor
             assert T.s_move_counter == 1
 
             i3 = T(std.move(T()))                # both move and ref-count
@@ -239,10 +236,7 @@ class TestCPP11FEATURES:
             i4.__assign__(i2)
             assert T.s_move_counter == 3
 
-            if ispypy or 0x3000000 <= sys.hexversion:
-                i4.__assign__(std.move(T()))     # can't check ref-count
-            else:
-                i4.__assign__(T())
+            i4.__assign__(T())
             assert T.s_move_counter == 4
 
             i4.__assign__(std.move(i2))

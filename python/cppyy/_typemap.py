@@ -2,8 +2,6 @@
     for typedef-ed C++ builtin types.
 """
 
-import sys
-
 def _create_mapper(cls, extra_dct=None):
     def mapper(name, scope):
         if scope:
@@ -76,20 +74,14 @@ def initialize(backend):
     str_tm = _create_mapper(str)
     for tp in ['char', 'unsigned char', 'signed char']:
         tm[tp] = str_tm
-    if sys.hexversion < 0x3000000:
-        tm['wchar_t'] = _create_mapper(unicode)
-    else:
         tm['wchar_t'] = str_tm
 
     # integer types
     int_tm = _create_mapper(int)
     for tp in ['int8_t', 'uint8_t', 'short', 'unsigned short', 'int']:
         tm[tp] = int_tm
-
-    if sys.hexversion < 0x3000000:
-        long_tm = _create_mapper(long)
-    else:
         long_tm = tm['int']
+
     for tp in ['unsigned int', 'long', 'unsigned long', 'long long', 'unsigned long long']:
         tm[tp] = long_tm
 

@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os, py, sys, subprocess
 
 currpath = py.path.local(__file__).dirpath()
@@ -15,14 +14,10 @@ def setup_make(targetname):
     if popen.returncode:
         raise OSError("'make' failed:\n%s" % (stdout,))
 
-if sys.hexversion >= 0x3000000:
-    pylong = int
-    pyunicode = str
-    maxvalue = sys.maxsize
-else:
-    pylong = long
-    pyunicode = unicode
-    maxvalue = sys.maxint
+
+pylong = int
+pyunicode = str
+maxvalue = sys.maxsize
 
 IS_WINDOWS = 0
 if 'win32' in sys.platform:

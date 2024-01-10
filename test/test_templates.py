@@ -45,10 +45,7 @@ class TestTEMPLATES:
         assert m.get_size[int]()      == m.get_int_size()
 
       # specialized
-        if sys.hexversion >= 0x3000000:
-            targ = 'long'
-        else:
-            targ = long
+        targ = 'long'
         assert m.get_size[targ]()     == m.get_long_size()
 
         import ctypes

@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import os, sys, subprocess
 
 target = sys.argv[1]
@@ -29,4 +27,3 @@ for line in stdout.split('\r\n'):
     elif parts[4] == '()' and parts[5] == 'External':
         if isokay(parts[7]):
             outf.write('\t%s\n' % parts[7])
-

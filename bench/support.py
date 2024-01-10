@@ -1,4 +1,3 @@
-from __future__ import print_function
 import py, sys, subprocess
 
 currpath = py.path.local(__file__).dirpath()
