@@ -20,7 +20,8 @@ cppyy_cppflags=$(shell $(clingconfig) --cflags) $(cppflags)
 
 PLATFORM := $(shell uname -s)
 ifeq ($(PLATFORM),Darwin)
-  cppflags+=-dynamiclib -single_module -arch x86_64 -undefined dynamic_lookup
+  MACHINE := $(shell uname -m)
+  cppflags+=-dynamiclib -arch $(MACHINE) -undefined dynamic_lookup
 endif
 
 py11_%.so: py11_%.cxx lib%.so
@@ -43,7 +44,7 @@ lib%.so: %.cxx
 
 # note -O2 for cxx to make sure code actually runs instead of being optimized out of existence
 %_main: %_main.cxx lib%.so
-	$(CXX) -O2 -fPIC -o $@ $*_main.cxx -L. -l$*
+	$(CXX) -std=c++11 -O2 -fPIC -o $@ $*_main.cxx -L. -l$*
 
 .PHONY: bench clean
 
