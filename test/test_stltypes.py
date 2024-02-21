@@ -746,6 +746,22 @@ class TestSTLVECTOR:
         assert mv.itemsize == cppyy.sizeof(cppyy.gbl.ArrayLike.Vector3f)
         assert mv.nbytes   == cppyy.sizeof(cppyy.gbl.ArrayLike.Vector3f) * len(v)
 
+    def test22_copy_conversion(self):
+        """Vector given an array of different type should copy convert"""
+
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            skip('numpy is not installed')
+
+        x = np.array([5., 25., 125.])
+        v = cppyy.gbl.std.vector('float')(x)
+
+        for f, d in zip(x, v):
+            assert f == d
+
 
 class TestSTLSTRING:
     def setup_class(cls):
