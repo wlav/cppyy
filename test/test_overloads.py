@@ -254,3 +254,31 @@ class TestOVERLOADS:
 
         with raises(TypeError):
             ns.MyClass3("some_file")
+
+    def test11_deep_inheritance(self):
+        """Prioritize expected most derived class"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace DeepInheritance {
+        class A {};
+        class B: public A {};
+        class C: public B {};
+
+        class D: public A {};
+        class E: public D {};
+
+        std::string myfunc1(const B&) { return "B"; }
+        std::string myfunc1(const C&) { return "C"; }
+        std::string myfunc2(const E&) { return "E"; }
+        std::string myfunc2(const D&) { return "D"; }
+        }""")
+
+        ns = cppyy.gbl.DeepInheritance
+
+        assert ns.myfunc1(ns.B()) == "B"
+        assert ns.myfunc1(ns.C()) == "C"
+
+        assert ns.myfunc2(ns.E()) == "E"
+        assert ns.myfunc2(ns.D()) == "D"
