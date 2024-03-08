@@ -108,7 +108,7 @@ install the latest or modified version of ``cppyy-cling`` into that::
  $ make -j <N> install
 
 where the ``cmake`` command needs to be given the full path to
-``site-packages/cppyy_backend`` in the virtual environment or other
+`site-packages/cppyy_backend` in the virtual environment or other
 installation location.
 Adjust other options (esp. ``CMAKE_CXX_STANDARD``) as needed.
 For the build command, adjust the ``cmake`` command as appropriate for your
@@ -136,6 +136,16 @@ is very similar::
  $ git clone https://github.com/wlav/CPyCppyy.git
  $ cd CPyCppyy
  $ python -m pip install . --upgrade --no-use-pep517 --no-deps
+
+Just like ``cppyy-cling``, ``CPyCppyy`` has ``cmake`` scripts which are the
+recommended way for development, as incremental builds are faster::
+
+ $ mkdir build
+ $ cmake ../CPyCppyy
+ $ make -j <N>
+
+then simply point the ``PYTHONPATH`` envar to the `build` directory above to
+pick up the local `cppyy.so` module.
 
 Finally, the top-level package ``cppyy``::
 
