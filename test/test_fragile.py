@@ -612,6 +612,26 @@ class TestFRAGILE:
         cppyy.cppdef('#define SOME_INT 42')
         assert cppyy.macro("SOME_INT") == 42
 
+    def test27_pickle_enums(self):
+        """Pickling of enum types"""
+
+        import cppyy
+        import pickle
+
+        cppyy.cppdef("""
+        enum MyPickleEnum { PickleFoo, PickleBar };
+        namespace MyPickleNamespace {
+          enum MyPickleEnum { PickleFoo, PickleBar };
+        }""")
+
+        e1 = cppyy.gbl.MyPickleEnum
+        assert e1.__module__ == 'cppyy.gbl'
+        assert pickle.dumps(e1.PickleFoo)
+
+        e2 = cppyy.gbl.MyPickleNamespace.MyPickleEnum
+        assert e2.__module__ == 'cppyy.gbl.MyPickleNamespace'
+        assert pickle.dumps(e2.PickleBar)
+
 
 class TestSIGNALS:
     def setup_class(cls):
