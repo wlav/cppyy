@@ -19,6 +19,7 @@ master
 * Fixed regression when calling static methods with default args on instances
 * Fixed regression for pickling enums (in global scope only)
 * Auto-cast elements of std::vector<T*>, with T a class type
+* Add a ``Sequence_Check()`` method to the public API
 
 
 2023-11-15: 3.1.2
