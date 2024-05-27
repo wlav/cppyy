@@ -473,6 +473,9 @@ class TestFRAGILE:
     def test20_capture_output(self):
         """Capture cerr into a string"""
 
+        if IS_MAC_ARM:
+            skip("crashes in clang::Sema::FindInstantiatedDecl for rdbuf()")
+
         import cppyy
 
         cppyy.cppdef(r"""\
