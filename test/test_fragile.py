@@ -632,6 +632,17 @@ class TestFRAGILE:
         assert e2.__module__ == 'cppyy.gbl.MyPickleNamespace'
         assert pickle.dumps(e2.PickleBar)
 
+    def test28_memoryview_of_empty(self):
+        """memoryview of an empty array"""
+
+        import cppyy, array
+
+        cppyy.cppdef("void f(unsigned char const *buf) {}")
+        try:
+            cppyy.gbl.f(memoryview(array.array('B', [])))
+        except TypeError:
+            pass        # used to crash in PyObject_CheckBuffer on Linux
+
 
 class TestSIGNALS:
     def setup_class(cls):
