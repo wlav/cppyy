@@ -20,6 +20,7 @@ master
 * Fixed regression for pickling enums (in global scope only)
 * Auto-cast elements of std::vector<T*>, with T a class type
 * Add a ``Sequence_Check()`` method to the public API
+* Fix offset calculation of ``std::vector<unsigned>`` datamember on Mac arm
 
 
 2023-11-15: 3.1.2

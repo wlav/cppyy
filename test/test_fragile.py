@@ -646,6 +646,14 @@ class TestFRAGILE:
         except TypeError:
             pass        # used to crash in PyObject_CheckBuffer on Linux
 
+    def test29_vector_datamember(self):
+        """Offset calculation of vector datamember"""
+
+        import cppyy
+
+        cppyy.cppdef("struct VectorDatamember { std::vector<unsigned> v; };")
+        cppyy.gbl.VectorDatamember     # used to crash on Mac arm64
+
 
 class TestSIGNALS:
     def setup_class(cls):
