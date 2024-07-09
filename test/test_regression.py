@@ -1335,3 +1335,19 @@ class TestREGRESSION:
             raise # rethrow the exception
         finally:
             cppyy._backend.SetMemoryPolicy(old_memory_policy)
+
+    def test45_unnamed_enum_values(self):
+        """Ensure correct values for unnamed enums"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        enum {
+            kSingleKey     = 1,
+            kOverwrite     = 2,
+            kWriteDelete   = 4,
+        }; """)
+
+        assert cppyy.gbl.kSingleKey == 1
+        assert cppyy.gbl.kOverwrite == 2
+        assert cppyy.gbl.kWriteDelete == 4
