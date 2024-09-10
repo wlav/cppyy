@@ -122,7 +122,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
                 if np.issubdtype(t, np.integer):
                     t = 'int'
                 elif np.issubdtype(t, np.floating):
-                    t = 'double'
+                    t = 'doublex'
                 elif np.issubdtype(t, np.complexfloating):
                     t = 'std::complex<double>'
 
@@ -227,10 +227,18 @@ def _end_capture_stderr():
 def _np_vector(arr, dtype):
     import cppyy
 
+    vector_type_cache = {}
+
     def _build_nested_vector_type(ndim, dtype):
+        key = (ndim, dtype)
+        if key in vector_type_cache:
+            return vector_type_cache[key]
+
         vector_t = cppyy.gbl.std.vector[dtype]
         for _ in range(ndim - 1):
             vector_t = cppyy.gbl.std.vector[vector_t]
+
+        vector_type_cache[key] = vector_t
         return vector_t
 
     ndim = arr.ndim
@@ -240,8 +248,11 @@ def _np_vector(arr, dtype):
         vector = vector_t()
         vector.reserve(arr.size)  # Pre-allocate memory for better performance
 
-        for elem in arr:
-            vector.push_back(elem.item())  # Convert NumPy type to native Python type
+        try:
+            vector.insert(vector.end(), arr.flat)
+        except TypeError:
+            for elem in arr:
+                vector.push_back(elem.item())
         return vector
 
     # Build nested vector types dynamically
