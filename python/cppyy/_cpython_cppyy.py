@@ -114,6 +114,20 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
       # most common cases are covered
         if args:
             args0 = args[0]
+
+            if type(args0).__module__ == 'numpy' and type(args0).__name__ == 'ndarray':
+                import numpy as np
+                # Get the data type of the array
+                t = args0.dtype.type
+                if np.issubdtype(t, np.integer):
+                    t = 'int'
+                elif np.issubdtype(t, np.floating):
+                    t = 'double'
+                elif np.issubdtype(t, np.complexfloating):
+                    t = 'std::complex<double>'
+
+                # Handle arrays of arbitrary dimension recursively
+                return _np_vector(args0, t)
             if args0 and (type(args0) is tuple or type(args0) is list):
                 t = type(args0[0])
                 if t is float: t = 'double'
@@ -209,3 +223,35 @@ def _end_capture_stderr():
             pass
         return "C++ issued an error message that could not be decoded (%s)" % str(original_error)
     return ""
+
+def _np_vector(arr, dtype):
+    import cppyy
+
+    def _build_nested_vector_type(ndim, dtype):
+        vector_t = cppyy.gbl.std.vector[dtype]
+        for _ in range(ndim - 1):
+            vector_t = cppyy.gbl.std.vector[vector_t]
+        return vector_t
+
+    ndim = arr.ndim
+
+    if ndim == 1:
+        vector_t = cppyy.gbl.std.vector[dtype]
+        vector = vector_t()
+        vector.reserve(arr.size)  # Pre-allocate memory for better performance
+
+        for elem in arr:
+            vector.push_back(elem.item())  # Convert NumPy type to native Python type
+        return vector
+
+    # Build nested vector types dynamically
+    nested_vector_type = _build_nested_vector_type(ndim, dtype)
+    nested_vector = nested_vector_type()
+    nested_vector.reserve(arr.shape[0])  # Pre-allocate outer vector
+
+    # Recursively process sub-arrays
+    for subarr in arr:
+        inner_vector = _np_vector(subarr, dtype)
+        nested_vector.push_back(inner_vector)
+
+    return nested_vector
