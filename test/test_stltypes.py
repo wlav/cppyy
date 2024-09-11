@@ -789,6 +789,52 @@ class TestSTLVECTOR:
         for f, d in zip(x, v):
             assert f == d
 
+    def test24_numpy_template_less(self):
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            skip("numpy is not installed")
+
+        rng = np.random.default_rng(seed=42)
+        x = rng.random((10, 3, 3, 3)) # It is default to dtype=np.float32
+        v = cppyy.gbl.std.vector(x)
+
+        assert len(v) == 10
+        assert type(v[0][0][0][0]) is float
+
+
+    def test25_numpy_dtype_and_template_less(self):
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            skip("numpy is not installed")
+
+        rng = np.random.default_rng(seed=42)
+        x = rng.integers(low=0, high=100, size=(10, 3, 3, 3))
+        v = cppyy.gbl.std.vector(x)
+
+        assert len(v) == 10
+        assert type(v[0][0][0][0]) is int
+
+
+    def test26_numpy_passing_dtype(self):
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            skip("numpy is not installed")
+
+        rng = np.random.default_rng(seed=42)
+        x = rng.integers(low=0, high=100, size=(10, 3, 3, 3), dtype=np.int32)
+        v = cppyy.gbl.std.vector(x)
+
+        assert len(v) == 10
+        assert type(v[0][0][0][0]) is int
 
 class TestSTLSTRING:
     def setup_class(cls):

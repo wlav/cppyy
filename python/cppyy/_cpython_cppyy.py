@@ -115,16 +115,18 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
         if args:
             args0 = args[0]
 
-            if type(args0).__module__ == 'numpy' and type(args0).__name__ == 'ndarray':
-                import numpy as np
-                # Get the data type of the array
-                t = args0.dtype.type
-                if np.issubdtype(t, np.integer):
-                    t = 'int'
-                elif np.issubdtype(t, np.floating):
-                    t = 'doublex'
-                elif np.issubdtype(t, np.complexfloating):
-                    t = 'std::complex<double>'
+            if (
+                type(args0).__module__ == "numpy"
+                and type(args0).__name__ == "ndarray"
+                and hasattr(args0, "dtype")
+            ):
+                t = args0.dtype.type.__name__
+                if t.startswith("int"):
+                    t = "int"
+                elif t.startswith("float"):
+                    t = "double"
+                elif t.startswith("complex"):
+                    t = "std::complex<double>"
 
                 # Handle arrays of arbitrary dimension recursively
                 return _np_vector(args0, t)
@@ -225,8 +227,6 @@ def _end_capture_stderr():
     return ""
 
 def _np_vector(arr, dtype):
-    import cppyy
-
     vector_type_cache = {}
 
     def _build_nested_vector_type(ndim, dtype):
@@ -234,9 +234,9 @@ def _np_vector(arr, dtype):
         if key in vector_type_cache:
             return vector_type_cache[key]
 
-        vector_t = cppyy.gbl.std.vector[dtype]
+        vector_t = gbl.std.vector[dtype]
         for _ in range(ndim - 1):
-            vector_t = cppyy.gbl.std.vector[vector_t]
+            vector_t = gbl.std.vector[vector_t]
 
         vector_type_cache[key] = vector_t
         return vector_t
@@ -244,9 +244,9 @@ def _np_vector(arr, dtype):
     ndim = arr.ndim
 
     if ndim == 1:
-        vector_t = cppyy.gbl.std.vector[dtype]
+        vector_t = gbl.std.vector[dtype]
         vector = vector_t()
-        vector.reserve(arr.size)  # Pre-allocate memory for better performance
+        vector.reserve(arr.size)
 
         try:
             vector.insert(vector.end(), arr.flat)
@@ -255,12 +255,10 @@ def _np_vector(arr, dtype):
                 vector.push_back(elem.item())
         return vector
 
-    # Build nested vector types dynamically
     nested_vector_type = _build_nested_vector_type(ndim, dtype)
     nested_vector = nested_vector_type()
     nested_vector.reserve(arr.shape[0])  # Pre-allocate outer vector
 
-    # Recursively process sub-arrays
     for subarr in arr:
         inner_vector = _np_vector(subarr, dtype)
         nested_vector.push_back(inner_vector)
