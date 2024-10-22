@@ -120,16 +120,8 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
                 and type(args0).__name__ == "ndarray"
                 and hasattr(args0, "dtype")
             ):
-                t = args0.dtype.type.__name__
-                if t.startswith("int"):
-                    t = "int"
-                elif t.startswith("float"):
-                    t = "double"
-                elif t.startswith("complex"):
-                    t = "std::complex<double>"
-
                 # Handle arrays of arbitrary dimension recursively
-                return _np_vector(args0, t)
+                return _np_vector(args0)
             if args0 and (type(args0) is tuple or type(args0) is list):
                 t = type(args0[0])
                 if t is float: t = 'double'
@@ -226,41 +218,49 @@ def _end_capture_stderr():
         return "C++ issued an error message that could not be decoded (%s)" % str(original_error)
     return ""
 
-def _np_vector(arr, dtype):
-    vector_type_cache = {}
+def _np_vector(arr):
+    def _build_nested_vector_type(ndim, base_type, cache={}):
+        key = (ndim, base_type)
+        if key not in cache:
+            vector_t = gbl.std.vector[base_type]
+            for _ in range(ndim - 1):
+                vector_t = gbl.std.vector[vector_t]
+            cache[key] = vector_t
+        return cache[key]
 
-    def _build_nested_vector_type(ndim, dtype):
-        key = (ndim, dtype)
-        if key in vector_type_cache:
-            return vector_type_cache[key]
+    def convert(arr):
+        ndim = arr.ndim
+        if arr.size > 0:
+            base_type = type(arr.flat[0].item())
+        else:
+            base_type = float
 
-        vector_t = gbl.std.vector[dtype]
-        for _ in range(ndim - 1):
-            vector_t = gbl.std.vector[vector_t]
+        if ndim == 1:
+            vector = _build_nested_vector_type(1, base_type)()
+            vector.reserve(arr.size)
 
-        vector_type_cache[key] = vector_t
-        return vector_t
+            if arr.flags["C_CONTIGUOUS"]:
+                try:
+                    vector.insert(vector.end(), arr.flat)
+                    return vector
+                except TypeError:
+                    pass
 
-    ndim = arr.ndim
-
-    if ndim == 1:
-        vector_t = gbl.std.vector[dtype]
-        vector = vector_t()
-        vector.reserve(arr.size)
-
-        try:
-            vector.insert(vector.end(), arr.flat)
-        except TypeError:
-            for elem in arr:
+            for elem in arr.flat:
                 vector.push_back(elem.item())
-        return vector
+            return vector
 
-    nested_vector_type = _build_nested_vector_type(ndim, dtype)
-    nested_vector = nested_vector_type()
-    nested_vector.reserve(arr.shape[0])  # Pre-allocate outer vector
+        nested_vector = _build_nested_vector_type(ndim, base_type)()
+        nested_vector.reserve(arr.shape[0])
 
-    for subarr in arr:
-        inner_vector = _np_vector(subarr, dtype)
-        nested_vector.push_back(inner_vector)
+        if arr.flags["C_CONTIGUOUS"]:
+            arr_view = arr.reshape(-1, *arr.shape[1:])
+            for subarr in arr_view:
+                nested_vector.push_back(convert(subarr))
+        else:
+            for subarr in arr:
+                nested_vector.push_back(convert(subarr))
 
-    return nested_vector
+        return nested_vector
+
+    return convert(arr)
