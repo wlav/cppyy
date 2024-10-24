@@ -238,29 +238,16 @@ def _np_vector(arr):
         if ndim == 1:
             vector = _build_nested_vector_type(1, base_type)()
             vector.reserve(arr.size)
-
-            if arr.flags["C_CONTIGUOUS"]:
-                try:
-                    vector.insert(vector.end(), arr.flat)
-                    return vector
-                except TypeError:
-                    pass
-
             for elem in arr.flat:
                 vector.push_back(elem.item())
             return vector
 
-        nested_vector = _build_nested_vector_type(ndim, base_type)()
-        nested_vector.reserve(arr.shape[0])
+        vector_type = _build_nested_vector_type(ndim, base_type)
+        result = vector_type()
+        result.reserve(arr.shape[0])
+        for subarr in arr:
+            result.push_back(convert(subarr))
 
-        if arr.flags["C_CONTIGUOUS"]:
-            arr_view = arr.reshape(-1, *arr.shape[1:])
-            for subarr in arr_view:
-                nested_vector.push_back(convert(subarr))
-        else:
-            for subarr in arr:
-                nested_vector.push_back(convert(subarr))
-
-        return nested_vector
+        return result
 
     return convert(arr)
