@@ -789,7 +789,7 @@ class TestSTLVECTOR:
         for f, d in zip(x, v):
             assert f == d
 
-    def test25_ndarray_template_less(self):
+    def test25_int_ndarray_template_less(self):
         import cppyy
 
         try:
@@ -803,6 +803,21 @@ class TestSTLVECTOR:
 
         assert len(v) == 10
         assert type(v[0][0][0][0]) is int
+
+    def test26_float_ndarray_template_less(self):
+        import cppyy
+
+        try:
+            import numpy as np
+        except ImportError:
+            skip("numpy is not installed")
+
+        rng = np.random.default_rng(seed=42)
+        x = rng.random(size=(10, 3, 3, 3))        
+        v = cppyy.gbl.std.vector(x)
+
+        assert len(v) == 10
+        assert type(v[0][0][0][0]) is float
 
 class TestSTLSTRING:
     def setup_class(cls):
