@@ -219,7 +219,9 @@ def _end_capture_stderr():
     return ""
 
 def _np_vector(arr):
-    def _build_nested_vector_type(ndim, base_type, cache={}):
+    CPP_EXPLICIT_TYPES = {"float64": "double", "int64": "long"}
+
+    def build_nested_vector_type(ndim, base_type, cache={}):
         key = (ndim, base_type)
         if key not in cache:
             vector_t = gbl.std.vector[base_type]
@@ -231,18 +233,20 @@ def _np_vector(arr):
     def convert(arr):
         ndim = arr.ndim
         if arr.size > 0:
-            base_type = type(arr.flat[0].item())
+            base_type = CPP_EXPLICIT_TYPES.get(
+                arr.dtype.type.__name__, type(arr.flat[0].item())
+            )
         else:
             base_type = float
 
         if ndim == 1:
-            vector = _build_nested_vector_type(1, base_type)()
+            vector = build_nested_vector_type(1, base_type)()
             vector.reserve(arr.size)
             for elem in arr.flat:
                 vector.push_back(elem.item())
             return vector
 
-        vector_type = _build_nested_vector_type(ndim, base_type)
+        vector_type = build_nested_vector_type(ndim, base_type)
         result = vector_type()
         result.reserve(arr.shape[0])
         for subarr in arr:
