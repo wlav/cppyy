@@ -789,35 +789,45 @@ class TestSTLVECTOR:
         for f, d in zip(x, v):
             assert f == d
 
-    def test25_int_ndarray_template_less(self):
-        import cppyy
+def test_ndarray_template_less(self):
+    import cppyy
 
-        try:
-            import numpy as np
-        except ImportError:
-            skip("numpy is not installed")
+    try:
+        import numpy as np
+    except ImportError:
+        self.skipTest("numpy is not installed")
+    dtype_mappings = {
+        np.int32: "int",
+        np.int64: "long",
+        np.float32: "float",
+        np.float64: "double",
+    }
 
-        rng = np.random.default_rng(seed=42)
-        x = rng.integers(low=0, high=100, size=(10, 3, 3, 3))
-        v = cppyy.gbl.std.vector(x)
+    shapes = [
+        (10,),  # 1D array
+        (5, 5),  # 2D array
+        (4, 4, 4),  # 3D array
+        (2, 3, 3, 3),  # 4D array
+    ]
 
-        assert len(v) == 10
-        assert type(v[0][0][0][0]) is int
+    for np_dtype, cpp_dtype in dtype_mappings.items():
+        for shape in shapes:
+            rng = np.random.default_rng(seed=42)
 
-    def test26_float_ndarray_template_less(self):
-        import cppyy
+            if np.issubdtype(np_dtype, np.integer):
+                x = rng.integers(low=0, high=100, size=shape, dtype=np_dtype)
+            else:
+                x = rng.random(size=shape).astype(np_dtype)
 
-        try:
-            import numpy as np
-        except ImportError:
-            skip("numpy is not installed")
+                cpp_vector = cppyy.gbl.std.vector(x)
+                assert len(cpp_vector) == shape[0]
 
-        rng = np.random.default_rng(seed=42)
-        x = rng.random(size=(10, 3, 3, 3))        
-        v = cppyy.gbl.std.vector(x)
-
-        assert len(v) == 10
-        assert type(v[0][0][0][0]) is float
+                if len(shape) > 1:
+                    assert len(cpp_vector[0]) == shape[1]
+                    if len(shape) > 2:
+                        assert len(cpp_vector[0][0]) == shape[2]
+                        if len(shape) > 3:
+                            assert len(cpp_vector[0][0][0]) == shape[3]
 
 class TestSTLSTRING:
     def setup_class(cls):
