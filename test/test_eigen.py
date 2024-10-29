@@ -143,6 +143,14 @@ class TestEIGEN:
         a.__assign__(b)
         assert a.size() == 9
 
+    def test05_initialisation_through_initializer_list(self):
+        
+        import cppyy
+
+        a = cppyy.gbl.Eigen.MatrixXf([[1.,2.,3.,4.], [5.,6.,7.,8.]])
+        assert a(0,1) == 6.
+        assert a.size() == 8
+
 
 @mark.skipif(eigen_path is None, reason="Eigen not found")
 class TestEIGEN_REGRESSIOn:
