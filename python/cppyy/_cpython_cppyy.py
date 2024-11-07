@@ -114,6 +114,14 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
       # most common cases are covered
         if args:
             args0 = args[0]
+
+            if (
+                type(args0).__module__ == "numpy"
+                and type(args0).__name__ == "ndarray"
+                and hasattr(args0, "dtype")
+            ):
+                # Handle arrays of arbitrary dimension recursively
+                return _np_vector(args0)
             if args0 and (type(args0) is tuple or type(args0) is list):
                 t = type(args0[0])
                 if t is float: t = 'double'
@@ -209,3 +217,41 @@ def _end_capture_stderr():
             pass
         return "C++ issued an error message that could not be decoded (%s)" % str(original_error)
     return ""
+
+def _np_vector(arr):
+    CPP_EXPLICIT_TYPES = {"float64": "double", "int64": "long"}
+
+    def build_nested_vector_type(ndim, base_type, cache={}):
+        key = (ndim, base_type)
+        if key not in cache:
+            vector_t = gbl.std.vector[base_type]
+            for _ in range(ndim - 1):
+                vector_t = gbl.std.vector[vector_t]
+            cache[key] = vector_t
+        return cache[key]
+
+    def convert(arr):
+        ndim = arr.ndim
+        if arr.size > 0:
+            base_type = CPP_EXPLICIT_TYPES.get(
+                arr.dtype.type.__name__, type(arr.flat[0].item())
+            )
+        else:
+            base_type = float
+
+        if ndim == 1:
+            vector = build_nested_vector_type(1, base_type)()
+            vector.reserve(arr.size)
+            for elem in arr.flat:
+                vector.push_back(elem.item())
+            return vector
+
+        vector_type = build_nested_vector_type(ndim, base_type)
+        result = vector_type()
+        result.reserve(arr.shape[0])
+        for subarr in arr:
+            result.push_back(convert(subarr))
+
+        return result
+
+    return convert(arr)
