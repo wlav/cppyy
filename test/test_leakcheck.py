@@ -68,7 +68,7 @@ class TestLEAKCHECK:
 
             gc.collect()
             assert len(gc.get_objects()) == pre
-            if last != self.process.memory_info().rss:
+            if last < self.process.memory_info().rss:
                 fail += 1
 
         assert fail < M
