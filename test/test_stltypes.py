@@ -789,6 +789,45 @@ class TestSTLVECTOR:
         for f, d in zip(x, v):
             assert f == d
 
+def test_ndarray_template_less(self):
+    import cppyy
+
+    try:
+        import numpy as np
+    except ImportError:
+        self.skipTest("numpy is not installed")
+    dtype_mappings = {
+        np.int32: "int",
+        np.int64: "long",
+        np.float32: "float",
+        np.float64: "double",
+    }
+
+    shapes = [
+        (10,),  # 1D array
+        (5, 5),  # 2D array
+        (4, 4, 4),  # 3D array
+        (2, 3, 3, 3),  # 4D array
+    ]
+
+    for np_dtype, cpp_dtype in dtype_mappings.items():
+        for shape in shapes:
+            rng = np.random.default_rng(seed=42)
+
+            if np.issubdtype(np_dtype, np.integer):
+                x = rng.integers(low=0, high=100, size=shape, dtype=np_dtype)
+            else:
+                x = rng.random(size=shape).astype(np_dtype)
+
+                cpp_vector = cppyy.gbl.std.vector(x)
+                assert len(cpp_vector) == shape[0]
+
+                if len(shape) > 1:
+                    assert len(cpp_vector[0]) == shape[1]
+                    if len(shape) > 2:
+                        assert len(cpp_vector[0][0]) == shape[2]
+                        if len(shape) > 3:
+                            assert len(cpp_vector[0][0][0]) == shape[3]
 
 class TestSTLSTRING:
     def setup_class(cls):
