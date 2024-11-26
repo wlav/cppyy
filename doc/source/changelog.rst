@@ -26,6 +26,7 @@ master
 * Use importlib.metadata instead of pkg_resources for py3.11 and later
 * Added out-of-bounds handling for small char-based enums
 * Fixed a leak check in the generic STL iterator protocol
+* Represent arrays of ``signed char`` as low level views returning bytes
 * Fixes for py3.12 and py3.13
 * Upgrade backend to Clang16
 
