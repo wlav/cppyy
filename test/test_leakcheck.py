@@ -251,3 +251,22 @@ class TestLEAKCHECK:
 
         obj = ns.Leaker()
         self.check_func(obj, 'leak_string', 2048)
+
+    def test08_list_creation(self):
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace LeakCheck {
+            std::list<int> list_by_value() { return std::list<int>(3); }
+        } """)
+
+        ns = cppyy.gbl.LeakCheck
+
+        def wrapped_list_by_value():
+            return list(ns.list_by_value())
+
+        ns.leak_list = wrapped_list_by_value
+
+        self.check_func(ns, 'leak_list')
+
