@@ -95,11 +95,13 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
             if 'reserve' in pyclass.__dict__:
                 def iadd(self, ll):
                     self.reserve(len(ll))
-                    for x in ll: self.push_back(x)
+                    for x in ll:
+                        self.push_back(x)
                     return self
             else:
                 def iadd(self, ll):
-                    for x in ll: self.push_back(x)
+                    for x in ll:
+                        self.push_back(x)
                     return self
             pyclass.__iadd__ = iadd
 
@@ -167,7 +169,8 @@ def add_default_paths():
         if os.path.exists(lib_path): gSystem.AddDynamicPath(lib_path)
 
   # assuming that we are in PREFIX/lib/python/site-packages/cppyy, add PREFIX/lib to the search path
-    lib_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, os.path.pardir))
+    lib_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir, os.path.pardir))
     if os.path.exists(lib_path): gSystem.AddDynamicPath(lib_path)
 
     try:

@@ -14,7 +14,8 @@ def _create_mapper(cls, extra_dct=None):
             cppname = name
             modname = 'cppyy.gbl'
         dct = {'__cpp_name__' : cppname, '__module__' : modname}
-        if extra_dct: dct.update(extra_dct)
+        if extra_dct:
+            dct.update(extra_dct)
         return type(name, (cls,), dct)
     return mapper
 

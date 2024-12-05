@@ -90,7 +90,8 @@ class ArraySizer(object):
         res = self.func[self.array_type](size)
         try:
             res.reshape((size,)+res.shape[1:])
-            if managed: res.__python_owns__ = True
+            if managed:
+                res.__python_owns__ = True
         except AttributeError:
             res.__reshape__((size,))
             if managed:

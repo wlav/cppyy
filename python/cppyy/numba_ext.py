@@ -194,7 +194,8 @@ class CppFunctionNumbaType(nb_types.Callable):
         except KeyError:
             pass
 
-        ol = CppFunctionNumbaType(self._func.__overload__(numba_arg_convertor(args)), self._is_method)
+        ol = CppFunctionNumbaType(
+                self._func.__overload__(numba_arg_convertor(args)), self._is_method)
 
         thistype = None
         if self._is_method:
@@ -219,7 +220,8 @@ class CppFunctionNumbaType(nb_types.Callable):
 
         @nb_iutils.lower_builtin(ol, *args)
         def lower_external_call(context, builder, sig, args,
-                ty=nb_types.ExternalFunctionPointer(extsig, ol.get_pointer), pyval=self._func, is_method=self._is_method):
+                ty=nb_types.ExternalFunctionPointer(extsig, ol.get_pointer),
+                pyval=self._func, is_method=self._is_method):
             ptrty = context.get_function_pointer_type(ty)
             ptrval = context.add_dynamic_addr(
                 builder, ty.get_pointer(pyval), info=str(pyval))
@@ -234,9 +236,11 @@ class CppFunctionNumbaType(nb_types.Callable):
     def get_impl_key(self, sig):
         return self._impl_keys[sig.args]
 
-    #TODO : Remove the redundancy of __overload__ matching and use this function to only obtain the address given the matched overload
+    # TODO: Remove the redundancy of __overload__ matching and use this function
+    # to only obtain the address given the matched overload
     def get_pointer(self, func):
-        if func is None: func = self._func
+        if func is None:
+            func = self._func
 
         ol = func.__overload__(numba_arg_convertor(self.sig.args))
 
@@ -432,7 +436,8 @@ class ImplClassValueModel(ImplAggregateValueModel):
       # struct is split in a series of byte members to get the total size right
       # and to allow addressing at the correct offsets.
         if self._data_type is None:
-            self._data_type = ir.LiteralStructType([ir_byte for i in range(self._sizeof)], packed=True)
+            self._data_type = \
+                    ir.LiteralStructType([ir_byte for i in range(self._sizeof)], packed=True)
         return self._data_type
 
   # return: representation used for return argument.
@@ -518,13 +523,13 @@ def typeof_scope(val, c, q = Qualified.default):
           # value: representation inside function body. Maybe stored in stack.
           #        The representation here are flexible.
             def get_value_type(self):
-              # the C++ object, b/c through a proxy, is always accessed by pointer; it is represented
-              # as a pointer to POD to allow indexing by Numba for data member type checking, but the
-              # address offsetting for loading data member values is independent (see get(), below),
-              # so the exact layout need not match a POD
+              # the C++ object, b/c through a proxy, is always accessed by pointer; it is
+              # represented as a pointer to POD to allow indexing by Numba for data member
+              # type checking, but the address offsetting for loading data member values is
+              # independent (see get(), below), so the exact layout need not match a POD
 
-              # TODO: this doesn't work for real PODs, b/c those are unpacked into their elements and
-              # passed through registers
+              # TODO: this doesn't work for real PODs, b/c those are unpacked into their elements
+              # and passed through registers
                 return ir.PointerType(super(ImplClassModel, self).get_value_type())
 
           # argument: representation used for function argument. Needs to be builtin type,
@@ -626,7 +631,8 @@ def typeof_scope(val, c, q = Qualified.default):
         box_res = c.pyapi.call_function_objargs(
             classobj, tuple(box_list)
         )
-        # Required for nopython mode, numba nrt requres each member box call to decref since it steals the reference
+        # Required for nopython mode, numba nrt requres each member box call to decref
+        # since it steals the reference
         for i in box_list:
             c.pyapi.decref(i)
 

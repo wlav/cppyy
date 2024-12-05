@@ -52,19 +52,25 @@ __all__ = [
 
 from ._version import __version__
 
-import ctypes, os, sys, sysconfig, warnings
+import ctypes
+import os
+import sys
+import sysconfig
+import warnings
 
 if not 'CLING_STANDARD_PCH' in os.environ:
     def _set_pch():
         try:
             import cppyy_backend as cpb
-            local_pch = os.path.join(os.path.dirname(__file__), 'allDict.cxx.pch.'+str(cpb.__version__))
+            local_pch = os.path.join(
+                    os.path.dirname(__file__), 'allDict.cxx.pch.'+str(cpb.__version__))
             if os.path.exists(local_pch):
                 os.putenv('CLING_STANDARD_PCH', local_pch)
                 os.environ['CLING_STANDARD_PCH'] = local_pch
         except (ImportError, AttributeError):
             pass
-    _set_pch(); del _set_pch
+    _set_pch()
+    del _set_pch
 
 try:
     import __pypy__
@@ -219,7 +225,8 @@ def cppexec(stmt):
             gbl.gInterpreter.ProcessLine(stmt, ctypes.pointer(errcode))
         except Exception as e:
             sys.stderr.write("%s\n\n" % str(e))
-            if not errcode.value: errcode.value = 1
+            if not errcode.value:
+                errcode.value = 1
 
     if errcode.value:
         raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
@@ -336,7 +343,8 @@ if not ispypy:
 
     if apipath_extra is None:
         ldversion = sysconfig.get_config_var('LDVERSION')
-        if not ldversion: ldversion = sys.version[:3]
+        if not ldversion:
+            ldversion = sys.version[:3]
 
         apipath_extra = os.path.join(os.path.dirname(apipath), 'site', 'python'+ldversion)
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
@@ -362,7 +370,9 @@ if not ispypy:
 
     if apipath_extra.lower() != 'none':
         if not os.path.exists(os.path.join(apipath_extra, 'CPyCppyy')):
-            warnings.warn("CPyCppyy API not found (tried: %s); set CPPYY_API_PATH envar to the 'CPyCppyy' API directory to fix" % apipath_extra)
+            warnings.warn("CPyCppyy API not found (tried: %s); "
+                          "set CPPYY_API_PATH envar to the 'CPyCppyy' API directory to fix"
+                          % apipath_extra)
         else:
             add_include_path(apipath_extra)
 
@@ -371,15 +381,20 @@ if not ispypy:
 if os.getenv('CONDA_PREFIX'):
   # MacOS, Linux
     include_path = os.path.join(os.getenv('CONDA_PREFIX'), 'include')
-    if os.path.exists(include_path): add_include_path(include_path)
+    if os.path.exists(include_path):
+        add_include_path(include_path)
 
   # Windows
     include_path = os.path.join(os.getenv('CONDA_PREFIX'), 'Library', 'include')
-    if os.path.exists(include_path): add_include_path(include_path)
+    if os.path.exists(include_path):
+        add_include_path(include_path)
 
-# assuming that we are in PREFIX/lib/python/site-packages/cppyy, add PREFIX/include to the search path
-include_path = os.path.abspath(os.path.join(os.path.dirname(__file__), *(4*[os.path.pardir]+['include'])))
-if os.path.exists(include_path): add_include_path(include_path)
+# assuming that we are in PREFIX/lib/python/site-packages/cppyy,
+# add PREFIX/include to the search path
+include_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), *(4*[os.path.pardir]+['include'])))
+if os.path.exists(include_path):
+    add_include_path(include_path)
 
 del include_path, apipath, ispypy
 
@@ -439,7 +454,8 @@ def typeid(tt):
 def multi(*bases):      # after six, see also _typemap.py
     """Resolve metaclasses for multiple inheritance."""
   # contruct a "no conflict" meta class; the '_meta' is needed by convention
-    nc_meta = type.__new__(type, 'cppyy_nc_meta', tuple(type(b) for b in bases if type(b) is not type), {})
+    nc_meta = type.__new__(
+            type, 'cppyy_nc_meta', tuple(type(b) for b in bases if type(b) is not type), {})
     class faux_meta(type):
         def __new__(mcs, name, this_bases, d):
             return nc_meta(name, bases, d)
