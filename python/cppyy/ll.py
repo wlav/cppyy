@@ -36,7 +36,6 @@ __all__ = [
 
 # convenience functions to create C-style argv/argc
 def argv():
-    argc = len(sys.argv)
     cargsv = (ctypes.c_char_p * len(sys.argv))(*(x.encode() for x in sys.argv))
     return ctypes.POINTER(ctypes.c_char_p)(cargsv)
 

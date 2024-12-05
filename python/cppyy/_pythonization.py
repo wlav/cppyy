@@ -313,7 +313,6 @@ def make_property(match_class, match_get, match_set=None, match_del=None, prop_n
             names += list(named_deleters.keys())
             names = set(names)
 
-            properties = []
             for name in names:
                 if name in named_getters:
                     fget = self.make_get_del_proxy(named_getters[name])

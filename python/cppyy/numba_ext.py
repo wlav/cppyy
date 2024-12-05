@@ -17,9 +17,7 @@ import numba.core.typing as nb_typing
 
 from llvmlite import ir
 from numba.extending import make_attribute_wrapper
-import itertools
 import re
-import inspect
 
 # setuptools entry point for Numba
 def _init_extension():
@@ -114,7 +112,7 @@ def numba2cpp(val):
 
 def numba_arg_convertor(args):
     args_cpp = []
-    for i, arg in enumerate(list(args)):
+    for arg in list(args):
         # If the user explicitly passes an argument using numba CPointer, the regex match is used
         # to detect the pass by reference since the dispatcher always returns typeref[val*]
         match = re.search(r"typeref\[(.*?)\*\]", str(arg))
@@ -128,7 +126,7 @@ def numba_arg_convertor(args):
 
 def to_ref(type_list):
     ref_list = []
-    for i, l in enumerate(type_list):
+    for l in type_list:
         ref_list.append(l + '&')
     return ref_list
 
@@ -615,7 +613,6 @@ def typeof_scope(val, c, q = Qualified.default):
 
         implclass = make_implclass(c.context, c.builder, typ)
         classobj = c.pyapi.unserialize(c.pyapi.serialize_object(cpp_types.Instance))
-        pyobj = c.context.get_argument_type(nb_types.pyobject)
 
         box_list = []
 
