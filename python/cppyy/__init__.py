@@ -177,7 +177,7 @@ class make_smartptr(object):
                 return py_make_smartptr(cls, self.ptrcls)
         except AttributeError:
             pass
-        if type(cls) == str and not cls in ('int', 'float'):
+        if isinstance(cls, str) and not cls in ('int', 'float'):
             return py_make_smartptr(getattr(gbl, cls), self.ptrcls)
         return self.maker[cls]
 
@@ -412,7 +412,7 @@ def set_debug(enable=True):
         gbl.CppyyLegacy.gDebug =  0
 
 def _get_name(tt):
-    if type(tt) == str:
+    if isinstance(tt, str):
         return tt
     try:
         ttname = tt.__cpp_name__
@@ -423,7 +423,7 @@ def _get_name(tt):
 _sizes = {}
 def sizeof(tt):
     """Returns the storage size (in chars) of C++ type <tt>."""
-    if not isinstance(tt, type) and not type(tt) == str:
+    if not isinstance(tt, type) and not isinstance(tt, str):
         tt = type(tt)
     try:
         return _sizes[tt]

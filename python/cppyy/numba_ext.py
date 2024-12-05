@@ -70,7 +70,7 @@ def resolve_const_types(val):
     return re.match(r'const\s+(.+)\s*\*', val).group(1)
 
 def cpp2numba(val):
-    if type(val) != str:
+    if not isinstance(val, str):
         # TODO: distinguish ptr/ref/byval
         # TODO: Only metaclasses/proxies end up here since
         #  ref cases makes the RETURN_TYPE from reflex a string
@@ -341,14 +341,14 @@ class CppClassFieldResolver(nb_tmpl.AttributeTemplate):
 
         try:
             f = getattr(typ._scope, attr)
-            if type(f) == cpp_types.Function:
+            if isinstance(f, cpp_types.Function):
                 ft = CppFunctionNumbaType(f, is_method=True)
         except AttributeError:
             pass
 
         try:
             f = typ._scope.__dict__[attr]
-            if type(f) == cpp_types.DataMember:
+            if isinstance(f, cpp_types.DataMember):
                 ct = f.__cpp_reflex__(cpp_refl.TYPE)
                 ft = cpp2numba(ct)
         except AttributeError:
@@ -364,7 +364,7 @@ def cppclass_getattr_impl(context, builder, typ, val, attr):
     # TODO: the following relies on the fact that numba will first lower the
     # field access, then immediately lower the call; and that the `val` loads
     # the struct representing the C++ object. Neither need be stable.
-    if attr in typ._scope.__dict__ and type(typ._scope.__dict__[attr]) == cpp_types.DataMember:
+    if attr in typ._scope.__dict__ and isinstance(typ._scope.__dict__[attr], cpp_types.DataMember):
         dm = typ._scope.__dict__[attr]
         ct = dm.__cpp_reflex__(cpp_refl.TYPE)
         offset = dm.__cpp_reflex__(cpp_refl.OFFSET)
@@ -484,11 +484,11 @@ def typeof_scope(val, c, q = Qualified.default):
     member_methods = dict()
 
     for name, field in val.__dict__.items():
-        if type(field) == cpp_types.DataMember:
+        if isinstance(field, cpp_types.DataMember):
             data_members.append(CppDataMemberInfo(
                 name, field.__cpp_reflex__(cpp_refl.OFFSET), field.__cpp_reflex__(cpp_refl.TYPE))
             )
-        elif type(field) == cpp_types.Function:
+        elif isinstance(field, cpp_types.Function):
             member_methods[name] = field.__cpp_reflex__(cpp_refl.RETURN_TYPE)
 
   # TODO: this refresh is needed b/c the scope type is registered as a
@@ -611,7 +611,7 @@ def typeof_scope(val, c, q = Qualified.default):
 
         global cppyy_from_voidptr
 
-        if type(val) == ir.Constant:
+        if isinstance(val, ir.Constant):
             if val.constant == ir.Undefined:
                 assert not "Value passed to instance boxing is undefined"
                 return NULL

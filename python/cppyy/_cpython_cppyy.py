@@ -39,14 +39,14 @@ if sys.hexversion < 0x3000000:
 
     inspect._old_isfunction = inspect.isfunction
     def isfunction(object):
-        if type(object) == _backend.CPPOverload and not object.im_class:
+        if isinstance(object, _backend.CPPOverload) and not object.im_class:
             return True
         return inspect._old_isfunction(object)
     inspect.isfunction = isfunction
 
     inspect._old_ismethod = inspect.ismethod
     def ismethod(object):
-        if type(object) == _backend.CPPOverload:
+        if isinstance(object, _backend.CPPOverload):
             return True
         return inspect._old_ismethod(object)
     inspect.ismethod = ismethod
@@ -70,7 +70,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
 
     def __getitem__(self, *args):
       # multi-argument to [] becomes a single tuple argument
-        if args and type(args[0]) is tuple:
+        if args and isinstance(args[0], tuple):
             args = args[0]
 
       # if already instantiated, return the existing class
@@ -82,7 +82,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
       # construct the type name from the types or their string representation
         newargs = [self.__name__]
         for arg in args:
-            if type(arg) == str:
+            if isinstance(arg, str):
                 arg = ','.join(map(lambda x: x.strip(), arg.split(',')))
             newargs.append(arg)
         pyclass = _backend.MakeCppTemplateClass(*newargs)
@@ -116,7 +116,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
       # most common cases are covered
         if args:
             args0 = args[0]
-            if args0 and (type(args0) is tuple or type(args0) is list):
+            if args0 and isinstance(args0, (tuple, list)):
                 t = type(args0[0])
                 if t is float: t = 'double'
 
@@ -127,7 +127,7 @@ class Template(object):  # expected/used by ProxyWrappers.cxx in CPyCppyy
                 if self.__name__ in self.stl_unrolled_types:
                     return self[tuple(type(a) for a in args0)](*args0)
 
-            if args0 and type(args0) is dict:
+            if args0 and isinstance(args0, dict):
                 if self.__name__ in self.stl_mapping_types:
                     try:
                         pair = args0.items().__iter__().__next__()
