@@ -183,12 +183,12 @@ del make_smartptr
 #--- interface to Cling ------------------------------------------------------
 class _stderr_capture(object):
     def __init__(self):
-       self._capture = not gbl.CppyyLegacy.gDebug and True or False
-       self.err = ""
+        self._capture = not gbl.CppyyLegacy.gDebug and True or False
+        self.err = ""
 
     def __enter__(self):
         if self._capture:
-           _begin_capture_stderr()
+            _begin_capture_stderr()
         return self
 
     def __exit__(self, tp, val, trace):

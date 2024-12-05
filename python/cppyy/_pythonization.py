@@ -134,14 +134,14 @@ def add_overload(match_class, match_method, overload):
             if not self.match_class.match(name):
                 return
             for k in dir(obj): #.__dict__:
-               try:
-                   tmp = getattr(obj, k)
-               except:
-                   continue
-               if self.match_method.match(k):
-                   try:
-                       tmp.__add_overload__(overload)
-                   except AttributeError: pass
+                try:
+                    tmp = getattr(obj, k)
+                except:
+                    continue
+                if self.match_method.match(k):
+                    try:
+                        tmp.__add_overload__(overload)
+                    except AttributeError: pass
     return method_pythonizor(match_class, match_method, overload)
 
 

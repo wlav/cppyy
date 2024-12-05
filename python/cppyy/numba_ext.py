@@ -165,9 +165,8 @@ def cpp2ir(val):
         elif val != "char*" and val[-1] == "*":
             if val.startswith('const'):
                 return ir.PointerType(cpp2ir(resolve_const_types(val)))
-            else:
-                type_2 = _cpp2ir[val[:-1]]
-                return ir.PointerType(type_2)
+            type_2 = _cpp2ir[val[:-1]]
+            return ir.PointerType(type_2)
 
 #
 # C++ function pointer -> Numba

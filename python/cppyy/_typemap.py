@@ -56,8 +56,9 @@ def with_metaclass(meta, *bases):
 
 class _BoolMeta(type):
     def __call__(self, val = bool()):
-        if val: return True
-        else: return False
+        if val:
+            return True
+        return False
 
 class _Bool(with_metaclass(_BoolMeta, object)):
     pass
