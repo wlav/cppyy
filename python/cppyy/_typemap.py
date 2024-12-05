@@ -2,6 +2,7 @@
     for typedef-ed C++ builtin types.
 """
 
+import ctypes
 import sys
 import types
 
@@ -110,7 +111,6 @@ def initialize(backend):
         tm[tp] = float_tm
 
     # void*
-    import ctypes
     def voidp_init(self, arg=0):
         import cppyy, ctypes
         if arg == cppyy.nullptr: arg = 0

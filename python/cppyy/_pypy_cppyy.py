@@ -47,14 +47,13 @@ del fixup_legacy
 
 
 #- exports -------------------------------------------------------------------
-import sys
 _thismodule = sys.modules[__name__]
 for name in __all__:
     try:
         setattr(_thismodule, name, getattr(_backend, name))
     except AttributeError:
         pass
-del name, sys
+del name
 nullptr = _backend.nullptr
 
 def load_reflection_info(name):

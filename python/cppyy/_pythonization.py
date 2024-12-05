@@ -1,6 +1,8 @@
 """ Pythonization API.
 """
 
+import re
+
 __all__ = [
     'add_pythonization',
     'remove_pythonization',
@@ -79,7 +81,6 @@ def rename_attribute(match_class, orig_attribute, new_attribute, keep_orig=False
                 return delattr(obj, self.attr)
 
         def __init__(self, match_class, orig_attribute, new_attribute, keep_orig):
-            import re
             self.match_class = re.compile(match_class)
             self.match_attr = re.compile(orig_attribute)
             self.new_attr = new_attribute
@@ -98,7 +99,6 @@ def rename_attribute(match_class, orig_attribute, new_attribute, keep_orig=False
 # def rename_attribute(match_class, orig_attribute, new_attribute, keep_orig=False):
 #     class method_pythonizor:
 #         def __init__(self, match_class, orig_attribute, new_attribute, keep_orig):
-#             import re
 #             self.match_class = re.compile(match_class)
 #             self.match_attr = re.compile(orig_attribute)
 #             self.new_attr = new_attribute
@@ -125,7 +125,6 @@ def rename_attribute(match_class, orig_attribute, new_attribute, keep_orig=False
 def add_overload(match_class, match_method, overload):
     class method_pythonizor(object):
         def __init__(self, match_class, match_method, overload):
-            import re
             self.match_class = re.compile(match_class)
             self.match_method = re.compile(match_method)
             self.overload = overload
@@ -148,7 +147,6 @@ def add_overload(match_class, match_method, overload):
 def compose_method(match_class, match_method, g):
     class composition_pythonizor(object):
         def __init__(self, match_class, match_method, g):
-            import re
             self.match_class = re.compile(match_class)
             self.match_method = re.compile(match_method)
             self.g = g
@@ -176,7 +174,6 @@ def compose_method(match_class, match_method, g):
 def set_method_property(match_class, match_method, prop, value):
     class method_pythonizor(object):
         def __init__(self, match_class, match_method, prop, value):
-            import re
             self.match_class = re.compile(match_class)
             self.match_method = re.compile(match_method)
             self.prop = prop
@@ -198,7 +195,6 @@ def set_method_property(match_class, match_method, prop, value):
 def make_property(match_class, match_get, match_set=None, match_del=None, prop_name=None):
     class property_pythonizor(object):
         def __init__(self, match_class, match_get, match_set, match_del, prop_name):
-            import re
             self.match_class = re.compile(match_class)
 
             self.match_get = re.compile(match_get)

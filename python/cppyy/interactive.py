@@ -13,7 +13,8 @@ class InteractiveLazy(object):
         self._hook_okay = hook_okay
 
     def __getattr__(self, attr):
-        import cppyy, sys
+        import cppyy
+
         if attr == '__all__':
           # copy all exported items from cppyy itself
             for v in cppyy.__all__:

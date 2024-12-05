@@ -50,8 +50,6 @@ __all__ = [
     'set_debug',              # enable/disable debug output
     ]
 
-from ._version import __version__
-
 import ctypes
 import os
 import sys
@@ -79,6 +77,9 @@ try:
 except ImportError:
     ispypy = False
 
+from . import _typemap
+from ._version import __version__
+
 # import separately instead of in the above try/except block for easier to
 # understand tracebacks
 if ispypy:
@@ -98,7 +99,6 @@ except: pass
 
 
 #- external typemap ----------------------------------------------------------
-from . import _typemap
 _typemap.initialize(_backend)               # also creates (u)int8_t mapper
 
 try:
