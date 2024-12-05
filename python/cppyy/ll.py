@@ -36,10 +36,12 @@ __all__ = [
 
 # convenience functions to create C-style argv/argc
 def argv():
+    """Return C's argv for use with cppyy/ctypes."""
     cargsv = (ctypes.c_char_p * len(sys.argv))(*(x.encode() for x in sys.argv))
     return ctypes.POINTER(ctypes.c_char_p)(cargsv)
 
 def argc():
+    """Return C's argc for use with cppyy/ctypes."""
     return len(sys.argv)
 
 # import low-level python converters
