@@ -233,6 +233,7 @@ class TestLEAKCHECK:
         self.check_func(cppyy.gbl, '__dir__', cppyy.gbl)
 
     def test07_string_handling(self):
+        """Leak check of returning an std::string by value"""
 
         import cppyy
 
@@ -240,14 +241,34 @@ class TestLEAKCHECK:
         namespace LeakCheck {
         class Leaker {
         public:
-             const std::string leak_string(std::size_t size) const {
-                  std::string result;
-                  result.reserve(size);
-                  return result;
-             }
+            const std::string leak_string(std::size_t size) const {
+                std::string result;
+                result.reserve(size);
+                return result;
+            }
         }; }""")
 
         ns = cppyy.gbl.LeakCheck
 
         obj = ns.Leaker()
         self.check_func(obj, 'leak_string', 2048)
+
+    def test08_list_creation(self):
+        """Leak check of creating a python list from an std::list"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace LeakCheck {
+            std::list<int> list_by_value() { return std::list<int>(3); }
+        } """)
+
+        ns = cppyy.gbl.LeakCheck
+
+        def wrapped_list_by_value():
+            return list(ns.list_by_value())
+
+        ns.leak_list = wrapped_list_by_value
+
+        self.check_func(ns, 'leak_list')
+
