@@ -28,6 +28,7 @@ master
 * Fixed a leak check in the generic STL iterator protocol
 * Represent arrays of ``signed char`` as low level views returning bytes
 * Improve memory regulator's handling of smart pointers
+* Version PCHs with the C++ standard version
 * Fixes for py3.12 and py3.13
 * Upgrade backend to Clang16
 
