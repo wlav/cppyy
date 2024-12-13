@@ -201,15 +201,26 @@ class _stderr_capture(object):
         if self._capture:
             self.err = _end_capture_stderr()
 
+def _cling_report(msg, errcode, msg_is_error=False):
+  # errcode should be authorative, but at least on MacOS, Cling does not report an
+  # error when it should, so also check for the typical compilation signature that
+  # Cling puts out as an indicator than an error occurred
+    if 'input_line' in msg:
+        if 'warning' in msg and not 'error' in msg:
+            warnings.warn(msg, SyntaxWarning)
+            msg_is_error=False
+
+        if 'error' in msg:
+            errcode = 1
+
+    if errcode or (msg and msg_is_error):
+        raise SyntaxError('Failed to parse the given C++ code%s' % msg)
+
 def cppdef(src):
     """Declare C++ source <src> to Cling."""
     with _stderr_capture() as err:
         errcode = gbl.gInterpreter.Declare(src)
-    if not errcode or err.err:
-        if 'warning' in err.err.lower() and not 'error' in err.err.lower():
-            warnings.warn(err.err, SyntaxWarning)
-            return True
-        raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
+    _cling_report(err.err, int(not errcode), msg_is_error=True)
     return True
 
 def cppexec(stmt):
@@ -228,9 +239,8 @@ def cppexec(stmt):
             if not errcode.value:
                 errcode.value = 1
 
-    if errcode.value:
-        raise SyntaxError('Failed to parse the given C++ code%s' % err.err)
-    elif err.err and err.err[1:] != '\n':
+    _cling_report(err.err, errcode.value)
+    if err.err and err.err[1:] != '\n':
         sys.stderr.write(err.err[1:])
 
     return True
