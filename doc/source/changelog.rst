@@ -10,6 +10,13 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
+master
+------
+
+* Fix crash when looping over empty ``std::vector`` of pointer types.
+
+
+
 2024-12-16: 3.5.0
 -----------------
 

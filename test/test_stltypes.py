@@ -287,7 +287,7 @@ class TestSTLVECTOR:
         v.__destruct__()
 
     def test03_empty_vector_type(self):
-        """Test behavior of empty std::vector<int>"""
+        """Test behavior of empty std::vector<>"""
 
         import cppyy
 
@@ -296,6 +296,9 @@ class TestSTLVECTOR:
         for arg in v:
             pass
         v.__destruct__()
+
+        for x in cppyy.gbl.std.vector["std::string*"]():
+            pass
 
     def test04_vector_iteration(self):
         """Test iteration over an std::vector<int>"""
