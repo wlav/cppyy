@@ -10,8 +10,8 @@ See :doc:`packages <packages>`, for details on the package structure.
 PyPy support lags CPython support.
 
 
-master
-------
+2024-12-16: 3.5.0
+-----------------
 
 * Fix buffering problems with std::string_view's on Python str objects
 * Fix potential buffering problems in creation of initializer lists
