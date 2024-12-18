@@ -1339,3 +1339,17 @@ class TestREGRESSION:
             raise # rethrow the exception
         finally:
             cppyy._backend.SetMemoryPolicy(old_memory_policy)
+
+    def test45_typedef_resolution(self):
+        """Typedefs starting with 'c'"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        typedef const int my_custom_type_t;
+        typedef const int cmy_custom_type_t;
+        """)
+
+        assert cppyy.gbl.CppyyLegacy.TClassEdit.ResolveTypedef("my_custom_type_t") == "const int"
+        assert cppyy.gbl.CppyyLegacy.TClassEdit.ResolveTypedef("cmy_custom_type_t") == "const int"
+
