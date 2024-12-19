@@ -14,6 +14,7 @@ master
 ------
 
 * Fix crash when looping over empty ``std::vector`` of pointer types.
+* Fix offsets for protected data members for multiple cross-inheritance
 
 
 
