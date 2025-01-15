@@ -1353,3 +1353,22 @@ class TestREGRESSION:
         assert cppyy.gbl.CppyyLegacy.TClassEdit.ResolveTypedef("my_custom_type_t") == "const int"
         assert cppyy.gbl.CppyyLegacy.TClassEdit.ResolveTypedef("cmy_custom_type_t") == "const int"
 
+    def test46_exception_narrowing(self):
+        """Exception narrowing to C++ exception of all overloads"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        namespace OverloadThrows {
+        class Foo {
+        public:
+            void bar() { throw std::logic_error("This is fine"); }
+            void bar() const { throw std::logic_error("This is fine"); }
+        }; }""")
+
+        ns = cppyy.gbl.OverloadThrows
+
+        foo = ns.Foo()
+        with raises(cppyy.gbl.std.logic_error):
+            foo.bar()
+
