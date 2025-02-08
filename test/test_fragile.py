@@ -683,6 +683,38 @@ class TestFRAGILE:
         p = Test.Family1.Parent()
         p.children                          # used to crash
 
+    def test31_template_with_class_enum(self):
+        """Template instantiated with class enum"""
+
+        import cppyy
+
+        cppyy.cppdef("""\
+        enum class ClassEnumA { A, };
+
+        template<ClassEnumA T>
+        struct EnumTemplate {
+          int foo();
+        };
+
+        template<> int EnumTemplate<ClassEnumA::A>::foo() { return 42; }
+        template class EnumTemplate<ClassEnumA::A>;
+
+        namespace ClassEnumNS {
+          enum class ClassEnumA { A, };
+
+          template<ClassEnumA T>
+          struct EnumTemplate {
+            int foo();
+          };
+
+          template<> int EnumTemplate<ClassEnumA::A>::foo() { return 37; }
+          template class EnumTemplate<ClassEnumA::A>;
+        }""")
+
+        for ns, val in [(cppyy.gbl, 42),
+                        (cppyy.gbl.ClassEnumNS, 37)]:
+            assert ns.EnumTemplate[ns.ClassEnumA.A]().foo() == val
+
 
 class TestSIGNALS:
     def setup_class(cls):
