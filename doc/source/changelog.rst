@@ -16,6 +16,9 @@ master
 * Fix crash when looping over empty ``std::vector`` of pointer types.
 * Fix offsets for protected data members for multiple cross-inheritance
 * Remove string_view compatibility header for C++14
+* Fix for typedefs that are mistaken as const
+* Fix versioning/installation issues on specific platforms
+* Avoid ``nullptr`` dereferencing in ``CPyCppyy::BindCppObjectNoCast``
 * Scope values of class enums for template instantiations
 
 
