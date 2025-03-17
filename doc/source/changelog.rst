@@ -20,6 +20,7 @@ master
 * Fix versioning/installation issues on specific platforms
 * Avoid ``nullptr`` dereferencing in ``CPyCppyy::BindCppObjectNoCast``
 * Scope values of class enums for template instantiations
+* Fix true/false default arguments when using keywords
 
 
 2024-12-16: 3.5.0
