@@ -56,15 +56,24 @@ class TestREGRESSION:
 
         import cppyy, pydoc
 
-        assert not '__abstractmethods__' in dir(cppyy.gbl.gInterpreter)
-        assert '__class__' in dir(cppyy.gbl.gInterpreter)
+        cppyy.cppdef("""
+            namespace docs {
+            struct MyDocs {
+                void fn() {}
+            } s;
+            MyDocs *ptrDocs = &s;
+            }
+        """)
+
+        assert not '__abstractmethods__' in dir(cppyy.gbl.docs.ptrDocs)
+        assert '__class__' in dir(cppyy.gbl.docs.ptrDocs)
 
         self.__class__.helpout = []
-        pydoc.doc(cppyy.gbl.gInterpreter)
+        pydoc.doc(cppyy.gbl.docs.ptrDocs)
         helptext = ''.join(self.__class__.helpout)
-        assert 'TInterpreter' in helptext
+        assert 'MyDocs' in helptext
         assert 'CPPInstance' in helptext
-        assert 'AddIncludePath' in helptext
+        assert 'fn' in helptext
 
         cppyy.cppdef("namespace cppyy_regression_test { void iii() {}; }")
 

@@ -54,13 +54,24 @@ class TestClassPYTHONIZATION:
 
         assert cppyy.gbl.pyzables.SomeDummy2.test == 3
 
+        cppyy.cppdef("""
+            namespace pyzables {
+                class TObjString {
+                public:
+                    std::string s;
+                    TObjString(std::string ss) : s(ss) {}
+                    size_t Sizeof() { return s.size() + 1; }
+                };
+            }
+        """)
+        
         def root_pythonizor(klass, name):
-            if name == 'CppyyLegacy::TObjString':
+            if name == 'pyzables::TObjString':
                 klass.__len__ = klass.Sizeof
 
         cppyy.py.add_pythonization(root_pythonizor)
 
-        assert len(cppyy.gbl.CppyyLegacy.TObjString("aap")) == 4     # include '\0'
+        assert len(cppyy.gbl.pyzables.TObjString("aap")) == 4     # include '\0'
 
     def test01_size_mapping(self):
         """Use composites to map GetSize() onto buffer returns"""
