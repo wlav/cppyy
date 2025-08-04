@@ -1727,6 +1727,24 @@ class TestSTLSTRING_VIEW:
 
         assert "Lorem ipsum dolor sit amet" in str(text)
 
+    def test03_multiple_string_view_arguments(self):
+        """Function that take multiple std::string_view arguments"""
+
+        import cppyy
+
+        cppyy.cppdef("""
+        std::string concat_string_views(std::string_view s1, std::string_view s2)
+        {
+           std::string out;
+           out += s1;
+           out += " ";
+           out += s2;
+           return out;
+        }
+        """)
+
+        assert cppyy.gbl.concat_string_views("hello", "world") == "hello world"
+
 
 class TestSTLDEQUE:
     def setup_class(cls):
