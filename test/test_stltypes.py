@@ -9,6 +9,7 @@ test_dct = str(currpath.join("stltypesDict"))
 def setup_module(mod):
     setup_make("stltypes")
 
+global_n = 5
 
 # after CPython's Lib/test/seq_tests.py
 def iterfunc(seqn):
@@ -197,7 +198,7 @@ class TestSTLVECTOR:
         cls.test_dct = test_dct
         import cppyy
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
-        cls.N = cppyy.gbl.N
+        cls.N = global_n
 
     def test01_builtin_type_vector_types(self):
         """Test access to std::vector<int>/std::vector<double>"""
@@ -1751,7 +1752,7 @@ class TestSTLDEQUE:
         cls.test_dct = test_dct
         import cppyy
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
-        cls.N = cppyy.gbl.N
+        cls.N = global_n
 
     def test01_deque_byvalue_regression(self):
         """Return by value of a deque used to crash"""
@@ -1778,7 +1779,7 @@ class TestSTLSET:
         cls.test_dct = test_dct
         import cppyy
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
-        cls.N = cppyy.gbl.N
+        cls.N = global_n
 
     def test01_set_iteration(self):
         """Iterate over a set"""
@@ -1871,7 +1872,7 @@ class TestSTLTUPLE:
         cls.test_dct = test_dct
         import cppyy
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
-        cls.N = cppyy.gbl.N
+        cls.N = global_n
 
     def test01_tuple_creation_and_access(self):
         """Create tuples and access their elements"""
@@ -1961,7 +1962,7 @@ class TestSTLPAIR:
         cls.test_dct = test_dct
         import cppyy
         cls.stltypes = cppyy.load_reflection_info(cls.test_dct)
-        cls.N = cppyy.gbl.N
+        cls.N = global_n
 
     def test01_pair_pack_unpack(self):
         """Pack/unpack pairs"""
