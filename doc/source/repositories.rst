@@ -140,12 +140,11 @@ is very similar::
 Just like ``cppyy-cling``, ``CPyCppyy`` has ``cmake`` scripts which are the
 recommended way for development, as incremental builds are faster::
 
- $ mkdir build
  $ cmake ../CPyCppyy
  $ make -j <N>
 
-then simply point the ``PYTHONPATH`` envar to the `build` directory above to
-pick up the local `cppyy.so` module.
+then simply point the ``PYTHONPATH`` envar to the CPyCppyy `root` directory above to
+pick up the local `cppyy.so` module(or `libcppyy.so` module on Linux).
 
 Finally, the top-level package ``cppyy``::
 
