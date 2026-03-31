@@ -2353,3 +2353,115 @@ class TestDATATYPES:
 
         assert [ns.test[i]  for i in range(6)] == [-0x12, -0x34, -0x56, -0x78, 0x0, 0x0]
         assert [ns.utest[i] for i in range(6)] == [ 0x12,  0x34,  0x56,  0x78, 0x0, 0x0]
+
+
+class TestBITFIELDS:
+    def setup_class(cls):
+        import cppyy
+
+        cppyy.cppdef(r"""
+        struct BitFieldTest {
+            unsigned int a : 1;
+            unsigned int b : 2;
+            unsigned int c : 4;
+            unsigned int d : 1;
+            unsigned int e : 8;
+            unsigned int f : 16;
+
+            BitFieldTest() : a(1), b(0), c(0), d(0), e(0x33), f(0x5555) {}
+        };
+
+        struct SignedBitFieldTest {
+            int x : 3;
+            int y : 5;
+            int z : 24;
+
+            SignedBitFieldTest() : x(-1), y(-16), z(0) {}
+        };
+
+        struct MultiBitFieldUnit {
+            unsigned int first  : 16;
+            unsigned int second : 16;
+            unsigned int third  : 8;
+            unsigned int fourth : 8;
+            unsigned int fifth  : 16;
+
+            MultiBitFieldUnit()
+                : first(0xAAAA), second(0x5555),
+                  third(0xBB), fourth(0xCC), fifth(0xDDDD) {}
+        };
+        """)
+
+    def test01_read_unsigned_bitfields(self):
+        """Read unsigned bitfield values (issue #57 reproducer)"""
+
+        import cppyy
+
+        f = cppyy.gbl.BitFieldTest()
+        assert f.a == 1
+        assert f.b == 0
+        assert f.c == 0
+        assert f.d == 0
+        assert f.e == 0x33
+        assert f.f == 0x5555
+
+    def test02_write_unsigned_bitfields(self):
+        """Write individual bitfield members without corrupting neighbors"""
+
+        import cppyy
+
+        f = cppyy.gbl.BitFieldTest()
+
+        f.c = 0xF
+        assert f.c == 0xF
+        assert f.a == 1
+        assert f.b == 0
+        assert f.d == 0
+        assert f.e == 0x33
+        assert f.f == 0x5555
+
+    def test03_write_truncation(self):
+        """Writing a value wider than the bitfield truncates to fit"""
+
+        import cppyy
+
+        f = cppyy.gbl.BitFieldTest()
+        f.a = 0xFF
+        assert f.a == 1       # 1-bit field, 0xFF & 1 == 1
+
+        f.b = 0xFF
+        assert f.b == 3       # 2-bit field, 0xFF & 3 == 3
+
+        f.c = 0xF0
+        assert f.c == 0       # 4-bit field, 0xF0 & 0xF == 0
+
+    def test04_signed_bitfields(self):
+        """Read/write signed bitfield values with sign extension"""
+
+        import cppyy
+
+        f = cppyy.gbl.SignedBitFieldTest()
+        assert f.x == -1
+        assert f.y == -16
+
+        f.x = 3
+        assert f.x == 3
+
+        f.x = -2
+        assert f.x == -2
+
+    def test05_multi_unit_bitfields(self):
+        """Bitfields spanning multiple storage units"""
+
+        import cppyy
+
+        m = cppyy.gbl.MultiBitFieldUnit()
+        assert m.first  == 0xAAAA
+        assert m.second == 0x5555
+        assert m.third  == 0xBB
+        assert m.fourth == 0xCC
+        assert m.fifth  == 0xDDDD
+
+        m.first = 0x1234
+        assert m.first  == 0x1234
+        assert m.second == 0x5555
