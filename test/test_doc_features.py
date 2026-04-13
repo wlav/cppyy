@@ -633,7 +633,6 @@ namespace Math {
         k = i2 + i
         assert int(k) == i2.m_data + i.m_data
 
-    @mark.xfail(condition=(IS_MAC or IS_CLING), reason="Fails on OSX and Cling")
     def test07_run_zoo(self):
         """Bunch of zoo animals running around"""
 

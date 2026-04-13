@@ -801,7 +801,6 @@ class TestMULTIDIMARRAYS:
             assert arr.shape == (rows, cols)
 
     
-    @mark.xfail(condition=IS_CLING, reason="fails with cling")
     def test07_3D_custom_struct(self):
         import cppyy
         from cppyy import gbl
